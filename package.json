@@ -1,0 +1,31 @@
+{
+  "name": "minisearch",
+  "version": "1.0.0",
+  "description": "fun with fulltext search",
+  "main": "index.js",
+  "author": "Luca Ongaro",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.4.2",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^23.4.2",
+    "regenerator-runtime": "^0.12.1",
+    "snazzy": "^7.1.1",
+    "standard": "^11.0.1",
+    "webpack": "^4.16.5",
+    "webpack-cli": "^3.1.0"
+  },
+  "jest": {
+    "testURL": "http://localhost:3000/",
+    "setupTestFrameworkScriptFile": "<rootDir>/src/testConfig/jest.js"
+  },
+  "scripts": {
+    "test": "jest",
+    "test-watch": "jest --watch",
+    "lint": "standard --verbose 'app/**/*.{js,jsx}' | snazzy",
+    "lintfix": "standard --fix 'app/**/*.{js,.jsx}'"
+  }
+}
