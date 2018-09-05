@@ -47,7 +47,7 @@ class PrefixTree {
   set (key, value = true) {
     if (typeof key !== 'string') { throw new Error('key must be a string') }
     delete this._size
-    const node = lookup(this._tree, key, true)
+    const node = createPath(this._tree, key)
     node[LEAF] = value
     return this
   }
@@ -80,14 +80,18 @@ PrefixTree.fromObject = function (object) {
   return PrefixTree.from(Object.entries(object))
 }
 
-const lookup = function (tree, key, createPath = false) {
+const lookup = function (tree, key) {
   const chars = key.split('')
   return chars.reduce((tree, char) => {
-    if (createPath) {
-      tree[char] = tree[char] || {}
-    } else if (tree === undefined) {
-      return undefined
-    }
+    if (tree === undefined) { return undefined }
+    return tree[char]
+  }, tree)
+}
+
+const createPath = function (tree, key) {
+  const chars = key.split('')
+  return chars.reduce((tree, char) => {
+    tree[char] = tree[char] || {}
     return tree[char]
   }, tree)
 }
@@ -106,7 +110,7 @@ const deleteAndCleanup = function (tree, key) {
 const cleanup = function (path) {
   if (path.length === 0) { return }
   const node = last(path)
-  if (Object.keys(node) === 1) {
+  if (Object.keys(node).length === 1) {
     delete node[Object.keys(node)[0]]
     cleanup(path.slice(0, -1))
   }
