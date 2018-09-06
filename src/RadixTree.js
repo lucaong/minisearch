@@ -24,7 +24,7 @@ class RadixTree {
 
   delete (key) {
     delete this._size
-    return deleteAndCleanup(this._tree, key)
+    return remove(this._tree, key)
   }
 
   entries () {
@@ -125,7 +125,7 @@ const commonPrefix = function (a, b, i = 0, length = Math.min(a.length, b.length
   return commonPrefix(a, b, i + 1, length, prefix + a[i])
 }
 
-const deleteAndCleanup = function (tree, key) {
+const remove = function (tree, key) {
   const [node, path] = trackDown(tree, key)
   if (node === undefined) { return }
   delete node[LEAF]
