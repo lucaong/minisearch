@@ -200,7 +200,7 @@ describe('RadixTree', () => {
     })
   })
 
-  describe('property-based', () => {
+  describe('with generated test data', () => {
     const chars = ['a', 'b', 'c', 'd', 'ø', ' ', '"', 'é']
     const randomInt = max => Math.floor(Math.random() * max)
     const randomString = length => {
@@ -210,32 +210,43 @@ describe('RadixTree', () => {
       }
       return string
     }
-    const randomList = length => {
-      let list = []
+    const randomArray = length => {
+      let array = []
       for (let i = 0; i < length; i++) {
-        const strLength = randomInt(length)
-        list.push(randomString(strLength))
+        const strLength = Math.floor(Math.pow(Math.random(), 2) * 10)
+        array.push(randomString(strLength))
       }
-      return list
+      return array
     }
 
     it('adds and removes entries', () => {
       for (let i = 0; i < 100; i++) {
-        const listLength = randomInt(50)
-        const terms = randomList(listLength)
+        const arrayLength = randomInt(50)
+        const terms = randomArray(arrayLength)
         const tree = new RadixTree()
-        terms.forEach((term, i) => tree.set(term, i))
-        const values = terms.reduce((values, term, i) => ({...values, [term]: i}), {})
-        terms.forEach(term => {
-          expect(tree.get(term)).toEqual(values[term])
+        const map = new Map()
+
+        terms.forEach((term, i) => {
+          tree.set(term, i)
+          map.set(term, i)
+          expect(tree.has(term)).toBe(true)
+          expect(tree.get(term)).toEqual(i)
         })
+
+        expect(tree.size).toEqual(map.size)
+        expect(Array.from(tree.entries()).sort()).toEqual(Array.from(map.entries()).sort())
+
+        const prefix = randomString(3)
+        expect(Array.from(tree.atPrefix(prefix).keys()).sort())
+          .toEqual(terms.filter(t => t.startsWith(prefix)).sort())
+
         terms.forEach(term => {
-          if (values[term] % 2 !== 0) { tree.delete(term) }
+          tree.delete(term)
+          expect(tree.has(term)).toBe(false)
+          expect(tree.get(term)).toEqual(undefined)
         })
-        terms.forEach(term => {
-          expect(tree.has(term)).toEqual(values[term] % 2 === 0)
-        })
-        expect(tree.size).toEqual(Object.values(values).filter(x => x % 2 === 0).length)
+
+        expect(tree.size).toEqual(0)
       }
     })
   })
