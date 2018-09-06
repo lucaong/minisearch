@@ -119,10 +119,10 @@ const createPath = function (tree, key) {
   return createPath(tree[nodeKey], key.slice(nodeKey.length))
 }
 
-const commonPrefix = function (a, b, i = 0, prefix = '') {
-  if (i >= Math.min(a.length, b.length)) { return prefix }
+const commonPrefix = function (a, b, i = 0, length = Math.min(a.length, b.length), prefix = '') {
+  if (i >= length) { return prefix }
   if (a[i] !== b[i]) { return prefix }
-  return commonPrefix(a, b, i + 1, prefix + a[i])
+  return commonPrefix(a, b, i + 1, length, prefix + a[i])
 }
 
 const deleteAndCleanup = function (tree, key) {
