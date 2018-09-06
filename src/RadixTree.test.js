@@ -1,6 +1,7 @@
 /* eslint-env jest */
 
 import RadixTree from './RadixTree.js'
+import * as fc from 'fast-check'
 
 describe('RadixTree', () => {
   const strings = ['bin', 'border', 'acqua', 'aqua', 'poisson', 'parachute',
@@ -201,28 +202,8 @@ describe('RadixTree', () => {
   })
 
   describe('with generated test data', () => {
-    const chars = ['a', 'b', 'c', 'd', 'ø', ' ', '"', 'é']
-    const randomInt = max => Math.floor(Math.random() * max)
-    const randomString = length => {
-      let string = ''
-      for (let i = 0; i < length; i++) {
-        string += chars[randomInt(chars.length)]
-      }
-      return string
-    }
-    const randomArray = length => {
-      let array = []
-      for (let i = 0; i < length; i++) {
-        const strLength = Math.floor(Math.pow(Math.random(), 2) * 10)
-        array.push(randomString(strLength))
-      }
-      return array
-    }
-
     it('adds and removes entries', () => {
-      for (let i = 0; i < 100; i++) {
-        const arrayLength = randomInt(50)
-        const terms = randomArray(arrayLength)
+      fc.assert(fc.property(fc.array(fc.unicodeString(), 70), fc.unicodeString(0, 4), (terms, prefix) => {
         const tree = new RadixTree()
         const map = new Map()
 
@@ -236,9 +217,8 @@ describe('RadixTree', () => {
         expect(tree.size).toEqual(map.size)
         expect(Array.from(tree.entries()).sort()).toEqual(Array.from(map.entries()).sort())
 
-        const prefix = randomString(3)
         expect(Array.from(tree.atPrefix(prefix).keys()).sort())
-          .toEqual(terms.filter(t => t.startsWith(prefix)).sort())
+          .toEqual(Array.from(new Set(terms)).filter(t => t.startsWith(prefix)).sort())
 
         terms.forEach(term => {
           tree.delete(term)
@@ -247,7 +227,7 @@ describe('RadixTree', () => {
         })
 
         expect(tree.size).toEqual(0)
-      }
+      }))
     })
   })
 })
