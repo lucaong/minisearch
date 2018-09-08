@@ -241,13 +241,10 @@ describe('RadixTree', () => {
     it('returns all entries having the given maximum edit distance from the given key', () => {
       [1, 2, 3].forEach(distance => {
         const results = tree.fuzzyGet('acqua', distance)
-        expect(results.map(([key, value]) => key).sort())
-          .toEqual(terms.filter(term => editDistance('acqua', term) <= distance).sort())
+        expect(results.map(([key, value, dist]) => [key, dist]).sort())
+          .toEqual(terms.map(term => [term, editDistance('acqua', term)]).filter(([, d]) => d <= distance).sort())
         expect(results.every(([key, value]) => tree.get(key) === value)).toBe(true)
       })
-
-      const tree2 = RadixTree.from([['   ', 0], ['#', 1], ['##', 2]])
-      expect(tree2.fuzzyGet('   ', 2).map(([key, value]) => key).sort()).toEqual(['   '])
     })
   })
 
@@ -259,6 +256,7 @@ describe('RadixTree', () => {
       fc.assert(fc.property(arrayOfStrings, string, (terms, prefix) => {
         const tree = new RadixTree()
         const map = new Map()
+        const uniqueTerms = [...new Set(terms)]
 
         terms.forEach((term, i) => {
           tree.set(term, i)
@@ -274,8 +272,8 @@ describe('RadixTree', () => {
           .toEqual(Array.from(new Set(terms)).filter(t => t.startsWith(prefix)).sort())
 
         const fuzzy = tree.fuzzyGet(terms[0], 2)
-        expect(fuzzy.map(([key, value]) => key).sort())
-          .toEqual([...new Set(terms.filter(term => editDistance(terms[0], term) <= 2).sort())])
+        expect(fuzzy.map(([key, value, dist]) => [key, dist]).sort())
+          .toEqual(uniqueTerms.map(term => [term, editDistance(terms[0], term)]).filter(([, d]) => d <= 2).sort())
 
         terms.forEach(term => {
           tree.delete(term)
