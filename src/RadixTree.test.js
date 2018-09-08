@@ -10,6 +10,19 @@ describe('RadixTree', () => {
   const keyValues = strings.map((key, i) => [key, i])
   const object = keyValues.reduce((obj, [key, value]) => ({...obj, [key]: value}))
 
+  const editDistance = function (a, b, mem = [[0]]) {
+    mem[a.length] = mem[a.length] || [a.length]
+    if (mem[a.length][b.length] !== undefined) { return mem[a.length][b.length] }
+    const d = (a[a.length - 1] === b[b.length - 1]) ? 0 : 1
+    const distance = (a.length === 1 && b.length === 1) ? d : Math.min(
+      ((a.length > 0) ? editDistance(a.slice(0, -1), b, mem) + 1 : Infinity),
+      ((b.length > 0) ? editDistance(a, b.slice(0, -1), mem) + 1 : Infinity),
+      ((a.length > 0 && b.length > 0) ? editDistance(a.slice(0, -1), b.slice(0, -1), mem) + d : Infinity)
+    )
+    mem[a.length][b.length] = distance
+    return distance
+  }
+
   describe('clear', () => {
     it('empties the tree', () => {
       const tree = RadixTree.from(keyValues)
@@ -158,6 +171,25 @@ describe('RadixTree', () => {
     })
   })
 
+  describe('update', () => {
+    it('sets a value at key applying a function to the previous value', () => {
+      const tree = new RadixTree()
+      const key = 'foo'
+      const fn = jest.fn(x => (x || 0) + 1)
+      tree.update(key, fn)
+      expect(fn).toHaveBeenCalledWith(undefined)
+      expect(tree.get(key)).toBe(1)
+      tree.update(key, fn)
+      expect(fn).toHaveBeenCalledWith(1)
+      expect(tree.get(key)).toBe(2)
+    })
+
+    it('throws error if the given key is not a string', () => {
+      const tree = new RadixTree()
+      expect(() => tree.update(123, () => {})).toThrow('key must be a string')
+    })
+  })
+
   describe('values', () => {
     it('returns an iterator of values', () => {
       const tree = RadixTree.fromObject(object)
@@ -201,9 +233,30 @@ describe('RadixTree', () => {
     })
   })
 
+  describe('fuzzyGet', () => {
+    const terms = ['summer', 'acqua', 'aqua', 'acquire', 'poisson', 'qua']
+    const keyValues = terms.map((key, i) => [key, i])
+    const tree = RadixTree.from(keyValues)
+
+    it('returns all entries having the given maximum edit distance from the given key', () => {
+      [1, 2, 3].forEach(distance => {
+        const results = tree.fuzzyGet('acqua', distance)
+        expect(results.map(([key, value]) => key).sort())
+          .toEqual(terms.filter(term => editDistance('acqua', term) <= distance).sort())
+        expect(results.every(([key, value]) => tree.get(key) === value)).toBe(true)
+      })
+
+      const tree2 = RadixTree.from([['   ', 0], ['#', 1], ['##', 2]])
+      expect(tree2.fuzzyGet('   ', 2).map(([key, value]) => key).sort()).toEqual(['   '])
+    })
+  })
+
   describe('with generated test data', () => {
     it('adds and removes entries', () => {
-      fc.assert(fc.property(fc.array(fc.unicodeString(), 70), fc.unicodeString(0, 4), (terms, prefix) => {
+      const arrayOfStrings = fc.array(fc.oneof(fc.unicodeString(), fc.string()), 70)
+      const string = fc.oneof(fc.unicodeString(0, 4), fc.string(0, 4))
+
+      fc.assert(fc.property(arrayOfStrings, string, (terms, prefix) => {
         const tree = new RadixTree()
         const map = new Map()
 
@@ -219,6 +272,10 @@ describe('RadixTree', () => {
 
         expect(Array.from(tree.atPrefix(prefix).keys()).sort())
           .toEqual(Array.from(new Set(terms)).filter(t => t.startsWith(prefix)).sort())
+
+        const fuzzy = tree.fuzzyGet(terms[0], 2)
+        expect(fuzzy.map(([key, value]) => key).sort())
+          .toEqual([...new Set(terms.filter(term => editDistance(terms[0], term) <= 2).sort())])
 
         terms.forEach(term => {
           tree.delete(term)

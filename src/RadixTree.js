@@ -1,3 +1,5 @@
+import { RadixTreeIterator, ENTRIES, KEYS, VALUES, LEAF } from './RadixTreeIterator.js'
+
 class RadixTree {
   constructor (tree = {}, prefix = '') {
     this._tree = tree
@@ -37,6 +39,10 @@ class RadixTree {
     }
   }
 
+  fuzzyGet (key, maxEditDistance) {
+    return fuzzySearch(this._tree, key, maxEditDistance)
+  }
+
   get (key) {
     const node = lookup(this._tree, key)
     return node !== undefined ? node[LEAF] : undefined
@@ -64,6 +70,14 @@ class RadixTree {
     this._size = 0
     this.forEach(() => { this._size += 1 })
     return this._size
+  }
+
+  update (key, fn) {
+    if (typeof key !== 'string') { throw new Error('key must be a string') }
+    delete this._size
+    const node = createPath(this._tree, key)
+    node[LEAF] = fn(node[LEAF])
+    return this
   }
 
   values () {
@@ -150,67 +164,58 @@ const merge = function (path, key, value) {
   delete node[nodeKey]
 }
 
-class RadixTreeIterator {
-  constructor (set, type = ENTRIES) {
-    const node = set._tree
-    const keys = Object.keys(node)
-    this.set = set
-    this.type = type
-    this.path = keys.length > 0 ? [{ node, keys }] : []
+const withinDistance = function (a, b, maxDistance, i = 0) {
+  const stack = [{ distance: 0, ia: i, ib: 0 }]
+  const mem = []
+  const results = []
+  while (stack.length > 0) {
+    const { distance, ia, ib } = stack.pop()
+    mem[ia] = mem[ia] || []
+    if (mem[ia][ib] && mem[ia][ib] <= distance) { continue }
+    mem[ia][ib] = distance
+    if (ib === b.length) {
+      results.push({ distance, i: ia })
+      continue
+    }
+    if (a[ia] === b[ib]) {
+      stack.push({ distance, ia: ia + 1, ib: ib + 1 })
+    } else {
+      if (distance >= maxDistance) { continue }
+      stack.push({ distance: distance + 1, ia, ib: ib + 1 })
+      if (ia < a.length) {
+        stack.push({ distance: distance + 1, ia: ia + 1, ib })
+        stack.push({ distance: distance + 1, ia: ia + 1, ib: ib + 1 })
+      }
+    }
   }
-
-  next () {
-    const value = this.dive()
-    this.backtrack()
-    return value
-  }
-
-  dive () {
-    if (this.path.length === 0) { return { done: true } }
-    const {node, keys} = last(this.path)
-    if (last(keys) === LEAF) { return { done: false, value: this.result() } }
-    this.path.push({ node: node[last(keys)], keys: Object.keys(node[last(keys)]) })
-    return this.dive()
-  }
-
-  backtrack () {
-    if (this.path.length === 0) { return }
-    last(this.path).keys.pop()
-    if (last(this.path).keys.length > 0) { return }
-    this.path.pop()
-    this.backtrack()
-  }
-
-  key () {
-    return this.set._prefix + this.path
-      .map(({keys}) => last(keys))
-      .filter(key => key !== LEAF)
-      .join('')
-  }
-
-  value () {
-    return last(this.path).node[LEAF]
-  }
-
-  result () {
-    if (this.type === VALUES) { return this.value() }
-    if (this.type === KEYS) { return this.key() }
-    return [this.key(), this.value()]
-  }
-
-  [Symbol.iterator] () {
-    return this
-  }
+  return results
 }
 
-const ENTRIES = 'ENTRIES'
-const KEYS = 'KEYS'
-const VALUES = 'VALUES'
-const LEAF = ''
+const fuzzySearch = function (node, query, maxDistance) {
+  const stack = [{ distance: 0, i: 0, key: '', node }]
+  const results = {}
+  while (stack.length > 0) {
+    const { node, distance, key, i } = stack.pop()
+    Object.keys(node).forEach(k => {
+      if (k === LEAF) {
+        const totDistance = distance + (query.length - i)
+        const [, , d] = results[key] || [null, null, Infinity]
+        if (totDistance <= maxDistance && totDistance < d) {
+          results[key] = [key, node[k], totDistance]
+        }
+      } else {
+        withinDistance(query, k, maxDistance - distance, i).forEach(({ distance: d, i }) => {
+          stack.push({ node: node[k], distance: distance + d, key: key + k, i })
+        })
+      }
+    })
+  }
+  return Object.values(results)
+}
 
 const last = function (array) {
   return array[array.length - 1]
 }
 
 export default RadixTree
-export { RadixTree, RadixTreeIterator, ENTRIES, KEYS, VALUES, LEAF }
+export { RadixTree }
