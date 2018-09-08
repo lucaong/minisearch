@@ -210,7 +210,7 @@ const fuzzySearch = function (node, query, maxDistance) {
       }
     })
   }
-  return Object.values(results)
+  return Object.values(results).sort(([, , a], [, , b]) => a - b)
 }
 
 const last = function (array) {

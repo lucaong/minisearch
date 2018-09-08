@@ -246,6 +246,11 @@ describe('RadixTree', () => {
         expect(results.every(([key, value]) => tree.get(key) === value)).toBe(true)
       })
     })
+
+    it('returns results sorted by ascending distance', () => {
+      const results = tree.fuzzyGet('acqua', 3)
+      expect(results).toEqual([['acqua', 1, 0], ['aqua', 2, 1], ['qua', 5, 2], ['acquire', 3, 3]])
+    })
   })
 
   describe('with generated test data', () => {
