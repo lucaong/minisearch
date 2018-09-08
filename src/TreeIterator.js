@@ -1,4 +1,4 @@
-class RadixTreeIterator {
+class TreeIterator {
   constructor (set, type = ENTRIES) {
     const node = set._tree
     const keys = Object.keys(node)
@@ -60,4 +60,4 @@ const last = function (array) {
   return array[array.length - 1]
 }
 
-export { RadixTreeIterator, ENTRIES, KEYS, VALUES, LEAF }
+export { TreeIterator, ENTRIES, KEYS, VALUES, LEAF }
