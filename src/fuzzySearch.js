@@ -42,7 +42,7 @@ export const withinDistance = function (a, b, maxDistance, i = 0, edit = undefin
       if (edit !== ADD) { stack.push({ distance: distance + 1, ia, ib: ib + 1, edit: DELETE }) }
       if (ia < a.length) {
         if (edit !== DELETE) { stack.push({ distance: distance + 1, ia: ia + 1, ib, edit: ADD }) }
-        stack.push({ distance: distance + 1, ia: ia + 1, ib: ib + 1, edit: CHANGE })
+        if (edit !== DELETE && edit !== ADD) { stack.push({ distance: distance + 1, ia: ia + 1, ib: ib + 1, edit: CHANGE }) }
       }
     }
   }
