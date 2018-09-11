@@ -22,7 +22,7 @@ export const fuzzySearch = function (node, query, maxDistance) {
   return Object.values(results).sort(([, , a], [, , b]) => a - b)
 }
 
-export const withinDistance = function (a, b, maxDistance, i = 0, edit = undefined) {
+export const withinDistance = function (a, b, maxDistance, i = 0, edit = NONE) {
   const stack = [{ distance: 0, ia: i, ib: 0, edit }]
   const mem = []
   const results = []
@@ -36,7 +36,7 @@ export const withinDistance = function (a, b, maxDistance, i = 0, edit = undefin
       continue
     }
     if (a[ia] === b[ib]) {
-      stack.push({ distance, ia: ia + 1, ib: ib + 1 })
+      stack.push({ distance, ia: ia + 1, ib: ib + 1, edit: NONE })
     } else {
       if (distance >= maxDistance) { continue }
       if (edit !== ADD) { stack.push({ distance: distance + 1, ia, ib: ib + 1, edit: DELETE }) }
@@ -49,8 +49,9 @@ export const withinDistance = function (a, b, maxDistance, i = 0, edit = undefin
   return results
 }
 
-const CHANGE = 'c'
-const ADD = 'a'
-const DELETE = 'd'
+const NONE = 0
+const CHANGE = 1
+const ADD = 2
+const DELETE = 3
 
 export default fuzzySearch
