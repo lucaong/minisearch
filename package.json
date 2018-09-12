@@ -7,25 +7,29 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-jest": "^23.4.2",
-    "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.1",
+    "@babel/preset-env": "^7.0.0",
+    "babel-core": "^7.0.0-0",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.2",
+    "benchmark": "^2.1.4",
     "fast-check": "^1.5.0",
-    "jest": "^23.4.2",
+    "jest": "^23.6.0",
     "regenerator-runtime": "^0.12.1",
-    "snazzy": "^7.1.1",
-    "standard": "^11.0.1",
+    "snazzy": "^8.0.0",
+    "standard": "^12.0.1",
     "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0"
   },
   "jest": {
     "testURL": "http://localhost:3000/",
-    "setupTestFrameworkScriptFile": "<rootDir>/src/testConfig/jest.js"
+    "setupTestFrameworkScriptFile": "<rootDir>/src/testSetup/jest.js"
   },
   "scripts": {
     "test": "jest",
     "test-watch": "jest --watch",
+    "benchmark": "webpack src/benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js",
     "lint": "standard --verbose 'app/**/*.{js,jsx}' | snazzy",
     "lintfix": "standard --fix 'app/**/*.{js,.jsx}'"
   }
