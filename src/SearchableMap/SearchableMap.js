@@ -1,7 +1,7 @@
 import { TreeIterator, ENTRIES, KEYS, VALUES, LEAF } from './TreeIterator.js'
 import fuzzySearch from './fuzzySearch.js'
 
-class RadixTree {
+class SearchableMap {
   constructor (tree = {}, prefix = '') {
     this._tree = tree
     this._prefix = prefix
@@ -14,10 +14,10 @@ class RadixTree {
       const [parentNode, key] = last(path)
       const nodeKey = Object.keys(parentNode).find(k => k !== LEAF && k.startsWith(key))
       if (nodeKey !== undefined) {
-        return new RadixTree({ [nodeKey.slice(key.length)]: parentNode[nodeKey] }, prefix)
+        return new SearchableMap({ [nodeKey.slice(key.length)]: parentNode[nodeKey] }, prefix)
       }
     }
-    return new RadixTree(node || {}, prefix)
+    return new SearchableMap(node || {}, prefix)
   }
 
   clear () {
@@ -90,16 +90,16 @@ class RadixTree {
   }
 }
 
-RadixTree.from = function (entries) {
-  const tree = new RadixTree()
+SearchableMap.from = function (entries) {
+  const tree = new SearchableMap()
   for (let [key, value] of entries) {
     tree.set(key, value)
   }
   return tree
 }
 
-RadixTree.fromObject = function (object) {
-  return RadixTree.from(Object.entries(object))
+SearchableMap.fromObject = function (object) {
+  return SearchableMap.from(Object.entries(object))
 }
 
 const trackDown = function (tree, key, path = []) {
@@ -169,5 +169,5 @@ const last = function (array) {
   return array[array.length - 1]
 }
 
-export default RadixTree
-export { RadixTree }
+export default SearchableMap
+export { SearchableMap }

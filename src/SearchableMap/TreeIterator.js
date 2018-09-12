@@ -15,7 +15,7 @@ class TreeIterator {
 
   dive () {
     if (this.path.length === 0) { return { done: true } }
-    const {node, keys} = last(this.path)
+    const { node, keys } = last(this.path)
     if (last(keys) === LEAF) { return { done: false, value: this.result() } }
     this.path.push({ node: node[last(keys)], keys: Object.keys(node[last(keys)]) })
     return this.dive()
@@ -31,7 +31,7 @@ class TreeIterator {
 
   key () {
     return this.set._prefix + this.path
-      .map(({keys}) => last(keys))
+      .map(({ keys }) => last(keys))
       .filter(key => key !== LEAF)
       .join('')
   }
