@@ -1,9 +1,10 @@
-import { stats } from './deRerumNatura.js'
+import { stats } from './divinaCommedia.js'
 import fuzzySearch from './fuzzySearch.js'
 import prefixSearch from './prefixSearch.js'
 import exactSearch from './exactSearch.js'
 
-console.log(`\nIndex size: ${stats.terms} terms, ${stats.documents} documents.\n`)
+console.log(`\nIndexing time: ${stats.indexingTime}ms`)
+console.log(`Index size: ${stats.terms} terms, ${stats.documents} documents.\n`)
 
 ;[fuzzySearch, prefixSearch, exactSearch].forEach(suite => {
   suite.on('start', () => {
