@@ -1,8 +1,12 @@
 import SearchableMap from './SearchableMap/SearchableMap.js'
 
+const OR = 'or'
+const AND = 'and'
+
 class MiniSearch {
   constructor (options = {}) {
     this.options = { ...defaultOptions, ...options }
+    this.options.searchOptions = { ...defaultSearchOptions, ...(this.options.searchOptions || {}) }
     const { fields } = this.options
 
     if (fields == null) {
@@ -31,10 +35,11 @@ class MiniSearch {
   }
 
   search (queryString, options = {}) {
-    const { tokenize, processTerm, termToQuery } = this.options
-    const queries = tokenize(queryString).map(processTerm).map(termToQuery)
+    const { tokenize, processTerm, searchOptions } = this.options
+    options = { ...searchOptions, ...options }
+    const queries = tokenize(queryString).map(processTerm).map(options.termToQuery)
     const results = queries.map(query => this.executeQuery(query, options))
-    const combinedResults = combineResults(results, options.combineWith)
+    const combinedResults = this.combineResults(results, options.combineWith)
 
     return Object.entries(combinedResults)
       .map(([shortDocumentId, score]) => ({ id: this.documentIds[shortDocumentId], score }))
@@ -42,19 +47,29 @@ class MiniSearch {
   }
 
   executeQuery (query, options = {}) {
-    // TODO fuzzy and prefix search
     options = { ...this.options.defaultSearchOptions, ...options }
     const fields = options.fields || this.options.fields
-    const indexData = this.index.get(query.term)
-    if (indexData == null) { return [] }
-    return fields.reduce((scores, field) => {
-      const { df, ds } = indexData[this.fieldIds[field]] || { ds: [] }
-      Object.entries(ds).forEach(([documentId, tf]) => {
-        const boost = (options.boost || {})[field] || 1
-        scores[documentId] = (scores[documentId] || 0) + boost * tfIdf(tf, df, this.documentCount)
-      })
-      return scores
-    }, {})
+    if (!query.fuzzy && !query.prefix) {
+      return termResults(this, fields, this.index.get(query.term), options.boost)
+    }
+    const results = []
+    if (query.fuzzy) {
+      const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
+      Object.values(this.index.fuzzyGet(query.term, maxDistance))
+        .forEach(([data, distance]) => results.push(termResults(this, fields, data, options.boost, distance)))
+    }
+    if (query.prefix) {
+      this.index.atPrefix(query.term)
+        .forEach((term, data) =>
+          results.push(termResults(this, fields, data, options.boost, term.length - query.term.length)))
+    }
+    return results.reduce(combinators[OR], {})
+  }
+
+  combineResults (results, combineWith = OR) {
+    if (results.length === 0) { return {} }
+    const operator = combineWith.toLowerCase()
+    return results.reduce(combinators[operator], null)
   }
 }
 
@@ -79,14 +94,33 @@ const addFields = function (instance, fields) {
   fields.forEach((field, i) => { instance.fieldIds[field] = i })
 }
 
-const combineResults = function (results, combineWith) {
-  // TODO: combine with AND
-  return results.reduce((combined, result) => {
-    Object.entries(result).forEach(([documentId, score]) => {
-      combined[documentId] = (combined[documentId] || 0) + score
+const termResults = function (instance, fields, indexData, boosts, distance = 0) {
+  if (indexData == null) { return {} }
+  return fields.reduce((scores, field) => {
+    const { df, ds } = indexData[instance.fieldIds[field]] || { ds: {} }
+    Object.entries(ds).forEach(([documentId, tf]) => {
+      const boost = ((boosts || {})[field] || 1) * (1 / (1 + 0.5 * distance))
+      scores[documentId] = (scores[documentId] || 0) + boost * tfIdf(tf, df, instance.documentCount)
     })
-    return combined
+    return scores
   }, {})
+}
+
+const combinators = {
+  [OR]: function (a, b) {
+    return Object.entries(b).reduce((combined, [documentId, score]) => {
+      combined[documentId] = (combined[documentId] || 0) + score
+      return combined
+    }, a || {})
+  },
+  [AND]: function (a, b) {
+    if (a == null) { return b }
+    return Object.entries(b).reduce((combined, [documentId, score]) => {
+      if (a[documentId] === undefined) { return combined }
+      combined[documentId] = Math.min(a[documentId], score)
+      return combined
+    }, {})
+  }
 }
 
 const tfIdf = function (tf, df, n) {
@@ -96,9 +130,11 @@ const tfIdf = function (tf, df, n) {
 const defaultOptions = {
   idField: 'id',
   tokenize: string => string.split(/\W+/).filter(term => term.length > 1),
-  processTerm: term => term.toLowerCase(),
-  termToQuery: term => ({ term }),
-  defaultSearchOptions: {}
+  processTerm: term => term.toLowerCase()
+}
+
+const defaultSearchOptions = {
+  termToQuery: term => ({ term })
 }
 
 export default MiniSearch

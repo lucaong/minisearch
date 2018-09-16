@@ -247,6 +247,10 @@ describe('SearchableMap', () => {
         expect(entries.every(([key, [value]]) => map.get(key) === value)).toBe(true)
       })
     })
+
+    it('returns an empty object if no matching entries are found', () => {
+      expect(map.fuzzyGet('winter', 1)).toEqual({})
+    })
   })
 
   describe('with generated test data', () => {

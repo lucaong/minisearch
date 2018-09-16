@@ -51,5 +51,35 @@ describe('MiniSearch', () => {
       expect(results).toHaveLength(1)
       expect(results[0].id).toEqual(3)
     })
+
+    it('combines results with OR by default', () => {
+      const results = ms.search('cammin como')
+      expect(results.length).toEqual(2)
+      expect(results.map(({ id }) => id)).toEqual([1, 2])
+    })
+
+    it('combines results with AND if combineWith is AND', () => {
+      const results = ms.search('vita cammin', { combineWith: 'AND' })
+      expect(results.length).toEqual(1)
+      expect(results.map(({ id }) => id)).toEqual([1])
+    })
+
+    it('executes fuzzy search', () => {
+      const results = ms.search('camin memory', { termToQuery: term => ({ term, fuzzy: 2 }) })
+      expect(results.length).toEqual(2)
+      expect(results.map(({ id }) => id)).toEqual([1, 3])
+    })
+
+    it('executes prefix search', () => {
+      const results = ms.search('que', { termToQuery: term => ({ term, prefix: true }) })
+      expect(results.length).toEqual(2)
+      expect(results.map(({ id }) => id)).toEqual([2, 3])
+    })
+
+    it('combines prefix search and fuzzy search', () => {
+      const results = ms.search('cammino quel', { termToQuery: term => ({ term, fuzzy: 0.25, prefix: true }) })
+      expect(results.length).toEqual(3)
+      expect(results.map(({ id }) => id)).toEqual([2, 1, 3])
+    })
   })
 })
