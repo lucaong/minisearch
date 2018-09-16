@@ -34,7 +34,11 @@ class MiniSearch {
     const { tokenize, processTerm, termToQuery } = this.options
     const queries = tokenize(queryString).map(processTerm).map(termToQuery)
     const results = queries.map(query => this.executeQuery(query, options))
-    return combineResults(this, results, options.combineWith)
+    const combinedResults = combineResults(results, options.combineWith)
+
+    return Object.entries(combinedResults)
+      .map(([shortDocumentId, score]) => ({ id: this.documentIds[shortDocumentId], score }))
+      .sort(({ score: a }, { score: b }) => a < b)
   }
 
   executeQuery (query, options = {}) {
@@ -75,21 +79,14 @@ const addFields = function (instance, fields) {
   fields.forEach((field, i) => { instance.fieldIds[field] = i })
 }
 
-const combineResults = function (instance, results, combineWith) {
+const combineResults = function (results, combineWith) {
   // TODO: combine with AND
-  const combined = results.reduce((combined, result) => {
+  return results.reduce((combined, result) => {
     Object.entries(result).forEach(([documentId, score]) => {
-      combined[documentId] = combineScores(combined[documentId], score, combineWith)
+      combined[documentId] = (combined[documentId] || 0) + score
     })
     return combined
   }, {})
-  return Object.entries(combined)
-    .map(([shortDocumentId, score]) => ({ id: instance.documentIds[shortDocumentId], score }))
-    .sort(({ score: a }, { score: b }) => a < b)
-}
-
-const combineScores = function (previousScore, score) {
-  return (previousScore || 0) + score
 }
 
 const tfIdf = function (tf, df, n) {

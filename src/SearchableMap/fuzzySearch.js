@@ -8,9 +8,9 @@ export const fuzzySearch = function (node, query, maxDistance) {
     Object.keys(node).forEach(k => {
       if (k === LEAF) {
         const totDistance = distance + (query.length - i)
-        const [, , d] = results[key] || [null, null, Infinity]
+        const [, d] = results[key] || [null, Infinity]
         if (totDistance <= maxDistance && totDistance < d) {
-          results[key] = [key, node[k], totDistance]
+          results[key] = [node[k], totDistance]
         }
       } else {
         withinDistance(query, k, maxDistance - distance, i, edit).forEach(({ distance: d, i, edit }) => {
@@ -19,7 +19,7 @@ export const fuzzySearch = function (node, query, maxDistance) {
       }
     })
   }
-  return Object.values(results).sort(([, , a], [, , b]) => a - b)
+  return results
 }
 
 export const withinDistance = function (a, b, maxDistance, i = 0, edit = NONE) {
