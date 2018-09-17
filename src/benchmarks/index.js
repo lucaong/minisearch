@@ -1,12 +1,14 @@
-import { stats } from './divinaCommedia.js'
+import { index, miniSearch } from './divinaCommedia.js'
 import fuzzySearch from './fuzzySearch.js'
 import prefixSearch from './prefixSearch.js'
 import exactSearch from './exactSearch.js'
+import indexing from './indexing.js'
+import combinedSearch from './combinedSearch.js'
+import loadIndex from './loadIndex.js'
 
-console.log(`\nIndexing time: ${stats.indexingTime}ms`)
-console.log(`Index size: ${stats.terms} terms, ${stats.documents} documents.\n`)
+console.log(`Index size: ${index.size} terms, ${miniSearch.documentCount} documents.\n`)
 
-;[fuzzySearch, prefixSearch, exactSearch].forEach(suite => {
+;[fuzzySearch, prefixSearch, exactSearch, indexing, combinedSearch, loadIndex].forEach(suite => {
   suite.on('start', () => {
     console.log(`${suite.name}:`)
     console.log('='.repeat(suite.name.length + 1))
