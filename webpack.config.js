@@ -8,6 +8,7 @@ module.exports = {
     umdNamedDefine: true,
     globalObject: 'typeof self !== \'undefined\' ? self : this',
     path: path.resolve(__dirname, 'dist'),
-    library: 'minisearch'
+    library: 'minisearch',
+    libraryExport: 'default'
   }
 }

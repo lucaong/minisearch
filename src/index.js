@@ -1,5 +1,5 @@
 import SearchableMap from './SearchableMap/SearchableMap.js'
 import MiniSearch from './MiniSearch.js'
 
-export { SearchableMap, MiniSearch }
+export { SearchableMap }
 export default MiniSearch

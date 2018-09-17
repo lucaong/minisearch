@@ -106,6 +106,8 @@ MiniSearch.loadJS = function (js, options = {}) {
   return miniSearch
 }
 
+MiniSearch.SearchableMap = SearchableMap
+
 const addTerm = function (self, fieldId, documentId, term) {
   self.index.update(term, indexData => {
     indexData = indexData || {}
