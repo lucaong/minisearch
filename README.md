@@ -35,6 +35,7 @@ const documents = [
   { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },
   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },
   { id: 3, title: 'Neuromancer', text: 'The sky above the port was...' },
+  { id: 4, title: 'Zen and the Art of Archery', text: 'At first sight it must seem...' },
   // ...and more
 ]
 
@@ -44,13 +45,13 @@ const ms = new MiniSearch({ fields: ['title', 'text'] })
 ms.addAll(documents)
 
 // Search with default options
-let results = ms.search('art motorcycle') // => [{ id: 2, score: ... }, ...]
+let results = ms.search('zen art motorcycle') // => [{ id: 2, score: ... }, { id: 4, score: ... }, ...]
 
 // Search only specific fields
-results = ms.search('art motorcycle', { fields: ['title'] })
+results = ms.search('zen', { fields: ['title'] })
 
 // Boost fields
-results = ms.search('art motorcycle', { boost: { title: 2 } })
+results = ms.search('zen', { boost: { title: 2 } })
 
 // Prefix search
 results = ms.search('moto', {
@@ -70,4 +71,6 @@ const ms2 = new MiniSearch({
     termToQuery: term => ({ term, fuzzy: 0.2 })
   }
 })
+
+results = ms2.search('zen and motorcycles') // Will default to fuzzy search
 ```
