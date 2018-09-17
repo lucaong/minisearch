@@ -45,7 +45,7 @@ const ms = new MiniSearch({ fields: ['title', 'text'] })
 ms.addAll(documents)
 
 // Search with default options
-let results = ms.search('zen art motorcycle') // => [{ id: 2, score: ... }, { id: 4, score: ... }, ...]
+let results = ms.search('zen art motorcycle') // => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]
 
 // Search only specific fields
 results = ms.search('zen', { fields: ['title'] })
