@@ -34,6 +34,10 @@ class MiniSearch {
     })
   }
 
+  addAll (documents) {
+    documents.forEach(document => this.add(document))
+  }
+
   search (queryString, options = {}) {
     const { tokenize, processTerm, searchOptions } = this.options
     options = { ...searchOptions, ...options }
@@ -43,7 +47,7 @@ class MiniSearch {
 
     return Object.entries(combinedResults)
       .map(([shortDocumentId, score]) => ({ id: this.documentIds[shortDocumentId], score }))
-      .sort(({ score: a }, { score: b }) => a < b)
+      .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
   }
 
   executeQuery (query, options = {}) {
@@ -55,13 +59,15 @@ class MiniSearch {
     const results = []
     if (query.fuzzy) {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
-      Object.values(this.index.fuzzyGet(query.term, maxDistance))
-        .forEach(([data, distance]) => results.push(termResults(this, fields, data, options.boost, distance)))
+      Object.values(this.index.fuzzyGet(query.term, maxDistance)).forEach(([data, distance]) => {
+        if (query.prefix && distance === 0) { return }
+        results.push(termResults(this, fields, data, options.boost, distance))
+      })
     }
     if (query.prefix) {
-      this.index.atPrefix(query.term)
-        .forEach((term, data) =>
-          results.push(termResults(this, fields, data, options.boost, term.length - query.term.length)))
+      this.index.atPrefix(query.term).forEach((term, data) => {
+        results.push(termResults(this, fields, data, options.boost, term.length - query.term.length))
+      })
     }
     return results.reduce(combinators[OR], {})
   }
@@ -71,10 +77,37 @@ class MiniSearch {
     const operator = combineWith.toLowerCase()
     return results.reduce(combinators[operator], null)
   }
+
+  toJSON () {
+    return {
+      index: this.index,
+      documentCount: this.documentCount,
+      documentIds: this.documentIds,
+      fieldIds: this.fieldIds
+    }
+  }
+
+  toJS () {
+    this.toJSON()
+  }
 }
 
-const addTerm = function (instance, fieldId, documentId, term) {
-  instance.index.update(term, indexData => {
+MiniSearch.loadJSON = function (json, options = {}) {
+  return MiniSearch.loadJS(JSON.parse(json), options)
+}
+
+MiniSearch.loadJS = function (js, options = {}) {
+  const { index: { _tree, _prefix }, documentCount, documentIds, fieldIds } = js
+  const miniSearch = new MiniSearch(options)
+  miniSearch.index = new SearchableMap(_tree, _prefix)
+  miniSearch.documentCount = documentCount
+  miniSearch.documentIds = documentIds
+  miniSearch.fieldIds = fieldIds
+  return miniSearch
+}
+
+const addTerm = function (self, fieldId, documentId, term) {
+  self.index.update(term, indexData => {
     indexData = indexData || {}
     const fieldIndex = indexData[fieldId] || { df: 0, ds: {} }
     if (fieldIndex.ds[documentId] == null) { fieldIndex.df += 1 }
@@ -83,24 +116,24 @@ const addTerm = function (instance, fieldId, documentId, term) {
   })
 }
 
-const addDocumentId = function (instance, documentId) {
-  const shortDocumentId = instance.documentCount
-  instance.documentIds[shortDocumentId] = documentId
-  instance.documentCount += 1
+const addDocumentId = function (self, documentId) {
+  const shortDocumentId = self.documentCount
+  self.documentIds[shortDocumentId] = documentId
+  self.documentCount += 1
   return shortDocumentId
 }
 
-const addFields = function (instance, fields) {
-  fields.forEach((field, i) => { instance.fieldIds[field] = i })
+const addFields = function (self, fields) {
+  fields.forEach((field, i) => { self.fieldIds[field] = i })
 }
 
-const termResults = function (instance, fields, indexData, boosts, distance = 0) {
+const termResults = function (self, fields, indexData, boosts, distance = 0) {
   if (indexData == null) { return {} }
   return fields.reduce((scores, field) => {
-    const { df, ds } = indexData[instance.fieldIds[field]] || { ds: {} }
+    const { df, ds } = indexData[self.fieldIds[field]] || { ds: {} }
     Object.entries(ds).forEach(([documentId, tf]) => {
-      const boost = ((boosts || {})[field] || 1) * (1 / (1 + 0.5 * distance))
-      scores[documentId] = (scores[documentId] || 0) + boost * tfIdf(tf, df, instance.documentCount)
+      const boost = ((boosts || {})[field] || 1) * (1 / (1 + (0.2 * distance)))
+      scores[documentId] = (scores[documentId] || 0) + (boost * tfIdf(tf, df, self.documentCount))
     })
     return scores
   }, {})

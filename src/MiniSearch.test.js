@@ -24,6 +24,18 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('addAll', () => {
+    it('adds all the documents to the index', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Nel mezzo del cammin di nostra vita' },
+        { id: 2, text: 'Mi ritrovai per una selva oscura' }
+      ]
+      ms.addAll(documents)
+      expect(ms.documentCount).toEqual(documents.length)
+    })
+  })
+
   describe('search', () => {
     const documents = [
       { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
@@ -31,7 +43,7 @@ describe('MiniSearch', () => {
       { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
     ]
     const ms = new MiniSearch({ fields: ['title', 'text'] })
-    documents.forEach(document => ms.add(document))
+    ms.addAll(documents)
 
     it('returns scored results', () => {
       const results = ms.search('vita')
@@ -80,6 +92,22 @@ describe('MiniSearch', () => {
       const results = ms.search('cammino quel', { termToQuery: term => ({ term, fuzzy: 0.25, prefix: true }) })
       expect(results.length).toEqual(3)
       expect(results.map(({ id }) => id)).toEqual([2, 1, 3])
+    })
+  })
+
+  describe('loadJSON', () => {
+    it('loads a JSON-serialized search index', () => {
+      const documents = [
+        { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+        { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+        { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
+      ]
+      const options = { fields: ['title', 'text'] }
+      const ms = new MiniSearch(options)
+      ms.addAll(documents)
+      const json = JSON.stringify(ms)
+      const deserialized = MiniSearch.loadJSON(json, options)
+      expect(ms.search('vita')).toEqual(deserialized.search('vita'))
     })
   })
 })
