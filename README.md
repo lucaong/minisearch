@@ -16,7 +16,7 @@ fast and reactive UI, removing the need to make requests to a search server.
 
 ## Design goals:
 
-  * Memory-efficient index, able to store (tens of) thousands of documents and
+  * Memory-efficient index, able to store tens of thousands of documents and
     terms in memory, even in the browser.
 
   * Exact match, prefix match and fuzzy match, all with a single performant and
