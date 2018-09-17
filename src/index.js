@@ -1,5 +1,1 @@
-import SearchableMap from './SearchableMap/SearchableMap.js'
-import MiniSearch from './MiniSearch.js'
-
-export { SearchableMap }
-export default MiniSearch
+module.exports = require('./MiniSearch.js').default
