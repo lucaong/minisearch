@@ -27,3 +27,47 @@ fast and reactive UI, removing the need to make requests to a search server.
   * Provide good building blocks that empower developers to build solutions to
     their specific problems, rather than try to offer a general-purpose tool to
     satisfy every use-case at the cost of complexity.
+
+## Usage:
+
+```javascript
+const documents = [
+  { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },
+  { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },
+  { id: 3, title: 'Neuromancer', text: 'The sky above the port was...' },
+  // ...and more
+]
+
+const ms = new MiniSearch({ fields: ['title', 'text'] })
+
+// Index all documents
+ms.addAll(documents)
+
+// Search with default options
+let results = ms.search('art motorcycle') // => [{ id: 2, score: ... }, ...]
+
+// Search only specific fields
+results = ms.search('art motorcycle', { fields: ['title'] })
+
+// Boost fields
+results = ms.search('art motorcycle', { boost: { title: 2 } })
+
+// Prefix search
+results = ms.search('moto', {
+  termToQuery: term => ({ term, prefix: true })
+})
+
+// Fuzzy search (in this example, with a max edit distance of 0.2 * term length)
+results = ms.search('ismael', {
+  termToQuery: term => ({ term, fuzzy: 0.2 })
+})
+
+// Set default search options upon initialization
+const ms2 = new MiniSearch({
+  fields: ['title', 'text'],
+  searchOptions: {
+    boost: { title: 2 },
+    termToQuery: term => ({ term, fuzzy: 0.2 })
+  }
+})
+```
