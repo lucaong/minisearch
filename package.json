@@ -1,10 +1,16 @@
 {
   "name": "minisearch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "fun with fulltext search",
   "main": "dist/minisearch.js",
   "author": "Luca Ongaro",
-  "keywords": ["search", "full-text", "fuzzy", "prefix", "index"],
+  "keywords": [
+    "search",
+    "full-text",
+    "fuzzy",
+    "prefix",
+    "index"
+  ],
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
