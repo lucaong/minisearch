@@ -33,6 +33,6 @@
     "build": "webpack --mode=production",
     "lint": "standard --verbose 'app/**/*.{js,jsx}' | snazzy",
     "lintfix": "standard --fix 'app/**/*.{js,.jsx}'",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "yarn build"
   }
 }
