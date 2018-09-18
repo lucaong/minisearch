@@ -39,7 +39,7 @@
     "benchmark": "webpack src/benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js",
     "build": "webpack --mode=production",
     "lint": "standard --verbose 'app/**/*.{js,jsx}' | snazzy",
-    "lintfix": "standard --fix 'app/**/*.{js,.jsx}'",
+    "lintfix": "standard --fix 'app/**/*.{js,jsx}'",
     "prepublishOnly": "yarn build"
   }
 }
