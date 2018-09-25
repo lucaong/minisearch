@@ -1,7 +1,5 @@
 # MiniSearch
 
-![MiniSearch](https://lucaong.github.io/minisearch/MiniSearch.png)
-
 `MiniSearch` is a tiny but powerful embedded full-text search engine for
 JavaScript. It is respectful of resources, so it can comfortably run both in
 Node and in the browser, but it can do a lot.

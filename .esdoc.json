@@ -12,7 +12,7 @@
         "coverage": { "enable": false },
         "brand": {
           "title": "MiniSearch",
-          "logo": "docs/MiniSearch.png",
+          "logo": "MiniSearch.png",
           "description": "Tiny but powerful full-text search",
           "site": "https://lucaong.github.io/minisearch/",
           "repository": "https://github.com/lucaong/minisearch",
