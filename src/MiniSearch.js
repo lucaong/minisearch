@@ -12,7 +12,6 @@ const AND = 'and'
 * // documents:
 * const miniSearch = MiniSearch.new({ fields: ['title', 'text'] })
 *
-* // Add documents to the index
 * const documents = [
 *   { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },
 *   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },
@@ -21,9 +20,7 @@ const AND = 'and'
 *   // ...and more
 * ]
 *
-* documents.forEach(document => miniSearch.add(document))
-*
-* // Or, equivalently:
+* // Add documents to the index
 * miniSearch.addAll(documents)
 *
 * // Search for documents:
