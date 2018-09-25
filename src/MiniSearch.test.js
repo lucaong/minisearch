@@ -24,6 +24,12 @@ describe('MiniSearch', () => {
       ms.add({ id: 1, text: 'Nel mezzo del cammin di nostra vita' })
       expect(ms.documentCount).toEqual(1)
     })
+
+    it('does not throw error if a field is missing', () => {
+      const ms = new MiniSearch({ fields: ['title', 'text'] })
+      ms.add({ id: 1, text: 'Nel mezzo del cammin di nostra vita' })
+      expect(ms.documentCount).toEqual(1)
+    })
   })
 
   describe('addAll', () => {
