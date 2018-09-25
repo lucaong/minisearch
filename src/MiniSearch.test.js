@@ -9,10 +9,12 @@ describe('MiniSearch', () => {
     })
 
     it('initializes the attributes', () => {
-      const ms = new MiniSearch({ fields: ['title', 'text'] })
-      expect(ms.documentCount).toEqual(0)
-      expect(ms.fieldIds).toEqual({ title: 0, text: 1 })
-      expect(ms.documentIds).toEqual({})
+      const options = { fields: ['title', 'text'] }
+      const ms = new MiniSearch(options)
+      expect(ms._documentCount).toEqual(0)
+      expect(ms._fieldIds).toEqual({ title: 0, text: 1 })
+      expect(ms._documentIds).toEqual({})
+      expect(ms._options).toMatchObject(options)
     })
   })
 

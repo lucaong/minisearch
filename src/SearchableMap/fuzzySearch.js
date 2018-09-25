@@ -1,5 +1,8 @@
 import { LEAF } from './TreeIterator.js'
 
+/**
+* @ignore
+*/
 export const fuzzySearch = function (node, query, maxDistance) {
   const stack = [{ distance: 0, i: 0, key: '', node }]
   const results = {}
@@ -22,6 +25,9 @@ export const fuzzySearch = function (node, query, maxDistance) {
   return results
 }
 
+/**
+* @ignore
+*/
 export const withinDistance = function (a, b, maxDistance, i = 0, edit = NONE) {
   const stack = [{ distance: 0, ia: i, ib: 0, edit }]
   const mem = []

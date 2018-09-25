@@ -21,6 +21,9 @@
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.2",
     "benchmark": "^2.1.4",
+    "esdoc": "^1.1.0",
+    "esdoc-ecmascript-proposal-plugin": "^1.0.0",
+    "esdoc-standard-plugin": "^1.0.0",
     "fast-check": "^1.5.0",
     "jest": "^23.6.0",
     "regenerator-runtime": "^0.12.1",
@@ -38,6 +41,7 @@
     "test-watch": "jest --watch",
     "benchmark": "webpack src/benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js",
     "build": "webpack --mode=production",
+    "build-docs": "esdoc",
     "lint": "standard --verbose 'app/**/*.{js,jsx}' | snazzy",
     "lintfix": "standard --fix 'app/**/*.{js,jsx}'",
     "prepublishOnly": "yarn build"

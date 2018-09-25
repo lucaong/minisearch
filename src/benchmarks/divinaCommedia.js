@@ -5,6 +5,6 @@ const lines = [{"id":"Inf II 1","txt":"Lo giorno se n'andava, e l'aere bruno"},{
 const miniSearch = new MiniSearch({ fields: ['txt'] })
 miniSearch.addAll(lines)
 
-const index = miniSearch.index
+const index = miniSearch._index
 
 export { lines, miniSearch, index }

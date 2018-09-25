@@ -1,0 +1,19 @@
+{
+  "source": "./src",
+  "destination": "./docs",
+  "includes": ["\\.js$"],
+  "excludes": ["benchmark", "testSetup", "\\.test\\.js$"],
+  "plugins": [
+    {
+      "name": "esdoc-standard-plugin",
+      "option": {
+        "accessor": { "access": ["public"], "autoPrivate": true },
+        "coverage": { "enable": false }
+      }
+    },
+    {
+      "name": "esdoc-ecmascript-proposal-plugin",
+      "option": { "all": true }
+    }
+  ]
+}

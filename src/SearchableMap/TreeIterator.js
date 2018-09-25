@@ -1,3 +1,6 @@
+/**
+* @private
+*/
 class TreeIterator {
   constructor (set, type = ENTRIES) {
     const node = set._tree
@@ -51,9 +54,16 @@ class TreeIterator {
   }
 }
 
+/** @ignore */
 const ENTRIES = 'ENTRIES'
+
+/** @ignore */
 const KEYS = 'KEYS'
+
+/** @ignore */
 const VALUES = 'VALUES'
+
+/** @ignore */
 const LEAF = ''
 
 const last = function (array) {
