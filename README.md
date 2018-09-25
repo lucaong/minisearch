@@ -1,18 +1,21 @@
 # MiniSearch
 
-MiniSearch is a tiny but powerful embedded full-text search engine for
+`MiniSearch` is a tiny but powerful embedded full-text search engine for
 JavaScript. It is respectful of resources, so it can comfortably run both in
 Node and in the browser, but it can do a lot.
 
 ## Use case:
 
-MiniSearch addresses use cases where flexible full-text search features are
-needed (e.g. prefix search or fuzzy search), but the whole material to be
+`MiniSearch` addresses use cases where full-text search features are needed
+(e.g. prefix search, fuzzy search, boosting of fields), but the data to be
 indexed can fit locally in the process memory. While you won't be able to index
 the whole Wikipedia with it, there are surprisingly many use cases that are
-served well by MiniSearch. A prominent example is search-as-you-type features in
-Web and mobile applications, where keeping the index on the client-side enables
-fast and reactive UI, removing the need to make requests to a search server.
+served well by `MiniSearch`. By storing the index locally, `MiniSearch` can work
+offline, and can process queries quickly, without network latency.
+
+A prominent use-case is search-as-you-type features in Web and mobile
+applications, where keeping the index on the client-side enables fast and
+reactive UI, removing the need to make requests to a search server.
 
 ## Design goals:
 
@@ -31,6 +34,7 @@ fast and reactive UI, removing the need to make requests to a search server.
 ## Usage:
 
 ```javascript
+// A collection of documents for our example
 const documents = [
   { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },
   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },
@@ -39,32 +43,34 @@ const documents = [
   // ...and more
 ]
 
-const ms = new MiniSearch({ fields: ['title', 'text'] })
+let miniSearch = new MiniSearch({ fields: ['title', 'text'] })
 
 // Index all documents
-ms.addAll(documents)
+miniSearch.addAll(documents)
 
 // Search with default options
-let results = ms.search('zen art motorcycle') // => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]
+let results = miniSearch.search('zen art motorcycle')
+// => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]
 
 // Search only specific fields
-results = ms.search('zen', { fields: ['title'] })
+results = miniSearch.search('zen', { fields: ['title'] })
 
 // Boost fields
-results = ms.search('zen', { boost: { title: 2 } })
+results = miniSearch.search('zen', { boost: { title: 2 } })
 
 // Prefix search
-results = ms.search('moto', {
+results = miniSearch.search('moto', {
   termToQuery: term => ({ term, prefix: true })
 })
 
-// Fuzzy search (in this example, with a max edit distance of 0.2 * term length)
-results = ms.search('ismael', {
+// Fuzzy search (in this example, with a max edit distance of 0.2 * term length,
+// rounded to nearest integer)
+results = miniSearch.search('ismael', {
   termToQuery: term => ({ term, fuzzy: 0.2 })
 })
 
 // Set default search options upon initialization
-const ms2 = new MiniSearch({
+miniSearch = new MiniSearch({
   fields: ['title', 'text'],
   searchOptions: {
     boost: { title: 2 },
