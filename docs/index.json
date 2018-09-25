@@ -1,0 +1,2957 @@
+[
+  {
+    "__docId__": 1,
+    "kind": "external",
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Infinity",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 2,
+    "kind": "external",
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~NaN",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 3,
+    "kind": "external",
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~undefined",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 4,
+    "kind": "external",
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~null",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 5,
+    "kind": "external",
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Object",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 6,
+    "kind": "external",
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~object",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 7,
+    "kind": "external",
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Function",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 8,
+    "kind": "external",
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~function",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 9,
+    "kind": "external",
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Boolean",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 10,
+    "kind": "external",
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~boolean",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 11,
+    "kind": "external",
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Symbol",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 12,
+    "kind": "external",
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Error",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 13,
+    "kind": "external",
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~EvalError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 14,
+    "kind": "external",
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~InternalError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 15,
+    "kind": "external",
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~RangeError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 16,
+    "kind": "external",
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~ReferenceError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 17,
+    "kind": "external",
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~SyntaxError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 18,
+    "kind": "external",
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~TypeError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 19,
+    "kind": "external",
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~URIError",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 20,
+    "kind": "external",
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Number",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 21,
+    "kind": "external",
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~number",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 22,
+    "kind": "external",
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Date",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 23,
+    "kind": "external",
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~String",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 24,
+    "kind": "external",
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~string",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 25,
+    "kind": "external",
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~RegExp",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 26,
+    "kind": "external",
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 27,
+    "kind": "external",
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Int8Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 28,
+    "kind": "external",
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Uint8Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 29,
+    "kind": "external",
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Uint8ClampedArray",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 30,
+    "kind": "external",
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Int16Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 31,
+    "kind": "external",
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Uint16Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 32,
+    "kind": "external",
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Int32Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 33,
+    "kind": "external",
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Uint32Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 34,
+    "kind": "external",
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Float32Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 35,
+    "kind": "external",
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Float64Array",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 36,
+    "kind": "external",
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Map",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 37,
+    "kind": "external",
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Set",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 38,
+    "kind": "external",
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~WeakMap",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 39,
+    "kind": "external",
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~WeakSet",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 40,
+    "kind": "external",
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~ArrayBuffer",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 41,
+    "kind": "external",
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~DataView",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 42,
+    "kind": "external",
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~JSON",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 43,
+    "kind": "external",
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Promise",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 44,
+    "kind": "external",
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Generator",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 45,
+    "kind": "external",
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~GeneratorFunction",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 46,
+    "kind": "external",
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Reflect",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 47,
+    "kind": "external",
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "src/.external-ecmascript.js",
+    "static": true,
+    "longname": "src/.external-ecmascript.js~Proxy",
+    "access": "public",
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 48,
+    "kind": "file",
+    "name": "src/MiniSearch.js",
+    "content": "import SearchableMap from './SearchableMap/SearchableMap.js'\n\nconst OR = 'or'\nconst AND = 'and'\n\n/**\n* MiniSearch is the main entrypoint class, and represents a full-text search\n* engine.\n*\n* @example\n* // Create a search engine that indexes the 'title' and 'text' fields of your\n* // documents:\n* const miniSearch = MiniSearch.new({ fields: ['title', 'text'] })\n*\n* // Add documents to the index\n* const documents = [\n*   { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },\n*   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },\n*   { id: 3, title: 'Neuromancer', text: 'The sky above the port was...' },\n*   { id: 4, title: 'Zen and the Art of Archery', text: 'At first sight it must seem...' },\n*   // ...and more\n* ]\n*\n* documents.forEach(document => miniSearch.add(document))\n*\n* // Or, equivalently:\n* miniSearch.addAll(documents)\n*\n* // Search for documents:\n* let results = miniSearch.search('zen art motorcycle')\n* // => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]\n* */\nclass MiniSearch {\n  /**\n  * @param {Object} options - Configuration options\n  * @param {Array<string>} options.fields - Fields to be indexed. Required.\n  * @param {string} [options.idField='id'] - ID field, uniquely identifying a document\n  * @param {function(text: string): Array<string>} [options.tokenize] - Function used to split a field into individual terms\n  * @param {function(term: string): string} [options.processTerm] - Function used to process a term before indexing it or searching\n  * @param {?Object} options.searchOptions - Default search options (see search method for details)\n  *\n  * @example\n  * // Create a search engine that indexes the 'title' and 'text' fields of your\n  * // documents:\n  * const miniSearch = MiniSearch.new({ fields: ['title', 'text'] })\n  *\n  * @example\n  * // Your documents are assumed to include a unique 'id' field, but if you want\n  * // to use a different field for document identification, you can set the\n  * // 'idField' option:\n  * const miniSearch = MiniSearch.new({ idField: 'key', fields: ['title', 'text'] })\n  *\n  * @example\n  * // The full set of options (here with their default value) is:\n  * const miniSearch = MiniSearch.new({\n  *   // idField: field that uniquely identifies a document\n  *   idField: 'id',\n  *\n  *   // tokenize: function used to split fields and queries into individual\n  *   // terms\n  *   tokenize: string => string.split(/\\W+/).filter(term => term.length > 1),\n  *\n  *   // processTerm: function used to process document and query terms before\n  *   // indexing or searching. It can be used for stemming and normalization.\n  *   processTerm: term => term.toLowerCase()\n  *\n  *   // searchOptions: default search options, see `search` method for details\n  *   searchOptions: undefined\n  *\n  *   // fields: document fields to be indexed. Mandatory, but not set by default\n  *   fields: undefined,\n  * })\n  */\n  constructor (options = {}) {\n    /** @private */\n    this._options = { ...defaultOptions, ...options }\n\n    this._options.searchOptions = { ...defaultSearchOptions, ...(this._options.searchOptions || {}) }\n    const { fields } = this._options\n\n    if (fields == null) {\n      throw new Error('Option \"fields\" must be provided')\n    }\n\n    /** @private */\n    this._index = new SearchableMap()\n\n    /** @private */\n    this._documentCount = 0\n\n    /** @private */\n    this._documentIds = {}\n\n    /** @private */\n    this._fieldIds = {}\n\n    addFields(this, fields)\n  }\n\n  /**\n  * Adds a document to the index\n  * @param {Object} document - the document to be indexed\n  */\n  add (document) {\n    const { tokenize, processTerm, fields, idField } = this._options\n    if (document[idField] == null) {\n      throw new Error(`Document does not have ID field \"${idField}\"`)\n    }\n    const shortDocumentId = addDocumentId(this, document[idField])\n    fields.filter(field => document[field] != null).forEach(field => {\n      tokenize(document[field]).forEach(term => {\n        addTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))\n      })\n    })\n  }\n\n  /**\n  * Adds all the given documents to the index\n  * @param {Object[]} documents - an array of documents to be indexed\n  */\n  addAll (documents) {\n    documents.forEach(document => this.add(document))\n  }\n\n  /**\n  * Search for documents matching the query\n  * @param {string} queryString - Query string to search for\n  * @param {Object} [options] - Search options\n  * @param {Array<string>} [options.fields] - Fields to search in. If omitted, all fields are searched\n  * @param {Object<string, number>} [options.boost] - Key-value object of boosting values for fields\n  * @param {function(term: string): {term: !string, prefix: ?boolean, fuzzy: ?number}} [options.termToQuery] - Function specifying how a term is turned into a query (whether to perform fuzzy search, prefix search, etc.)\n  * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')\n  * @return {Array<{ id: any, score: number }>} A sorted array of scored document IDs matching the search\n  *\n  * @example\n  * // Search for \"zen art motorcycle\" with default options: terms have to match\n  * // exactly, and individual terms are joined with OR\n  * miniSearch.search('zen art motorcycle')\n  * // => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]\n  *\n  * @example\n  * // Search only in the 'title' field\n  * miniSearch.search('zen', { fields: ['title'] })\n  *\n  * @example\n  * // Boost a field\n  * miniSearch.search('zen', { boost: { title: 2 } })\n  *\n  * @example\n  * // Search for \"moto\" with prefix search (it will match documents\n  * // containing terms that start with \"moto\" or \"neuro\")\n  * miniSearch.search('moto neuro', {\n  *   termToQuery: term => ({ term, prefix: true })\n  * })\n  *\n  * @example\n  * // Search for \"ismael\" with fuzzy search (it will match documents containing\n  * // terms similar to \"ismael\", with a maximum edit distance of 0.2 term.length\n  * // (rounded to nearest integer)\n  * miniSearch.search('ismael', {\n  *   termToQuery: term => ({ term, fuzzy: 0.2 })\n  * })\n  *\n  * @example\n  * // Mix of exact match, prefix search, and fuzzy search\n  * miniSearch.search('ismael mob', {\n  *   termToQuery: term => ({ term, prefix: true, fuzzy: 0.2 })\n  * })\n  *\n  * @example\n  * // Combine search terms with AND (to match only documents that contain both\n  * // \"motorcycle\" and \"art\")\n  * miniSearch.search('motorcycle art', { combineWith: 'AND' })\n  */\n  search (queryString, options = {}) {\n    const { tokenize, processTerm, searchOptions } = this._options\n    options = { ...searchOptions, ...options }\n    const queries = tokenize(queryString).map(processTerm).map(options.termToQuery)\n    const results = queries.map(query => this.executeQuery(query, options))\n    const combinedResults = this.combineResults(results, options.combineWith)\n\n    return Object.entries(combinedResults)\n      .map(([shortDocumentId, score]) => ({ id: this._documentIds[shortDocumentId], score }))\n      .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)\n  }\n\n  /**\n  * Number of documents in the index\n  *\n  * @type {number}\n  */\n  get documentCount () {\n    return this._documentCount\n  }\n\n  /**\n  * @private\n  * @ignore\n  */\n  executeQuery (query, options = {}) {\n    options = { ...this._options.defaultSearchOptions, ...options }\n    const fields = options.fields || this._options.fields\n    if (!query.fuzzy && !query.prefix) {\n      return termResults(this, fields, this._index.get(query.term), options.boost)\n    }\n    const results = []\n    if (query.fuzzy) {\n      const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy\n      Object.values(this._index.fuzzyGet(query.term, maxDistance)).forEach(([data, distance]) => {\n        if (query.prefix && distance === 0) { return }\n        results.push(termResults(this, fields, data, options.boost, distance))\n      })\n    }\n    if (query.prefix) {\n      this._index.atPrefix(query.term).forEach((term, data) => {\n        results.push(termResults(this, fields, data, options.boost, term.length - query.term.length))\n      })\n    }\n    return results.reduce(combinators[OR], {})\n  }\n\n  /**\n  * @private\n  * @ignore\n  */\n  combineResults (results, combineWith = OR) {\n    if (results.length === 0) { return {} }\n    const operator = combineWith.toLowerCase()\n    return results.reduce(combinators[operator], null)\n  }\n\n  /**\n  * Serializes the index to JSON, to allow storing it and later deserializing\n  * with MiniSearch.fromJSON\n  * @return {string} the JSON-serialized index\n  */\n  toJSON () {\n    return {\n      index: this._index,\n      documentCount: this._documentCount,\n      documentIds: this._documentIds,\n      fieldIds: this._fieldIds\n    }\n  }\n\n  /**\n  * @private\n  * @ignore\n  */\n  toJS () {\n    this.toJSON()\n  }\n}\n\n/**\n* Deserializes a JSON index (serialized with `miniSearch.toJSON()`) and\n* instantiates a MiniSearch instance. It should be given the same options\n* originally used when serializing the index.\n* @param {string} json - JSON-serialized index\n* @param {Object} options - configuration options, same as the constructor\n* @return {MiniSearch} an instance of MiniSearch\n*/\nMiniSearch.loadJSON = function (json, options = {}) {\n  return MiniSearch.loadJS(JSON.parse(json), options)\n}\n\n/**\n* @private\n*/\nMiniSearch.loadJS = function (js, options = {}) {\n  const { index: { _tree, _prefix }, documentCount, documentIds, fieldIds } = js\n  const miniSearch = new MiniSearch(options)\n  miniSearch._index = new SearchableMap(_tree, _prefix)\n  miniSearch._documentCount = documentCount\n  miniSearch._documentIds = documentIds\n  miniSearch._fieldIds = fieldIds\n  return miniSearch\n}\n\nMiniSearch.SearchableMap = SearchableMap\n\nconst addTerm = function (self, fieldId, documentId, term) {\n  self._index.update(term, indexData => {\n    indexData = indexData || {}\n    const fieldIndex = indexData[fieldId] || { df: 0, ds: {} }\n    if (fieldIndex.ds[documentId] == null) { fieldIndex.df += 1 }\n    fieldIndex.ds[documentId] = (fieldIndex.ds[documentId] || 0) + 1\n    return { ...indexData, [fieldId]: fieldIndex }\n  })\n}\n\nconst addDocumentId = function (self, documentId) {\n  const shortDocumentId = self._documentCount\n  self._documentIds[shortDocumentId] = documentId\n  self._documentCount += 1\n  return shortDocumentId\n}\n\nconst addFields = function (self, fields) {\n  fields.forEach((field, i) => { self._fieldIds[field] = i })\n}\n\nconst termResults = function (self, fields, indexData, boosts, distance = 0) {\n  if (indexData == null) { return {} }\n  return fields.reduce((scores, field) => {\n    const { df, ds } = indexData[self._fieldIds[field]] || { ds: {} }\n    Object.entries(ds).forEach(([documentId, tf]) => {\n      const boost = ((boosts || {})[field] || 1) * (1 / (1 + (0.2 * distance)))\n      scores[documentId] = (scores[documentId] || 0) + (boost * tfIdf(tf, df, self._documentCount))\n    })\n    return scores\n  }, {})\n}\n\nconst combinators = {\n  [OR]: function (a, b) {\n    return Object.entries(b).reduce((combined, [documentId, score]) => {\n      combined[documentId] = (combined[documentId] || 0) + score\n      return combined\n    }, a || {})\n  },\n  [AND]: function (a, b) {\n    if (a == null) { return b }\n    return Object.entries(b).reduce((combined, [documentId, score]) => {\n      if (a[documentId] === undefined) { return combined }\n      combined[documentId] = Math.min(a[documentId], score)\n      return combined\n    }, {})\n  }\n}\n\nconst tfIdf = function (tf, df, n) {\n  return tf * Math.log(n / df)\n}\n\nconst defaultOptions = {\n  idField: 'id',\n  tokenize: string => string.split(/\\W+/).filter(term => term.length > 1),\n  processTerm: term => term.toLowerCase()\n}\n\nconst defaultSearchOptions = {\n  termToQuery: term => ({ term }),\n  combineWith: OR\n}\n\nexport default MiniSearch\n",
+    "static": true,
+    "longname": "/Users/luca/Code/minisearch/src/MiniSearch.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 49,
+    "kind": "variable",
+    "name": "OR",
+    "memberof": "src/MiniSearch.js",
+    "static": true,
+    "longname": "src/MiniSearch.js~OR",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 50,
+    "kind": "variable",
+    "name": "AND",
+    "memberof": "src/MiniSearch.js",
+    "static": true,
+    "longname": "src/MiniSearch.js~AND",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 51,
+    "kind": "function",
+    "name": "loadJSON",
+    "memberof": "src/MiniSearch.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/MiniSearch.js~loadJSON",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": "Deserializes a JSON index (serialized with `miniSearch.toJSON()`) and\ninstantiates a MiniSearch instance. It should be given the same options\noriginally used when serializing the index.",
+    "lineNumber": 263,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "json",
+        "description": "JSON-serialized index"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options",
+        "description": "configuration options, same as the constructor"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "MiniSearch"
+      ],
+      "spread": false,
+      "description": "an instance of MiniSearch"
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 52,
+    "kind": "function",
+    "name": "loadJS",
+    "memberof": "src/MiniSearch.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/MiniSearch.js~loadJS",
+    "access": "private",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": "",
+    "lineNumber": 270,
+    "ignore": true,
+    "params": [
+      {
+        "name": "js",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "options",
+        "optional": true,
+        "types": [
+          "{}"
+        ],
+        "defaultRaw": {},
+        "defaultValue": "{}"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 53,
+    "kind": "function",
+    "name": "addTerm",
+    "memberof": "src/MiniSearch.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/MiniSearch.js~addTerm",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 282,
+    "undocument": true,
+    "params": [
+      {
+        "name": "self",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "fieldId",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "documentId",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "term",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null,
+    "ignore": true
+  },
+  {
+    "__docId__": 54,
+    "kind": "function",
+    "name": "addDocumentId",
+    "memberof": "src/MiniSearch.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/MiniSearch.js~addDocumentId",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 292,
+    "undocument": true,
+    "params": [
+      {
+        "name": "self",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "documentId",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 55,
+    "kind": "function",
+    "name": "addFields",
+    "memberof": "src/MiniSearch.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/MiniSearch.js~addFields",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 299,
+    "undocument": true,
+    "params": [
+      {
+        "name": "self",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "fields",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null,
+    "ignore": true
+  },
+  {
+    "__docId__": 56,
+    "kind": "function",
+    "name": "termResults",
+    "memberof": "src/MiniSearch.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/MiniSearch.js~termResults",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 303,
+    "undocument": true,
+    "params": [
+      {
+        "name": "self",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "fields",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "indexData",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "boosts",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "distance",
+        "optional": true,
+        "types": [
+          "number"
+        ],
+        "defaultRaw": 0,
+        "defaultValue": "0"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 57,
+    "kind": "variable",
+    "name": "combinators",
+    "memberof": "src/MiniSearch.js",
+    "static": true,
+    "longname": "src/MiniSearch.js~combinators",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 315,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"OR\": *, \"AND\": *}"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 58,
+    "kind": "function",
+    "name": "tfIdf",
+    "memberof": "src/MiniSearch.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/MiniSearch.js~tfIdf",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 332,
+    "undocument": true,
+    "params": [
+      {
+        "name": "tf",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "df",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "n",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 59,
+    "kind": "variable",
+    "name": "defaultOptions",
+    "memberof": "src/MiniSearch.js",
+    "static": true,
+    "longname": "src/MiniSearch.js~defaultOptions",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 336,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"idField\": string, \"tokenize\": *, \"processTerm\": *}"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 60,
+    "kind": "variable",
+    "name": "defaultSearchOptions",
+    "memberof": "src/MiniSearch.js",
+    "static": true,
+    "longname": "src/MiniSearch.js~defaultSearchOptions",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 342,
+    "undocument": true,
+    "type": {
+      "types": [
+        "{\"termToQuery\": *, \"combineWith\": *}"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 61,
+    "kind": "class",
+    "name": "MiniSearch",
+    "memberof": "src/MiniSearch.js",
+    "static": true,
+    "longname": "src/MiniSearch.js~MiniSearch",
+    "access": "public",
+    "export": true,
+    "importPath": "minisearch/src/MiniSearch.js",
+    "importStyle": "MiniSearch",
+    "description": "MiniSearch is the main entrypoint class, and represents a full-text search\nengine.",
+    "examples": [
+      "// Create a search engine that indexes the 'title' and 'text' fields of your\n// documents:\nconst miniSearch = MiniSearch.new({ fields: ['title', 'text'] })\n\n// Add documents to the index\nconst documents = [\n  { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },\n  { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },\n  { id: 3, title: 'Neuromancer', text: 'The sky above the port was...' },\n  { id: 4, title: 'Zen and the Art of Archery', text: 'At first sight it must seem...' },\n  // ...and more\n]\n\ndocuments.forEach(document => miniSearch.add(document))\n\n// Or, equivalently:\nminiSearch.addAll(documents)\n\n// Search for documents:\nlet results = miniSearch.search('zen art motorcycle')\n// => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]"
+    ],
+    "lineNumber": 33,
+    "interface": false
+  },
+  {
+    "__docId__": 62,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#constructor",
+    "access": "public",
+    "description": "",
+    "examples": [
+      "// Create a search engine that indexes the 'title' and 'text' fields of your\n// documents:\nconst miniSearch = MiniSearch.new({ fields: ['title', 'text'] })",
+      "// Your documents are assumed to include a unique 'id' field, but if you want\n// to use a different field for document identification, you can set the\n// 'idField' option:\nconst miniSearch = MiniSearch.new({ idField: 'key', fields: ['title', 'text'] })",
+      "// The full set of options (here with their default value) is:\nconst miniSearch = MiniSearch.new({\n  // idField: field that uniquely identifies a document\n  idField: 'id',\n\n  // tokenize: function used to split fields and queries into individual\n  // terms\n  tokenize: string => string.split(/\\W+/).filter(term => term.length > 1),\n\n  // processTerm: function used to process document and query terms before\n  // indexing or searching. It can be used for stemming and normalization.\n  processTerm: term => term.toLowerCase()\n\n  // searchOptions: default search options, see `search` method for details\n  searchOptions: undefined\n\n  // fields: document fields to be indexed. Mandatory, but not set by default\n  fields: undefined,\n})"
+    ],
+    "lineNumber": 74,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options",
+        "description": "Configuration options"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Array<string>"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.fields",
+        "description": "Fields to be indexed. Required."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "'id'",
+        "defaultRaw": "'id'",
+        "name": "options.idField",
+        "description": "ID field, uniquely identifying a document"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function(text: string): Array<string>"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options.tokenize",
+        "description": "Function used to split a field into individual terms"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function(term: string): string"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options.processTerm",
+        "description": "Function used to process a term before indexing it or searching"
+      },
+      {
+        "nullable": true,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "options.searchOptions",
+        "description": "Default search options (see search method for details)"
+      }
+    ]
+  },
+  {
+    "__docId__": 63,
+    "kind": "member",
+    "name": "_options",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#_options",
+    "access": "private",
+    "description": null,
+    "lineNumber": 76,
+    "ignore": true,
+    "type": {
+      "types": [
+        "{...defaultOptions: Object, ...options: Object}"
+      ]
+    }
+  },
+  {
+    "__docId__": 64,
+    "kind": "member",
+    "name": "_index",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#_index",
+    "access": "private",
+    "description": null,
+    "lineNumber": 86,
+    "ignore": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 65,
+    "kind": "member",
+    "name": "_documentCount",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#_documentCount",
+    "access": "private",
+    "description": null,
+    "lineNumber": 89,
+    "ignore": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 66,
+    "kind": "member",
+    "name": "_documentIds",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#_documentIds",
+    "access": "private",
+    "description": null,
+    "lineNumber": 92,
+    "ignore": true,
+    "type": {
+      "types": [
+        "{}"
+      ]
+    }
+  },
+  {
+    "__docId__": 67,
+    "kind": "member",
+    "name": "_fieldIds",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#_fieldIds",
+    "access": "private",
+    "description": null,
+    "lineNumber": 95,
+    "ignore": true,
+    "type": {
+      "types": [
+        "{}"
+      ]
+    }
+  },
+  {
+    "__docId__": 68,
+    "kind": "method",
+    "name": "add",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#add",
+    "access": "public",
+    "description": "Adds a document to the index",
+    "lineNumber": 104,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "document",
+        "description": "the document to be indexed"
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 69,
+    "kind": "method",
+    "name": "addAll",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#addAll",
+    "access": "public",
+    "description": "Adds all the given documents to the index",
+    "lineNumber": 121,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object[]"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "documents",
+        "description": "an array of documents to be indexed"
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 70,
+    "kind": "method",
+    "name": "search",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#search",
+    "access": "public",
+    "description": "Search for documents matching the query",
+    "examples": [
+      "// Search for \"zen art motorcycle\" with default options: terms have to match\n// exactly, and individual terms are joined with OR\nminiSearch.search('zen art motorcycle')\n// => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]",
+      "// Search only in the 'title' field\nminiSearch.search('zen', { fields: ['title'] })",
+      "// Boost a field\nminiSearch.search('zen', { boost: { title: 2 } })",
+      "// Search for \"moto\" with prefix search (it will match documents\n// containing terms that start with \"moto\" or \"neuro\")\nminiSearch.search('moto neuro', {\n  termToQuery: term => ({ term, prefix: true })\n})",
+      "// Search for \"ismael\" with fuzzy search (it will match documents containing\n// terms similar to \"ismael\", with a maximum edit distance of 0.2 term.length\n// (rounded to nearest integer)\nminiSearch.search('ismael', {\n  termToQuery: term => ({ term, fuzzy: 0.2 })\n})",
+      "// Mix of exact match, prefix search, and fuzzy search\nminiSearch.search('ismael mob', {\n  termToQuery: term => ({ term, prefix: true, fuzzy: 0.2 })\n})",
+      "// Combine search terms with AND (to match only documents that contain both\n// \"motorcycle\" and \"art\")\nminiSearch.search('motorcycle art', { combineWith: 'AND' })"
+    ],
+    "lineNumber": 175,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "queryString",
+        "description": "Query string to search for"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options",
+        "description": "Search options"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Array<string>"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options.fields",
+        "description": "Fields to search in. If omitted, all fields are searched"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object<string, number>"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options.boost",
+        "description": "Key-value object of boosting values for fields"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function(term: string): {term: !string, prefix: ?boolean, fuzzy: ?number}"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "options.termToQuery",
+        "description": "Function specifying how a term is turned into a query (whether to perform fuzzy search, prefix search, etc.)"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "'OR'",
+        "defaultRaw": "'OR'",
+        "name": "options.combineWith",
+        "description": "How to combine term queries (it can be 'OR' or 'AND')"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Array<{ id: any, score: number }>"
+      ],
+      "spread": false,
+      "description": "A sorted array of scored document IDs matching the search"
+    }
+  },
+  {
+    "__docId__": 71,
+    "kind": "get",
+    "name": "documentCount",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#documentCount",
+    "access": "public",
+    "description": "Number of documents in the index",
+    "lineNumber": 192,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 72,
+    "kind": "method",
+    "name": "executeQuery",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#executeQuery",
+    "access": "private",
+    "description": "",
+    "lineNumber": 200,
+    "ignore": true,
+    "params": [
+      {
+        "name": "query",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "options",
+        "optional": true,
+        "types": [
+          "{}"
+        ],
+        "defaultRaw": {},
+        "defaultValue": "{}"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 73,
+    "kind": "method",
+    "name": "combineResults",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#combineResults",
+    "access": "private",
+    "description": "",
+    "lineNumber": 226,
+    "ignore": true,
+    "params": [
+      {
+        "name": "results",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "combineWith",
+        "optional": true,
+        "types": [
+          "*"
+        ],
+        "defaultRaw": "OR",
+        "defaultValue": "OR"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 74,
+    "kind": "method",
+    "name": "toJSON",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#toJSON",
+    "access": "public",
+    "description": "Serializes the index to JSON, to allow storing it and later deserializing\nwith MiniSearch.fromJSON",
+    "lineNumber": 237,
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": "the JSON-serialized index"
+    },
+    "params": []
+  },
+  {
+    "__docId__": 75,
+    "kind": "method",
+    "name": "toJS",
+    "memberof": "src/MiniSearch.js~MiniSearch",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/MiniSearch.js~MiniSearch#toJS",
+    "access": "private",
+    "description": "",
+    "lineNumber": 250,
+    "ignore": true,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 76,
+    "kind": "file",
+    "name": "src/SearchableMap/SearchableMap.js",
+    "content": "import { TreeIterator, ENTRIES, KEYS, VALUES, LEAF } from './TreeIterator.js'\nimport fuzzySearch from './fuzzySearch.js'\n\n/**\n* A class implementing the same interface as a standard JavaScript `Map` with\n* string keys, but adding support for efficiently searching entries with prefix\n* or fuzzy search. This is the class internally used by `MiniSearch` as the\n* inverted index data structure. The implementation is a radix tree (compressed\n* prefix tree).\n*\n* @implements {Map}\n*/\nclass SearchableMap {\n  constructor (tree = {}, prefix = '') {\n    /** @private */\n    this._tree = tree\n    /** @private */\n    this._prefix = prefix\n  }\n\n  /**\n  * Creates and returns a mutable view of this `SearchableMap`, containing only\n  * entries that share the given prefix.\n  *\n  * @example\n  * let map = new SearchableMap()\n  * map.set(\"unicorn\", 1)\n  * map.set(\"universe\", 2)\n  * map.set(\"university\", 3)\n  * map.set(\"unique\", 4)\n  * map.set(\"hello\", 5)\n  *\n  * let uni = map.atPrefix(\"uni\")\n  * uni.get(\"unique\") // => 4\n  * uni.get(\"unicorn\") // => 1\n  * uni.get(\"hello\") // => undefined\n  *\n  * let univer = map.atPrefix(\"univer\")\n  * uni.get(\"unique\") // => undefined\n  * uni.get(\"universe\") // => 2\n  * uni.get(\"university\") // => 3\n  *\n  * @param {string} prefix - The prefix\n  * @return {SearchableMap} A `SearchableMap` representing a mutable view of the original Map at the given prefix\n  */\n  atPrefix (prefix) {\n    if (!prefix.startsWith(this._prefix)) { throw new Error('Mismatched prefix') }\n    const [node, path] = trackDown(this._tree, prefix.slice(this._prefix.length))\n    if (node === undefined) {\n      const [parentNode, key] = last(path)\n      const nodeKey = Object.keys(parentNode).find(k => k !== LEAF && k.startsWith(key))\n      if (nodeKey !== undefined) {\n        return new SearchableMap({ [nodeKey.slice(key.length)]: parentNode[nodeKey] }, prefix)\n      }\n    }\n    return new SearchableMap(node || {}, prefix)\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear\n  * @return {undefined}\n  */\n  clear () {\n    delete this._size\n    this._tree = {}\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete\n  * @param {string} key\n  * @return {undefined}\n  */\n  delete (key) {\n    delete this._size\n    return remove(this._tree, key)\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/entries\n  * @return {Iterator}\n  */\n  entries () {\n    return new TreeIterator(this, ENTRIES)\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach\n  * @param {function(key: string, value: any): any} fn\n  * @return {undefined}\n  */\n  forEach (fn) {\n    for (let [key, value] of this) {\n      fn(key, value, this)\n    }\n  }\n\n  /**\n  * Returns a key-value object of all the entries that have a key within the\n  * given edit distance from the search key. The keys of the returned object are\n  * the matching keys, while the values are two-elements arrays where the first\n  * element is the value associated to the key, and the second is the edit\n  * distance of the key to the search key.\n  *\n  * @example\n  * let map = new SearchableMap()\n  * map.set('hello', 'world')\n  * map.set('hell', 'yeah')\n  * map.set('ciao', 'mondo')\n  *\n  * // Get all entries that match the key 'hallo' with a maximum edit distance of 2\n  * map.fuzzyGet('hallo', 2)\n  * // => { \"hello\": [\"world\", 1], \"hell\": [\"yeah\", 2] }\n  *\n  * // In the example, the \"hello\" key has value \"world\" and edit distance of 1\n  * // (change \"e\" to \"a\"), the key \"hell\" has value \"yeah\" and edit distance of 2\n  * // (change \"e\" to \"a\", delete \"o\")\n  *\n  * @param {string} key - The search key\n  * @param {number} maxEditDistance - The maximum edit distance\n  * @return {Object<string, Array>} A key-value object of the matching keys to their value and edit distance\n  */\n  fuzzyGet (key, maxEditDistance) {\n    return fuzzySearch(this._tree, key, maxEditDistance)\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/get\n  * @param {string} key\n  * @return {any}\n  */\n  get (key) {\n    const node = lookup(this._tree, key)\n    return node !== undefined ? node[LEAF] : undefined\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/has\n  * @param {string} key\n  * @return {boolean}\n  */\n  has (key) {\n    const node = lookup(this._tree, key)\n    return node !== undefined && node.hasOwnProperty(LEAF)\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/keys\n  * @return {Iterator}\n  */\n  keys () {\n    return new TreeIterator(this, KEYS)\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set\n  * @param {string} key\n  * @param {any} value\n  * @return {SearchableMap} The `SearchableMap` itself, to allow chaining\n  */\n  set (key, value) {\n    if (typeof key !== 'string') { throw new Error('key must be a string') }\n    delete this._size\n    const node = createPath(this._tree, key)\n    node[LEAF] = value\n    return this\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/size\n  * @type {number}\n  */\n  get size () {\n    if (this._size) { return this._size }\n    /** @ignore */\n    this._size = 0\n    this.forEach(() => { this._size += 1 })\n    return this._size\n  }\n\n  /**\n  * Updates the value at the given key using the provided function. The function\n  * is called with the current value at the key, and its return value is used as\n  * the new value to be set.\n  *\n  * @example\n  * // Increment the current value by one\n  * searchableMap.update('somekey', (currentValue) => currentValue == null ? 0 : currentValue + 1)\n  *\n  * @param {string} key - The key\n  * @param {function(currentValue: any): any} fn - The function used to compute the new value from the current one\n  * @return {SearchableMap} The `SearchableMap` itself, to allow chaining\n  */\n  update (key, fn) {\n    if (typeof key !== 'string') { throw new Error('key must be a string') }\n    delete this._size\n    const node = createPath(this._tree, key)\n    node[LEAF] = fn(node[LEAF])\n    return this\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/values\n  * @return {Iterator}\n  */\n  values () {\n    return new TreeIterator(this, VALUES)\n  }\n\n  /**\n  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/@@iterator\n  * @return {Iterator}\n  */\n  [Symbol.iterator] () {\n    return this.entries()\n  }\n}\n\n/**\n* Creates a `SearchableMap` from an `Iterable` of entries\n*\n* @param {Iterable|Array} entries - Entries to be inserted in the `SearchableMap`\n* @return {SearchableMap} A new `SearchableMap` with the given entries\n**/\nSearchableMap.from = function (entries) {\n  const tree = new SearchableMap()\n  for (let [key, value] of entries) {\n    tree.set(key, value)\n  }\n  return tree\n}\n\n/**\n* Creates a `SearchableMap` from the iterable properties of a JavaScript object\n*\n* @param {Object} object - Object of entries for the `SearchableMap`\n* @return {SearchableMap} A new `SearchableMap` with the given entries\n**/\nSearchableMap.fromObject = function (object) {\n  return SearchableMap.from(Object.entries(object))\n}\n\nconst trackDown = function (tree, key, path = []) {\n  if (key.length === 0) { return [tree, path] }\n  const nodeKey = Object.keys(tree).find(k => k !== LEAF && key.startsWith(k))\n  if (nodeKey === undefined) { return trackDown(undefined, '', [...path, [tree, key]]) }\n  return trackDown(tree[nodeKey], key.slice(nodeKey.length), [...path, [tree, nodeKey]])\n}\n\nconst lookup = function (tree, key) {\n  if (key.length === 0) { return tree }\n  const nodeKey = Object.keys(tree).find(k => k !== LEAF && key.startsWith(k))\n  if (nodeKey === undefined) { return undefined }\n  return lookup(tree[nodeKey], key.slice(nodeKey.length))\n}\n\nconst createPath = function (tree, key) {\n  if (key.length === 0) { return tree }\n  const nodeKey = Object.keys(tree).find(k => k !== LEAF && key.startsWith(k))\n  if (nodeKey === undefined) {\n    const toSplit = Object.keys(tree).find(k => k !== LEAF && k.startsWith(key[0]))\n    if (toSplit === undefined) {\n      tree[key] = {}\n    } else {\n      const prefix = commonPrefix(key, toSplit)\n      tree[prefix] = { [toSplit.slice(prefix.length)]: tree[toSplit] }\n      delete tree[toSplit]\n      return createPath(tree[prefix], key.slice(prefix.length))\n    }\n    return tree[key]\n  }\n  return createPath(tree[nodeKey], key.slice(nodeKey.length))\n}\n\nconst commonPrefix = function (a, b, i = 0, length = Math.min(a.length, b.length), prefix = '') {\n  if (i >= length) { return prefix }\n  if (a[i] !== b[i]) { return prefix }\n  return commonPrefix(a, b, i + 1, length, prefix + a[i])\n}\n\nconst remove = function (tree, key) {\n  const [node, path] = trackDown(tree, key)\n  if (node === undefined) { return }\n  delete node[LEAF]\n  const keys = Object.keys(node)\n  if (keys.length === 0) { cleanup(path) }\n  if (keys.length === 1) { merge(path, keys[0], node[keys[0]]) }\n}\n\nconst cleanup = function (path) {\n  if (path.length === 0) { return }\n  const [node, key] = last(path)\n  delete node[key]\n  if (Object.keys(node).length === 0) {\n    cleanup(path.slice(0, -1))\n  }\n}\n\nconst merge = function (path, key, value) {\n  if (path.length === 0) { return }\n  const [node, nodeKey] = last(path)\n  node[nodeKey + key] = value\n  delete node[nodeKey]\n}\n\nconst last = function (array) {\n  return array[array.length - 1]\n}\n\nexport default SearchableMap\nexport { SearchableMap }\n",
+    "static": true,
+    "longname": "/Users/luca/Code/minisearch/src/SearchableMap/SearchableMap.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 77,
+    "kind": "function",
+    "name": "from",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~from",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": "Creates a `SearchableMap` from an `Iterable` of entries",
+    "lineNumber": 224,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Iterable",
+          "Array"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "entries",
+        "description": "Entries to be inserted in the `SearchableMap`"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "SearchableMap"
+      ],
+      "spread": false,
+      "description": "A new `SearchableMap` with the given entries"
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 78,
+    "kind": "function",
+    "name": "fromObject",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~fromObject",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": "Creates a `SearchableMap` from the iterable properties of a JavaScript object",
+    "lineNumber": 238,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "object",
+        "description": "Object of entries for the `SearchableMap`"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "SearchableMap"
+      ],
+      "spread": false,
+      "description": "A new `SearchableMap` with the given entries"
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 79,
+    "kind": "function",
+    "name": "trackDown",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~trackDown",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 242,
+    "undocument": true,
+    "params": [
+      {
+        "name": "tree",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "key",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "path",
+        "optional": true,
+        "types": [
+          "*[]"
+        ],
+        "defaultRaw": [],
+        "defaultValue": "[]"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 80,
+    "kind": "function",
+    "name": "lookup",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~lookup",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 249,
+    "undocument": true,
+    "params": [
+      {
+        "name": "tree",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "key",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 81,
+    "kind": "function",
+    "name": "createPath",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~createPath",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 256,
+    "undocument": true,
+    "params": [
+      {
+        "name": "tree",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "key",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 82,
+    "kind": "function",
+    "name": "commonPrefix",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~commonPrefix",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 274,
+    "undocument": true,
+    "params": [
+      {
+        "name": "a",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "b",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "i",
+        "optional": true,
+        "types": [
+          "number"
+        ],
+        "defaultRaw": 0,
+        "defaultValue": "0"
+      },
+      {
+        "name": "length",
+        "optional": true,
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "prefix",
+        "optional": true,
+        "types": [
+          "string"
+        ],
+        "defaultRaw": "",
+        "defaultValue": ""
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 83,
+    "kind": "function",
+    "name": "remove",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~remove",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 280,
+    "undocument": true,
+    "params": [
+      {
+        "name": "tree",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "key",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null,
+    "ignore": true
+  },
+  {
+    "__docId__": 84,
+    "kind": "function",
+    "name": "cleanup",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~cleanup",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 289,
+    "undocument": true,
+    "params": [
+      {
+        "name": "path",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null,
+    "ignore": true
+  },
+  {
+    "__docId__": 85,
+    "kind": "function",
+    "name": "merge",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~merge",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 298,
+    "undocument": true,
+    "params": [
+      {
+        "name": "path",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "key",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "value",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null,
+    "ignore": true
+  },
+  {
+    "__docId__": 86,
+    "kind": "function",
+    "name": "last",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~last",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 305,
+    "undocument": true,
+    "params": [
+      {
+        "name": "array",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 87,
+    "kind": "class",
+    "name": "SearchableMap",
+    "memberof": "src/SearchableMap/SearchableMap.js",
+    "static": true,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "access": "public",
+    "export": true,
+    "importPath": "minisearch/src/SearchableMap/SearchableMap.js",
+    "importStyle": "SearchableMap",
+    "description": "A class implementing the same interface as a standard JavaScript `Map` with\nstring keys, but adding support for efficiently searching entries with prefix\nor fuzzy search. This is the class internally used by `MiniSearch` as the\ninverted index data structure. The implementation is a radix tree (compressed\nprefix tree).",
+    "lineNumber": 13,
+    "interface": false,
+    "implements": [
+      "Map"
+    ]
+  },
+  {
+    "__docId__": 88,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#constructor",
+    "access": "public",
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true
+  },
+  {
+    "__docId__": 89,
+    "kind": "member",
+    "name": "_tree",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#_tree",
+    "access": "private",
+    "description": null,
+    "lineNumber": 16,
+    "ignore": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 90,
+    "kind": "member",
+    "name": "_prefix",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#_prefix",
+    "access": "private",
+    "description": null,
+    "lineNumber": 18,
+    "ignore": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 91,
+    "kind": "method",
+    "name": "atPrefix",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#atPrefix",
+    "access": "public",
+    "description": "Creates and returns a mutable view of this `SearchableMap`, containing only\nentries that share the given prefix.",
+    "examples": [
+      "let map = new SearchableMap()\nmap.set(\"unicorn\", 1)\nmap.set(\"universe\", 2)\nmap.set(\"university\", 3)\nmap.set(\"unique\", 4)\nmap.set(\"hello\", 5)\n\nlet uni = map.atPrefix(\"uni\")\nuni.get(\"unique\") // => 4\nuni.get(\"unicorn\") // => 1\nuni.get(\"hello\") // => undefined\n\nlet univer = map.atPrefix(\"univer\")\nuni.get(\"unique\") // => undefined\nuni.get(\"universe\") // => 2\nuni.get(\"university\") // => 3"
+    ],
+    "lineNumber": 46,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "prefix",
+        "description": "The prefix"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "SearchableMap"
+      ],
+      "spread": false,
+      "description": "A `SearchableMap` representing a mutable view of the original Map at the given prefix"
+    }
+  },
+  {
+    "__docId__": 92,
+    "kind": "method",
+    "name": "clear",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#clear",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear"
+    ],
+    "lineNumber": 63,
+    "return": {
+      "nullable": null,
+      "types": [
+        "undefined"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 94,
+    "kind": "method",
+    "name": "delete",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#delete",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete"
+    ],
+    "lineNumber": 73,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "undefined"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 95,
+    "kind": "method",
+    "name": "entries",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#entries",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/entries"
+    ],
+    "lineNumber": 82,
+    "return": {
+      "nullable": null,
+      "types": [
+        "Iterator"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 96,
+    "kind": "method",
+    "name": "forEach",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#forEach",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach"
+    ],
+    "lineNumber": 91,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "function(key: string, value: any): any"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "fn",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "undefined"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 97,
+    "kind": "method",
+    "name": "fuzzyGet",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#fuzzyGet",
+    "access": "public",
+    "description": "Returns a key-value object of all the entries that have a key within the\ngiven edit distance from the search key. The keys of the returned object are\nthe matching keys, while the values are two-elements arrays where the first\nelement is the value associated to the key, and the second is the edit\ndistance of the key to the search key.",
+    "examples": [
+      "let map = new SearchableMap()\nmap.set('hello', 'world')\nmap.set('hell', 'yeah')\nmap.set('ciao', 'mondo')\n\n// Get all entries that match the key 'hallo' with a maximum edit distance of 2\nmap.fuzzyGet('hallo', 2)\n// => { \"hello\": [\"world\", 1], \"hell\": [\"yeah\", 2] }\n\n// In the example, the \"hello\" key has value \"world\" and edit distance of 1\n// (change \"e\" to \"a\"), the key \"hell\" has value \"yeah\" and edit distance of 2\n// (change \"e\" to \"a\", delete \"o\")"
+    ],
+    "lineNumber": 122,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "The search key"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "maxEditDistance",
+        "description": "The maximum edit distance"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Object<string, Array>"
+      ],
+      "spread": false,
+      "description": "A key-value object of the matching keys to their value and edit distance"
+    }
+  },
+  {
+    "__docId__": 98,
+    "kind": "method",
+    "name": "get",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#get",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/get"
+    ],
+    "lineNumber": 131,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "any"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 99,
+    "kind": "method",
+    "name": "has",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#has",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/has"
+    ],
+    "lineNumber": 141,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 100,
+    "kind": "method",
+    "name": "keys",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#keys",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/keys"
+    ],
+    "lineNumber": 150,
+    "return": {
+      "nullable": null,
+      "types": [
+        "Iterator"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 101,
+    "kind": "method",
+    "name": "set",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#set",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set"
+    ],
+    "lineNumber": 160,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "any"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "value",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "SearchableMap"
+      ],
+      "spread": false,
+      "description": "The `SearchableMap` itself, to allow chaining"
+    }
+  },
+  {
+    "__docId__": 102,
+    "kind": "get",
+    "name": "size",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#size",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/size"
+    ],
+    "lineNumber": 172,
+    "type": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 103,
+    "kind": "member",
+    "name": "_size",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#_size",
+    "access": "private",
+    "description": null,
+    "lineNumber": 175,
+    "ignore": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    }
+  },
+  {
+    "__docId__": 105,
+    "kind": "method",
+    "name": "update",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#update",
+    "access": "public",
+    "description": "Updates the value at the given key using the provided function. The function\nis called with the current value at the key, and its return value is used as\nthe new value to be set.",
+    "examples": [
+      "// Increment the current value by one\nsearchableMap.update('somekey', (currentValue) => currentValue == null ? 0 : currentValue + 1)"
+    ],
+    "lineNumber": 193,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "string"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "key",
+        "description": "The key"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function(currentValue: any): any"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "fn",
+        "description": "The function used to compute the new value from the current one"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "SearchableMap"
+      ],
+      "spread": false,
+      "description": "The `SearchableMap` itself, to allow chaining"
+    }
+  },
+  {
+    "__docId__": 106,
+    "kind": "method",
+    "name": "values",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#values",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/values"
+    ],
+    "lineNumber": 205,
+    "return": {
+      "nullable": null,
+      "types": [
+        "Iterator"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 107,
+    "kind": "method",
+    "name": "[Symbol.iterator]",
+    "memberof": "src/SearchableMap/SearchableMap.js~SearchableMap",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/SearchableMap.js~SearchableMap#[Symbol.iterator]",
+    "access": "public",
+    "description": "",
+    "see": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/@@iterator"
+    ],
+    "lineNumber": 213,
+    "return": {
+      "nullable": null,
+      "types": [
+        "Iterator"
+      ],
+      "spread": false,
+      "description": ""
+    },
+    "params": []
+  },
+  {
+    "__docId__": 108,
+    "kind": "file",
+    "name": "src/SearchableMap/TreeIterator.js",
+    "content": "/**\n* @private\n*/\nclass TreeIterator {\n  constructor (set, type = ENTRIES) {\n    const node = set._tree\n    const keys = Object.keys(node)\n    this.set = set\n    this.type = type\n    this.path = keys.length > 0 ? [{ node, keys }] : []\n  }\n\n  next () {\n    const value = this.dive()\n    this.backtrack()\n    return value\n  }\n\n  dive () {\n    if (this.path.length === 0) { return { done: true } }\n    const { node, keys } = last(this.path)\n    if (last(keys) === LEAF) { return { done: false, value: this.result() } }\n    this.path.push({ node: node[last(keys)], keys: Object.keys(node[last(keys)]) })\n    return this.dive()\n  }\n\n  backtrack () {\n    if (this.path.length === 0) { return }\n    last(this.path).keys.pop()\n    if (last(this.path).keys.length > 0) { return }\n    this.path.pop()\n    this.backtrack()\n  }\n\n  key () {\n    return this.set._prefix + this.path\n      .map(({ keys }) => last(keys))\n      .filter(key => key !== LEAF)\n      .join('')\n  }\n\n  value () {\n    return last(this.path).node[LEAF]\n  }\n\n  result () {\n    if (this.type === VALUES) { return this.value() }\n    if (this.type === KEYS) { return this.key() }\n    return [this.key(), this.value()]\n  }\n\n  [Symbol.iterator] () {\n    return this\n  }\n}\n\n/** @ignore */\nconst ENTRIES = 'ENTRIES'\n\n/** @ignore */\nconst KEYS = 'KEYS'\n\n/** @ignore */\nconst VALUES = 'VALUES'\n\n/** @ignore */\nconst LEAF = ''\n\nconst last = function (array) {\n  return array[array.length - 1]\n}\n\nexport { TreeIterator, ENTRIES, KEYS, VALUES, LEAF }\n",
+    "static": true,
+    "longname": "/Users/luca/Code/minisearch/src/SearchableMap/TreeIterator.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 109,
+    "kind": "function",
+    "name": "last",
+    "memberof": "src/SearchableMap/TreeIterator.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/TreeIterator.js~last",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/TreeIterator.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 69,
+    "undocument": true,
+    "params": [
+      {
+        "name": "array",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 110,
+    "kind": "class",
+    "name": "TreeIterator",
+    "memberof": "src/SearchableMap/TreeIterator.js",
+    "static": true,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "access": "private",
+    "export": true,
+    "importPath": "minisearch/src/SearchableMap/TreeIterator.js",
+    "importStyle": "{TreeIterator}",
+    "description": "",
+    "lineNumber": 4,
+    "interface": false,
+    "ignore": true
+  },
+  {
+    "__docId__": 111,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#constructor",
+    "access": "public",
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true
+  },
+  {
+    "__docId__": 112,
+    "kind": "member",
+    "name": "set",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#set",
+    "access": "public",
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 113,
+    "kind": "member",
+    "name": "type",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#type",
+    "access": "public",
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 114,
+    "kind": "member",
+    "name": "path",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#path",
+    "access": "public",
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 115,
+    "kind": "method",
+    "name": "next",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#next",
+    "access": "public",
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 116,
+    "kind": "method",
+    "name": "dive",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#dive",
+    "access": "public",
+    "description": null,
+    "lineNumber": 19,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 117,
+    "kind": "method",
+    "name": "backtrack",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#backtrack",
+    "access": "public",
+    "description": null,
+    "lineNumber": 27,
+    "undocument": true,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 118,
+    "kind": "method",
+    "name": "key",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#key",
+    "access": "public",
+    "description": null,
+    "lineNumber": 35,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 119,
+    "kind": "method",
+    "name": "value",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#value",
+    "access": "public",
+    "description": null,
+    "lineNumber": 42,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 120,
+    "kind": "method",
+    "name": "result",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#result",
+    "access": "public",
+    "description": null,
+    "lineNumber": 46,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "undefined[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 121,
+    "kind": "method",
+    "name": "[Symbol.iterator]",
+    "memberof": "src/SearchableMap/TreeIterator.js~TreeIterator",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/SearchableMap/TreeIterator.js~TreeIterator#[Symbol.iterator]",
+    "access": "public",
+    "description": null,
+    "lineNumber": 52,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 122,
+    "kind": "variable",
+    "name": "ENTRIES",
+    "memberof": "src/SearchableMap/TreeIterator.js",
+    "static": true,
+    "longname": "src/SearchableMap/TreeIterator.js~ENTRIES",
+    "access": "public",
+    "export": true,
+    "importPath": "minisearch/src/SearchableMap/TreeIterator.js",
+    "importStyle": "{ENTRIES}",
+    "description": null,
+    "lineNumber": 58,
+    "ignore": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 123,
+    "kind": "variable",
+    "name": "KEYS",
+    "memberof": "src/SearchableMap/TreeIterator.js",
+    "static": true,
+    "longname": "src/SearchableMap/TreeIterator.js~KEYS",
+    "access": "public",
+    "export": true,
+    "importPath": "minisearch/src/SearchableMap/TreeIterator.js",
+    "importStyle": "{KEYS}",
+    "description": null,
+    "lineNumber": 61,
+    "ignore": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 124,
+    "kind": "variable",
+    "name": "VALUES",
+    "memberof": "src/SearchableMap/TreeIterator.js",
+    "static": true,
+    "longname": "src/SearchableMap/TreeIterator.js~VALUES",
+    "access": "public",
+    "export": true,
+    "importPath": "minisearch/src/SearchableMap/TreeIterator.js",
+    "importStyle": "{VALUES}",
+    "description": null,
+    "lineNumber": 64,
+    "ignore": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 125,
+    "kind": "variable",
+    "name": "LEAF",
+    "memberof": "src/SearchableMap/TreeIterator.js",
+    "static": true,
+    "longname": "src/SearchableMap/TreeIterator.js~LEAF",
+    "access": "public",
+    "export": true,
+    "importPath": "minisearch/src/SearchableMap/TreeIterator.js",
+    "importStyle": "{LEAF}",
+    "description": null,
+    "lineNumber": 67,
+    "ignore": true,
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 126,
+    "kind": "file",
+    "name": "src/SearchableMap/fuzzySearch.js",
+    "content": "import { LEAF } from './TreeIterator.js'\n\n/**\n* @ignore\n*/\nexport const fuzzySearch = function (node, query, maxDistance) {\n  const stack = [{ distance: 0, i: 0, key: '', node }]\n  const results = {}\n  while (stack.length > 0) {\n    const { node, distance, key, i, edit } = stack.pop()\n    Object.keys(node).forEach(k => {\n      if (k === LEAF) {\n        const totDistance = distance + (query.length - i)\n        const [, d] = results[key] || [null, Infinity]\n        if (totDistance <= maxDistance && totDistance < d) {\n          results[key] = [node[k], totDistance]\n        }\n      } else {\n        withinDistance(query, k, maxDistance - distance, i, edit).forEach(({ distance: d, i, edit }) => {\n          stack.push({ node: node[k], distance: distance + d, key: key + k, i, edit })\n        })\n      }\n    })\n  }\n  return results\n}\n\n/**\n* @ignore\n*/\nexport const withinDistance = function (a, b, maxDistance, i = 0, edit = NONE) {\n  const stack = [{ distance: 0, ia: i, ib: 0, edit }]\n  const mem = []\n  const results = []\n  while (stack.length > 0) {\n    const { distance, ia, ib, edit } = stack.pop()\n    mem[ia] = mem[ia] || []\n    if (mem[ia][ib] && mem[ia][ib] <= distance) { continue }\n    mem[ia][ib] = distance\n    if (ib === b.length) {\n      results.push({ distance, i: ia, edit })\n      continue\n    }\n    if (a[ia] === b[ib]) {\n      stack.push({ distance, ia: ia + 1, ib: ib + 1, edit: NONE })\n    } else {\n      if (distance >= maxDistance) { continue }\n      if (edit !== ADD) { stack.push({ distance: distance + 1, ia, ib: ib + 1, edit: DELETE }) }\n      if (ia < a.length) {\n        if (edit !== DELETE) { stack.push({ distance: distance + 1, ia: ia + 1, ib, edit: ADD }) }\n        if (edit !== DELETE && edit !== ADD) { stack.push({ distance: distance + 1, ia: ia + 1, ib: ib + 1, edit: CHANGE }) }\n      }\n    }\n  }\n  return results\n}\n\nconst NONE = 0\nconst CHANGE = 1\nconst ADD = 2\nconst DELETE = 3\n\nexport default fuzzySearch\n",
+    "static": true,
+    "longname": "/Users/luca/Code/minisearch/src/SearchableMap/fuzzySearch.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 127,
+    "kind": "function",
+    "name": "fuzzySearch",
+    "memberof": "src/SearchableMap/fuzzySearch.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/fuzzySearch.js~fuzzySearch",
+    "access": "public",
+    "export": true,
+    "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
+    "importStyle": "{fuzzySearch}",
+    "description": "",
+    "lineNumber": 6,
+    "ignore": true,
+    "params": [
+      {
+        "name": "node",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "query",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "maxDistance",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 128,
+    "kind": "function",
+    "name": "withinDistance",
+    "memberof": "src/SearchableMap/fuzzySearch.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/SearchableMap/fuzzySearch.js~withinDistance",
+    "access": "public",
+    "export": true,
+    "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
+    "importStyle": "{withinDistance}",
+    "description": "",
+    "lineNumber": 31,
+    "ignore": true,
+    "params": [
+      {
+        "name": "a",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "b",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "maxDistance",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "i",
+        "optional": true,
+        "types": [
+          "number"
+        ],
+        "defaultRaw": 0,
+        "defaultValue": "0"
+      },
+      {
+        "name": "edit",
+        "optional": true,
+        "types": [
+          "*"
+        ],
+        "defaultRaw": "NONE",
+        "defaultValue": "NONE"
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 129,
+    "kind": "variable",
+    "name": "NONE",
+    "memberof": "src/SearchableMap/fuzzySearch.js",
+    "static": true,
+    "longname": "src/SearchableMap/fuzzySearch.js~NONE",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 58,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 130,
+    "kind": "variable",
+    "name": "CHANGE",
+    "memberof": "src/SearchableMap/fuzzySearch.js",
+    "static": true,
+    "longname": "src/SearchableMap/fuzzySearch.js~CHANGE",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 59,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 131,
+    "kind": "variable",
+    "name": "ADD",
+    "memberof": "src/SearchableMap/fuzzySearch.js",
+    "static": true,
+    "longname": "src/SearchableMap/fuzzySearch.js~ADD",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 60,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 132,
+    "kind": "variable",
+    "name": "DELETE",
+    "memberof": "src/SearchableMap/fuzzySearch.js",
+    "static": true,
+    "longname": "src/SearchableMap/fuzzySearch.js~DELETE",
+    "access": "public",
+    "export": false,
+    "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 61,
+    "undocument": true,
+    "type": {
+      "types": [
+        "number"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 133,
+    "kind": "file",
+    "name": "src/index.js",
+    "content": "import MiniSearch from './MiniSearch.js'\n\nexport default MiniSearch\n",
+    "static": true,
+    "longname": "/Users/luca/Code/minisearch/src/index.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "kind": "index",
+    "content": "# MiniSearch\n\n`MiniSearch` is a tiny but powerful embedded full-text search engine for\nJavaScript. It is respectful of resources, so it can comfortably run both in\nNode and in the browser, but it can do a lot.\n\n## Use case:\n\n`MiniSearch` addresses use cases where full-text search features are needed\n(e.g. prefix search, fuzzy search, boosting of fields), but the data to be\nindexed can fit locally in the process memory. While you won't be able to index\nthe whole Wikipedia with it, there are surprisingly many use cases that are\nserved well by `MiniSearch`. By storing the index locally, `MiniSearch` can work\noffline, and can process queries quickly, without network latency.\n\nA prominent use-case is search-as-you-type features in Web and mobile\napplications, where keeping the index on the client-side enables fast and\nreactive UI, removing the need to make requests to a search server.\n\n## Design goals:\n\n  * Memory-efficient index, able to store tens of thousands of documents and\n    terms in memory, even in the browser.\n\n  * Exact match, prefix match and fuzzy match, all with a single performant and\n    multi-purpose index data structure.\n\n  * Small and maintainable code base, well tested, with no external dependency.\n\n  * Provide good building blocks that empower developers to build solutions to\n    their specific problems, rather than try to offer a general-purpose tool to\n    satisfy every use-case at the cost of complexity.\n\n## Usage:\n\n```javascript\n// A collection of documents for our example\nconst documents = [\n  { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },\n  { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },\n  { id: 3, title: 'Neuromancer', text: 'The sky above the port was...' },\n  { id: 4, title: 'Zen and the Art of Archery', text: 'At first sight it must seem...' },\n  // ...and more\n]\n\nlet miniSearch = new MiniSearch({ fields: ['title', 'text'] })\n\n// Index all documents\nminiSearch.addAll(documents)\n\n// Search with default options\nlet results = miniSearch.search('zen art motorcycle')\n// => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]\n\n// Search only specific fields\nresults = miniSearch.search('zen', { fields: ['title'] })\n\n// Boost fields\nresults = miniSearch.search('zen', { boost: { title: 2 } })\n\n// Prefix search\nresults = miniSearch.search('moto', {\n  termToQuery: term => ({ term, prefix: true })\n})\n\n// Fuzzy search (in this example, with a max edit distance of 0.2 * term length,\n// rounded to nearest integer)\nresults = miniSearch.search('ismael', {\n  termToQuery: term => ({ term, fuzzy: 0.2 })\n})\n\n// Set default search options upon initialization\nminiSearch = new MiniSearch({\n  fields: ['title', 'text'],\n  searchOptions: {\n    boost: { title: 2 },\n    termToQuery: term => ({ term, fuzzy: 0.2 })\n  }\n})\n\nresults = ms2.search('zen and motorcycles') // Will default to fuzzy search\n```\n",
+    "longname": "/Users/luca/Code/minisearch/README.md",
+    "name": "./README.md",
+    "static": true,
+    "access": "public"
+  },
+  {
+    "kind": "packageJSON",
+    "content": "{\n  \"name\": \"minisearch\",\n  \"version\": \"0.1.3\",\n  \"description\": \"fun with fulltext search\",\n  \"main\": \"dist/minisearch.js\",\n  \"author\": \"Luca Ongaro\",\n  \"keywords\": [\n    \"search\",\n    \"full-text\",\n    \"fuzzy\",\n    \"prefix\",\n    \"index\"\n  ],\n  \"license\": \"MIT\",\n  \"dependencies\": {},\n  \"devDependencies\": {\n    \"@babel/cli\": \"^7.0.0\",\n    \"@babel/core\": \"^7.0.1\",\n    \"@babel/preset-env\": \"^7.0.0\",\n    \"babel-core\": \"^7.0.0-0\",\n    \"babel-jest\": \"^23.6.0\",\n    \"babel-loader\": \"^8.0.2\",\n    \"benchmark\": \"^2.1.4\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-ecmascript-proposal-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"fast-check\": \"^1.5.0\",\n    \"jest\": \"^23.6.0\",\n    \"regenerator-runtime\": \"^0.12.1\",\n    \"snazzy\": \"^8.0.0\",\n    \"standard\": \"^12.0.1\",\n    \"webpack\": \"^4.16.5\",\n    \"webpack-cli\": \"^3.1.0\"\n  },\n  \"jest\": {\n    \"testURL\": \"http://localhost:3000/\",\n    \"setupTestFrameworkScriptFile\": \"<rootDir>/src/testSetup/jest.js\"\n  },\n  \"scripts\": {\n    \"test\": \"jest\",\n    \"test-watch\": \"jest --watch\",\n    \"benchmark\": \"webpack src/benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js\",\n    \"build\": \"webpack --mode=production\",\n    \"build-docs\": \"esdoc\",\n    \"lint\": \"standard --verbose 'app/**/*.{js,jsx}' | snazzy\",\n    \"lintfix\": \"standard --fix 'app/**/*.{js,jsx}'\",\n    \"prepublishOnly\": \"yarn build\"\n  }\n}\n",
+    "longname": "/Users/luca/Code/minisearch/package.json",
+    "name": "package.json",
+    "static": true,
+    "access": "public"
+  }
+]

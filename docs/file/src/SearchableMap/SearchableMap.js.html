@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">src/SearchableMap/SearchableMap.js | minisearch</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="fun with fulltext search"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="minisearch"><meta property="twitter:description" content="fun with fulltext search"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html">MiniSearch</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#searchablemap">SearchableMap</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/SearchableMap/SearchableMap.js~SearchableMap.html">SearchableMap</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/SearchableMap/SearchableMap.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import { TreeIterator, ENTRIES, KEYS, VALUES, LEAF } from &apos;./TreeIterator.js&apos;
+import fuzzySearch from &apos;./fuzzySearch.js&apos;
+
+/**
+* A class implementing the same interface as a standard JavaScript `Map` with
+* string keys, but adding support for efficiently searching entries with prefix
+* or fuzzy search. This is the class internally used by `MiniSearch` as the
+* inverted index data structure. The implementation is a radix tree (compressed
+* prefix tree).
+*
+* @implements {Map}
+*/
+class SearchableMap {
+  constructor (tree = {}, prefix = &apos;&apos;) {
+    /** @private */
+    this._tree = tree
+    /** @private */
+    this._prefix = prefix
+  }
+
+  /**
+  * Creates and returns a mutable view of this `SearchableMap`, containing only
+  * entries that share the given prefix.
+  *
+  * @example
+  * let map = new SearchableMap()
+  * map.set(&quot;unicorn&quot;, 1)
+  * map.set(&quot;universe&quot;, 2)
+  * map.set(&quot;university&quot;, 3)
+  * map.set(&quot;unique&quot;, 4)
+  * map.set(&quot;hello&quot;, 5)
+  *
+  * let uni = map.atPrefix(&quot;uni&quot;)
+  * uni.get(&quot;unique&quot;) // =&gt; 4
+  * uni.get(&quot;unicorn&quot;) // =&gt; 1
+  * uni.get(&quot;hello&quot;) // =&gt; undefined
+  *
+  * let univer = map.atPrefix(&quot;univer&quot;)
+  * uni.get(&quot;unique&quot;) // =&gt; undefined
+  * uni.get(&quot;universe&quot;) // =&gt; 2
+  * uni.get(&quot;university&quot;) // =&gt; 3
+  *
+  * @param {string} prefix - The prefix
+  * @return {SearchableMap} A `SearchableMap` representing a mutable view of the original Map at the given prefix
+  */
+  atPrefix (prefix) {
+    if (!prefix.startsWith(this._prefix)) { throw new Error(&apos;Mismatched prefix&apos;) }
+    const [node, path] = trackDown(this._tree, prefix.slice(this._prefix.length))
+    if (node === undefined) {
+      const [parentNode, key] = last(path)
+      const nodeKey = Object.keys(parentNode).find(k =&gt; k !== LEAF &amp;&amp; k.startsWith(key))
+      if (nodeKey !== undefined) {
+        return new SearchableMap({ [nodeKey.slice(key.length)]: parentNode[nodeKey] }, prefix)
+      }
+    }
+    return new SearchableMap(node || {}, prefix)
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear
+  * @return {undefined}
+  */
+  clear () {
+    delete this._size
+    this._tree = {}
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete
+  * @param {string} key
+  * @return {undefined}
+  */
+  delete (key) {
+    delete this._size
+    return remove(this._tree, key)
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/entries
+  * @return {Iterator}
+  */
+  entries () {
+    return new TreeIterator(this, ENTRIES)
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach
+  * @param {function(key: string, value: any): any} fn
+  * @return {undefined}
+  */
+  forEach (fn) {
+    for (let [key, value] of this) {
+      fn(key, value, this)
+    }
+  }
+
+  /**
+  * Returns a key-value object of all the entries that have a key within the
+  * given edit distance from the search key. The keys of the returned object are
+  * the matching keys, while the values are two-elements arrays where the first
+  * element is the value associated to the key, and the second is the edit
+  * distance of the key to the search key.
+  *
+  * @example
+  * let map = new SearchableMap()
+  * map.set(&apos;hello&apos;, &apos;world&apos;)
+  * map.set(&apos;hell&apos;, &apos;yeah&apos;)
+  * map.set(&apos;ciao&apos;, &apos;mondo&apos;)
+  *
+  * // Get all entries that match the key &apos;hallo&apos; with a maximum edit distance of 2
+  * map.fuzzyGet(&apos;hallo&apos;, 2)
+  * // =&gt; { &quot;hello&quot;: [&quot;world&quot;, 1], &quot;hell&quot;: [&quot;yeah&quot;, 2] }
+  *
+  * // In the example, the &quot;hello&quot; key has value &quot;world&quot; and edit distance of 1
+  * // (change &quot;e&quot; to &quot;a&quot;), the key &quot;hell&quot; has value &quot;yeah&quot; and edit distance of 2
+  * // (change &quot;e&quot; to &quot;a&quot;, delete &quot;o&quot;)
+  *
+  * @param {string} key - The search key
+  * @param {number} maxEditDistance - The maximum edit distance
+  * @return {Object&lt;string, Array&gt;} A key-value object of the matching keys to their value and edit distance
+  */
+  fuzzyGet (key, maxEditDistance) {
+    return fuzzySearch(this._tree, key, maxEditDistance)
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/get
+  * @param {string} key
+  * @return {any}
+  */
+  get (key) {
+    const node = lookup(this._tree, key)
+    return node !== undefined ? node[LEAF] : undefined
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/has
+  * @param {string} key
+  * @return {boolean}
+  */
+  has (key) {
+    const node = lookup(this._tree, key)
+    return node !== undefined &amp;&amp; node.hasOwnProperty(LEAF)
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/keys
+  * @return {Iterator}
+  */
+  keys () {
+    return new TreeIterator(this, KEYS)
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set
+  * @param {string} key
+  * @param {any} value
+  * @return {SearchableMap} The `SearchableMap` itself, to allow chaining
+  */
+  set (key, value) {
+    if (typeof key !== &apos;string&apos;) { throw new Error(&apos;key must be a string&apos;) }
+    delete this._size
+    const node = createPath(this._tree, key)
+    node[LEAF] = value
+    return this
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/size
+  * @type {number}
+  */
+  get size () {
+    if (this._size) { return this._size }
+    /** @ignore */
+    this._size = 0
+    this.forEach(() =&gt; { this._size += 1 })
+    return this._size
+  }
+
+  /**
+  * Updates the value at the given key using the provided function. The function
+  * is called with the current value at the key, and its return value is used as
+  * the new value to be set.
+  *
+  * @example
+  * // Increment the current value by one
+  * searchableMap.update(&apos;somekey&apos;, (currentValue) =&gt; currentValue == null ? 0 : currentValue + 1)
+  *
+  * @param {string} key - The key
+  * @param {function(currentValue: any): any} fn - The function used to compute the new value from the current one
+  * @return {SearchableMap} The `SearchableMap` itself, to allow chaining
+  */
+  update (key, fn) {
+    if (typeof key !== &apos;string&apos;) { throw new Error(&apos;key must be a string&apos;) }
+    delete this._size
+    const node = createPath(this._tree, key)
+    node[LEAF] = fn(node[LEAF])
+    return this
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/values
+  * @return {Iterator}
+  */
+  values () {
+    return new TreeIterator(this, VALUES)
+  }
+
+  /**
+  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/@@iterator
+  * @return {Iterator}
+  */
+  [Symbol.iterator] () {
+    return this.entries()
+  }
+}
+
+/**
+* Creates a `SearchableMap` from an `Iterable` of entries
+*
+* @param {Iterable|Array} entries - Entries to be inserted in the `SearchableMap`
+* @return {SearchableMap} A new `SearchableMap` with the given entries
+**/
+SearchableMap.from = function (entries) {
+  const tree = new SearchableMap()
+  for (let [key, value] of entries) {
+    tree.set(key, value)
+  }
+  return tree
+}
+
+/**
+* Creates a `SearchableMap` from the iterable properties of a JavaScript object
+*
+* @param {Object} object - Object of entries for the `SearchableMap`
+* @return {SearchableMap} A new `SearchableMap` with the given entries
+**/
+SearchableMap.fromObject = function (object) {
+  return SearchableMap.from(Object.entries(object))
+}
+
+const trackDown = function (tree, key, path = []) {
+  if (key.length === 0) { return [tree, path] }
+  const nodeKey = Object.keys(tree).find(k =&gt; k !== LEAF &amp;&amp; key.startsWith(k))
+  if (nodeKey === undefined) { return trackDown(undefined, &apos;&apos;, [...path, [tree, key]]) }
+  return trackDown(tree[nodeKey], key.slice(nodeKey.length), [...path, [tree, nodeKey]])
+}
+
+const lookup = function (tree, key) {
+  if (key.length === 0) { return tree }
+  const nodeKey = Object.keys(tree).find(k =&gt; k !== LEAF &amp;&amp; key.startsWith(k))
+  if (nodeKey === undefined) { return undefined }
+  return lookup(tree[nodeKey], key.slice(nodeKey.length))
+}
+
+const createPath = function (tree, key) {
+  if (key.length === 0) { return tree }
+  const nodeKey = Object.keys(tree).find(k =&gt; k !== LEAF &amp;&amp; key.startsWith(k))
+  if (nodeKey === undefined) {
+    const toSplit = Object.keys(tree).find(k =&gt; k !== LEAF &amp;&amp; k.startsWith(key[0]))
+    if (toSplit === undefined) {
+      tree[key] = {}
+    } else {
+      const prefix = commonPrefix(key, toSplit)
+      tree[prefix] = { [toSplit.slice(prefix.length)]: tree[toSplit] }
+      delete tree[toSplit]
+      return createPath(tree[prefix], key.slice(prefix.length))
+    }
+    return tree[key]
+  }
+  return createPath(tree[nodeKey], key.slice(nodeKey.length))
+}
+
+const commonPrefix = function (a, b, i = 0, length = Math.min(a.length, b.length), prefix = &apos;&apos;) {
+  if (i &gt;= length) { return prefix }
+  if (a[i] !== b[i]) { return prefix }
+  return commonPrefix(a, b, i + 1, length, prefix + a[i])
+}
+
+const remove = function (tree, key) {
+  const [node, path] = trackDown(tree, key)
+  if (node === undefined) { return }
+  delete node[LEAF]
+  const keys = Object.keys(node)
+  if (keys.length === 0) { cleanup(path) }
+  if (keys.length === 1) { merge(path, keys[0], node[keys[0]]) }
+}
+
+const cleanup = function (path) {
+  if (path.length === 0) { return }
+  const [node, key] = last(path)
+  delete node[key]
+  if (Object.keys(node).length === 0) {
+    cleanup(path.slice(0, -1))
+  }
+}
+
+const merge = function (path, key, value) {
+  if (path.length === 0) { return }
+  const [node, nodeKey] = last(path)
+  node[nodeKey + key] = value
+  delete node[nodeKey]
+}
+
+const last = function (array) {
+  return array[array.length - 1]
+}
+
+export default SearchableMap
+export { SearchableMap }
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

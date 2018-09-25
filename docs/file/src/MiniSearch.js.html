@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/MiniSearch.js | minisearch</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="fun with fulltext search"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="minisearch"><meta property="twitter:description" content="fun with fulltext search"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html">MiniSearch</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#searchablemap">SearchableMap</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/SearchableMap/SearchableMap.js~SearchableMap.html">SearchableMap</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/MiniSearch.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import SearchableMap from &apos;./SearchableMap/SearchableMap.js&apos;
+
+const OR = &apos;or&apos;
+const AND = &apos;and&apos;
+
+/**
+* MiniSearch is the main entrypoint class, and represents a full-text search
+* engine.
+*
+* @example
+* // Create a search engine that indexes the &apos;title&apos; and &apos;text&apos; fields of your
+* // documents:
+* const miniSearch = MiniSearch.new({ fields: [&apos;title&apos;, &apos;text&apos;] })
+*
+* // Add documents to the index
+* const documents = [
+*   { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
+*   { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, text: &apos;I can see by my watch...&apos; },
+*   { id: 3, title: &apos;Neuromancer&apos;, text: &apos;The sky above the port was...&apos; },
+*   { id: 4, title: &apos;Zen and the Art of Archery&apos;, text: &apos;At first sight it must seem...&apos; },
+*   // ...and more
+* ]
+*
+* documents.forEach(document =&gt; miniSearch.add(document))
+*
+* // Or, equivalently:
+* miniSearch.addAll(documents)
+*
+* // Search for documents:
+* let results = miniSearch.search(&apos;zen art motorcycle&apos;)
+* // =&gt; [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]
+* */
+class MiniSearch {
+  /**
+  * @param {Object} options - Configuration options
+  * @param {Array&lt;string&gt;} options.fields - Fields to be indexed. Required.
+  * @param {string} [options.idField=&apos;id&apos;] - ID field, uniquely identifying a document
+  * @param {function(text: string): Array&lt;string&gt;} [options.tokenize] - Function used to split a field into individual terms
+  * @param {function(term: string): string} [options.processTerm] - Function used to process a term before indexing it or searching
+  * @param {?Object} options.searchOptions - Default search options (see search method for details)
+  *
+  * @example
+  * // Create a search engine that indexes the &apos;title&apos; and &apos;text&apos; fields of your
+  * // documents:
+  * const miniSearch = MiniSearch.new({ fields: [&apos;title&apos;, &apos;text&apos;] })
+  *
+  * @example
+  * // Your documents are assumed to include a unique &apos;id&apos; field, but if you want
+  * // to use a different field for document identification, you can set the
+  * // &apos;idField&apos; option:
+  * const miniSearch = MiniSearch.new({ idField: &apos;key&apos;, fields: [&apos;title&apos;, &apos;text&apos;] })
+  *
+  * @example
+  * // The full set of options (here with their default value) is:
+  * const miniSearch = MiniSearch.new({
+  *   // idField: field that uniquely identifies a document
+  *   idField: &apos;id&apos;,
+  *
+  *   // tokenize: function used to split fields and queries into individual
+  *   // terms
+  *   tokenize: string =&gt; string.split(/\W+/).filter(term =&gt; term.length &gt; 1),
+  *
+  *   // processTerm: function used to process document and query terms before
+  *   // indexing or searching. It can be used for stemming and normalization.
+  *   processTerm: term =&gt; term.toLowerCase()
+  *
+  *   // searchOptions: default search options, see `search` method for details
+  *   searchOptions: undefined
+  *
+  *   // fields: document fields to be indexed. Mandatory, but not set by default
+  *   fields: undefined,
+  * })
+  */
+  constructor (options = {}) {
+    /** @private */
+    this._options = { ...defaultOptions, ...options }
+
+    this._options.searchOptions = { ...defaultSearchOptions, ...(this._options.searchOptions || {}) }
+    const { fields } = this._options
+
+    if (fields == null) {
+      throw new Error(&apos;Option &quot;fields&quot; must be provided&apos;)
+    }
+
+    /** @private */
+    this._index = new SearchableMap()
+
+    /** @private */
+    this._documentCount = 0
+
+    /** @private */
+    this._documentIds = {}
+
+    /** @private */
+    this._fieldIds = {}
+
+    addFields(this, fields)
+  }
+
+  /**
+  * Adds a document to the index
+  * @param {Object} document - the document to be indexed
+  */
+  add (document) {
+    const { tokenize, processTerm, fields, idField } = this._options
+    if (document[idField] == null) {
+      throw new Error(`Document does not have ID field &quot;${idField}&quot;`)
+    }
+    const shortDocumentId = addDocumentId(this, document[idField])
+    fields.filter(field =&gt; document[field] != null).forEach(field =&gt; {
+      tokenize(document[field]).forEach(term =&gt; {
+        addTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
+      })
+    })
+  }
+
+  /**
+  * Adds all the given documents to the index
+  * @param {Object[]} documents - an array of documents to be indexed
+  */
+  addAll (documents) {
+    documents.forEach(document =&gt; this.add(document))
+  }
+
+  /**
+  * Search for documents matching the query
+  * @param {string} queryString - Query string to search for
+  * @param {Object} [options] - Search options
+  * @param {Array&lt;string&gt;} [options.fields] - Fields to search in. If omitted, all fields are searched
+  * @param {Object&lt;string, number&gt;} [options.boost] - Key-value object of boosting values for fields
+  * @param {function(term: string): {term: !string, prefix: ?boolean, fuzzy: ?number}} [options.termToQuery] - Function specifying how a term is turned into a query (whether to perform fuzzy search, prefix search, etc.)
+  * @param {string} [options.combineWith=&apos;OR&apos;] - How to combine term queries (it can be &apos;OR&apos; or &apos;AND&apos;)
+  * @return {Array&lt;{ id: any, score: number }&gt;} A sorted array of scored document IDs matching the search
+  *
+  * @example
+  * // Search for &quot;zen art motorcycle&quot; with default options: terms have to match
+  * // exactly, and individual terms are joined with OR
+  * miniSearch.search(&apos;zen art motorcycle&apos;)
+  * // =&gt; [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]
+  *
+  * @example
+  * // Search only in the &apos;title&apos; field
+  * miniSearch.search(&apos;zen&apos;, { fields: [&apos;title&apos;] })
+  *
+  * @example
+  * // Boost a field
+  * miniSearch.search(&apos;zen&apos;, { boost: { title: 2 } })
+  *
+  * @example
+  * // Search for &quot;moto&quot; with prefix search (it will match documents
+  * // containing terms that start with &quot;moto&quot; or &quot;neuro&quot;)
+  * miniSearch.search(&apos;moto neuro&apos;, {
+  *   termToQuery: term =&gt; ({ term, prefix: true })
+  * })
+  *
+  * @example
+  * // Search for &quot;ismael&quot; with fuzzy search (it will match documents containing
+  * // terms similar to &quot;ismael&quot;, with a maximum edit distance of 0.2 term.length
+  * // (rounded to nearest integer)
+  * miniSearch.search(&apos;ismael&apos;, {
+  *   termToQuery: term =&gt; ({ term, fuzzy: 0.2 })
+  * })
+  *
+  * @example
+  * // Mix of exact match, prefix search, and fuzzy search
+  * miniSearch.search(&apos;ismael mob&apos;, {
+  *   termToQuery: term =&gt; ({ term, prefix: true, fuzzy: 0.2 })
+  * })
+  *
+  * @example
+  * // Combine search terms with AND (to match only documents that contain both
+  * // &quot;motorcycle&quot; and &quot;art&quot;)
+  * miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })
+  */
+  search (queryString, options = {}) {
+    const { tokenize, processTerm, searchOptions } = this._options
+    options = { ...searchOptions, ...options }
+    const queries = tokenize(queryString).map(processTerm).map(options.termToQuery)
+    const results = queries.map(query =&gt; this.executeQuery(query, options))
+    const combinedResults = this.combineResults(results, options.combineWith)
+
+    return Object.entries(combinedResults)
+      .map(([shortDocumentId, score]) =&gt; ({ id: this._documentIds[shortDocumentId], score }))
+      .sort(({ score: a }, { score: b }) =&gt; a &lt; b ? 1 : -1)
+  }
+
+  /**
+  * Number of documents in the index
+  *
+  * @type {number}
+  */
+  get documentCount () {
+    return this._documentCount
+  }
+
+  /**
+  * @private
+  * @ignore
+  */
+  executeQuery (query, options = {}) {
+    options = { ...this._options.defaultSearchOptions, ...options }
+    const fields = options.fields || this._options.fields
+    if (!query.fuzzy &amp;&amp; !query.prefix) {
+      return termResults(this, fields, this._index.get(query.term), options.boost)
+    }
+    const results = []
+    if (query.fuzzy) {
+      const maxDistance = query.fuzzy &lt; 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
+      Object.values(this._index.fuzzyGet(query.term, maxDistance)).forEach(([data, distance]) =&gt; {
+        if (query.prefix &amp;&amp; distance === 0) { return }
+        results.push(termResults(this, fields, data, options.boost, distance))
+      })
+    }
+    if (query.prefix) {
+      this._index.atPrefix(query.term).forEach((term, data) =&gt; {
+        results.push(termResults(this, fields, data, options.boost, term.length - query.term.length))
+      })
+    }
+    return results.reduce(combinators[OR], {})
+  }
+
+  /**
+  * @private
+  * @ignore
+  */
+  combineResults (results, combineWith = OR) {
+    if (results.length === 0) { return {} }
+    const operator = combineWith.toLowerCase()
+    return results.reduce(combinators[operator], null)
+  }
+
+  /**
+  * Serializes the index to JSON, to allow storing it and later deserializing
+  * with MiniSearch.fromJSON
+  * @return {string} the JSON-serialized index
+  */
+  toJSON () {
+    return {
+      index: this._index,
+      documentCount: this._documentCount,
+      documentIds: this._documentIds,
+      fieldIds: this._fieldIds
+    }
+  }
+
+  /**
+  * @private
+  * @ignore
+  */
+  toJS () {
+    this.toJSON()
+  }
+}
+
+/**
+* Deserializes a JSON index (serialized with `miniSearch.toJSON()`) and
+* instantiates a MiniSearch instance. It should be given the same options
+* originally used when serializing the index.
+* @param {string} json - JSON-serialized index
+* @param {Object} options - configuration options, same as the constructor
+* @return {MiniSearch} an instance of MiniSearch
+*/
+MiniSearch.loadJSON = function (json, options = {}) {
+  return MiniSearch.loadJS(JSON.parse(json), options)
+}
+
+/**
+* @private
+*/
+MiniSearch.loadJS = function (js, options = {}) {
+  const { index: { _tree, _prefix }, documentCount, documentIds, fieldIds } = js
+  const miniSearch = new MiniSearch(options)
+  miniSearch._index = new SearchableMap(_tree, _prefix)
+  miniSearch._documentCount = documentCount
+  miniSearch._documentIds = documentIds
+  miniSearch._fieldIds = fieldIds
+  return miniSearch
+}
+
+MiniSearch.SearchableMap = SearchableMap
+
+const addTerm = function (self, fieldId, documentId, term) {
+  self._index.update(term, indexData =&gt; {
+    indexData = indexData || {}
+    const fieldIndex = indexData[fieldId] || { df: 0, ds: {} }
+    if (fieldIndex.ds[documentId] == null) { fieldIndex.df += 1 }
+    fieldIndex.ds[documentId] = (fieldIndex.ds[documentId] || 0) + 1
+    return { ...indexData, [fieldId]: fieldIndex }
+  })
+}
+
+const addDocumentId = function (self, documentId) {
+  const shortDocumentId = self._documentCount
+  self._documentIds[shortDocumentId] = documentId
+  self._documentCount += 1
+  return shortDocumentId
+}
+
+const addFields = function (self, fields) {
+  fields.forEach((field, i) =&gt; { self._fieldIds[field] = i })
+}
+
+const termResults = function (self, fields, indexData, boosts, distance = 0) {
+  if (indexData == null) { return {} }
+  return fields.reduce((scores, field) =&gt; {
+    const { df, ds } = indexData[self._fieldIds[field]] || { ds: {} }
+    Object.entries(ds).forEach(([documentId, tf]) =&gt; {
+      const boost = ((boosts || {})[field] || 1) * (1 / (1 + (0.2 * distance)))
+      scores[documentId] = (scores[documentId] || 0) + (boost * tfIdf(tf, df, self._documentCount))
+    })
+    return scores
+  }, {})
+}
+
+const combinators = {
+  [OR]: function (a, b) {
+    return Object.entries(b).reduce((combined, [documentId, score]) =&gt; {
+      combined[documentId] = (combined[documentId] || 0) + score
+      return combined
+    }, a || {})
+  },
+  [AND]: function (a, b) {
+    if (a == null) { return b }
+    return Object.entries(b).reduce((combined, [documentId, score]) =&gt; {
+      if (a[documentId] === undefined) { return combined }
+      combined[documentId] = Math.min(a[documentId], score)
+      return combined
+    }, {})
+  }
+}
+
+const tfIdf = function (tf, df, n) {
+  return tf * Math.log(n / df)
+}
+
+const defaultOptions = {
+  idField: &apos;id&apos;,
+  tokenize: string =&gt; string.split(/\W+/).filter(term =&gt; term.length &gt; 1),
+  processTerm: term =&gt; term.toLowerCase()
+}
+
+const defaultSearchOptions = {
+  termToQuery: term =&gt; ({ term }),
+  combineWith: OR
+}
+
+export default MiniSearch
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
