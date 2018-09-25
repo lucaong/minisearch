@@ -3,6 +3,7 @@
   "destination": "./docs",
   "includes": ["\\.js$"],
   "excludes": ["benchmark", "testSetup", "\\.test\\.js$"],
+  "outputAST": false,
   "plugins": [
     {
       "name": "esdoc-standard-plugin",
