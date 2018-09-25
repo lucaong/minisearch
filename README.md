@@ -31,7 +31,24 @@ reactive UI, removing the need to make requests to a search server.
     their specific problems, rather than try to offer a general-purpose tool to
     satisfy every use-case at the cost of complexity.
 
+## Installation:
+
+With `npm`:
+
+```
+npm install --save minisearch
+```
+
+With `yarn`:
+
+```
+yarn add minisearch
+```
+
 ## Usage:
+
+[API documentation](https://lucaong.github.io/minisearch/identifiers.html) is
+available, but here are some quick examples:
 
 ```javascript
 // A collection of documents for our example
@@ -77,6 +94,8 @@ miniSearch = new MiniSearch({
     termToQuery: term => ({ term, fuzzy: 0.2 })
   }
 })
+miniSearch.addAll(documents)
 
-results = ms2.search('zen and motorcycles') // Will default to fuzzy search
+// Will now by default perform fuzzy search and boost "title":
+results = miniSearch.search('zen and motorcycles')
 ```

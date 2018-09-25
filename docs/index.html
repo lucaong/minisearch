@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl">
-  <title data-ice="title">Home | minisearch</title>
+  <title data-ice="title">Home | MiniSearch</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="fun with fulltext search"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="minisearch"><meta property="twitter:description" content="fun with fulltext search"></head>
+<meta name="description" content="Tiny but powerful full-text search"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="MiniSearch"><meta property="twitter:description" content="Tiny but powerful full-text search"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -24,7 +24,7 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-</header>
+<a style="position:relative; top:3px;" href="https://github.com/lucaong/minisearch"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
@@ -61,7 +61,13 @@ their specific problems, rather than try to offer a general-purpose tool to
 satisfy every use-case at the cost of complexity.</p>
 </li>
 </ul>
-<h2 id="usage-">Usage:</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our example
+<h2 id="installation-">Installation:</h2><p>With <code>npm</code>:</p>
+<pre><code><code class="source-code prettyprint">npm install --save minisearch</code>
+</code></pre><p>With <code>yarn</code>:</p>
+<pre><code><code class="source-code prettyprint">yarn add minisearch</code>
+</code></pre><h2 id="usage-">Usage:</h2><p><a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a> is
+available, but here are some quick examples:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our example
 const documents = [
   { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
   { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, text: &apos;I can see by my watch...&apos; },
@@ -104,8 +110,10 @@ miniSearch = new MiniSearch({
     termToQuery: term =&gt; ({ term, fuzzy: 0.2 })
   }
 })
+miniSearch.addAll(documents)
 
-results = ms2.search(&apos;zen and motorcycles&apos;) // Will default to fuzzy search</code>
+// Will now by default perform fuzzy search and boost &quot;title&quot;:
+results = miniSearch.search(&apos;zen and motorcycles&apos;)</code>
 </code></pre>
 </div>
 </div>

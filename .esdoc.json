@@ -9,7 +9,14 @@
       "name": "esdoc-standard-plugin",
       "option": {
         "accessor": { "access": ["public"], "autoPrivate": true },
-        "coverage": { "enable": false }
+        "coverage": { "enable": false },
+        "brand": {
+          "title": "MiniSearch",
+          "description": "Tiny but powerful full-text search",
+          "site": "https://lucaong.github.io/minisearch/",
+          "repository": "https://github.com/lucaong/minisearch",
+          "author": "Luca Ongaro"
+        }
       }
     },
     {
