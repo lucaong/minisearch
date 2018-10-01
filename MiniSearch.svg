@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 180 170" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g transform="matrix(0.707107,-0.707107,0.707107,0.707107,94.3173,174.957)">
+        <text x="0px" y="0px" style="font-family:'AppleSymbols', 'Apple Symbols';font-size:180px;fill:rgb(255,50,255);fill-opacity:0.498039;">⚲</text>
+    </g>
+    <g transform="matrix(0.707107,-0.707107,0.707107,0.707107,94.3173,189.099)">
+        <text x="0px" y="0px" style="font-family:'AppleSymbols', 'Apple Symbols';font-size:180px;fill:rgb(0,50,255);fill-opacity:0.498039;">⚲</text>
+    </g>
+    <g transform="matrix(0.707107,-0.707107,0.707107,0.707107,108.459,189.099)">
+        <text x="0px" y="0px" style="font-family:'AppleSymbols', 'Apple Symbols';font-size:180px;fill:rgb(0,255,50);fill-opacity:0.498039;">⚲</text>
+    </g>
+    <g transform="matrix(0.707107,-0.707107,0.707107,0.707107,108.459,174.957)">
+        <text x="0px" y="0px" style="font-family:'AppleSymbols', 'Apple Symbols';font-size:180px;fill:rgb(50,255,0);fill-opacity:0.498039;">⚲</text>
+    </g>
+    <g transform="matrix(0.707107,-0.707107,0.707107,0.707107,87.2462,182.028)">
+        <text x="0px" y="0px" style="font-family:'AppleSymbols', 'Apple Symbols';font-size:180px;fill:rgb(255,0,50);fill-opacity:0.498039;">⚲</text>
+    </g>
+    <g transform="matrix(0.707107,-0.707107,0.707107,0.707107,115.53,182.028)">
+        <text x="0px" y="0px" style="font-family:'AppleSymbols', 'Apple Symbols';font-size:180px;fill:rgb(255,50,0);fill-opacity:0.498039;">⚲</text>
+    </g>
+    <g transform="matrix(0.707107,-0.707107,0.707107,0.707107,101.388,182.028)">
+        <clipPath id="_clip1">
+            <path d="M66.094,0L56.074,0.088L56.074,-45.264C49.277,-46.67 44.019,-48.325 40.298,-50.229C36.577,-52.134 33.018,-54.99 29.619,-58.799C22.295,-67.002 18.633,-76.348 18.633,-86.836C18.633,-98.73 22.749,-108.823 30.981,-117.114C39.214,-125.405 49.219,-129.551 60.996,-129.551C72.598,-129.551 82.529,-125.42 90.791,-117.158C99.053,-108.896 103.184,-98.936 103.184,-87.275C103.184,-76.904 99.99,-67.822 93.604,-60.029C90.264,-55.928 86.66,-52.852 82.793,-50.801C78.926,-48.75 73.389,-46.934 66.182,-45.352L66.094,0ZM61.26,-118.652C52.471,-118.652 44.985,-115.576 38.804,-109.424C32.622,-103.271 29.531,-95.859 29.531,-87.188C29.531,-78.398 32.549,-71.001 38.584,-64.995C44.619,-58.989 52.031,-55.986 60.82,-55.986C69.551,-55.986 76.963,-58.989 83.057,-64.995C89.15,-71.001 92.197,-78.34 92.197,-87.012C92.197,-95.859 89.209,-103.345 83.232,-109.468C77.256,-115.591 69.932,-118.652 61.26,-118.652Z" clip-rule="nonzero"/>
+        </clipPath>
+        <g clip-path="url(#_clip1)">
+            <g transform="matrix(0.707107,0.707107,-0.707107,0.707107,57.0208,-200.406)">
+                <use xlink:href="#_Image2" x="40.618" y="35.163" width="107.641px" height="107.454px" transform="matrix(0.996674,0,0,0.994944,0,0)"/>
+            </g>
+        </g>
+    </g>
+    <defs>
+        <image id="_Image2" width="108px" height="108px" xlink:href="data:image/png;base64,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"/>
+    </defs>
+</svg>

@@ -1,6 +1,6 @@
 # MiniSearch
 
-`MiniSearch` is a tiny but powerful embedded full-text search engine for
+`MiniSearch` is a tiny but powerful in-memory full-text search engine for
 JavaScript. It is respectful of resources, so it can comfortably run both in
 Node and in the browser, but it can do a lot.
 
@@ -8,12 +8,12 @@ Node and in the browser, but it can do a lot.
 
 `MiniSearch` addresses use cases where full-text search features are needed
 (e.g. prefix search, fuzzy search, boosting of fields), but the data to be
-indexed can fit locally in the process memory. While you won't be able to index
-the whole Wikipedia with it, there are surprisingly many use cases that are
-served well by `MiniSearch`. By storing the index locally, `MiniSearch` can work
+indexed can fit locally in the process memory. While you may not index the whole
+Wikipedia with it, there are surprisingly many use cases that are served well by
+`MiniSearch`. By storing the index in local memory, `MiniSearch` can work
 offline, and can process queries quickly, without network latency.
 
-A prominent use-case is search-as-you-type features in Web and mobile
+A prominent use-case is search-as-you-type features in web and mobile
 applications, where keeping the index on the client-side enables fast and
 reactive UI, removing the need to make requests to a search server.
 
