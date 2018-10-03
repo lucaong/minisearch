@@ -67,7 +67,7 @@ miniSearch.addAll(documents)
 
 // Search with default options
 let results = miniSearch.search('zen art motorcycle')
-// => [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, { ... } } ]
+// => [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]
 
 // Search only specific fields
 results = miniSearch.search('zen', { fields: ['title'] })
