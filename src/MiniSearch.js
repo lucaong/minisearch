@@ -120,20 +120,25 @@ class MiniSearch {
   }
 
   /**
-  * Search for documents matching the query
+  * Search for documents matching the given search query.
+  *
+  * The result is a list of scored document IDs matching the query, sorted by
+  * descending score, and each including data about which terms were matched and
+  * in which fields.
+  *
   * @param {string} queryString - Query string to search for
   * @param {Object} [options] - Search options
   * @param {Array<string>} [options.fields] - Fields to search in. If omitted, all fields are searched
   * @param {Object<string, number>} [options.boost] - Key-value object of boosting values for fields
   * @param {function(term: string): {term: !string, prefix: ?boolean, fuzzy: ?number}} [options.termToQuery] - Function specifying how a term is turned into a query (whether to perform fuzzy search, prefix search, etc.)
   * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')
-  * @return {Array<{ id: any, score: number }>} A sorted array of scored document IDs matching the search
+  * @return {Array<{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
   *
   * @example
   * // Search for "zen art motorcycle" with default options: terms have to match
   * // exactly, and individual terms are joined with OR
   * miniSearch.search('zen art motorcycle')
-  * // => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]
+  * // => [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]
   *
   * @example
   * // Search only in the 'title' field
@@ -177,7 +182,7 @@ class MiniSearch {
     const combinedResults = this.combineResults(results, options.combineWith)
 
     return Object.entries(combinedResults)
-      .map(([shortDocumentId, score]) => ({ id: this._documentIds[shortDocumentId], score }))
+      .map(([shortDocumentId, { score, match }]) => ({ id: this._documentIds[shortDocumentId], score, match }))
       .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
   }
 
@@ -199,18 +204,18 @@ class MiniSearch {
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
       ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
     if (!query.fuzzy && !query.prefix) {
-      return termResults(this, boosts, this._index.get(query.term))
+      return termResults(this, query.term, boosts, this._index.get(query.term))
     }
     const results = []
     if (query.fuzzy) {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
-      Object.values(this._index.fuzzyGet(query.term, maxDistance)).forEach(([data, distance]) => {
-        results.push(termResults(this, boosts, data, distance))
+      Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
+        results.push(termResults(this, term, boosts, data, distance))
       })
     }
     if (query.prefix) {
       this._index.atPrefix(query.term).forEach((term, data) => {
-        results.push(termResults(this, boosts, data, term.length - query.term.length))
+        results.push(termResults(this, term, boosts, data, term.length - query.term.length))
       })
     }
     return results.reduce(combinators[OR], {})
@@ -297,30 +302,37 @@ const addFields = function (self, fields) {
   fields.forEach((field, i) => { self._fieldIds[field] = i })
 }
 
-const termResults = function (self, boosts, indexData, distance = 0) {
+const termResults = function (self, term, boosts, indexData, distance = 0) {
   if (indexData == null) { return {} }
-  return Object.entries(boosts).reduce((scores, [field, boost]) => {
+  return Object.entries(boosts).reduce((results, [field, boost]) => {
     const { df, ds } = indexData[self._fieldIds[field]] || { ds: {} }
     Object.entries(ds).forEach(([documentId, tf]) => {
       const weight = boost / (1 + (0.333 * boost * distance))
-      scores[documentId] = (scores[documentId] || 0) + (weight * tfIdf(tf, df, self._documentCount))
+      results[documentId] = results[documentId] || { score: 0, match: {} }
+      results[documentId].match[term] = results[documentId].match[term] || []
+      results[documentId].score = results[documentId].score + (weight * tfIdf(tf, df, self._documentCount))
+      results[documentId].match[term].push(field)
     })
-    return scores
+    return results
   }, {})
 }
 
 const combinators = {
   [OR]: function (a, b) {
-    return Object.entries(b).reduce((combined, [documentId, score]) => {
-      combined[documentId] = (combined[documentId] || 0) + score
+    return Object.entries(b).reduce((combined, [documentId, { match, score }]) => {
+      combined[documentId] = combined[documentId] || { score: 0, match: {} }
+      combined[documentId].score = combined[documentId].score + score
+      combined[documentId].match = { ...combined[documentId].match, ...match }
       return combined
     }, a || {})
   },
   [AND]: function (a, b) {
     if (a == null) { return b }
-    return Object.entries(b).reduce((combined, [documentId, score]) => {
+    return Object.entries(b).reduce((combined, [documentId, { score, match }]) => {
       if (a[documentId] === undefined) { return combined }
-      combined[documentId] = Math.min(a[documentId], score)
+      combined[documentId] = combined[documentId] || {}
+      combined[documentId].score = Math.min(a[documentId].score, score)
+      combined[documentId].match = { ...a[documentId].match, ...match }
       return combined
     }, {})
   }

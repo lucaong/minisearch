@@ -101,6 +101,31 @@ describe('MiniSearch', () => {
       expect(results.length).toEqual(3)
       expect(results.map(({ id }) => id)).toEqual([2, 1, 3])
     })
+
+    describe('match data', () => {
+      const documents = [
+        { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+        { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+        { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria ... vita' }
+      ]
+      const ms = new MiniSearch({ fields: ['title', 'text'] })
+      ms.addAll(documents)
+
+      it('reports information about matched terms and fields', () => {
+        const results = ms.search('vita nova')
+        expect(results.length).toBeGreaterThan(0)
+        expect(results.map(({ match }) => match)).toEqual([
+          { vita: ['title', 'text'], nova: ['title'] },
+          { vita: ['text'] }
+        ])
+      })
+
+      it('works the same with all combinators', () => {
+        const resultsOr = ms.search('vita nova', { combineWith: 'OR' })
+        const resultsAnd = ms.search('vita nova', { combineWith: 'AND' })
+        expect(resultsOr[0].match).toEqual(resultsAnd[0].match)
+      })
+    })
   })
 
   describe('loadJSON', () => {
