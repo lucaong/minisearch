@@ -120,10 +120,19 @@ describe('MiniSearch', () => {
         ])
       })
 
-      it('works the same with all combinators', () => {
-        const resultsOr = ms.search('vita nova', { combineWith: 'OR' })
-        const resultsAnd = ms.search('vita nova', { combineWith: 'AND' })
-        expect(resultsOr[0].match).toEqual(resultsAnd[0].match)
+      it('reports correct info when combining terms with AND', () => {
+        const results = ms.search('vita nova', { combineWith: 'AND' })
+        expect(results.map(({ match }) => match)).toEqual([
+          { vita: ['title', 'text'], nova: ['title'] }
+        ])
+      })
+
+      it('reports correct info for fuzzy and prefix queries', () => {
+        const results = ms.search('vi nuova', { termToQuery: term => ({ term, fuzzy: 0.2, prefix: true }) })
+        expect(results.map(({ match }) => match)).toEqual([
+          { vita: ['title', 'text'], nova: ['title'] },
+          { vita: ['text'] }
+        ])
       })
     })
   })
