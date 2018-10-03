@@ -196,21 +196,21 @@ class MiniSearch {
   */
   executeQuery (query, options = {}) {
     options = { ...this._options.defaultSearchOptions, ...options }
-    const fields = options.fields || this._options.fields
+    const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
+      ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
     if (!query.fuzzy && !query.prefix) {
-      return termResults(this, fields, this._index.get(query.term), options.boost)
+      return termResults(this, boosts, this._index.get(query.term))
     }
     const results = []
     if (query.fuzzy) {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.values(this._index.fuzzyGet(query.term, maxDistance)).forEach(([data, distance]) => {
-        if (query.prefix && distance === 0) { return }
-        results.push(termResults(this, fields, data, options.boost, distance))
+        results.push(termResults(this, boosts, data, distance))
       })
     }
     if (query.prefix) {
       this._index.atPrefix(query.term).forEach((term, data) => {
-        results.push(termResults(this, fields, data, options.boost, term.length - query.term.length))
+        results.push(termResults(this, boosts, data, term.length - query.term.length))
       })
     }
     return results.reduce(combinators[OR], {})
@@ -297,13 +297,13 @@ const addFields = function (self, fields) {
   fields.forEach((field, i) => { self._fieldIds[field] = i })
 }
 
-const termResults = function (self, fields, indexData, boosts, distance = 0) {
+const termResults = function (self, boosts, indexData, distance = 0) {
   if (indexData == null) { return {} }
-  return fields.reduce((scores, field) => {
+  return Object.entries(boosts).reduce((scores, [field, boost]) => {
     const { df, ds } = indexData[self._fieldIds[field]] || { ds: {} }
     Object.entries(ds).forEach(([documentId, tf]) => {
-      const boost = ((boosts || {})[field] || 1) * (1 / (1 + (0.2 * distance)))
-      scores[documentId] = (scores[documentId] || 0) + (boost * tfIdf(tf, df, self._documentCount))
+      const weight = boost / (1 + (0.333 * boost * distance))
+      scores[documentId] = (scores[documentId] || 0) + (weight * tfIdf(tf, df, self._documentCount))
     })
     return scores
   }, {})
