@@ -249,13 +249,13 @@ let results = miniSearch.search(&apos;zen art motorcycle&apos;)
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-search">search</a></span></span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span="">any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{id:></span>
+          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-search">search</a></span></span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span="">any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, match: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>}&gt;</{id:></span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Search for documents matching the query</p>
+        <div data-ice="description"><p>Search for documents matching the given search query.</p>
 </div>
       </div>
     </td>
@@ -453,7 +453,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber189">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber194">source</a></span></span>
     </span>
   </h3>
 
@@ -618,18 +618,21 @@ const miniSearch = MiniSearch.new({
     
     
     
-    <span class="code" data-ice="name">search</span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span="">any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{id:></span>
+    <span class="code" data-ice="name">search</span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span="">any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, match: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>}&gt;</{id:></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber172">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber177">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Search for documents matching the query</p>
+  <div data-ice="description"><p>Search for documents matching the given search query.</p>
+<p>The result is a list of scored document IDs matching the query, sorted by
+descending score, and each including data about which terms were matched and
+in which fields.</p>
 </div>
 
   
@@ -695,7 +698,7 @@ const miniSearch = MiniSearch.new({
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span="">any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{id:></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span="">any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, match: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>}&gt;</{id:></td>
           <td class="return-desc" data-ice="returnDescription"><p>A sorted array of scored document IDs matching the search</p>
 </td>
         </tr>
@@ -721,7 +724,7 @@ const miniSearch = MiniSearch.new({
       <pre class="prettyprint source-code"><code data-ice="exampleCode">// Search for &quot;zen art motorcycle&quot; with default options: terms have to match
 // exactly, and individual terms are joined with OR
 miniSearch.search(&apos;zen art motorcycle&apos;)
-// =&gt; [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]</code></pre>
+// =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]</code></pre>
     </div>
 <div class="example-doc" data-ice="exampleDoc">
       
@@ -782,7 +785,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber234">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber239">source</a></span></span>
     </span>
   </h3>
 
