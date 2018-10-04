@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../">
+  <title data-ice="title">Manual | MiniSearch</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Tiny but powerful full-text search"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="MiniSearch"><meta property="twitter:description" content="Tiny but powerful full-text search"></head>
+<body class="layout-container manual-root manual-index" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.png" style="width:34px;"></a>
+  <a href="./manual/index.html" data-ice="manualHeaderLink">Manual</a>
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/lucaong/minisearch"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div class="manual-toc-root">
+  
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/README.html"><a href="manual/README.html" data-ice="link">MiniSearch</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#use-case" data-ice="link">Use case</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#features" data-ice="link">Features</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#installation" data-ice="link">Installation</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#usage" data-ice="link">Usage</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#basic-usage" data-ice="link">Basic usage</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#search-options" data-ice="link">Search options</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/CONTRIBUTING.html"><a href="manual/CONTRIBUTING.html" data-ice="link">Contributing</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CONTRIBUTING.html"><a href="manual/CONTRIBUTING.html#bugs-and-feature-requests" data-ice="link">Bugs and Feature requests</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CONTRIBUTING.html"><a href="manual/CONTRIBUTING.html#pull-requests" data-ice="link">Pull requests</a></li>
+</ul>
+  </div>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div class="github-markdown">
+  
+
+  
+
+  <div class="manual-cards">
+    
+  <div class="manual-card-wrap" data-ice="cards">
+      <div class="manual-card">
+        <div data-ice="card"><h1>MiniSearch</h1><p><code>MiniSearch</code> is a tiny but powerful in-memory full-text search engine for
+JavaScript. It is respectful of resources, so it can comfortably run both in
+Node and in the browser, but it can do a lot.</p><h2>Use case</h2><p><code>MiniSearch</code> addresses use cases where full-text search features are needed
+(e.g. prefix search, fuzzy search, boosting of fields), but the data to be
+indexed can fit locally in the process memory. While you may not index the whole
+Wikipedia with it, there are surprisingly many use cases that are served well by
+<code>MiniSearch</code>. By storing the index in local memory, <code>MiniSearch</code> can work
+offline, and can process queries quickly, without network latency.</p><p>A prominent use-case is search-as-you-type features in web and mobile
+applications, where keeping the index on the client-side enables fast and
+reactive UI, removing the need to make requests to a search server.</p><h2>Features</h2><ul>
+<li><p>Memory-efficient index, smaller than most other libraries, designed to
+support memory-constrained use cases like mobile browsers.</p>
+</li>
+<li><p>Exact match, prefix match and fuzzy match, all with a single performant and
+multi-purpose index data structure.</p>
+</li>
+<li><p>Mutable index, capable of adding and removing documents at any time</p>
+</li>
+<li><p>Simple API, providing building blocks to build solutions to
+their specific problems</p>
+</li>
+<li><p>Zero external dependencies, small code-base, well tested</p>
+</li>
+</ul><h2>Installation</h2><p>With <code>npm</code>:</p><pre><code><code class="source-code prettyprint">npm install --save minisearch</code>
+</code></pre><p>With <code>yarn</code>:</p><pre><code><code class="source-code prettyprint">yarn add minisearch</code>
+</code></pre><h2>Usage</h2><p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API
+documentation</a> for
+details, but here are some quick examples. All the examples use the <code>ES6</code>
+syntax.</p><h3>Basic usage</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our examples
+const documents = [
+  { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
+  { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, text: &apos;I can see by my watch...&apos; },
+  { id: 3, title: &apos;Neuromancer&apos;, text: &apos;The sky above the port was...&apos; },
+  { id: 4, title: &apos;Zen and the Art of Archery&apos;, text: &apos;At first sight it must seem...&apos; },
+  // ...and more
+]
+
+let miniSearch = new MiniSearch({ fields: [&apos;title&apos;, &apos;text&apos;] })
+
+// Index all documents
+miniSearch.addAll(documents)
+
+// Search with default options
+let results = miniSearch.search(&apos;zen art motorcycle&apos;)
+// =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]</code>
+</code></pre><h3>Search options</h3><p><code>MiniSearch</code> supports several options for more advanced search behavior:</p><pre><code class="lang-javascript"><code class="source-code prettyprint">// Search only specific fields
+miniSearch.search(&apos;zen&apos;, { fields: [&apos;title&apos;] })
+
+// Boost some fields (here &quot;title&quot;)
+miniSearch.search(&apos;zen&apos;, { boost: { title: 2 } })
+
+// Prefix search (so that &apos;moto&apos; will match &apos;motorcycle&apos;)
+miniSearch.search(&apos;moto&apos;, {
+  termToQuery: (term) =&gt; {
+    return { term, prefix: true }
+  }
+})
+
+// Fuzzy search, in this example, with a max edit distance of 0.2 * term length,
+// rounded to nearest integer. The mispelled &apos;ismael&apos; will match &apos;ishmael&apos;.
+miniSearch.search(&apos;ismael&apos;, {
+  termToQuery: (term) =&gt; {
+    return { term, fuzzy: 0.2 }
+  }
+})
+
+// You can set the default search options upon initialization
+miniSearch = new MiniSearch({
+  fields: [&apos;title&apos;, &apos;text&apos;],
+  searchOptions: {
+    boost: { title: 2 },
+    termToQuery: (term) =&gt; ({ term, fuzzy: 0.2 })
+  }
+})
+miniSearch.addAll(documents)
+
+// It will now by default perform fuzzy search and boost &quot;title&quot;:
+miniSearch.search(&apos;zen and motorcycles&apos;)</code>
+</code></pre><p>The <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>
+has more details about other configuration options (tokenization, term
+processing, etc.)</p></div>
+        <a data-ice="link" href="manual/README.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <div class="manual-card">
+        <div data-ice="card"><h1>Contributing</h1><p>Contributions to <code>MiniSearch</code> are welcome :) Just follow the guidelines below.</p><h2>Bugs and Feature requests</h2><p>If you have an idea for a feature, or spotted a bug, please <a href="https://github.com/lucaong/minisearch/issues">open an
+issue on GitHub</a>.</p><ul>
+<li><p>Make sure to search if your issue was already reported. In that case, better
+  to comment on the existing issue rather than open a duplicate one.</p>
+</li>
+<li><p>When reporting a bug, whenever possible, provide example code to reproduce
+  the bug: that will make the process of fixing it much faster.</p>
+</li>
+<li><p>Remember this is an open-source project. Your feature requests will be
+  discussed and taken into consideration, but please do not take it
+  personally if the feature does not get implemented. This project uses a
+  permissive license, so pull requests are welcome and forks are permitted.</p>
+</li>
+<li><p>Always be respectful of others when discussing issues. The project
+  maintainer reserves the right to remove or close discussions where the
+  tone or language is derogatory or offensive toward others.</p>
+</li>
+</ul><h2>Pull requests</h2><p>Thinking about sending a pull request? That is great :) Here is how you can
+setup your development environment:</p><ol>
+<li>Clone the <a href="https://github.com/lucaong/minisearch">repository</a></li>
+<li>Install the development dependencies with <code>yarn install</code></li>
+<li>Run the tests with <code>yarn test</code>. You can also automatically run tests for
+the code that you change by running <code>yarn test-watch</code></li>
+<li>If you are working on optimising the performance, you can run performance
+benchmarks with <code>yarn benchmark</code></li>
+<li>If you are improving the documentation, you can build the docs with <code>yarn
+build-docs</code></li>
+</ol><p>Also, please follow these guidelines:</p><ul>
+<li><p>Add tests for your code. This ensures that your feature won&apos;t be broken by
+  further code changes. If you are not sure of how to test, feel free to
+  send the pull request and ask for advices in the comment.</p>
+</li>
+<li><p>Don&apos;t change the version number. That will be done by the mainteiner upon
+  releasing a new version.</p>
+</li>
+<li><p>Make sure you run the full test suite before sending the pull request.</p>
+</li>
+</ul></div>
+        <a data-ice="link" href="manual/CONTRIBUTING.html"></a>
+      </div>
+    </div>
+</div>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

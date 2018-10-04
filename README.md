@@ -4,7 +4,7 @@
 JavaScript. It is respectful of resources, so it can comfortably run both in
 Node and in the browser, but it can do a lot.
 
-## Use case:
+## Use case
 
 `MiniSearch` addresses use cases where full-text search features are needed
 (e.g. prefix search, fuzzy search, boosting of fields), but the data to be
@@ -17,21 +17,24 @@ A prominent use-case is search-as-you-type features in web and mobile
 applications, where keeping the index on the client-side enables fast and
 reactive UI, removing the need to make requests to a search server.
 
-## Design goals:
 
-  * Memory-efficient index, able to store tens of thousands of documents and
-    terms in memory, even in the browser.
+## Features
+
+  * Memory-efficient index, smaller than most other libraries, designed to
+    support memory-constrained use cases like mobile browsers.
 
   * Exact match, prefix match and fuzzy match, all with a single performant and
     multi-purpose index data structure.
 
-  * Small and maintainable code base, well tested, with no external dependency.
+  * Mutable index, capable of adding and removing documents at any time
 
-  * Provide good building blocks that empower developers to build solutions to
-    their specific problems, rather than try to offer a general-purpose tool to
-    satisfy every use-case at the cost of complexity.
+  * Simple API, providing building blocks to build solutions to
+    their specific problems
 
-## Installation:
+  * Zero external dependencies, small code-base, well tested
+
+
+## Installation
 
 With `npm`:
 
@@ -45,14 +48,14 @@ With `yarn`:
 yarn add minisearch
 ```
 
-## Usage:
+## Usage
 
 Refer to the [API
 documentation](https://lucaong.github.io/minisearch/identifiers.html) for
 details, but here are some quick examples. All the examples use the `ES6`
 syntax.
 
-### Basic usage:
+### Basic usage
 
 ```javascript
 // A collection of documents for our examples
@@ -74,7 +77,7 @@ let results = miniSearch.search('zen art motorcycle')
 // => [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]
 ```
 
-### Search options:
+### Search options
 
 `MiniSearch` supports several options for more advanced search behavior:
 
@@ -117,28 +120,3 @@ miniSearch.search('zen and motorcycles')
 The [API documentation](https://lucaong.github.io/minisearch/identifiers.html)
 has more details about other configuration options (tokenization, term
 processing, etc.)
-
-
-# Comparison with other libraries
-
-There are other great libraries besides `MiniSearch` for in-memory full-text
-search in JavaScript, the most widely used being [Lunr.js](https://lunrjs.com).
-`MiniSearch` was created with slightly different goals in mind, which make it
-better for some use-cases, and worse for others. Here is a list of the most
-notable differences between `MiniSearch` and `Lunr`:
-
-  - `MiniSearch` focuses on minimizing the index size, to run even on
-      memory-constrained devices. `MiniSearch` index is typically much smaller
-      than `Lunr` index.
-  - On the side of search speed, `MiniSearch` and `Lunr` are on-par
-  - `MiniSearch` provides a simple API that provides the building blocks for
-      more complex use-cases. `Lunr` provides more feature out-of-the-box
-      (stemming, a query language, arbitrary wildcards, etc.).
-  - `Lunr` index is immutable, while `MiniSearch` supports removing and
-      re-indexing documents at any time.
-
-In summary, if you need the additional features provided by `Lunr`, and you are
-fine with an immutable index, definitely go with it, it's a great library. If
-you don't need those features or need to dynamically add and remove documents,
-you could benefit from the much smaller index size and API simplicity offered by
-`MiniSearch`.

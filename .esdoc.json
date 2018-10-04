@@ -17,6 +17,9 @@
           "site": "https://lucaong.github.io/minisearch/",
           "repository": "https://github.com/lucaong/minisearch",
           "author": "https://twitter.com/lucaongaro"
+        },
+        "manual": {
+          "files": ["README.md", "CONTRIBUTING.md"]
         }
       }
     },
