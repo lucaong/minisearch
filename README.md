@@ -120,7 +120,7 @@ let miniSearch = new MiniSearch({
 })
 ```
 
-## Term processing
+### Term processing
 
 Terms are downcased by default. No stemming is performed. If you want to
 customize how the terms are processed, for example to normalize terms or apply

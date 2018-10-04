@@ -122,7 +122,7 @@ let miniSearch = new MiniSearch({
   tokenize: (str) =&gt; str.split(\s+).filter(word =&gt; !stopWords.includes(word))
 })</code>
 </code></pre>
-<h2 id="term-processing">Term processing</h2><p>Terms are downcased by default. No stemming is performed. If you want to
+<h3 id="term-processing">Term processing</h3><p>Terms are downcased by default. No stemming is performed. If you want to
 customize how the terms are processed, for example to normalize terms or apply
 stemming, you can use the <code>processTerm</code> configuration option:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">const removeAccents = (term) =&gt;

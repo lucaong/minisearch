@@ -39,7 +39,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#basic-usage" data-ice="link">Basic usage</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#search-options" data-ice="link">Search options</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#tokenization" data-ice="link">Tokenization</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
 </ul>
   </div>
 <div data-ice="manual">
@@ -138,7 +138,7 @@ let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
   tokenize: (str) =&gt; str.split(\s+).filter(word =&gt; !stopWords.includes(word))
 })</code>
-</code></pre><h2>Term processing</h2><p>Terms are downcased by default. No stemming is performed. If you want to
+</code></pre><h3>Term processing</h3><p>Terms are downcased by default. No stemming is performed. If you want to
 customize how the terms are processed, for example to normalize terms or apply
 stemming, you can use the <code>processTerm</code> configuration option:</p><pre><code class="lang-javascript"><code class="source-code prettyprint">const removeAccents = (term) =&gt;
   term.replace(/[&#xE0;&#xE1;]/, &apos;a&apos;)
