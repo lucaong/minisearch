@@ -388,10 +388,13 @@ const termResults = function (self, term, boosts, indexData, distance = 0) {
 
 const combinators = {
   [OR]: function (a, b) {
-    return Object.entries(b).reduce((combined, [documentId, { match, score }]) => {
-      combined[documentId] = combined[documentId] || { score: 0, match: {} }
-      combined[documentId].score += score
-      Object.assign(combined[documentId].match, match)
+    return Object.entries(b).reduce((combined, [documentId, { score, match }]) => {
+      if (combined[documentId] == null) {
+        combined[documentId] = { score, match }
+      } else {
+        combined[documentId].score += score
+        Object.assign(combined[documentId].match, match)
+      }
       return combined
     }, a || {})
   },
