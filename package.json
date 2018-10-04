@@ -44,6 +44,6 @@
     "build-docs": "esdoc",
     "lint": "standard --verbose 'app/**/*.{js,jsx}' | snazzy",
     "lintfix": "standard --fix 'app/**/*.{js,jsx}'",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "yarn test && yarn build"
   }
 }
