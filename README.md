@@ -111,12 +111,12 @@ characters. No stop-word list is applied, but single-character words are
 excluded. The tokenization logic can be easily customized:
 
 ```javascript
-let stopWords = ['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ]
+let stopWords = new Set(['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ])
 
 // Tokenize splitting by space and apply a stop-word list
 let miniSearch = new MiniSearch({
   fields: ['title', 'text'],
-  tokenize: (string) => string.split(/\s+/).filter(word => !stopWords.includes(word))
+  tokenize: (string) => string.split(/\s+/).filter(word => !stopWords.has(word))
 })
 ```
 
