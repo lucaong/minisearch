@@ -324,6 +324,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/minisearch.js~minisearch#remove",
+    "class/src/MiniSearch.js~MiniSearch.html#instance-method-remove",
+    "src/MiniSearch.js~MiniSearch#remove",
+    "method"
+  ],
+  [
     "src/minisearch.js~minisearch#search",
     "class/src/MiniSearch.js~MiniSearch.html#instance-method-search",
     "src/MiniSearch.js~MiniSearch#search",
