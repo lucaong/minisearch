@@ -112,26 +112,18 @@ miniSearch.search(&apos;zen&apos;, { fields: [&apos;title&apos;] })
 miniSearch.search(&apos;zen&apos;, { boost: { title: 2 } })
 
 // Prefix search (so that &apos;moto&apos; will match &apos;motorcycle&apos;)
-miniSearch.search(&apos;moto&apos;, {
-  termToQuery: (term) =&gt; {
-    return { term, prefix: true }
-  }
-})
+miniSearch.search(&apos;moto&apos;, { prefix: true })
 
 // Fuzzy search, in this example, with a max edit distance of 0.2 * term length,
 // rounded to nearest integer. The mispelled &apos;ismael&apos; will match &apos;ishmael&apos;.
-miniSearch.search(&apos;ismael&apos;, {
-  termToQuery: (term) =&gt; {
-    return { term, fuzzy: 0.2 }
-  }
-})
+miniSearch.search(&apos;ismael&apos;, { fuzzy: 0.2 })
 
 // You can set the default search options upon initialization
 miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
   searchOptions: {
     boost: { title: 2 },
-    termToQuery: (term) =&gt; ({ term, fuzzy: 0.2 })
+    fuzzy: 0.2
   }
 })
 miniSearch.addAll(documents)

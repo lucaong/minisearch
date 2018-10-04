@@ -482,7 +482,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber227">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber233">source</a></span></span>
     </span>
   </h3>
 
@@ -720,7 +720,7 @@ after a change, the correct order of operations is:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber210">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber216">source</a></span></span>
     </span>
   </h3>
 
@@ -772,10 +772,17 @@ in which fields.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">options.termToQuery</td>
-      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>(term: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>: <span>{term</span></span></td>
+      <td data-ice="name" class="code" data-depth="1">options.prefix</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
-      <td data-ice="description"><p>Function specifying how a term is turned into a query (whether to perform fuzzy search, prefix search, etc.)</p>
+      <td data-ice="description"><p>Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from the term.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.fuzzy</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to the value. If set to a number less than 1, it performs fuzzy search with a max distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function passing each search term and expects a numeric value back.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
@@ -838,24 +845,30 @@ miniSearch.search(&apos;zen&apos;, { boost: { title: 2 } })</code></pre>
       
       <pre class="prettyprint source-code"><code data-ice="exampleCode">// Search for &quot;moto&quot; with prefix search (it will match documents
 // containing terms that start with &quot;moto&quot; or &quot;neuro&quot;)
-miniSearch.search(&apos;moto neuro&apos;, {
-  termToQuery: term =&gt; ({ term, prefix: true })
-})</code></pre>
+miniSearch.search(&apos;moto neuro&apos;, { prefix: true })</code></pre>
     </div>
 <div class="example-doc" data-ice="exampleDoc">
       
       <pre class="prettyprint source-code"><code data-ice="exampleCode">// Search for &quot;ismael&quot; with fuzzy search (it will match documents containing
 // terms similar to &quot;ismael&quot;, with a maximum edit distance of 0.2 term.length
 // (rounded to nearest integer)
-miniSearch.search(&apos;ismael&apos;, {
-  termToQuery: term =&gt; ({ term, fuzzy: 0.2 })
-})</code></pre>
+miniSearch.search(&apos;ismael&apos;, { fuzzy: 0.2 })</code></pre>
     </div>
 <div class="example-doc" data-ice="exampleDoc">
       
       <pre class="prettyprint source-code"><code data-ice="exampleCode">// Mix of exact match, prefix search, and fuzzy search
 miniSearch.search(&apos;ismael mob&apos;, {
-  termToQuery: term =&gt; ({ term, prefix: true, fuzzy: 0.2 })
+ prefix: true,
+ fuzzy: 0.2
+})</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Perform fuzzy and prefix search depending on the search term. Here
+// performing prefix and fuzzy search only on terms longer than 3 characters
+miniSearch.search(&apos;ismael mob&apos;, {
+ prefix: term =&gt; term.length &gt; 3
+ fuzzy: term =&gt; term.length &gt; 3 ? 0.2 : null
 })</code></pre>
     </div>
 <div class="example-doc" data-ice="exampleDoc">
@@ -883,7 +896,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber273">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber279">source</a></span></span>
     </span>
   </h3>
 
