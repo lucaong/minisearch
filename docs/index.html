@@ -119,7 +119,7 @@ excluded. The tokenization logic can be easily customized:</p>
 // Tokenize splitting by space and apply a stop-word list
 let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
-  tokenize: (str) =&gt; str.split(\s+).filter(word =&gt; !stopWords.includes(word))
+  tokenize: (string) =&gt; string.split(/\s+/).filter(word =&gt; !stopWords.includes(word))
 })</code>
 </code></pre>
 <h3 id="term-processing">Term processing</h3><p>Terms are downcased by default. No stemming is performed. If you want to

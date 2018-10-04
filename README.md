@@ -116,7 +116,7 @@ let stopWords = ['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ]
 // Tokenize splitting by space and apply a stop-word list
 let miniSearch = new MiniSearch({
   fields: ['title', 'text'],
-  tokenize: (str) => str.split(\s+).filter(word => !stopWords.includes(word))
+  tokenize: (string) => string.split(/\s+/).filter(word => !stopWords.includes(word))
 })
 ```
 
