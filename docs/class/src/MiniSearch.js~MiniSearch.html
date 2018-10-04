@@ -782,7 +782,7 @@ in which fields.</p>
       <td data-ice="name" class="code" data-depth="1">options.fuzzy</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
-      <td data-ice="description"><p>If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to the value. If set to a number less than 1, it performs fuzzy search with a max distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function passing each search term and expects a numeric value back.</p>
+      <td data-ice="description"><p>If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function passing each search term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
