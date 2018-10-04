@@ -47,11 +47,15 @@ yarn add minisearch
 
 ## Usage:
 
-[API documentation](https://lucaong.github.io/minisearch/identifiers.html) is
-available, but here are some quick examples:
+Refer to the [API
+documentation](https://lucaong.github.io/minisearch/identifiers.html) for
+details, but here are some quick examples. All the examples use the `ES6`
+syntax.
+
+### Basic usage:
 
 ```javascript
-// A collection of documents for our example
+// A collection of documents for our examples
 const documents = [
   { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },
   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },
@@ -68,34 +72,73 @@ miniSearch.addAll(documents)
 // Search with default options
 let results = miniSearch.search('zen art motorcycle')
 // => [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]
+```
 
+### Search options:
+
+`MiniSearch` supports several options for more advanced search behavior:
+
+```javascript
 // Search only specific fields
-results = miniSearch.search('zen', { fields: ['title'] })
+miniSearch.search('zen', { fields: ['title'] })
 
-// Boost fields
-results = miniSearch.search('zen', { boost: { title: 2 } })
+// Boost some fields (here "title")
+miniSearch.search('zen', { boost: { title: 2 } })
 
-// Prefix search
-results = miniSearch.search('moto', {
-  termToQuery: term => ({ term, prefix: true })
+// Prefix search (so that 'moto' will match 'motorcycle')
+miniSearch.search('moto', {
+  termToQuery: (term) => {
+    return { term, prefix: true }
+  }
 })
 
-// Fuzzy search (in this example, with a max edit distance of 0.2 * term length,
-// rounded to nearest integer)
-results = miniSearch.search('ismael', {
-  termToQuery: term => ({ term, fuzzy: 0.2 })
+// Fuzzy search, in this example, with a max edit distance of 0.2 * term length,
+// rounded to nearest integer. The mispelled 'ismael' will match 'ishmael'.
+miniSearch.search('ismael', {
+  termToQuery: (term) => {
+    return { term, fuzzy: 0.2 }
+  }
 })
 
-// Set default search options upon initialization
+// You can set the default search options upon initialization
 miniSearch = new MiniSearch({
   fields: ['title', 'text'],
   searchOptions: {
     boost: { title: 2 },
-    termToQuery: term => ({ term, fuzzy: 0.2 })
+    termToQuery: (term) => ({ term, fuzzy: 0.2 })
   }
 })
 miniSearch.addAll(documents)
 
-// Will now by default perform fuzzy search and boost "title":
-results = miniSearch.search('zen and motorcycles')
+// It will now by default perform fuzzy search and boost "title":
+miniSearch.search('zen and motorcycles')
 ```
+
+The [API documentation](https://lucaong.github.io/minisearch/identifiers.html)
+has more details about other configuration options (tokenization, term
+processing, etc.)
+
+
+# Comparison with other libraries
+
+There are other great libraries besides `MiniSearch` for in-memory full-text
+search in JavaScript, the most widely used being [Lunr.js](https://lunrjs.com).
+`MiniSearch` was created with slightly different goals in mind, which make it
+better for some use-cases, and worse for others. Here is a list of the most
+notable differences between `MiniSearch` and `Lunr`:
+
+  - `MiniSearch` focuses on minimizing the index size, to run even on
+      memory-constrained devices. `MiniSearch` index is typically much smaller
+      than `Lunr` index.
+  - On the side of search speed, `MiniSearch` and `Lunr` are on-par
+  - `MiniSearch` provides a simple API that provides the building blocks for
+      more complex use-cases. `Lunr` provides more feature out-of-the-box
+      (stemming, a query language, arbitrary wildcards, etc.).
+  - `Lunr` index is immutable, while `MiniSearch` supports removing and
+      re-indexing documents at any time.
+
+In summary, if you need the additional features provided by `Lunr`, and you are
+fine with an immutable index, definitely go with it, it's a great library. If
+you don't need those features or need to dynamically add and remove documents,
+you could benefit from the much smaller index size and API simplicity offered by
+`MiniSearch`.
