@@ -38,13 +38,15 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#usage" data-ice="link">Usage</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#basic-usage" data-ice="link">Basic usage</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#search-options" data-ice="link">Search options</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#tokenization" data-ice="link">Tokenization</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
 </ul>
   </div>
 <div data-ice="manual">
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CONTRIBUTING.html"><a href="manual/CONTRIBUTING.html" data-ice="link">Contributing</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/CONTRIBUTING.html"><a href="manual/CONTRIBUTING.html#bugs-and-feature-requests" data-ice="link">Bugs and Feature requests</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CONTRIBUTING.html"><a href="manual/CONTRIBUTING.html#bugs-and-feature-requests" data-ice="link">Bugs and feature requests</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CONTRIBUTING.html"><a href="manual/CONTRIBUTING.html#pull-requests" data-ice="link">Pull requests</a></li>
 </ul>
   </div>
@@ -82,11 +84,7 @@ their specific problems</p>
 <pre><code><code class="source-code prettyprint">npm install --save minisearch</code>
 </code></pre><p>With <code>yarn</code>:</p>
 <pre><code><code class="source-code prettyprint">yarn add minisearch</code>
-</code></pre><h2 id="usage">Usage</h2><p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API
-documentation</a> for
-details, but here are some quick examples. All the examples use the <code>ES6</code>
-syntax.</p>
-<h3 id="basic-usage">Basic usage</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our examples
+</code></pre><h2 id="usage">Usage</h2><h3 id="basic-usage">Basic usage</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our examples
 const documents = [
   { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
   { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, text: &apos;I can see by my watch...&apos; },
@@ -131,9 +129,35 @@ miniSearch.addAll(documents)
 // It will now by default perform fuzzy search and boost &quot;title&quot;:
 miniSearch.search(&apos;zen and motorcycles&apos;)</code>
 </code></pre>
-<p>The <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>
-has more details about other configuration options (tokenization, term
-processing, etc.)</p>
+<h3 id="tokenization">Tokenization</h3><p>By default, documents and queries are tokenized splitting on non-word
+characters. No stop-word list is applied, but single-character words are
+excluded. The tokenization logic can be easily customized:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">let stopWords = [&apos;and&apos;, &apos;or&apos;, &apos;to&apos;, &apos;in&apos;, &apos;a&apos;, &apos;the&apos;, /* ...and more */ ]
+
+// Tokenize splitting by space and apply a stop-word list
+let miniSearch = new MiniSearch({
+  fields: [&apos;title&apos;, &apos;text&apos;],
+  tokenize: (str) =&gt; str.split(\s+).filter(word =&gt; !stopWords.includes(word))
+})</code>
+</code></pre>
+<h2 id="term-processing">Term processing</h2><p>Terms are downcased by default. No stemming is performed. If you want to
+customize how the terms are processed, for example to normalize terms or apply
+stemming, you can use the <code>processTerm</code> configuration option:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">const removeAccents = (term) =&gt;
+  term.replace(/[&#xE0;&#xE1;]/, &apos;a&apos;)
+      .replace(/[&#xE8;&#xE9;]/, &apos;e&apos;)
+      .replace(/[&#xEC;&#xED;]/, &apos;i&apos;)
+      .replace(/[&#xF2;&#xF3;]/, &apos;o&apos;)
+      .replace(/[&#xF9;&#xFA;]/, &apos;u&apos;)
+
+// Perform custom term processing (here removing accents)
+let miniSearch = new MiniSearch({
+  fields: [&apos;title&apos;, &apos;text&apos;],
+  processTerm: (term) =&gt; removeAccents(term.toLowerCase())
+})</code>
+</code></pre>
+<p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>
+for details about configuration options and methods.</p>
 </div>
 </div>
 

@@ -50,11 +50,6 @@ yarn add minisearch
 
 ## Usage
 
-Refer to the [API
-documentation](https://lucaong.github.io/minisearch/identifiers.html) for
-details, but here are some quick examples. All the examples use the `ES6`
-syntax.
-
 ### Basic usage
 
 ```javascript
@@ -109,6 +104,42 @@ miniSearch.addAll(documents)
 miniSearch.search('zen and motorcycles')
 ```
 
-The [API documentation](https://lucaong.github.io/minisearch/identifiers.html)
-has more details about other configuration options (tokenization, term
-processing, etc.)
+### Tokenization
+
+By default, documents and queries are tokenized splitting on non-word
+characters. No stop-word list is applied, but single-character words are
+excluded. The tokenization logic can be easily customized:
+
+```javascript
+let stopWords = ['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ]
+
+// Tokenize splitting by space and apply a stop-word list
+let miniSearch = new MiniSearch({
+  fields: ['title', 'text'],
+  tokenize: (str) => str.split(\s+).filter(word => !stopWords.includes(word))
+})
+```
+
+## Term processing
+
+Terms are downcased by default. No stemming is performed. If you want to
+customize how the terms are processed, for example to normalize terms or apply
+stemming, you can use the `processTerm` configuration option:
+
+```javascript
+const removeAccents = (term) =>
+  term.replace(/[àá]/, 'a')
+      .replace(/[èé]/, 'e')
+      .replace(/[ìí]/, 'i')
+      .replace(/[òó]/, 'o')
+      .replace(/[ùú]/, 'u')
+
+// Perform custom term processing (here removing accents)
+let miniSearch = new MiniSearch({
+  fields: ['title', 'text'],
+  processTerm: (term) => removeAccents(term.toLowerCase())
+})
+```
+
+Refer to the [API documentation](https://lucaong.github.io/minisearch/identifiers.html)
+for details about configuration options and methods.

@@ -2,7 +2,7 @@
 
 Contributions to `MiniSearch` are welcome :) Just follow the guidelines below.
 
-## Bugs and Feature requests
+## Bugs and feature requests
 
 If you have an idea for a feature, or spotted a bug, please [open an
 issue on GitHub](https://github.com/lucaong/minisearch/issues).
