@@ -163,7 +163,8 @@ class MiniSearch {
   * @param {Object} [options] - Search options
   * @param {Array<string>} [options.fields] - Fields to search in. If omitted, all fields are searched
   * @param {Object<string, number>} [options.boost] - Key-value object of boosting values for fields
-  * @param {function(term: string): {term: !string, prefix: ?boolean, fuzzy: ?number}} [options.termToQuery] - Function specifying how a term is turned into a query (whether to perform fuzzy search, prefix search, etc.)
+  * @param {boolean|function} [options.prefix] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from the term.
+  * @param {number|function} [options.fuzzy] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to the value. If set to a number less than 1, it performs fuzzy search with a max distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function passing each search term and expects a numeric value back.
   * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')
   * @return {Array<{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
   *
@@ -184,22 +185,27 @@ class MiniSearch {
   * @example
   * // Search for "moto" with prefix search (it will match documents
   * // containing terms that start with "moto" or "neuro")
-  * miniSearch.search('moto neuro', {
-  *   termToQuery: term => ({ term, prefix: true })
-  * })
+  * miniSearch.search('moto neuro', { prefix: true })
   *
   * @example
   * // Search for "ismael" with fuzzy search (it will match documents containing
   * // terms similar to "ismael", with a maximum edit distance of 0.2 term.length
   * // (rounded to nearest integer)
-  * miniSearch.search('ismael', {
-  *   termToQuery: term => ({ term, fuzzy: 0.2 })
-  * })
+  * miniSearch.search('ismael', { fuzzy: 0.2 })
   *
   * @example
   * // Mix of exact match, prefix search, and fuzzy search
   * miniSearch.search('ismael mob', {
-  *   termToQuery: term => ({ term, prefix: true, fuzzy: 0.2 })
+  *  prefix: true,
+  *  fuzzy: 0.2
+  * })
+  *
+  * @example
+  * // Perform fuzzy and prefix search depending on the search term. Here
+  * // performing prefix and fuzzy search only on terms longer than 3 characters
+  * miniSearch.search('ismael mob', {
+  *  prefix: term => term.length > 3
+  *  fuzzy: term => term.length > 3 ? 0.2 : null
   * })
   *
   * @example
@@ -210,7 +216,7 @@ class MiniSearch {
   search (queryString, options = {}) {
     const { tokenize, processTerm, searchOptions } = this._options
     options = { ...searchOptions, ...options }
-    const queries = tokenize(queryString).map(processTerm).map(options.termToQuery)
+    const queries = tokenize(queryString).map(processTerm).map(termToQuery(options))
     const results = queries.map(query => this.executeQuery(query, options))
     const combinedResults = this.combineResults(results, options.combineWith)
 
@@ -414,6 +420,16 @@ const tfIdf = function (tf, df, n) {
   return tf * Math.log(n / df)
 }
 
+const termToQuery = (options) => (term) => {
+  const fuzzy = (typeof options.fuzzy === 'function')
+    ? options.fuzzy(term)
+    : options.fuzzy
+  const prefix = (typeof options.prefix === 'function')
+    ? options.prefix(term)
+    : options.prefix
+  return { term, fuzzy, prefix }
+}
+
 const defaultOptions = {
   idField: 'id',
   tokenize: string => string.split(/\W+/).filter(term => term.length > 1),
@@ -421,7 +437,6 @@ const defaultOptions = {
 }
 
 const defaultSearchOptions = {
-  termToQuery: term => ({ term }),
   combineWith: OR
 }
 

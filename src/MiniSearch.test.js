@@ -145,21 +145,30 @@ describe('MiniSearch', () => {
     })
 
     it('executes fuzzy search', () => {
-      const results = ms.search('camin memory', { termToQuery: term => ({ term, fuzzy: 2 }) })
+      const results = ms.search('camin memory', { fuzzy: 2 })
       expect(results.length).toEqual(2)
       expect(results.map(({ id }) => id)).toEqual([1, 3])
     })
 
     it('executes prefix search', () => {
-      const results = ms.search('que', { termToQuery: term => ({ term, prefix: true }) })
+      const results = ms.search('que', { prefix: true })
       expect(results.length).toEqual(2)
       expect(results.map(({ id }) => id)).toEqual([2, 3])
     })
 
     it('combines prefix search and fuzzy search', () => {
-      const results = ms.search('cammino quel', { termToQuery: term => ({ term, fuzzy: 0.25, prefix: true }) })
+      const results = ms.search('cammino quel', { fuzzy: 0.25, prefix: true })
       expect(results.length).toEqual(3)
       expect(results.map(({ id }) => id)).toEqual([2, 1, 3])
+    })
+
+    it('accepts a function to compute fuzzy and prefix options from term', () => {
+      const results = ms.search('quel comedia', {
+        fuzzy: term => term.length > 4 ? 2 : false,
+        prefix: term => term.length > 4
+      })
+      expect(results.length).toEqual(2)
+      expect(results.map(({ id }) => id)).toEqual([2, 1])
     })
 
     describe('match data', () => {
@@ -188,7 +197,7 @@ describe('MiniSearch', () => {
       })
 
       it('reports correct info for fuzzy and prefix queries', () => {
-        const results = ms.search('vi nuova', { termToQuery: term => ({ term, fuzzy: 0.2, prefix: true }) })
+        const results = ms.search('vi nuova', { fuzzy: 0.2, prefix: true })
         expect(results.map(({ match }) => match)).toEqual([
           { vita: ['title', 'text'], nova: ['title'] },
           { vita: ['text'] }
