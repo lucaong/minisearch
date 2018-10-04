@@ -96,6 +96,7 @@ class MiniSearch {
 
   /**
   * Adds a document to the index
+  *
   * @param {Object} document - the document to be indexed
   */
   add (document) {
@@ -113,10 +114,42 @@ class MiniSearch {
 
   /**
   * Adds all the given documents to the index
+  *
   * @param {Object[]} documents - an array of documents to be indexed
   */
   addAll (documents) {
     documents.forEach(document => this.add(document))
+  }
+
+  /**
+  * Removes the given document from the index.
+  *
+  * The document to delete must NOT have changed between indexing and deletion,
+  * otherwise the index will be corrupted. Therefore, when reindexing a document
+  * after a change, the correct order of operations is:
+  *
+  *   1. remove old version
+  *   2. apply changes
+  *   3. index new version
+  *
+  * @param {Object} document - the document to be indexed
+  */
+  remove (document) {
+    const { tokenize, processTerm, fields, idField } = this._options
+    if (document[idField] == null) {
+      throw new Error(`Document does not have ID field "${idField}"`)
+    }
+    const [shortDocumentId] = Object.entries(this._documentIds)
+      .find(([_, longId]) => document[idField] === longId) || []
+    if (shortDocumentId == null) {
+      throw new Error(`Cannot remove document with ID ${document[idField]}: it is not in the index`)
+    }
+    fields.filter(field => document[field] != null).forEach(field => {
+      tokenize(document[field]).forEach(term => {
+        removeTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
+      })
+    })
+    this._documentCount -= 1
   }
 
   /**
@@ -234,6 +267,7 @@ class MiniSearch {
   /**
   * Serializes the index to JSON, to allow storing it and later deserializing
   * with MiniSearch.fromJSON
+  *
   * @return {string} the JSON-serialized index
   */
   toJSON () {
@@ -258,6 +292,7 @@ class MiniSearch {
 * Deserializes a JSON index (serialized with `miniSearch.toJSON()`) and
 * instantiates a MiniSearch instance. It should be given the same options
 * originally used when serializing the index.
+*
 * @param {string} json - JSON-serialized index
 * @param {Object} options - configuration options, same as the constructor
 * @return {MiniSearch} an instance of MiniSearch
@@ -289,6 +324,40 @@ const addTerm = function (self, fieldId, documentId, term) {
     fieldIndex.ds[documentId] = (fieldIndex.ds[documentId] || 0) + 1
     return { ...indexData, [fieldId]: fieldIndex }
   })
+}
+
+const removeTerm = function (self, fieldId, documentId, term) {
+  if (!self._index.has(term)) {
+    warnDocumentChanged(self, documentId, fieldId, term)
+    return
+  }
+  self._index.update(term, indexData => {
+    const fieldIndex = indexData[fieldId]
+    if (fieldIndex == null || fieldIndex.ds[documentId] == null) {
+      warnDocumentChanged(self, documentId, fieldId, term)
+      return indexData
+    }
+    if (fieldIndex.df <= 1) {
+      delete indexData[fieldId]
+      return indexData
+    }
+    fieldIndex.df -= 1
+    if (fieldIndex.ds[documentId] <= 1) {
+      delete fieldIndex.ds[documentId]
+      return indexData
+    }
+    fieldIndex.ds[documentId] -= 1
+    return { ...indexData, [fieldId]: fieldIndex }
+  })
+  if (Object.keys(self._index.get(term)).length === 0) {
+    self._index.delete(term)
+  }
+}
+
+const warnDocumentChanged = function (self, shortDocumentId, fieldId, term) {
+  if (console == null || console.warn == null) { return }
+  const fieldName = Object.entries(self._fieldIds).find(([name, id]) => id === fieldId)[0]
+  console.warn(`MiniSearch: document with ID ${self._documentIds[shortDocumentId]} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`)
 }
 
 const addDocumentId = function (self, documentId) {

@@ -32,6 +32,66 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('remove', () => {
+    const documents = [
+      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
+    ]
+
+    let ms
+    beforeEach(() => {
+      ms = new MiniSearch({ fields: ['title', 'text'] })
+      ms.addAll(documents)
+    })
+
+    it('removes the document from the index', () => {
+      expect(ms.documentCount).toEqual(3)
+      ms.remove(documents[0])
+      expect(ms.documentCount).toEqual(2)
+      expect(ms.search('commedia').length).toEqual(0)
+      expect(ms.search('vita').map(({ id }) => id)).toEqual([3])
+    })
+
+    it('cleans up the index', () => {
+      ms.remove(documents[0])
+      expect(ms._index.has('commedia')).toEqual(false)
+      expect(Object.keys(ms._index.get('vita'))).toEqual([ms._fieldIds.title.toString()])
+    })
+
+    describe('when the document was not in the index', () => {
+      it('throws an error', () => {
+        expect(() => ms.remove({ id: 99 }))
+          .toThrow('Cannot remove document with ID 99: it is not in the index')
+      })
+    })
+
+    describe('when the document has changed', () => {
+      let _warn
+      beforeEach(() => {
+        _warn = console.warn
+        console.warn = jest.fn()
+      })
+      afterEach(() => {
+        console.warn = _warn
+      })
+
+      it('warns of possible index corruption', () => {
+        expect(() => ms.remove({ id: 1, title: 'Divina Commedia cammin', text: 'something has changed' }))
+          .not.toThrow()
+        expect(console.warn).toHaveBeenCalledTimes(4)
+        ;[
+          ['cammin', 'title'],
+          ['something', 'text'],
+          ['has', 'text'],
+          ['changed', 'text']
+        ].forEach(([term, field], i) => {
+          expect(console.warn).toHaveBeenNthCalledWith(i + 1, `MiniSearch: document with ID 1 has changed before removal: term "${term}" was not present in field "${field}". Removing a document after it has changed can corrupt the index!`)
+        })
+      })
+    })
+  })
+
   describe('addAll', () => {
     it('adds all the documents to the index', () => {
       const ms = new MiniSearch({ fields: ['text'] })
