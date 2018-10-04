@@ -417,7 +417,7 @@ const termResults = function (self, term, boosts, indexData, distance = 0) {
       const weight = boost / (1 + (0.333 * boost * distance))
       results[documentId] = results[documentId] || { score: 0, match: {} }
       results[documentId].match[term] = results[documentId].match[term] || []
-      results[documentId].score = results[documentId].score + (weight * tfIdf(tf, df, self._documentCount))
+      results[documentId].score += (weight * tfIdf(tf, df, self._documentCount))
       results[documentId].match[term].push(field)
     })
     return results
@@ -426,10 +426,13 @@ const termResults = function (self, term, boosts, indexData, distance = 0) {
 
 const combinators = {
   [OR]: function (a, b) {
-    return Object.entries(b).reduce((combined, [documentId, { match, score }]) =&gt; {
-      combined[documentId] = combined[documentId] || { score: 0, match: {} }
-      combined[documentId].score = combined[documentId].score + score
-      combined[documentId].match = { ...combined[documentId].match, ...match }
+    return Object.entries(b).reduce((combined, [documentId, { score, match }]) =&gt; {
+      if (combined[documentId] == null) {
+        combined[documentId] = { score, match }
+      } else {
+        combined[documentId].score += score
+        Object.assign(combined[documentId].match, match)
+      }
       return combined
     }, a || {})
   },

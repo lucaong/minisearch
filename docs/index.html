@@ -65,9 +65,11 @@ satisfy every use-case at the cost of complexity.</p>
 <pre><code><code class="source-code prettyprint">npm install --save minisearch</code>
 </code></pre><p>With <code>yarn</code>:</p>
 <pre><code><code class="source-code prettyprint">yarn add minisearch</code>
-</code></pre><h2 id="usage-">Usage:</h2><p><a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a> is
-available, but here are some quick examples:</p>
-<pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our example
+</code></pre><h2 id="usage-">Usage:</h2><p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API
+documentation</a> for
+details, but here are some quick examples. All the examples use the <code>ES6</code>
+syntax.</p>
+<h3 id="basic-usage-">Basic usage:</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our examples
 const documents = [
   { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
   { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, text: &apos;I can see by my watch...&apos; },
@@ -83,38 +85,67 @@ miniSearch.addAll(documents)
 
 // Search with default options
 let results = miniSearch.search(&apos;zen art motorcycle&apos;)
-// =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]
+// =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]</code>
+</code></pre>
+<h3 id="search-options-">Search options:</h3><p><code>MiniSearch</code> supports several options for more advanced search behavior:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">// Search only specific fields
+miniSearch.search(&apos;zen&apos;, { fields: [&apos;title&apos;] })
 
-// Search only specific fields
-results = miniSearch.search(&apos;zen&apos;, { fields: [&apos;title&apos;] })
+// Boost some fields (here &quot;title&quot;)
+miniSearch.search(&apos;zen&apos;, { boost: { title: 2 } })
 
-// Boost fields
-results = miniSearch.search(&apos;zen&apos;, { boost: { title: 2 } })
-
-// Prefix search
-results = miniSearch.search(&apos;moto&apos;, {
-  termToQuery: term =&gt; ({ term, prefix: true })
+// Prefix search (so that &apos;moto&apos; will match &apos;motorcycle&apos;)
+miniSearch.search(&apos;moto&apos;, {
+  termToQuery: (term) =&gt; {
+    return { term, prefix: true }
+  }
 })
 
-// Fuzzy search (in this example, with a max edit distance of 0.2 * term length,
-// rounded to nearest integer)
-results = miniSearch.search(&apos;ismael&apos;, {
-  termToQuery: term =&gt; ({ term, fuzzy: 0.2 })
+// Fuzzy search, in this example, with a max edit distance of 0.2 * term length,
+// rounded to nearest integer. The mispelled &apos;ismael&apos; will match &apos;ishmael&apos;.
+miniSearch.search(&apos;ismael&apos;, {
+  termToQuery: (term) =&gt; {
+    return { term, fuzzy: 0.2 }
+  }
 })
 
-// Set default search options upon initialization
+// You can set the default search options upon initialization
 miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
   searchOptions: {
     boost: { title: 2 },
-    termToQuery: term =&gt; ({ term, fuzzy: 0.2 })
+    termToQuery: (term) =&gt; ({ term, fuzzy: 0.2 })
   }
 })
 miniSearch.addAll(documents)
 
-// Will now by default perform fuzzy search and boost &quot;title&quot;:
-results = miniSearch.search(&apos;zen and motorcycles&apos;)</code>
+// It will now by default perform fuzzy search and boost &quot;title&quot;:
+miniSearch.search(&apos;zen and motorcycles&apos;)</code>
 </code></pre>
+<p>The <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>
+has more details about other configuration options (tokenization, term
+processing, etc.)</p>
+<h1 id="comparison-with-other-libraries">Comparison with other libraries</h1><p>There are other great libraries besides <code>MiniSearch</code> for in-memory full-text
+search in JavaScript, the most widely used being <a href="https://lunrjs.com">Lunr.js</a>.
+<code>MiniSearch</code> was created with slightly different goals in mind, which make it
+better for some use-cases, and worse for others. Here is a list of the most
+notable differences between <code>MiniSearch</code> and <code>Lunr</code>:</p>
+<ul>
+<li><code>MiniSearch</code> focuses on minimizing the index size, to run even on
+  memory-constrained devices. <code>MiniSearch</code> index is typically much smaller
+  than <code>Lunr</code> index.</li>
+<li>On the side of search speed, <code>MiniSearch</code> and <code>Lunr</code> are on-par</li>
+<li><code>MiniSearch</code> provides a simple API that provides the building blocks for
+  more complex use-cases. <code>Lunr</code> provides more feature out-of-the-box
+  (stemming, a query language, arbitrary wildcards, etc.).</li>
+<li><code>Lunr</code> index is immutable, while <code>MiniSearch</code> supports removing and
+  re-indexing documents at any time.</li>
+</ul>
+<p>In summary, if you need the additional features provided by <code>Lunr</code>, and you are
+fine with an immutable index, definitely go with it, it&apos;s a great library. If
+you don&apos;t need those features or need to dynamically add and remove documents,
+you could benefit from the much smaller index size and API simplicity offered by
+<code>MiniSearch</code>.</p>
 </div>
 </div>
 
