@@ -1,6 +1,6 @@
 # MiniSearch
 
-`MiniSearch` is a tiny but powerful in-memory full-text search engine for
+`MiniSearch` is a tiny but powerful in-memory fulltext search engine for
 JavaScript. It is respectful of resources, so it can comfortably run both in
 Node and in the browser, but it can do a lot.
 
@@ -26,12 +26,13 @@ reactive UI, removing the need to make requests to a search server.
   * Exact match, prefix match and fuzzy match, all with a single performant and
     multi-purpose index data structure.
 
-  * Mutable index, capable of adding and removing documents at any time
+  * Boosting of document fields
 
-  * Simple API, providing building blocks to build solutions to
-    their specific problems
+  * Mutable index: documents can be added and removed at any time
 
-  * Zero external dependencies, small code-base, well tested
+  * Simple API, providing building blocks to build specific solutions
+
+  * Zero external dependencies, small and well tested code-base
 
 
 ## Installation
@@ -47,6 +48,9 @@ With `yarn`:
 ```
 yarn add minisearch
 ```
+
+Then `require` or `import` it in your project.
+
 
 ## Usage
 
@@ -108,7 +112,8 @@ miniSearch.search('zen and motorcycles')
 
 By default, documents and queries are tokenized splitting on non-word
 characters. No stop-word list is applied, but single-character words are
-excluded. The tokenization logic can be easily customized:
+excluded. The tokenization logic can be easily changed by passing a custom
+tokenizer function as the `tokenize` option:
 
 ```javascript
 let stopWords = new Set(['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ])
@@ -122,9 +127,9 @@ let miniSearch = new MiniSearch({
 
 ### Term processing
 
-Terms are downcased by default. No stemming is performed. If you want to
-customize how the terms are processed, for example to normalize terms or apply
-stemming, you can use the `processTerm` configuration option:
+Terms are downcased by default. No stemming is performed. To customize how the
+terms are processed upon indexing or searching, for example to normalize them or
+to apply stemming, the `processTerm` option can be used:
 
 ```javascript
 const removeAccents = (term) =>
