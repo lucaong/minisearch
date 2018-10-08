@@ -100,7 +100,7 @@ features</li>
 <h3 id="index-data-structure">Index data structure</h3><p>The data structure chosen for the index is a <a href="https://en.wikipedia.org/wiki/Radix_tree">radix
 tree</a>, which is a trie where nodes
 that are the only child are merged with the parent node. The reason for choosing
-this data structure follow from the project goals:</p>
+this data structure follows from the project goals:</p>
 <ul>
 <li>The radix tree minimizes the memory footprint of the index, because common
 prefixes are stored only once, and nodes are compressed into a single
@@ -115,9 +115,9 @@ use-cases the maximum distance is small enough for this algorithm to be
 performant. Other more performant solutions for fuzzy search require more
 space.</li>
 </ul>
-<p>The class implementing the radix tree is called <code>SearchableMap</code>. The reason for
-the name is that it implements the standard JavaScript <code>Map</code> interface, but adds
-the following top of it:</p>
+<p>The class implementing the radix tree is called <code>SearchableMap</code>, because it
+implements the standard JavaScript <code>Map</code> interface, but adds the following top
+of it:</p>
 <ul>
 <li><code>SearchableMap.prototype.atPrefix(prefix)</code>, returning another
 <code>SearchableMap</code> representing a mutable view of the original one, containing
@@ -130,10 +130,11 @@ together with their distance.</li>
 only string keys.</p>
 <p>The <code>SearchableMap</code> data type is part of the public API of <code>MiniSearch</code>, exposed
 also as <code>MiniSearch.SearchableMap</code>. Its utility is in fact not limited to
-providing a good inverted index, and developers can use it as a building block
-for other use cases (e.g. autocompletion).</p>
-<h3 id="fuzzy-search-algorithm">Fuzzy search algorithm</h3><p>The algorithm used to provide fuzzy search of keys within a maximum edit
-distance from a given term is the following:</p>
+providing a data structure for the inverted index, and developers can use it as
+a building block for other use cases (e.g. autocompletion).</p>
+<h3 id="fuzzy-search-algorithm">Fuzzy search algorithm</h3><p>The algorithm used to provide fuzzy search of keys within a maximum <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein
+distance</a> from a given term
+is the following:</p>
 <ul>
 <li>The search starts with a budget of edit distance, initially equal to the
 given maximum distance.</li>
@@ -189,6 +190,18 @@ instead offers easy options for developers to provide their own implementation.
 This heuristic will be followed in future development too: rather than providing
 an opinionated solution, the project will offer simple building blocks for
 application developers to implement their own solutions.</p>
+<p>The inverted index is implemented with <code>SearchableMap</code>, and posting lists are
+stored as values in the Map. This way, the same data structure provides both the
+inverted index and the set of indexed terms. Different document fields are
+indexed within the same index, to further save space. The index is therefore
+structure as following:</p>
+<pre><code><code class="source-code prettyprint">term -&gt; field -&gt; { document frequency, posting list }</code>
+</code></pre><p>When performing a search, the entries corresponding to the search term are
+looked up in the index (optionally searching the index with prefix or fuzzy
+search), then the documents are scored with
+<a href="https://en.wikipedia.org/wiki/Tf&#x2013;idf">Tf-Idf</a>, and finally results for
+different search terms are merged with the given combinator function (by default
+<code>OR</code>, but <code>AND</code> can be specified).</p>
 </div>
 </div>
 

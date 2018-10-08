@@ -45,7 +45,7 @@ Here follows a description of these two layers.
 The data structure chosen for the index is a [radix
 tree](https://en.wikipedia.org/wiki/Radix_tree), which is a trie where nodes
 that are the only child are merged with the parent node. The reason for choosing
-this data structure follow from the project goals:
+this data structure follows from the project goals:
 
   - The radix tree minimizes the memory footprint of the index, because common
     prefixes are stored only once, and nodes are compressed into a single
@@ -60,9 +60,9 @@ this data structure follow from the project goals:
     performant. Other more performant solutions for fuzzy search require more
     space.
 
-The class implementing the radix tree is called `SearchableMap`. The reason for
-the name is that it implements the standard JavaScript `Map` interface, but adds
-the following top of it:
+The class implementing the radix tree is called `SearchableMap`, because it
+implements the standard JavaScript `Map` interface, but adds the following top
+of it:
 
   - `SearchableMap.prototype.atPrefix(prefix)`, returning another
     `SearchableMap` representing a mutable view of the original one, containing
@@ -76,13 +76,14 @@ only string keys.
 
 The `SearchableMap` data type is part of the public API of `MiniSearch`, exposed
 also as `MiniSearch.SearchableMap`. Its utility is in fact not limited to
-providing a good inverted index, and developers can use it as a building block
-for other use cases (e.g. autocompletion).
+providing a data structure for the inverted index, and developers can use it as
+a building block for other use cases (e.g. autocompletion).
 
 ### Fuzzy search algorithm
 
-The algorithm used to provide fuzzy search of keys within a maximum edit
-distance from a given term is the following:
+The algorithm used to provide fuzzy search of keys within a maximum [Levenshtein
+distance](https://en.wikipedia.org/wiki/Levenshtein_distance) from a given term
+is the following:
 
   - The search starts with a budget of edit distance, initially equal to the
     given maximum distance.
@@ -138,3 +139,20 @@ instead offers easy options for developers to provide their own implementation.
 This heuristic will be followed in future development too: rather than providing
 an opinionated solution, the project will offer simple building blocks for
 application developers to implement their own solutions.
+
+The inverted index is implemented with `SearchableMap`, and posting lists are
+stored as values in the Map. This way, the same data structure provides both the
+inverted index and the set of indexed terms. Different document fields are
+indexed within the same index, to further save space. The index is therefore
+structure as following:
+
+```
+term -> field -> { document frequency, posting list }
+```
+
+When performing a search, the entries corresponding to the search term are
+looked up in the index (optionally searching the index with prefix or fuzzy
+search), then the documents are scored with
+[Tf-Idf](https://en.wikipedia.org/wiki/Tf–idf), and finally results for
+different search terms are merged with the given combinator function (by default
+`OR`, but `AND` can be specified).
