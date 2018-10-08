@@ -44,12 +44,12 @@ Here follows a description of these two layers.
 
 The data structure chosen for the index is a [radix
 tree](https://en.wikipedia.org/wiki/Radix_tree), which is a trie where nodes
-that are the only child are merged with the parent node. The reason for choosing
-this data structure follows from the project goals:
+with no siblings are merged with the parent node. The reason for choosing this
+data structure follows from the project goals:
 
   - The radix tree minimizes the memory footprint of the index, because common
     prefixes are stored only once, and nodes are compressed into a single
-    multi-character node whenever possible
+    multi-character node whenever possible.
   - Radix trees offer fast key lookup, with performance proportional to the key
     length, and fast lookup of subtrees sharing the same key prefix. These
     properties make it possible to offer exact match and prefix search.
@@ -61,23 +61,23 @@ this data structure follows from the project goals:
     space.
 
 The class implementing the radix tree is called `SearchableMap`, because it
-implements the standard JavaScript `Map` interface, but adds the following top
-of it:
+implements the standard JavaScript `Map` interface, adding on top of it more
+advanced key lookup features:
 
   - `SearchableMap.prototype.atPrefix(prefix)`, returning another
     `SearchableMap` representing a mutable view of the original one, containing
     only entries where the keys share the given prefix.
-  - `SearchableMap.prototype.fuzzyGet(searchKey, maxEditDistance)`, returning all the
-    entries where the key is withing the given edit distance from `searchKey`,
-    together with their distance.
+  - `SearchableMap.prototype.fuzzyGet(searchKey, maxEditDistance)`, returning
+    all the entries where the key is within the given edit (Levenshtein)
+    distance from `searchKey`.
 
-In exchange for these additional features, `SearchableMap` is restricted to use
-only string keys.
+As a trade-off for offering these additional features, `SearchableMap` is
+restricted to use only string keys.
 
 The `SearchableMap` data type is part of the public API of `MiniSearch`, exposed
-also as `MiniSearch.SearchableMap`. Its utility is in fact not limited to
+as `MiniSearch.SearchableMap`. Its usefulness is in fact not limited to
 providing a data structure for the inverted index, and developers can use it as
-a building block for other use cases (e.g. autocompletion).
+a building block for other solutions (e.g. autocompletion).
 
 ### Fuzzy search algorithm
 
@@ -88,35 +88,36 @@ is the following:
   - The search starts with a budget of edit distance, initially equal to the
     given maximum distance.
   - The radix tree is traversed, starting from the root, visiting each path and
-    propagating the remaining budget along each path, but quitting any path
-    along which the budget is exhausted.
+    propagating the remaining budget along each path, but quitting any search
+    path along which the budget is exhausted.
   - For each visited node in the radix tree, the string contained in the node is
     traversed character by character using cursors that are kept on a stack.
   - Each cursor has: a pointer to a position in the node string; a pointer to a
     corresponding position in the search string; the type of the last edit,
-    either deletion, or insertion, or change, or none; a budget of "available
-    edits". This budget is decremented whenever an edit is required. The budget
-    is passed from parent to children cursors.
+    either `deletion`, or `insertion`, or `change`, or `none`; a budget of
+    "available edits". This budget is decremented whenever an edit is required.
+    The budget is passed from parent to children cursors.
   - The algorithm pulls cursors from the stack, and compares the pointed
     character in the node string with the pointed character in the search
     string:
     * if they are the same, one single child cursor is created, advancing both
-      pointers of 1 position
+      pointers of 1 position. No edit was necessary, so the last edit type is
+      `none`.
     * if they are not the same, and the remaining budget is higher than zero, up
       to three children cursors are created: one corresponding to a character
-      change, where both pointers are incremented by 1; one corresponding to a
-      deletion, where only the search string pointer is incremented; one
-      corresponding to an insertion, where only the node string pointer is
+      `change`, where both pointers are incremented by 1; one corresponding to a
+      `deletion`, where only the search string pointer is incremented; one
+      corresponding to an `insertion`, where only the node string pointer is
       incremented. Each of the children cursors have a budget that is one less
       the parent budget.
     * Some special cases are considered to avoid creating unnecessary cursors. A
-      sequence of adjacent deletion-insertion, or insertion-deletion, would have
-      the same effect of a change, but would consume more budget: therefore, a
-      delete cursor is never created after a insertion cursor, and vice-versa.
-      Similarily, adjacent change-deletion and deletion-change, or
-      change-insertion and insertion-change, are equivalent. Therefore, only one
-      of these cases is generated, by never producing a change cursor after a
-      deletion or insertion one.
+      sequence of adjacent `deletion`-`insertion`, or `insertion`-`deletion`,
+      would have the same effect of a change, but would consume more budget:
+      therefore, a delete cursor is never created after a insertion cursor, and
+      vice-versa. Similarily, adjacent `change`-`deletion` and
+      `deletion`-`change`, or `change`-`insertion` and `insertion`-`change`, are
+      equivalent. Therefore, only one of these cases is generated, by never
+      producing a change cursor after a deletion or insertion one.
   - Whenever the algorithm finds a leaf node, it reports it as a result.
 
 Note that this algorithm can get complex if the maximum edit distance is large,

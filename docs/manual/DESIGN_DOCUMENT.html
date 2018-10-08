@@ -99,12 +99,12 @@ features</li>
 <p>Here follows a description of these two layers.</p>
 <h3 id="index-data-structure">Index data structure</h3><p>The data structure chosen for the index is a <a href="https://en.wikipedia.org/wiki/Radix_tree">radix
 tree</a>, which is a trie where nodes
-that are the only child are merged with the parent node. The reason for choosing
-this data structure follows from the project goals:</p>
+with no siblings are merged with the parent node. The reason for choosing this
+data structure follows from the project goals:</p>
 <ul>
 <li>The radix tree minimizes the memory footprint of the index, because common
 prefixes are stored only once, and nodes are compressed into a single
-multi-character node whenever possible</li>
+multi-character node whenever possible.</li>
 <li>Radix trees offer fast key lookup, with performance proportional to the key
 length, and fast lookup of subtrees sharing the same key prefix. These
 properties make it possible to offer exact match and prefix search.</li>
@@ -116,22 +116,22 @@ performant. Other more performant solutions for fuzzy search require more
 space.</li>
 </ul>
 <p>The class implementing the radix tree is called <code>SearchableMap</code>, because it
-implements the standard JavaScript <code>Map</code> interface, but adds the following top
-of it:</p>
+implements the standard JavaScript <code>Map</code> interface, adding on top of it more
+advanced key lookup features:</p>
 <ul>
 <li><code>SearchableMap.prototype.atPrefix(prefix)</code>, returning another
 <code>SearchableMap</code> representing a mutable view of the original one, containing
 only entries where the keys share the given prefix.</li>
-<li><code>SearchableMap.prototype.fuzzyGet(searchKey, maxEditDistance)</code>, returning all the
-entries where the key is withing the given edit distance from <code>searchKey</code>,
-together with their distance.</li>
+<li><code>SearchableMap.prototype.fuzzyGet(searchKey, maxEditDistance)</code>, returning
+all the entries where the key is within the given edit (Levenshtein)
+distance from <code>searchKey</code>.</li>
 </ul>
-<p>In exchange for these additional features, <code>SearchableMap</code> is restricted to use
-only string keys.</p>
+<p>As a trade-off for offering these additional features, <code>SearchableMap</code> is
+restricted to use only string keys.</p>
 <p>The <code>SearchableMap</code> data type is part of the public API of <code>MiniSearch</code>, exposed
-also as <code>MiniSearch.SearchableMap</code>. Its utility is in fact not limited to
+as <code>MiniSearch.SearchableMap</code>. Its usefulness is in fact not limited to
 providing a data structure for the inverted index, and developers can use it as
-a building block for other use cases (e.g. autocompletion).</p>
+a building block for other solutions (e.g. autocompletion).</p>
 <h3 id="fuzzy-search-algorithm">Fuzzy search algorithm</h3><p>The algorithm used to provide fuzzy search of keys within a maximum <a href="https://en.wikipedia.org/wiki/Levenshtein_distance">Levenshtein
 distance</a> from a given term
 is the following:</p>
@@ -139,35 +139,36 @@ is the following:</p>
 <li>The search starts with a budget of edit distance, initially equal to the
 given maximum distance.</li>
 <li>The radix tree is traversed, starting from the root, visiting each path and
-propagating the remaining budget along each path, but quitting any path
-along which the budget is exhausted.</li>
+propagating the remaining budget along each path, but quitting any search
+path along which the budget is exhausted.</li>
 <li>For each visited node in the radix tree, the string contained in the node is
 traversed character by character using cursors that are kept on a stack.</li>
 <li>Each cursor has: a pointer to a position in the node string; a pointer to a
 corresponding position in the search string; the type of the last edit,
-either deletion, or insertion, or change, or none; a budget of &quot;available
-edits&quot;. This budget is decremented whenever an edit is required. The budget
-is passed from parent to children cursors.</li>
+either <code>deletion</code>, or <code>insertion</code>, or <code>change</code>, or <code>none</code>; a budget of
+&quot;available edits&quot;. This budget is decremented whenever an edit is required.
+The budget is passed from parent to children cursors.</li>
 <li>The algorithm pulls cursors from the stack, and compares the pointed
 character in the node string with the pointed character in the search
 string:<ul>
 <li>if they are the same, one single child cursor is created, advancing both
-pointers of 1 position</li>
+pointers of 1 position. No edit was necessary, so the last edit type is
+<code>none</code>.</li>
 <li>if they are not the same, and the remaining budget is higher than zero, up
 to three children cursors are created: one corresponding to a character
-change, where both pointers are incremented by 1; one corresponding to a
-deletion, where only the search string pointer is incremented; one
-corresponding to an insertion, where only the node string pointer is
+<code>change</code>, where both pointers are incremented by 1; one corresponding to a
+<code>deletion</code>, where only the search string pointer is incremented; one
+corresponding to an <code>insertion</code>, where only the node string pointer is
 incremented. Each of the children cursors have a budget that is one less
 the parent budget.</li>
 <li>Some special cases are considered to avoid creating unnecessary cursors. A
-sequence of adjacent deletion-insertion, or insertion-deletion, would have
-the same effect of a change, but would consume more budget: therefore, a
-delete cursor is never created after a insertion cursor, and vice-versa.
-Similarily, adjacent change-deletion and deletion-change, or
-change-insertion and insertion-change, are equivalent. Therefore, only one
-of these cases is generated, by never producing a change cursor after a
-deletion or insertion one.</li>
+sequence of adjacent <code>deletion</code>-<code>insertion</code>, or <code>insertion</code>-<code>deletion</code>,
+would have the same effect of a change, but would consume more budget:
+therefore, a delete cursor is never created after a insertion cursor, and
+vice-versa. Similarily, adjacent <code>change</code>-<code>deletion</code> and
+<code>deletion</code>-<code>change</code>, or <code>change</code>-<code>insertion</code> and <code>insertion</code>-<code>change</code>, are
+equivalent. Therefore, only one of these cases is generated, by never
+producing a change cursor after a deletion or insertion one.</li>
 </ul>
 </li>
 <li>Whenever the algorithm finds a leaf node, it reports it as a result.</li>
