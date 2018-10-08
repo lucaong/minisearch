@@ -1,5 +1,7 @@
 # MiniSearch
 
+[![Build Status](https://travis-ci.org/lucaong/minisearch.svg?branch=master)](https://travis-ci.org/lucaong/minisearch)
+
 `MiniSearch` is a tiny but powerful in-memory fulltext search engine for
 JavaScript. It is respectful of resources, so it can comfortably run both in
 Node and in the browser, but it can do a lot.
