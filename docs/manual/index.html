@@ -40,7 +40,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#search-options" data-ice="link">Search options</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#tokenization" data-ice="link">Tokenization</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#browser-compatibility" data-ice="link">Browser compatibility</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#browser-compatibility" data-ice="link">Browser compatibility</a></li>
 </ul>
   </div>
 <div data-ice="manual">
@@ -167,7 +167,7 @@ let miniSearch = new MiniSearch({
   processTerm: (term) =&gt; removeAccents(term.toLowerCase())
 })</code>
 </code></pre><p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>
-for details about configuration options and methods.</p><h3>Browser compatibility</h3><p><code>MiniSearch</code> should natively supports all modern browsers implementing
+for details about configuration options and methods.</p><h2>Browser compatibility</h2><p><code>MiniSearch</code> should natively supports all modern browsers implementing
 JavaScript standards, but requires a polyfill when used in Internet Explorer, as
 it makes use of <code>Object.entries</code>, <code>Array.includes</code> and <code>Array.from</code>. The
 <a href="https://babeljs.io/docs/en/babel-polyfill"><code>@babel/polyfill</code></a> is one such

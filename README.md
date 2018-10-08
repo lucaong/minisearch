@@ -150,7 +150,7 @@ Refer to the [API documentation](https://lucaong.github.io/minisearch/identifier
 for details about configuration options and methods.
 
 
-### Browser compatibility
+## Browser compatibility
 
 `MiniSearch` should natively supports all modern browsers implementing
 JavaScript standards, but requires a polyfill when used in Internet Explorer, as
