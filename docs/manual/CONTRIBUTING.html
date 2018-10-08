@@ -40,6 +40,18 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#search-options" data-ice="link">Search options</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#tokenization" data-ice="link">Tokenization</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#browser-compatibility" data-ice="link">Browser compatibility</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html" data-ice="link">Design Document</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#goals--and-non-goals-" data-ice="link">Goals (and non-goals)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#technical-design" data-ice="link">Technical design</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#index-data-structure" data-ice="link">Index data structure</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#fuzzy-search-algorithm" data-ice="link">Fuzzy search algorithm</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#search-api-layer" data-ice="link">Search API layer</a></li>
 </ul>
   </div>
 <div data-ice="manual">
@@ -85,14 +97,16 @@ benchmarks with <code>yarn benchmark</code></li>
 <li>If you are improving the documentation, you can build the docs with <code>yarn
 build-docs</code></li>
 </ol>
+<p>In order to understand implementation details and design goals, read the <a href="https://lucaong.github.io/minisearch/manual/DESIGN_DOCUMENT.html">design
+document</a>.</p>
 <p>Also, please follow these guidelines:</p>
 <ul>
 <li><p>Add tests for your code. This ensures that your feature won&apos;t be broken by
-  further code changes. If you are not sure of how to test, feel free to
-  send the pull request and ask for advices in the comment.</p>
+further code changes. If you are not sure of how to test, feel free to send
+the pull request and ask for advices in the comment.</p>
 </li>
 <li><p>Don&apos;t change the version number. That will be done by the mainteiner upon
-  releasing a new version.</p>
+releasing a new version.</p>
 </li>
 <li><p>Make sure you run the full test suite before sending the pull request.</p>
 </li>

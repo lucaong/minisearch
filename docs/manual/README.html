@@ -40,6 +40,18 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#search-options" data-ice="link">Search options</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#tokenization" data-ice="link">Tokenization</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#browser-compatibility" data-ice="link">Browser compatibility</a></li>
+</ul>
+  </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html" data-ice="link">Design Document</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#goals--and-non-goals-" data-ice="link">Goals (and non-goals)</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#technical-design" data-ice="link">Technical design</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#index-data-structure" data-ice="link">Index data structure</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#fuzzy-search-algorithm" data-ice="link">Fuzzy search algorithm</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#search-api-layer" data-ice="link">Search API layer</a></li>
 </ul>
   </div>
 <div data-ice="manual">
@@ -161,6 +173,11 @@ let miniSearch = new MiniSearch({
 </code></pre>
 <p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>
 for details about configuration options and methods.</p>
+<h3 id="browser-compatibility">Browser compatibility</h3><p><code>MiniSearch</code> should natively supports all modern browsers implementing
+JavaScript standards, but requires a polyfill when used in Internet Explorer, as
+it makes use of <code>Object.entries</code>, <code>Array.includes</code> and <code>Array.from</code>. The
+<a href="https://babeljs.io/docs/en/babel-polyfill"><code>@babel/polyfill</code></a> is one such
+polyfill that can be used to provide those functions.</p>
 </div>
 </div>
 

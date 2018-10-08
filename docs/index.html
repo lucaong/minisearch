@@ -143,6 +143,11 @@ let miniSearch = new MiniSearch({
 </code></pre>
 <p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>
 for details about configuration options and methods.</p>
+<h3 id="browser-compatibility">Browser compatibility</h3><p><code>MiniSearch</code> should natively supports all modern browsers implementing
+JavaScript standards, but requires a polyfill when used in Internet Explorer, as
+it makes use of <code>Object.entries</code>, <code>Array.includes</code> and <code>Array.from</code>. The
+<a href="https://babeljs.io/docs/en/babel-polyfill"><code>@babel/polyfill</code></a> is one such
+polyfill that can be used to provide those functions.</p>
 </div>
 </div>
 
