@@ -120,6 +120,14 @@ describe('MiniSearch', () => {
       expect(results[0].score).toEqual(results[1].score)
     })
 
+    it('returns empty results for terms that are not in the index', () => {
+      let results
+      expect(() => {
+        results = ms.search('sottomarino aeroplano')
+      }).not.toThrowError()
+      expect(results.length).toEqual(0)
+    })
+
     it('boosts fields', () => {
       const results = ms.search('vita', { boost: { title: 2 } })
       expect(results.map(({ id }) => id)).toEqual([3, 1])
@@ -133,7 +141,7 @@ describe('MiniSearch', () => {
     })
 
     it('combines results with OR by default', () => {
-      const results = ms.search('cammin como')
+      const results = ms.search('cammin como sottomarino')
       expect(results.length).toEqual(2)
       expect(results.map(({ id }) => id)).toEqual([1, 2])
     })
@@ -142,6 +150,7 @@ describe('MiniSearch', () => {
       const results = ms.search('vita cammin', { combineWith: 'AND' })
       expect(results.length).toEqual(1)
       expect(results.map(({ id }) => id)).toEqual([1])
+      expect(ms.search('vita sottomarino', { combineWith: 'AND' }).length).toEqual(0)
     })
 
     it('executes fuzzy search', () => {
