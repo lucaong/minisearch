@@ -36,13 +36,16 @@ setup your development environment:
   5. If you are improving the documentation, you can build the docs with `yarn
      build-docs`
 
+In order to understand implementation details and design goals, read the [design
+document](https://lucaong.github.io/minisearch/manual/DESIGN_DOCUMENT.html).
+
 Also, please follow these guidelines:
 
   - Add tests for your code. This ensures that your feature won't be broken by
-      further code changes. If you are not sure of how to test, feel free to
-      send the pull request and ask for advices in the comment.
+    further code changes. If you are not sure of how to test, feel free to send
+    the pull request and ask for advices in the comment.
 
   - Don't change the version number. That will be done by the mainteiner upon
-      releasing a new version.
+    releasing a new version.
 
   - Make sure you run the full test suite before sending the pull request.
