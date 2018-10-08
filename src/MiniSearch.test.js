@@ -30,13 +30,20 @@ describe('MiniSearch', () => {
       ms.add({ id: 1, text: 'Nel mezzo del cammin di nostra vita' })
       expect(ms.documentCount).toEqual(1)
     })
+
+    it('throws error if the document does not have the ID field', () => {
+      const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] })
+      expect(() => {
+        ms.add({ text: 'I do not have an ID' })
+      }).toThrowError('Document does not have ID field "foo"')
+    })
   })
 
   describe('remove', () => {
     const documents = [
-      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita ... cammin' },
       { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
-      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
+      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria ... cammin' }
     ]
 
     let ms
@@ -57,6 +64,13 @@ describe('MiniSearch', () => {
       ms.remove(documents[0])
       expect(ms._index.has('commedia')).toEqual(false)
       expect(Object.keys(ms._index.get('vita'))).toEqual([ms._fieldIds.title.toString()])
+    })
+
+    it('throws error if the document does not have the ID field', () => {
+      const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] })
+      expect(() => {
+        ms.remove({ text: 'I do not have an ID' })
+      }).toThrowError('Document does not have ID field "foo"')
     })
 
     describe('when the document was not in the index', () => {

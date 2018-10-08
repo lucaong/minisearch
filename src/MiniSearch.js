@@ -284,14 +284,6 @@ class MiniSearch {
       fieldIds: this._fieldIds
     }
   }
-
-  /**
-  * @private
-  * @ignore
-  */
-  toJS () {
-    this.toJSON()
-  }
 }
 
 /**
