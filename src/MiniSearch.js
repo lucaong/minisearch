@@ -163,8 +163,8 @@ class MiniSearch {
   * @param {Object} [options] - Search options
   * @param {Array<string>} [options.fields] - Fields to search in. If omitted, all fields are searched
   * @param {Object<string, number>} [options.boost] - Key-value object of boosting values for fields
-  * @param {boolean|function} [options.prefix] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from the term.
-  * @param {number|function} [options.fuzzy] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function passing each search term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed.
+  * @param {boolean|function} [options.prefix] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from the term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms, `terms: Array<string>` - the array of query terms.
+  * @param {number|function} [options.fuzzy] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms, `terms: Array<string>` - the array of query terms.
   * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')
   * @return {Array<{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
   *
@@ -412,12 +412,12 @@ const tfIdf = function (tf, df, n) {
   return tf * Math.log(n / df)
 }
 
-const termToQuery = (options) => (term) => {
+const termToQuery = (options) => (term, i, terms) => {
   const fuzzy = (typeof options.fuzzy === 'function')
-    ? options.fuzzy(term)
+    ? options.fuzzy(term, i, terms)
     : options.fuzzy
   const prefix = (typeof options.prefix === 'function')
-    ? options.prefix(term)
+    ? options.prefix(term, i, terms)
     : options.prefix
   return { term, fuzzy, prefix }
 }

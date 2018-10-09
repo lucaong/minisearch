@@ -186,10 +186,13 @@ describe('MiniSearch', () => {
     })
 
     it('accepts a function to compute fuzzy and prefix options from term', () => {
-      const results = ms.search('quel comedia', {
-        fuzzy: term => term.length > 4 ? 2 : false,
-        prefix: term => term.length > 4
-      })
+      const fuzzy = jest.fn(term => term.length > 4 ? 2 : false)
+      const prefix = jest.fn(term => term.length > 4)
+      const results = ms.search('quel comedia', { fuzzy, prefix })
+      expect(fuzzy).toHaveBeenNthCalledWith(1, 'quel', 0, ['quel', 'comedia'])
+      expect(fuzzy).toHaveBeenNthCalledWith(2, 'comedia', 1, ['quel', 'comedia'])
+      expect(prefix).toHaveBeenNthCalledWith(1, 'quel', 0, ['quel', 'comedia'])
+      expect(prefix).toHaveBeenNthCalledWith(2, 'comedia', 1, ['quel', 'comedia'])
       expect(results.length).toEqual(2)
       expect(results.map(({ id }) => id)).toEqual([2, 1])
     })
