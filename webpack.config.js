@@ -23,10 +23,7 @@ module.exports = {
               ['@babel/preset-env', {
                 'shippedProposals': true,
                 'useBuiltIns': 'usage',
-                'targets': {
-                  'browsers': '> 1%',
-                  'uglify': true
-                }
+                'targets': { 'browsers': '> 1%' }
               }]
             ],
             plugins: [require('@babel/plugin-proposal-object-rest-spread')]
