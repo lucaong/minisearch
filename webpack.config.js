@@ -10,5 +10,29 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     library: 'minisearch',
     libraryExport: 'default'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.m?js$/,
+        exclude: /(node_modules)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                'shippedProposals': true,
+                'useBuiltIns': 'usage',
+                'targets': {
+                  'browsers': '> 1%',
+                  'uglify': true
+                }
+              }]
+            ],
+            plugins: [require('@babel/plugin-proposal-object-rest-spread')]
+          }
+        }
+      }
+    ]
   }
 }
