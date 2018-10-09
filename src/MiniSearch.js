@@ -34,7 +34,7 @@ class MiniSearch {
   * @param {string} [options.idField='id'] - ID field, uniquely identifying a document
   * @param {function(text: string): Array<string>} [options.tokenize] - Function used to split a field into individual terms
   * @param {function(term: string): string} [options.processTerm] - Function used to process a term before indexing it or searching
-  * @param {?Object} options.searchOptions - Default search options (see search method for details)
+  * @param {?Object} options.searchOptions - Default search options (see the `search` method for details)
   *
   * @example
   * // Create a search engine that indexes the 'title' and 'text' fields of your
@@ -61,7 +61,8 @@ class MiniSearch {
   *   // indexing or searching. It can be used for stemming and normalization.
   *   processTerm: term => term.toLowerCase()
   *
-  *   // searchOptions: default search options, see `search` method for details
+  *   // searchOptions: default search options, see the `search` method for
+  *   // details
   *   searchOptions: undefined
   *
   *   // fields: document fields to be indexed. Mandatory, but not set by default
@@ -163,8 +164,8 @@ class MiniSearch {
   * @param {Object} [options] - Search options
   * @param {Array<string>} [options.fields] - Fields to search in. If omitted, all fields are searched
   * @param {Object<string, number>} [options.boost] - Key-value object of boosting values for fields
-  * @param {boolean|function} [options.prefix] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from the term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms, `terms: Array<string>` - the array of query terms.
-  * @param {number|function} [options.fuzzy] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms, `terms: Array<string>` - the array of query terms.
+  * @param {boolean|function} [options.prefix] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from each tokenized and processed query term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
+  * @param {number|function} [options.fuzzy] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function for each tokenized and processed query term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
   * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')
   * @return {Array<{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
   *
