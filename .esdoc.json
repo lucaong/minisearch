@@ -19,7 +19,7 @@
           "author": "https://twitter.com/lucaongaro"
         },
         "manual": {
-          "files": ["README.md", "DESIGN_DOCUMENT.md", "CONTRIBUTING.md"]
+          "files": ["README.md", "CONTRIBUTING.md", "DESIGN_DOCUMENT.md"]
         }
       }
     },
