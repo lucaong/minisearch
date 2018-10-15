@@ -161,12 +161,13 @@ class MiniSearch {
   * in which fields.
   *
   * @param {string} queryString - Query string to search for
-  * @param {Object} [options] - Search options
+  * @param {Object} [options] - Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
   * @param {Array<string>} [options.fields] - Fields to search in. If omitted, all fields are searched
   * @param {Object<string, number>} [options.boost] - Key-value object of boosting values for fields
-  * @param {boolean|function} [options.prefix] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from each tokenized and processed query term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
-  * @param {number|function} [options.fuzzy] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function for each tokenized and processed query term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
+  * @param {boolean|function(term: string, i: number, terms: Array<string>): boolean} [options.prefix=false] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from each tokenized and processed query term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
+  * @param {number|function(term: string, i: number, terms: Array<string>): boolean|number} [options.fuzzy=false] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function for each tokenized and processed query term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
   * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')
+  * @param {function(termFrequency: number, documentFrequency: number, documentCount: number, boost: number, editDistance: number): number} [options.score] - The scoring function. By default, results are scored by TF-IDF, weighted by boosting and edit distance to the search term. Optionally, the scoring can be customized by passing a `score` function, that accepts as arguments: `termFrequency: integer` - the number of occurrencies of the term in the document/field; `documentFrequency: integer` - the number of documents containing the term; `documentCount: integer` - the total number of indexed documents; `boost: number` - the boosting factor; `editDistance: integer` - the edit distance of the term to the corresponding search term. The `score` function is expected to return a numeric score value.
   * @return {Array<{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
   *
   * @example
@@ -240,22 +241,22 @@ class MiniSearch {
   * @ignore
   */
   executeQuery (query, options = {}) {
-    options = { ...this._options.defaultSearchOptions, ...options }
+    options = { ...this._options.searchOptions, ...options }
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
       ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
     if (!query.fuzzy && !query.prefix) {
-      return termResults(this, query.term, boosts, this._index.get(query.term))
+      return termResults(this, options.score, query.term, boosts, this._index.get(query.term))
     }
     const results = []
     if (query.fuzzy) {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
-        results.push(termResults(this, term, boosts, data, distance))
+        results.push(termResults(this, options.score, term, boosts, data, distance))
       })
     }
     if (query.prefix) {
       this._index.atPrefix(query.term).forEach((term, data) => {
-        results.push(termResults(this, term, boosts, data, term.length - query.term.length))
+        results.push(termResults(this, options.score, term, boosts, data, term.length - query.term.length))
       })
     }
     return results.reduce(combinators[OR], {})
@@ -370,15 +371,14 @@ const addFields = function (self, fields) {
   fields.forEach((field, i) => { self._fieldIds[field] = i })
 }
 
-const termResults = function (self, term, boosts, indexData, distance = 0) {
+const termResults = function (self, scoreFn, term, boosts, indexData, distance = 0) {
   if (indexData == null) { return {} }
   return Object.entries(boosts).reduce((results, [field, boost]) => {
     const { df, ds } = indexData[self._fieldIds[field]] || { ds: {} }
     Object.entries(ds).forEach(([documentId, tf]) => {
-      const weight = boost / (1 + (0.333 * boost * distance))
       results[documentId] = results[documentId] || { score: 0, match: {} }
       results[documentId].match[term] = results[documentId].match[term] || []
-      results[documentId].score += (weight * tfIdf(tf, df, self._documentCount))
+      results[documentId].score += scoreFn(tf, df, self._documentCount, boost, distance)
       results[documentId].match[term].push(field)
     })
     return results
@@ -430,7 +430,13 @@ const defaultOptions = {
 }
 
 const defaultSearchOptions = {
-  combineWith: OR
+  combineWith: OR,
+  prefix: false,
+  fuzzy: false,
+  score: (termFrequency, documentFrequency, documentCount, boost, editDistance) => {
+    const weight = boost / (1 + (0.333 * boost * editDistance))
+    return weight * tfIdf(termFrequency, documentFrequency, documentCount)
+  }
 }
 
 export default MiniSearch
