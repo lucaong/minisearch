@@ -78,17 +78,6 @@ let results = miniSearch.search('zen art motorcycle')
 // => [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]
 ```
 
-### Auto suggestions
-
-`MiniSearch` can also suggest search terms given an incomplete query:
-
-```
-// Get auto-suggestions for a search
-miniSearch.autoSuggest('zen ar')
-// => [ { suggestion: 'archery art zen', score: 1.7333230649339662 },
-//      { suggestion: 'art zen', score: 1.2131375635756583 } ]
-```
-
 ### Search options
 
 `MiniSearch` supports several options for more advanced search behavior:
@@ -119,6 +108,16 @@ miniSearch.addAll(documents)
 
 // It will now by default perform fuzzy search and boost "title":
 miniSearch.search('zen and motorcycles')
+```
+
+### Auto suggestions
+
+`MiniSearch` can suggest search queries given an incomplete query:
+
+```
+miniSearch.autoSuggest('zen ar')
+// => [ { suggestion: 'archery art zen', score: 1.7333230649339662 },
+//      { suggestion: 'art zen', score: 1.2131375635756583 } ]
 ```
 
 ### Tokenization

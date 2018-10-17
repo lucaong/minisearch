@@ -37,8 +37,8 @@
 <li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#installation" data-ice="link">Installation</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#usage" data-ice="link">Usage</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#basic-usage" data-ice="link">Basic usage</a></li>
-<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#auto-suggestions" data-ice="link">Auto suggestions</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#search-options" data-ice="link">Search options</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#auto-suggestions" data-ice="link">Auto suggestions</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#tokenization" data-ice="link">Tokenization</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#browser-compatibility" data-ice="link">Browser compatibility</a></li>
@@ -118,12 +118,7 @@ miniSearch.addAll(documents)
 let results = miniSearch.search(&apos;zen art motorcycle&apos;)
 // =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]</code>
 </code></pre>
-<h3 id="auto-suggestions">Auto suggestions</h3><p><code>MiniSearch</code> can also suggest search terms given an incomplete query:</p>
-<pre><code><code class="source-code prettyprint">// Get auto-suggestions for a search
-miniSearch.autoSuggest(&apos;zen ar&apos;)
-// =&gt; [ { suggestion: &apos;archery art zen&apos;, score: 1.7333230649339662 },
-//      { suggestion: &apos;art zen&apos;, score: 1.2131375635756583 } ]</code>
-</code></pre><h3 id="search-options">Search options</h3><p><code>MiniSearch</code> supports several options for more advanced search behavior:</p>
+<h3 id="search-options">Search options</h3><p><code>MiniSearch</code> supports several options for more advanced search behavior:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">// Search only specific fields
 miniSearch.search(&apos;zen&apos;, { fields: [&apos;title&apos;] })
 
@@ -150,7 +145,11 @@ miniSearch.addAll(documents)
 // It will now by default perform fuzzy search and boost &quot;title&quot;:
 miniSearch.search(&apos;zen and motorcycles&apos;)</code>
 </code></pre>
-<h3 id="tokenization">Tokenization</h3><p>By default, documents and queries are tokenized splitting on non-word
+<h3 id="auto-suggestions">Auto suggestions</h3><p><code>MiniSearch</code> can suggest search queries given an incomplete query:</p>
+<pre><code><code class="source-code prettyprint">miniSearch.autoSuggest(&apos;zen ar&apos;)
+// =&gt; [ { suggestion: &apos;archery art zen&apos;, score: 1.7333230649339662 },
+//      { suggestion: &apos;art zen&apos;, score: 1.2131375635756583 } ]</code>
+</code></pre><h3 id="tokenization">Tokenization</h3><p>By default, documents and queries are tokenized splitting on non-word
 characters. No stop-word list is applied, but single-character words are
 excluded. The tokenization logic can be easily changed by passing a custom
 tokenizer function as the <code>tokenize</code> option:</p>
