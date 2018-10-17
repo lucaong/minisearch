@@ -249,7 +249,7 @@ let results = miniSearch.search(&apos;zen art motorcycle&apos;)
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-autoSuggest">autoSuggest</a></span></span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-autoSuggest">autoSuggest</a></span></span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{suggestion: <span=""><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{suggestion:></span>
         </p>
       </div>
       <div>
@@ -512,7 +512,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber272">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber273">source</a></span></span>
     </span>
   </h3>
 
@@ -677,11 +677,11 @@ const miniSearch = MiniSearch.new({
     
     
     
-    <span class="code" data-ice="name">autoSuggest</span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span>*</span></span>
+    <span class="code" data-ice="name">autoSuggest</span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{suggestion: <span=""><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{suggestion:></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber250">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber251">source</a></span></span>
     </span>
   </h3>
 
@@ -727,8 +727,9 @@ given search query, each with a relevance score, sorted by descending score.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{suggestion: <span=""><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{suggestion:></td>
+          <td class="return-desc" data-ice="returnDescription"><p>A sorted array of suggestions sorted by relevance score.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1033,7 +1034,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber318">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber319">source</a></span></span>
     </span>
   </h3>
 

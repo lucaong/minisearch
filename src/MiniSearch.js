@@ -235,6 +235,7 @@ class MiniSearch {
   *
   * @param {string} queryString - Query string to be expanded into suggestions
   * @param {Object} [options] - Search options. The supported options and default values are the same as for the `search` method, except that `options.fuzzy` defaults to `true`.
+  * @return {Array<{ suggestion: string, score: number }>} A sorted array of suggestions sorted by relevance score.
   *
   * @example
   * // Get suggestions for 'neuro'
