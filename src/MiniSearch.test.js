@@ -232,6 +232,38 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('autoSuggest', () => {
+    const documents = [
+      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
+    ]
+    const ms = new MiniSearch({ fields: ['title', 'text'] })
+    ms.addAll(documents)
+
+    it('returns scored suggestions', () => {
+      const results = ms.autoSuggest('com')
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ suggestion }) => suggestion)).toEqual(['como', 'commedia'])
+      expect(results[0].score).toBeGreaterThan(results[1].score)
+    })
+
+    it('returns scored suggestions for multi-word queries', () => {
+      const results = ms.autoSuggest('vi no')
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ suggestion }) => suggestion)).toEqual(['nova vita', 'nostra vita'])
+      expect(results[0].score).toBeGreaterThan(results[1].score)
+    })
+
+    it('returns empty suggestions for terms that are not in the index', () => {
+      let results
+      expect(() => {
+        results = ms.autoSuggest('sottomarino aeroplano')
+      }).not.toThrowError()
+      expect(results.length).toEqual(0)
+    })
+  })
+
   describe('loadJSON', () => {
     it('loads a JSON-serialized search index', () => {
       const documents = [
