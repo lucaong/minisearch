@@ -251,7 +251,7 @@ describe('MiniSearch', () => {
     it('returns scored suggestions for multi-word queries', () => {
       const results = ms.autoSuggest('vi no')
       expect(results.length).toBeGreaterThan(0)
-      expect(results.map(({ suggestion }) => suggestion)).toEqual(['nova vita', 'nostra vita'])
+      expect(results.map(({ suggestion }) => suggestion)).toEqual(['vita nova', 'vita nostra'])
       expect(results[0].score).toBeGreaterThan(results[1].score)
     })
 

@@ -223,7 +223,7 @@ class MiniSearch {
     const combinedResults = this.combineResults(results, options.combineWith)
 
     return Object.entries(combinedResults)
-      .map(([shortDocumentId, { score, match }]) => ({ id: this._documentIds[shortDocumentId], score, match }))
+      .map(([docId, { score, match, terms }]) => ({ id: this._documentIds[docId], score, match, terms }))
       .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
   }
 
@@ -245,15 +245,15 @@ class MiniSearch {
   * @example
   * // Get suggestions for 'zen ar'
   * miniSearch.autoSuggest('zen ar')
-  * // => [ { suggestion: 'archery art zen', score: 1.7333230649339662 },
-  * //      { suggestion: 'art zen', score: 1.2131375635756583 } ]
+  * // => [ { suggestion: 'zen archery art', terms: [ 'zen', 'archery', 'art' ], score: 1.73332 },
+  * //      { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 } ]
   */
   autoSuggest (queryString, options = {}) {
     options = { ...defaultAutoSuggestOptions, ...options }
-    const suggestions = this.search(queryString, options).reduce((suggestions, { score, match }) => {
-      const phrase = Object.keys(match).sort().join(' ')
+    const suggestions = this.search(queryString, options).reduce((suggestions, { score, terms }) => {
+      const phrase = terms.join(' ')
       if (suggestions[phrase] == null) {
-        suggestions[phrase] = { score, count: 1 }
+        suggestions[phrase] = { score, terms, count: 1 }
       } else {
         suggestions[phrase].score += score
         suggestions[phrase].count += 1
@@ -261,7 +261,7 @@ class MiniSearch {
       return suggestions
     }, {})
     return Object.entries(suggestions)
-      .map(([suggestion, { score, count }]) => ({ suggestion, score: score / count }))
+      .map(([suggestion, { score, terms, count }]) => ({ suggestion, terms, score: score / count }))
       .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
   }
 
@@ -414,7 +414,8 @@ const termResults = function (self, scoreFn, term, boosts, indexData, distance =
   return Object.entries(boosts).reduce((results, [field, boost]) => {
     const { df, ds } = indexData[self._fieldIds[field]] || { ds: {} }
     Object.entries(ds).forEach(([documentId, tf]) => {
-      results[documentId] = results[documentId] || { score: 0, match: {} }
+      results[documentId] = results[documentId] || { score: 0, match: {}, terms: [] }
+      results[documentId].terms.push(term)
       results[documentId].match[term] = results[documentId].match[term] || []
       results[documentId].score += scoreFn(tf, df, self._documentCount, boost, distance)
       results[documentId].match[term].push(field)
@@ -425,11 +426,12 @@ const termResults = function (self, scoreFn, term, boosts, indexData, distance =
 
 const combinators = {
   [OR]: function (a, b) {
-    return Object.entries(b).reduce((combined, [documentId, { score, match }]) => {
+    return Object.entries(b).reduce((combined, [documentId, { score, match, terms }]) => {
       if (combined[documentId] == null) {
-        combined[documentId] = { score, match }
+        combined[documentId] = { score, match, terms }
       } else {
         combined[documentId].score += score
+        combined[documentId].terms = [...combined[documentId].terms, ...terms]
         Object.assign(combined[documentId].match, match)
       }
       return combined
@@ -437,11 +439,12 @@ const combinators = {
   },
   [AND]: function (a, b) {
     if (a == null) { return b }
-    return Object.entries(b).reduce((combined, [documentId, { score, match }]) => {
+    return Object.entries(b).reduce((combined, [documentId, { score, match, terms }]) => {
       if (a[documentId] === undefined) { return combined }
       combined[documentId] = combined[documentId] || {}
       combined[documentId].score = Math.min(a[documentId].score, score)
       combined[documentId].match = { ...a[documentId].match, ...match }
+      combined[documentId].terms = [...a[documentId].terms, ...terms]
       return combined
     }, {})
   }
