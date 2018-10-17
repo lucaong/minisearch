@@ -146,10 +146,11 @@ miniSearch.addAll(documents)
 miniSearch.search(&apos;zen and motorcycles&apos;)</code>
 </code></pre>
 <h3 id="auto-suggestions">Auto suggestions</h3><p><code>MiniSearch</code> can suggest search queries given an incomplete query:</p>
-<pre><code><code class="source-code prettyprint">miniSearch.autoSuggest(&apos;zen ar&apos;)
+<pre><code class="lang-javascript"><code class="source-code prettyprint">miniSearch.autoSuggest(&apos;zen ar&apos;)
 // =&gt; [ { suggestion: &apos;archery art zen&apos;, score: 1.7333230649339662 },
 //      { suggestion: &apos;art zen&apos;, score: 1.2131375635756583 } ]</code>
-</code></pre><h3 id="tokenization">Tokenization</h3><p>By default, documents and queries are tokenized splitting on non-word
+</code></pre>
+<h3 id="tokenization">Tokenization</h3><p>By default, documents and queries are tokenized splitting on non-word
 characters. No stop-word list is applied, but single-character words are
 excluded. The tokenization logic can be easily changed by passing a custom
 tokenizer function as the <code>tokenize</code> option:</p>

@@ -114,7 +114,7 @@ miniSearch.search('zen and motorcycles')
 
 `MiniSearch` can suggest search queries given an incomplete query:
 
-```
+```javascript
 miniSearch.autoSuggest('zen ar')
 // => [ { suggestion: 'archery art zen', score: 1.7333230649339662 },
 //      { suggestion: 'art zen', score: 1.2131375635756583 } ]
