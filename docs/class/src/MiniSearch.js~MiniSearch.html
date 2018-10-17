@@ -512,7 +512,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber273">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber278">source</a></span></span>
     </span>
   </h3>
 
@@ -681,7 +681,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber251">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber256">source</a></span></span>
     </span>
   </h3>
 
@@ -750,16 +750,22 @@ given search query, each with a relevance score, sorted by descending score.</p>
     
   <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get suggestions for &apos;neuro&apos;
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get suggestions for &apos;neuro&apos;:
 miniSearch.autoSuggest(&apos;neuro&apos;)
-// =&gt; [ { suggestion: &apos;neuromancer&apos;, score: 0.4624063913008307 } ]</code></pre>
+// =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 0.46240 } ]</code></pre>
     </div>
 <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get suggestions for &apos;zen ar&apos;
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get suggestions for &apos;zen ar&apos;:
 miniSearch.autoSuggest(&apos;zen ar&apos;)
 // =&gt; [ { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
 //      { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 } ]</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Correct spelling mistakes using fuzzy search:
+miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
+// =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 1.03998 } ]</code></pre>
     </div>
 </div>
 
@@ -1034,7 +1040,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber319">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber324">source</a></span></span>
     </span>
   </h3>
 

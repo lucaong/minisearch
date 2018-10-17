@@ -276,15 +276,20 @@ class MiniSearch {
   * @return {Array&lt;{ suggestion: string, score: number }&gt;} A sorted array of suggestions sorted by relevance score.
   *
   * @example
-  * // Get suggestions for &apos;neuro&apos;
+  * // Get suggestions for &apos;neuro&apos;:
   * miniSearch.autoSuggest(&apos;neuro&apos;)
-  * // =&gt; [ { suggestion: &apos;neuromancer&apos;, score: 0.4624063913008307 } ]
+  * // =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 0.46240 } ]
   *
   * @example
-  * // Get suggestions for &apos;zen ar&apos;
+  * // Get suggestions for &apos;zen ar&apos;:
   * miniSearch.autoSuggest(&apos;zen ar&apos;)
   * // =&gt; [ { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
   * //      { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 } ]
+  *
+  * @example
+  * // Correct spelling mistakes using fuzzy search:
+  * miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
+  * // =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 1.03998 } ]
   */
   autoSuggest (queryString, options = {}) {
     options = { ...defaultAutoSuggestOptions, ...options }
