@@ -87,7 +87,12 @@ miniSearch.addAll(documents)
 let results = miniSearch.search(&apos;zen art motorcycle&apos;)
 // =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]</code>
 </code></pre>
-<h3 id="search-options">Search options</h3><p><code>MiniSearch</code> supports several options for more advanced search behavior:</p>
+<h3 id="auto-suggestions">Auto suggestions</h3><p><code>MiniSearch</code> can also suggest search terms given an incomplete query:</p>
+<pre><code><code class="source-code prettyprint">// Get auto-suggestions for a search
+miniSearch.autoSuggest(&apos;zen ar&apos;)
+// =&gt; [ { suggestion: &apos;archery art zen&apos;, score: 1.7333230649339662 },
+//      { suggestion: &apos;art zen&apos;, score: 1.2131375635756583 } ]</code>
+</code></pre><h3 id="search-options">Search options</h3><p><code>MiniSearch</code> supports several options for more advanced search behavior:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">// Search only specific fields
 miniSearch.search(&apos;zen&apos;, { fields: [&apos;title&apos;] })
 

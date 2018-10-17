@@ -249,6 +249,35 @@ let results = miniSearch.search(&apos;zen art motorcycle&apos;)
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-autoSuggest">autoSuggest</a></span></span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Provide suggestions for the given search query</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-remove">remove</a></span></span><span class="code" data-ice="signature">(document: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>)</span>
         </p>
       </div>
@@ -483,7 +512,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber235">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber272">source</a></span></span>
     </span>
   </h3>
 
@@ -634,6 +663,104 @@ const miniSearch = MiniSearch.new({
   
 
   
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-autoSuggest">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">autoSuggest</span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber250">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Provide suggestions for the given search query</p>
+<p>The result is a list of suggested modified search queries, derived from the
+given search query, each with a relevance score, sorted by descending score.</p>
+</div>
+
+  
+
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">queryString</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>Query string to be expanded into suggestions</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">options</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Search options. The supported options and default values are the same as for the <code>search</code> method, except that <code>options.fuzzy</code> defaults to <code>true</code>.</p>
+</td>
+    </tr>
+</tbody>
+  </table>
+</div>
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span>*</span></td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  <div data-ice="example">
+    <h4>Example:</h4>
+    
+  <div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get suggestions for &apos;neuro&apos;
+miniSearch.autoSuggest(&apos;neuro&apos;)
+// =&gt; [ { suggestion: &apos;neuromancer&apos;, score: 0.4624063913008307 } ]</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get suggestions for &apos;zen ar&apos;
+miniSearch.autoSuggest(&apos;zen ar&apos;)
+// =&gt; [ { suggestion: &apos;archery art zen&apos;, score: 1.7333230649339662 },
+//      { suggestion: &apos;art zen&apos;, score: 1.2131375635756583 } ]</code></pre>
+    </div>
+</div>
 
   
 
@@ -906,7 +1033,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber281">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber318">source</a></span></span>
     </span>
   </h3>
 

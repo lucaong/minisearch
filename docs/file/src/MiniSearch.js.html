@@ -266,6 +266,43 @@ class MiniSearch {
   }
 
   /**
+  * Provide suggestions for the given search query
+  *
+  * The result is a list of suggested modified search queries, derived from the
+  * given search query, each with a relevance score, sorted by descending score.
+  *
+  * @param {string} queryString - Query string to be expanded into suggestions
+  * @param {Object} [options] - Search options. The supported options and default values are the same as for the `search` method, except that `options.fuzzy` defaults to `true`.
+  *
+  * @example
+  * // Get suggestions for &apos;neuro&apos;
+  * miniSearch.autoSuggest(&apos;neuro&apos;)
+  * // =&gt; [ { suggestion: &apos;neuromancer&apos;, score: 0.4624063913008307 } ]
+  *
+  * @example
+  * // Get suggestions for &apos;zen ar&apos;
+  * miniSearch.autoSuggest(&apos;zen ar&apos;)
+  * // =&gt; [ { suggestion: &apos;archery art zen&apos;, score: 1.7333230649339662 },
+  * //      { suggestion: &apos;art zen&apos;, score: 1.2131375635756583 } ]
+  */
+  autoSuggest (queryString, options = {}) {
+    options = { ...defaultAutoSuggestOptions, ...options }
+    const suggestions = this.search(queryString, options).reduce((suggestions, { score, match }) =&gt; {
+      const phrase = Object.keys(match).sort().join(&apos; &apos;)
+      if (suggestions[phrase] == null) {
+        suggestions[phrase] = { score, count: 1 }
+      } else {
+        suggestions[phrase].score += score
+        suggestions[phrase].count += 1
+      }
+      return suggestions
+    }, {})
+    return Object.entries(suggestions)
+      .map(([suggestion, { score, count }]) =&gt; ({ suggestion, score: score / count }))
+      .sort(({ score: a }, { score: b }) =&gt; a &lt; b ? 1 : -1)
+  }
+
+  /**
   * Number of documents in the index
   *
   * @type {number}
@@ -475,6 +512,10 @@ const defaultSearchOptions = {
     const weight = boost / (1 + (0.333 * boost * editDistance))
     return weight * tfIdf(termFrequency, documentFrequency, documentCount)
   }
+}
+
+const defaultAutoSuggestOptions = {
+  prefix: true
 }
 
 export default MiniSearch

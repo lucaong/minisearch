@@ -312,6 +312,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/minisearch.js~minisearch#autosuggest",
+    "class/src/MiniSearch.js~MiniSearch.html#instance-method-autoSuggest",
+    "src/MiniSearch.js~MiniSearch#autoSuggest",
+    "method"
+  ],
+  [
     "src/minisearch.js~minisearch#constructor",
     "class/src/MiniSearch.js~MiniSearch.html#instance-constructor-constructor",
     "src/MiniSearch.js~MiniSearch#constructor",
