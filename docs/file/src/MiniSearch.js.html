@@ -261,7 +261,7 @@ class MiniSearch {
     const combinedResults = this.combineResults(results, options.combineWith)
 
     return Object.entries(combinedResults)
-      .map(([shortDocumentId, { score, match }]) =&gt; ({ id: this._documentIds[shortDocumentId], score, match }))
+      .map(([docId, { score, match, terms }]) =&gt; ({ id: this._documentIds[docId], score, match, terms }))
       .sort(({ score: a }, { score: b }) =&gt; a &lt; b ? 1 : -1)
   }
 
@@ -283,15 +283,15 @@ class MiniSearch {
   * @example
   * // Get suggestions for &apos;zen ar&apos;
   * miniSearch.autoSuggest(&apos;zen ar&apos;)
-  * // =&gt; [ { suggestion: &apos;archery art zen&apos;, score: 1.7333230649339662 },
-  * //      { suggestion: &apos;art zen&apos;, score: 1.2131375635756583 } ]
+  * // =&gt; [ { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
+  * //      { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 } ]
   */
   autoSuggest (queryString, options = {}) {
     options = { ...defaultAutoSuggestOptions, ...options }
-    const suggestions = this.search(queryString, options).reduce((suggestions, { score, match }) =&gt; {
-      const phrase = Object.keys(match).sort().join(&apos; &apos;)
+    const suggestions = this.search(queryString, options).reduce((suggestions, { score, terms }) =&gt; {
+      const phrase = terms.join(&apos; &apos;)
       if (suggestions[phrase] == null) {
-        suggestions[phrase] = { score, count: 1 }
+        suggestions[phrase] = { score, terms, count: 1 }
       } else {
         suggestions[phrase].score += score
         suggestions[phrase].count += 1
@@ -299,7 +299,7 @@ class MiniSearch {
       return suggestions
     }, {})
     return Object.entries(suggestions)
-      .map(([suggestion, { score, count }]) =&gt; ({ suggestion, score: score / count }))
+      .map(([suggestion, { score, terms, count }]) =&gt; ({ suggestion, terms, score: score / count }))
       .sort(({ score: a }, { score: b }) =&gt; a &lt; b ? 1 : -1)
   }
 
@@ -452,7 +452,8 @@ const termResults = function (self, scoreFn, term, boosts, indexData, distance =
   return Object.entries(boosts).reduce((results, [field, boost]) =&gt; {
     const { df, ds } = indexData[self._fieldIds[field]] || { ds: {} }
     Object.entries(ds).forEach(([documentId, tf]) =&gt; {
-      results[documentId] = results[documentId] || { score: 0, match: {} }
+      results[documentId] = results[documentId] || { score: 0, match: {}, terms: [] }
+      results[documentId].terms.push(term)
       results[documentId].match[term] = results[documentId].match[term] || []
       results[documentId].score += scoreFn(tf, df, self._documentCount, boost, distance)
       results[documentId].match[term].push(field)
@@ -463,11 +464,12 @@ const termResults = function (self, scoreFn, term, boosts, indexData, distance =
 
 const combinators = {
   [OR]: function (a, b) {
-    return Object.entries(b).reduce((combined, [documentId, { score, match }]) =&gt; {
+    return Object.entries(b).reduce((combined, [documentId, { score, match, terms }]) =&gt; {
       if (combined[documentId] == null) {
-        combined[documentId] = { score, match }
+        combined[documentId] = { score, match, terms }
       } else {
         combined[documentId].score += score
+        combined[documentId].terms = [...combined[documentId].terms, ...terms]
         Object.assign(combined[documentId].match, match)
       }
       return combined
@@ -475,11 +477,12 @@ const combinators = {
   },
   [AND]: function (a, b) {
     if (a == null) { return b }
-    return Object.entries(b).reduce((combined, [documentId, { score, match }]) =&gt; {
+    return Object.entries(b).reduce((combined, [documentId, { score, match, terms }]) =&gt; {
       if (a[documentId] === undefined) { return combined }
       combined[documentId] = combined[documentId] || {}
       combined[documentId].score = Math.min(a[documentId].score, score)
       combined[documentId].match = { ...a[documentId].match, ...match }
+      combined[documentId].terms = [...a[documentId].terms, ...terms]
       return combined
     }, {})
   }
