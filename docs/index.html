@@ -116,8 +116,13 @@ miniSearch.search(&apos;zen and motorcycles&apos;)</code>
 </code></pre>
 <h3 id="auto-suggestions">Auto suggestions</h3><p><code>MiniSearch</code> can suggest search queries given an incomplete query:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">miniSearch.autoSuggest(&apos;zen ar&apos;)
-// =&gt; [ { suggestion: &apos;archery art zen&apos;, score: 1.7333230649339662 },
-//      { suggestion: &apos;art zen&apos;, score: 1.2131375635756583 } ]</code>
+// =&gt; [ { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
+//      { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 } ]</code>
+</code></pre>
+<p>The <code>autoSuggest</code> method takes the same options as the <code>search</code> method, so you
+can get suggestions for misspelled words using fuzzy search:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
+// =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 1.03998 } ]</code>
 </code></pre>
 <h3 id="tokenization">Tokenization</h3><p>By default, documents and queries are tokenized splitting on non-word
 characters. No stop-word list is applied, but single-character words are

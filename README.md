@@ -116,8 +116,16 @@ miniSearch.search('zen and motorcycles')
 
 ```javascript
 miniSearch.autoSuggest('zen ar')
-// => [ { suggestion: 'archery art zen', score: 1.7333230649339662 },
-//      { suggestion: 'art zen', score: 1.2131375635756583 } ]
+// => [ { suggestion: 'zen archery art', terms: [ 'zen', 'archery', 'art' ], score: 1.73332 },
+//      { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 } ]
+```
+
+The `autoSuggest` method takes the same options as the `search` method, so you
+can get suggestions for misspelled words using fuzzy search:
+
+```javascript
+miniSearch.autoSuggest('neromancer', { fuzzy: 0.2 })
+// => [ { suggestion: 'neuromancer', terms: [ 'neuromancer' ], score: 1.03998 } ]
 ```
 
 ### Tokenization
