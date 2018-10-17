@@ -6,9 +6,11 @@
   "author": "Luca Ongaro",
   "keywords": [
     "search",
-    "full-text",
+    "fulltext",
     "fuzzy",
     "prefix",
+    "auto suggest",
+    "auto complete",
     "index"
   ],
   "license": "MIT",
