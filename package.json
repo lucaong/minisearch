@@ -35,6 +35,10 @@
     "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0"
   },
+  "files": [
+    "/dist/minisearch.js",
+    "/src/**/*"
+  ],
   "jest": {
     "testURL": "http://localhost:3000/",
     "setupTestFrameworkScriptFile": "<rootDir>/src/testSetup/jest.js"
@@ -42,7 +46,7 @@
   "scripts": {
     "test": "jest",
     "test-watch": "jest --watch",
-    "benchmark": "webpack src/benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js",
+    "benchmark": "webpack benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js",
     "build": "webpack --mode=production",
     "build-docs": "esdoc",
     "lint": "standard --verbose 'app/**/*.{js,jsx}' | snazzy",

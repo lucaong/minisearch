@@ -1,5 +1,5 @@
 import Benchmark from 'benchmark'
-import MiniSearch from '../MiniSearch.js'
+import MiniSearch from '../src/MiniSearch.js'
 import { lines } from './divinaCommedia.js'
 
 const suite = new Benchmark.Suite('Indexing')
