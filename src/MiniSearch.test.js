@@ -213,12 +213,19 @@ describe('MiniSearch', () => {
           { vita: ['title', 'text'], nova: ['title'] },
           { vita: ['text'] }
         ])
+        expect(results.map(({ terms }) => terms)).toEqual([
+          ['vita', 'nova'],
+          ['vita']
+        ])
       })
 
       it('reports correct info when combining terms with AND', () => {
         const results = ms.search('vita nova', { combineWith: 'AND' })
         expect(results.map(({ match }) => match)).toEqual([
           { vita: ['title', 'text'], nova: ['title'] }
+        ])
+        expect(results.map(({ terms }) => terms)).toEqual([
+          ['vita', 'nova']
         ])
       })
 
@@ -227,6 +234,10 @@ describe('MiniSearch', () => {
         expect(results.map(({ match }) => match)).toEqual([
           { vita: ['title', 'text'], nova: ['title'] },
           { vita: ['text'] }
+        ])
+        expect(results.map(({ terms }) => terms)).toEqual([
+          ['vita', 'nova'],
+          ['vita']
         ])
       })
     })
@@ -261,6 +272,12 @@ describe('MiniSearch', () => {
         results = ms.autoSuggest('sottomarino aeroplano')
       }).not.toThrowError()
       expect(results.length).toEqual(0)
+    })
+
+    it('does not duplicate suggested terms', () => {
+      const results = ms.autoSuggest('vita', { fuzzy: true, prefix: true })
+      expect(results[0].suggestion).toEqual('vita')
+      expect(results[0].terms).toEqual(['vita'])
     })
   })
 
