@@ -3,8 +3,8 @@
 [![Build Status](https://travis-ci.org/lucaong/minisearch.svg?branch=master)](https://travis-ci.org/lucaong/minisearch)
 
 `MiniSearch` is a tiny but powerful in-memory fulltext search engine for
-JavaScript. It is respectful of resources, so it can comfortably run both in
-Node and in the browser, but it can do a lot.
+JavaScript. It is respectful of resources, and it can comfortably run both in
+Node and in the browser.
 
 ## Use case
 
@@ -22,15 +22,14 @@ reactive UI, removing the need to make requests to a search server.
 
 ## Features
 
-  * Memory-efficient index, smaller than most other libraries, designed to
-    support memory-constrained use cases like mobile browsers.
+  * Memory-efficient index, designed to support memory-constrained use cases
+    like mobile browsers.
 
-  * Exact match, prefix match and fuzzy match, all with a single performant and
-    multi-purpose index data structure.
+  * Exact, prefix, and fuzzy search
 
-  * Boosting of document fields
+  * Auto-suggestion engine, for auto-completion of search queries
 
-  * Mutable index: documents can be added and removed at any time
+  * Documents can be added and removed from the index at any time
 
   * Simple API, providing building blocks to build specific solutions
 

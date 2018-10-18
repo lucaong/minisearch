@@ -76,8 +76,8 @@
   <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
         <div data-ice="card"><h1> MiniSearch</h1><p><a href="https://travis-ci.org/lucaong/minisearch"><img src="https://travis-ci.org/lucaong/minisearch.svg?branch=master" alt="Build Status"></a></p><p><code>MiniSearch</code> is a tiny but powerful in-memory fulltext search engine for
-JavaScript. It is respectful of resources, so it can comfortably run both in
-Node and in the browser, but it can do a lot.</p><h2>Use case</h2><p><code>MiniSearch</code> addresses use cases where full-text search features are needed
+JavaScript. It is respectful of resources, and it can comfortably run both in
+Node and in the browser.</p><h2>Use case</h2><p><code>MiniSearch</code> addresses use cases where full-text search features are needed
 (e.g. prefix search, fuzzy search, boosting of fields), but the data to be
 indexed can fit locally in the process memory. While you may not index the whole
 Wikipedia with it, there are surprisingly many use cases that are served well by
@@ -85,15 +85,14 @@ Wikipedia with it, there are surprisingly many use cases that are served well by
 offline, and can process queries quickly, without network latency.</p><p>A prominent use-case is search-as-you-type features in web and mobile
 applications, where keeping the index on the client-side enables fast and
 reactive UI, removing the need to make requests to a search server.</p><h2>Features</h2><ul>
-<li><p>Memory-efficient index, smaller than most other libraries, designed to
-support memory-constrained use cases like mobile browsers.</p>
+<li><p>Memory-efficient index, designed to support memory-constrained use cases
+like mobile browsers.</p>
 </li>
-<li><p>Exact match, prefix match and fuzzy match, all with a single performant and
-multi-purpose index data structure.</p>
+<li><p>Exact, prefix, and fuzzy search</p>
 </li>
-<li><p>Boosting of document fields</p>
+<li><p>Auto-suggestion engine, for auto-completion of search queries</p>
 </li>
-<li><p>Mutable index: documents can be added and removed at any time</p>
+<li><p>Documents can be added and removed from the index at any time</p>
 </li>
 <li><p>Simple API, providing building blocks to build specific solutions</p>
 </li>
