@@ -6,6 +6,8 @@
 JavaScript. It is respectful of resources, and it can comfortably run both in
 Node and in the browser.
 
+Try out the [demo application](https://lucaong.github.io/minisearch/examples/).
+
 ## Use case
 
 `MiniSearch` addresses use cases where full-text search features are needed

@@ -261,7 +261,7 @@ class MiniSearch {
     const combinedResults = this.combineResults(results, options.combineWith)
 
     return Object.entries(combinedResults)
-      .map(([docId, { score, match, terms }]) =&gt; ({ id: this._documentIds[docId], score, match, terms }))
+      .map(([docId, { score, match, terms }]) =&gt; ({ id: this._documentIds[docId], terms: uniq(terms), score, match }))
       .sort(({ score: a }, { score: b }) =&gt; a &lt; b ? 1 : -1)
   }
 
@@ -505,6 +505,10 @@ const termToQuery = (options) =&gt; (term, i, terms) =&gt; {
     ? options.prefix(term, i, terms)
     : options.prefix
   return { term, fuzzy, prefix }
+}
+
+const uniq = function (array) {
+  return array.filter((element, i, array) =&gt; array.indexOf(element) === i)
 }
 
 const defaultOptions = {
