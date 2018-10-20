@@ -144,7 +144,7 @@ const SearchBox = ({ onChange, onKeyDown, onSuggestionClick, onSearchClear, valu
   <div className='SearchBox'>
     <div className='Search'>
       <input type='text' value={value} onChange={onChange} onKeyDown={onKeyDown} ref={searchInputRef}
-        autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' />
+        autocomplete='none' autocorrect='none' autocapitalize='none' spellcheck='false' />
       <button className='clear' onClick={onSearchClear}>&times;</button>
     </div>
     {
