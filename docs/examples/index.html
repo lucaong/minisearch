@@ -62,9 +62,11 @@
         top: 0;
         right: 0;
         font-size: 1.5em;
+        line-height: 1.2em;
         z-index: 20;
         border: none;
         background: none;
+        outline: none;
       }
       .Search input {
         width: 100%;
@@ -80,8 +82,9 @@
         padding: 0;
         list-style: none;
         flex-grow: 1;
-        overflow-y: auto;
         position: relative;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
       }
       .SongList:before {
         content: '';
