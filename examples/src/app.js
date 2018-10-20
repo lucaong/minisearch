@@ -2,7 +2,7 @@ import React from 'react'
 import fetch from 'unfetch'
 import MiniSearch from 'minisearch'
 
-class App extends React.PureComponent {
+class App extends React.Component {
   constructor (props) {
     super(props)
     const miniSearch = new MiniSearch({
@@ -14,6 +14,7 @@ class App extends React.PureComponent {
     this.handleSuggestionClick = this.handleSuggestionClick.bind(this)
     this.handleSearchClear = this.handleSearchClear.bind(this)
     this.handleAppClick = this.handleAppClick.bind(this)
+    this.searchInputRef = React.createRef()
     this.state = {
       matchingSongs: [],
       songsById: null,
@@ -56,6 +57,7 @@ class App extends React.PureComponent {
     } else if (key === 'Enter') {
       selectedSuggestion = -1
       suggestions = []
+      this.searchInputRef.current.blur()
     } else {
       return
     }
@@ -93,7 +95,8 @@ class App extends React.PureComponent {
               ? <Header
                 onChange={this.handleSearchChange} onKeyDown={this.handleSearchKeyDown}
                 selectedSuggestion={selectedSuggestion} onSuggestionClick={this.handleSuggestionClick}
-                onSearchClear={this.handleSearchClear} value={searchValue} suggestions={suggestions} />
+                onSearchClear={this.handleSearchClear} value={searchValue} suggestions={suggestions}
+                searchInputRef={this.searchInputRef} />
               : <Loader />
           }
           {
@@ -131,10 +134,10 @@ const Header = (props) => (
   </header>
 )
 
-const SearchBox = ({ onChange, onKeyDown, onSuggestionClick, onSearchClear, value, suggestions, selectedSuggestion }) => (
+const SearchBox = ({ onChange, onKeyDown, onSuggestionClick, onSearchClear, value, suggestions, selectedSuggestion, searchInputRef }) => (
   <div className='SearchBox'>
     <div className='Search'>
-      <input type='text' value={value} onChange={onChange} onKeyDown={onKeyDown} />
+      <input type='text' value={value} onChange={onChange} onKeyDown={onKeyDown} ref={searchInputRef} />
       <button className='clear' onClick={onSearchClear}>&times;</button>
     </div>
     {
