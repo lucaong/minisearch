@@ -1,0 +1,52 @@
+Arguments: 
+  /usr/local/Cellar/node/10.12.0/bin/node /usr/local/Cellar/yarn/1.10.1/libexec/bin/yarn.js add --dev react react-dom
+
+PATH: 
+  /Users/luca/.gem/ruby/2.5.2/bin:/Users/luca/.rubies/ruby-2.5.2/lib/ruby/gems/2.5.0/bin:/Users/luca/.rubies/ruby-2.5.2/bin:/Users/luca/bin:/usr/local/sbin:/usr/local/bin:/usr/local/share/npm/bin:/Users/luca/Library/Android/sdk:/usr/local/opt/python/libexec/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin
+
+Yarn version: 
+  1.10.1
+
+Node version: 
+  10.12.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/luca/Code/minisearch/examples/package.json: Unexpected token } in JSON at position 583
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.10.1/libexec/lib/cli.js:1136:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.10.1/libexec/lib/cli.js:98:30)
+      at /usr/local/Cellar/yarn/1.10.1/libexec/lib/cli.js:109:13
+
+npm manifest: 
+  {
+    "name": "minisearch-example",
+    "version": "1.0.0",
+    "description": "Example app for MiniSearch",
+    "main": "index.js",
+    "author": "Luca Ongaro",
+    "license": "MIT",
+    "devDependencies": {
+      "@babel/cli": "^7.0.0",
+      "@babel/core": "^7.0.1",
+      "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+      "@babel/preset-env": "^7.0.0",
+      "babel-core": "^7.0.0-0",
+      "babel-jest": "^23.6.0",
+      "babel-loader": "^8.0.4",
+      "regenerator-runtime": "^0.12.1",
+      "snazzy": "^8.0.0",
+      "standard": "^12.0.1",
+      "webpack": "^4.16.5",
+      "webpack-cli": "^3.1.0"
+    },
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
