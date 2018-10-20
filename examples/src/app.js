@@ -143,7 +143,8 @@ const Header = (props) => (
 const SearchBox = ({ onChange, onKeyDown, onSuggestionClick, onSearchClear, value, suggestions, selectedSuggestion, searchInputRef }) => (
   <div className='SearchBox'>
     <div className='Search'>
-      <input type='text' value={value} onChange={onChange} onKeyDown={onKeyDown} ref={searchInputRef} />
+      <input type='text' value={value} onChange={onChange} onKeyDown={onKeyDown} ref={searchInputRef}
+        autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' />
       <button className='clear' onClick={onSearchClear}>&times;</button>
     </div>
     {
