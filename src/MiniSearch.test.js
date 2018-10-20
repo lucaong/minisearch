@@ -182,7 +182,7 @@ describe('MiniSearch', () => {
     it('combines prefix search and fuzzy search', () => {
       const results = ms.search('cammino quel', { fuzzy: 0.25, prefix: true })
       expect(results.length).toEqual(3)
-      expect(results.map(({ id }) => id)).toEqual([2, 1, 3])
+      expect(results.map(({ id }) => id)).toEqual([2, 3, 1])
     })
 
     it('accepts a function to compute fuzzy and prefix options from term', () => {

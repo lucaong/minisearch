@@ -294,12 +294,14 @@ class MiniSearch {
     if (query.fuzzy) {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
-        results.push(termResults(this, options.score, term, boosts, data, distance))
+        const weightedDistance = distance / term.length
+        results.push(termResults(this, options.score, term, boosts, data, 0.30, weightedDistance))
       })
     }
     if (query.prefix) {
       this._index.atPrefix(query.term).forEach((term, data) => {
-        results.push(termResults(this, options.score, term, boosts, data, term.length - query.term.length))
+        const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
+        results.push(termResults(this, options.score, term, boosts, data, 0.45, weightedDistance))
       })
     }
     return results.reduce(combinators[OR], {})
@@ -414,7 +416,7 @@ const addFields = function (self, fields) {
   fields.forEach((field, i) => { self._fieldIds[field] = i })
 }
 
-const termResults = function (self, scoreFn, term, boosts, indexData, distance = 0) {
+const termResults = function (self, scoreFn, term, boosts, indexData, weight = 1, distance = 0) {
   if (indexData == null) { return {} }
   return Object.entries(boosts).reduce((results, [field, boost]) => {
     const { df, ds } = indexData[self._fieldIds[field]] || { ds: {} }
