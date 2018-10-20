@@ -2,7 +2,7 @@ import React from 'react'
 import fetch from 'unfetch'
 import MiniSearch from 'minisearch'
 
-class App extends React.Component {
+class App extends React.PureComponent {
   constructor (props) {
     super(props)
     const miniSearch = new MiniSearch({
@@ -13,7 +13,7 @@ class App extends React.Component {
     this.handleSearchKeyDown = this.handleSearchKeyDown.bind(this)
     this.handleSuggestionClick = this.handleSuggestionClick.bind(this)
     this.handleSearchClear = this.handleSearchClear.bind(this)
-    this.handleClick = this.handleClick.bind(this)
+    this.handleAppClick = this.handleAppClick.bind(this)
     this.state = {
       matchingSongs: [],
       songsById: null,
@@ -41,7 +41,8 @@ class App extends React.Component {
     this.setState({ searchValue: value })
     const matchingSongs = this.searchSongs(value)
     const suggestions = miniSearch.autoSuggest(value).slice(0, 5)
-    this.setState({ matchingSongs, suggestions })
+    const selectedSuggestion = -1
+    this.setState({ matchingSongs, suggestions, selectedSuggestion })
   }
 
   handleSearchKeyDown ({ which, key, keyCode }) {
@@ -73,7 +74,7 @@ class App extends React.Component {
     this.setState({ searchValue: '', matchingSongs: [], suggestions: [], selectedSuggestion: -1 })
   }
 
-  handleClick () {
+  handleAppClick () {
     this.setState({ suggestions: [], selectedSuggestion: -1 })
   }
 
@@ -85,20 +86,22 @@ class App extends React.Component {
   render () {
     const { matchingSongs, searchValue, ready, suggestions, selectedSuggestion } = this.state
     return (
-      <div className='App' onClick={this.handleClick}>
-        {
-          ready
-            ? <Header
-              onChange={this.handleSearchChange} onKeyDown={this.handleSearchKeyDown}
-              selectedSuggestion={selectedSuggestion} onSuggestionClick={this.handleSuggestionClick}
-              onSearchClear={this.handleSearchClear} value={searchValue} suggestions={suggestions} />
-            : <Loader />
-        }
-        {
-          matchingSongs && matchingSongs.length > 0
-            ? <SongList songs={matchingSongs} />
-            : (ready && <Explanation />)
-        }
+      <div className='App' onClick={this.handleAppClick}>
+        <article className='main'>
+          {
+            ready
+              ? <Header
+                onChange={this.handleSearchChange} onKeyDown={this.handleSearchKeyDown}
+                selectedSuggestion={selectedSuggestion} onSuggestionClick={this.handleSuggestionClick}
+                onSearchClear={this.handleSearchClear} value={searchValue} suggestions={suggestions} />
+              : <Loader />
+          }
+          {
+            matchingSongs && matchingSongs.length > 0
+              ? <SongList songs={matchingSongs} />
+              : (ready && <Explanation />)
+          }
+        </article>
       </div>
     )
   }
@@ -148,7 +151,7 @@ const SuggestionList = ({ items, selectedSuggestion, onSuggestionClick }) => (
     {
       items.map(({ suggestion }, i) =>
         <Suggestion value={suggestion} selected={selectedSuggestion === i}
-          onClick={() => onSuggestionClick(i)} key={i} />)
+          onClick={(event) => onSuggestionClick(i, event)} key={i} />)
     }
   </ul>
 )

@@ -38,14 +38,17 @@
         display: block;
       }
       .App {
-        max-width: 900px;
-        margin: 0 auto;
         padding: 1em;
+      }
+      .App .main {
         display: flex;
         flex-flow: column;
         max-height: 100vh;
+        max-width: 900px;
+        margin: 0 auto;
       }
       .Header h1 {
+        font-size: 2em;
         margin-top: 0;
       }
       .SearchBox {
@@ -140,6 +143,9 @@
       }
       .Suggestion.selected {
         background: rgba(240, 240, 240, 0.95);
+      }
+      .Suggestion:hover:not(.selected) {
+        background: rgba(250, 250, 250, 0.95);
       }
       .Loader,
       .Loader:after {
