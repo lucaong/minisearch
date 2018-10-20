@@ -26,7 +26,7 @@ class App extends React.Component {
   }
 
   componentDidMount () {
-    fetch('/billboard_1965-2015.json')
+    fetch('billboard_1965-2015.json')
       .then(response => response.json())
       .then((allSongs) => {
         const songsById = allSongs.reduce((byId, song) => ({ ...byId, [song.id]: song }), {})
