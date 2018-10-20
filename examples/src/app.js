@@ -1,6 +1,6 @@
 import React from 'react'
 import fetch from 'unfetch'
-import MiniSearch from 'minisearch'
+import MiniSearch from '../../src/MiniSearch.js'
 
 class App extends React.Component {
   constructor (props) {
@@ -38,11 +38,10 @@ class App extends React.Component {
   }
 
   handleSearchChange ({ target: { value } }) {
-    const { miniSearch } = this.state
     this.setState({ searchValue: value })
     const matchingSongs = this.searchSongs(value)
-    const suggestions = miniSearch.autoSuggest(value).slice(0, 5)
     const selectedSuggestion = -1
+    const suggestions = this.getSuggestions(value)
     this.setState({ matchingSongs, suggestions, selectedSuggestion })
   }
 
@@ -83,6 +82,13 @@ class App extends React.Component {
   searchSongs (query) {
     const { miniSearch, songsById } = this.state
     return miniSearch.search(query).map(({ id }) => songsById[id])
+  }
+
+  getSuggestions (query) {
+    const { miniSearch } = this.state
+    return miniSearch.autoSuggest(query)
+      .filter(({ suggestion }) => suggestion.length > 3)
+      .slice(0, 5)
   }
 
   render () {

@@ -6,7 +6,7 @@
   "author": "Luca Ongaro",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "webpack-dev-server --watch",
     "build": "webpack && yarn copy-to-docs",
     "copy-to-docs": "mkdir -p ../docs/examples && cp ./{dist/app.js,index.html,billboard_1965-2015.json} ../docs/examples"
   },
