@@ -87,7 +87,7 @@ class App extends React.Component {
   getSuggestions (query) {
     const { miniSearch } = this.state
     return miniSearch.autoSuggest(query)
-      .filter(({ suggestion }) => suggestion.length > 3)
+      .filter(({ suggestion, score }, _, [first]) => score > first.score / 2)
       .slice(0, 5)
   }
 
