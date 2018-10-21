@@ -6,14 +6,14 @@ class App extends React.Component {
   constructor (props) {
     super(props)
     const miniSearch = new MiniSearch({
-      fields: ['artist', 'title'],
-      searchOptions: { fuzzy: 0.2, prefix: true }
+      fields: ['artist', 'title']
     })
     this.handleSearchChange = this.handleSearchChange.bind(this)
     this.handleSearchKeyDown = this.handleSearchKeyDown.bind(this)
     this.handleSuggestionClick = this.handleSuggestionClick.bind(this)
     this.handleSearchClear = this.handleSearchClear.bind(this)
     this.handleAppClick = this.handleAppClick.bind(this)
+    this.setSearchOption = this.setSearchOption.bind(this)
     this.searchInputRef = React.createRef()
     this.state = {
       matchingSongs: [],
@@ -22,6 +22,12 @@ class App extends React.Component {
       ready: false,
       suggestions: [],
       selectedSuggestion: -1,
+      searchOptions: {
+        fuzzy: 0.2,
+        prefix: true,
+        fields: ['title', 'artist'],
+        combineWith: 'OR'
+      },
       miniSearch
     }
   }
@@ -79,20 +85,32 @@ class App extends React.Component {
     this.setState({ suggestions: [], selectedSuggestion: -1 })
   }
 
+  setSearchOption (option, valueOrFn) {
+    if (typeof valueOrFn === 'function') {
+      this.setState(({ searchOptions }) => ({
+        searchOptions: { ...searchOptions, [option]: valueOrFn(searchOptions[option]) }
+      }))
+    } else {
+      this.setState(({ searchOptions }) => ({
+        searchOptions: { ...searchOptions, [option]: valueOrFn }
+      }))
+    }
+  }
+
   searchSongs (query) {
-    const { miniSearch, songsById } = this.state
-    return miniSearch.search(query).map(({ id }) => songsById[id])
+    const { miniSearch, songsById, searchOptions } = this.state
+    return miniSearch.search(query, searchOptions).map(({ id }) => songsById[id])
   }
 
   getSuggestions (query) {
-    const { miniSearch } = this.state
-    return miniSearch.autoSuggest(query)
+    const { miniSearch, searchOptions } = this.state
+    return miniSearch.autoSuggest(query, { ...searchOptions, prefix: true })
       .filter(({ suggestion, score }, _, [first]) => score > first.score / 2)
       .slice(0, 5)
   }
 
   render () {
-    const { matchingSongs, searchValue, ready, suggestions, selectedSuggestion } = this.state
+    const { matchingSongs, searchValue, ready, suggestions, selectedSuggestion, searchOptions } = this.state
     return (
       <div className='App' onClick={this.handleAppClick}>
         <article className='main'>
@@ -102,7 +120,7 @@ class App extends React.Component {
                 onChange={this.handleSearchChange} onKeyDown={this.handleSearchKeyDown}
                 selectedSuggestion={selectedSuggestion} onSuggestionClick={this.handleSuggestionClick}
                 onSearchClear={this.handleSearchClear} value={searchValue} suggestions={suggestions}
-                searchInputRef={this.searchInputRef} />
+                searchInputRef={this.searchInputRef} searchOptions={searchOptions} setSearchOption={this.setSearchOption} />
               : <Loader />
           }
           {
@@ -140,11 +158,11 @@ const Header = (props) => (
   </header>
 )
 
-const SearchBox = ({ onChange, onKeyDown, onSuggestionClick, onSearchClear, value, suggestions, selectedSuggestion, searchInputRef }) => (
+const SearchBox = ({ onChange, onKeyDown, onSuggestionClick, onSearchClear, value, suggestions, selectedSuggestion, searchInputRef, searchOptions, setSearchOption }) => (
   <div className='SearchBox'>
     <div className='Search'>
       <input type='text' value={value} onChange={onChange} onKeyDown={onKeyDown} ref={searchInputRef}
-        autocomplete='none' autocorrect='none' autocapitalize='none' spellcheck='false' />
+        autoComplete='none' autoCorrect='none' autoCapitalize='none' spellCheck='false' />
       <button className='clear' onClick={onSearchClear}>&times;</button>
     </div>
     {
@@ -153,6 +171,7 @@ const SearchBox = ({ onChange, onKeyDown, onSuggestionClick, onSearchClear, valu
         selectedSuggestion={selectedSuggestion}
         onSuggestionClick={onSuggestionClick} />
     }
+    <AdvancedOptions options={searchOptions} setOption={setSearchOption} />
   </div>
 )
 
@@ -169,6 +188,50 @@ const SuggestionList = ({ items, selectedSuggestion, onSuggestionClick }) => (
 const Suggestion = ({ value, selected, onClick }) => (
   <li className={`Suggestion ${selected ? 'selected' : ''}`} onClick={onClick}>{ value }</li>
 )
+
+const AdvancedOptions = ({ options, setOption }) => {
+  const setField = (field) => ({ target: { checked } }) => {
+    setOption('fields', (fields) => {
+      return checked ? [...fields, field] : fields.filter(f => f !== field)
+    })
+  }
+  const setKey = (key, trueValue = true, falseValue = false) => ({ target: { checked } }) => {
+    setOption(key, checked ? trueValue : falseValue)
+  }
+  const { fields, combineWith, fuzzy, prefix } = options
+  return (
+    <details className='AdvancedOptions'>
+      <summary>Advanced options</summary>
+      <div className='options'>
+        <div>
+          <b>Search in fields:</b>
+          <label>
+            <input type='checkbox' checked={fields.includes('title')} onChange={setField('title')} />
+            Title
+          </label>
+          <label>
+            <input type='checkbox' checked={fields.includes('artist')} onChange={setField('artist')} />
+            Artist
+          </label>
+        </div>
+        <div>
+          <b>Search options:</b>
+          <label><input type='checkbox' checked={!!prefix} onChange={setKey('prefix')} /> Prefix</label>
+          <label><input type='checkbox' checked={!!fuzzy} onChange={setKey('fuzzy', 0.2)} /> Fuzzy</label>
+        </div>
+        <div>
+          <b>Combine terms with:</b>
+          <label>
+            <input type='radio' checked={combineWith === 'OR'}
+              onChange={setKey('combineWith', 'OR', 'AND')} /> OR
+          </label>
+          <label><input type='radio' checked={combineWith === 'AND'}
+            onChange={setKey('combineWith', 'AND', 'OR')} /> AND</label>
+        </div>
+      </div>
+    </details>
+  )
+}
 
 const Explanation = () => (
   <p>

@@ -39,6 +39,9 @@
         content: '';
         display: block;
       }
+      details, summary {
+        outline: none;
+      }
       .App .main {
         padding: 1em;
         display: flex;
@@ -80,6 +83,20 @@
         outline: none;
         color: #555;
         box-shadow: none;
+      }
+      .AdvancedOptions {
+        font-size: 0.9em;
+      }
+      .AdvancedOptions summary {
+        text-decoration: underline;
+      }
+      .AdvancedOptions .options {
+        margin-top: 1em;
+        font-size: 0.85em;
+      }
+      .AdvancedOptions .options label {
+        display: inline;
+        margin-left: 0.7em;
       }
       .SongList {
         margin: 1em 0 0 0;
