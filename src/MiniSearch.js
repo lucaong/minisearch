@@ -438,6 +438,7 @@ const combinators = {
         combined[documentId] = { score, match, terms }
       } else {
         combined[documentId].score += score
+        combined[documentId].score *= 1.5
         combined[documentId].terms = [...combined[documentId].terms, ...terms]
         Object.assign(combined[documentId].match, match)
       }
@@ -449,7 +450,7 @@ const combinators = {
     return Object.entries(b).reduce((combined, [documentId, { score, match, terms }]) => {
       if (a[documentId] === undefined) { return combined }
       combined[documentId] = combined[documentId] || {}
-      combined[documentId].score = Math.min(a[documentId].score, score)
+      combined[documentId].score = a[documentId].score + score
       combined[documentId].match = { ...a[documentId].match, ...match }
       combined[documentId].terms = [...a[documentId].terms, ...terms]
       return combined
