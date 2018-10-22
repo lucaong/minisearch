@@ -157,7 +157,7 @@ term -> field -> { document frequency, posting list }
 
 When performing a search, the entries corresponding to the search term are
 looked up in the index (optionally searching the index with prefix or fuzzy
-search), then the documents are scored with
+search), then the documents are scored with a variant of
 [Tf-Idf](https://en.wikipedia.org/wiki/Tf–idf), and finally results for
 different search terms are merged with the given combinator function (by default
 `OR`, but `AND` can be specified).

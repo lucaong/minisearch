@@ -342,7 +342,7 @@ indexed within the same index, to further save space. The index is therefore
 structure as following:</p><pre><code><code class="source-code prettyprint">term -&gt; field -&gt; { document frequency, posting list }</code>
 </code></pre><p>When performing a search, the entries corresponding to the search term are
 looked up in the index (optionally searching the index with prefix or fuzzy
-search), then the documents are scored with
+search), then the documents are scored with a variant of
 <a href="https://en.wikipedia.org/wiki/Tf&#x2013;idf">Tf-Idf</a>, and finally results for
 different search terms are merged with the given combinator function (by default
 <code>OR</code>, but <code>AND</code> can be specified).</p></div>
