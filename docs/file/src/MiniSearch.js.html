@@ -130,6 +130,12 @@ class MiniSearch {
     /** @private */
     this._fieldIds = {}
 
+    /** @private */
+    this._fieldLength = {}
+
+    /** @private */
+    this._averageFieldLength = {}
+
     addFields(this, fields)
   }
 
@@ -144,8 +150,10 @@ class MiniSearch {
       throw new Error(`Document does not have ID field &quot;${idField}&quot;`)
     }
     const shortDocumentId = addDocumentId(this, document[idField])
-    fields.filter(field =&gt; document[field] != null).forEach(field =&gt; {
-      tokenize(document[field]).forEach(term =&gt; {
+    fields.forEach(field =&gt; {
+      const tokens = tokenize(document[field] || &apos;&apos;)
+      addFieldLength(this, shortDocumentId, this._fieldIds[field], this.documentCount - 1, tokens.length)
+      tokens.forEach(term =&gt; {
         addTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
       })
     })
@@ -205,7 +213,6 @@ class MiniSearch {
   * @param {boolean|function(term: string, i: number, terms: Array&lt;string&gt;): boolean} [options.prefix=false] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from each tokenized and processed query term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array&lt;string&gt;` - the array of query terms.
   * @param {number|function(term: string, i: number, terms: Array&lt;string&gt;): boolean|number} [options.fuzzy=false] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function for each tokenized and processed query term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array&lt;string&gt;` - the array of query terms.
   * @param {string} [options.combineWith=&apos;OR&apos;] - How to combine term queries (it can be &apos;OR&apos; or &apos;AND&apos;)
-  * @param {function(termFrequency: number, documentFrequency: number, documentCount: number, boost: number, editDistance: number): number} [options.score] - The scoring function. By default, results are scored by TF-IDF, weighted by boosting and edit distance to the search term. Optionally, the scoring can be customized by passing a `score` function, that accepts as arguments: `termFrequency: integer` - the number of occurrencies of the term in the document/field; `documentFrequency: integer` - the number of documents containing the term; `documentCount: integer` - the total number of indexed documents; `boost: number` - the boosting factor; `editDistance: integer` - the edit distance of the term to the corresponding search term. The `score` function is expected to return a numeric score value.
   * @return {Array&lt;{ id: any, score: number, match: Object }&gt;} A sorted array of scored document IDs matching the search
   *
   * @example
@@ -326,18 +333,20 @@ class MiniSearch {
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =&gt;
       ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
     if (!query.fuzzy &amp;&amp; !query.prefix) {
-      return termResults(this, options.score, query.term, boosts, this._index.get(query.term))
+      return termResults(this, query.term, boosts, this._index.get(query.term))
     }
     const results = []
     if (query.fuzzy) {
       const maxDistance = query.fuzzy &lt; 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) =&gt; {
-        results.push(termResults(this, options.score, term, boosts, data, distance))
+        const weightedDistance = distance / term.length
+        results.push(termResults(this, term, boosts, data, 0.30, weightedDistance))
       })
     }
     if (query.prefix) {
       this._index.atPrefix(query.term).forEach((term, data) =&gt; {
-        results.push(termResults(this, options.score, term, boosts, data, term.length - query.term.length))
+        const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
+        results.push(termResults(this, term, boosts, data, 0.45, weightedDistance))
       })
     }
     return results.reduce(combinators[OR], {})
@@ -364,7 +373,9 @@ class MiniSearch {
       index: this._index,
       documentCount: this._documentCount,
       documentIds: this._documentIds,
-      fieldIds: this._fieldIds
+      fieldIds: this._fieldIds,
+      fieldLength: this._fieldLength,
+      averageFieldLength: this._averageFieldLength
     }
   }
 }
@@ -386,11 +397,14 @@ MiniSearch.loadJSON = function (json, options = {}) {
 * @private
 */
 MiniSearch.loadJS = function (js, options = {}) {
-  const { index: { _tree, _prefix }, documentCount, documentIds, fieldIds } = js
+  const { index: { _tree, _prefix }, documentCount, documentIds, fieldIds, fieldLength, averageFieldLength } = js
   const miniSearch = new MiniSearch(options)
   miniSearch._index = new SearchableMap(_tree, _prefix)
   miniSearch._documentCount = documentCount
   miniSearch._documentIds = documentIds
+  miniSearch._fieldIds = fieldIds
+  miniSearch._fieldLength = fieldLength
+  miniSearch._averageFieldLength = averageFieldLength
   miniSearch._fieldIds = fieldIds
   return miniSearch
 }
@@ -452,19 +466,29 @@ const addFields = function (self, fields) {
   fields.forEach((field, i) =&gt; { self._fieldIds[field] = i })
 }
 
-const termResults = function (self, scoreFn, term, boosts, indexData, distance = 0) {
+const termResults = function (self, term, boosts, indexData, weight = 1, editDistance = 0) {
   if (indexData == null) { return {} }
   return Object.entries(boosts).reduce((results, [field, boost]) =&gt; {
-    const { df, ds } = indexData[self._fieldIds[field]] || { ds: {} }
+    const fieldId = self._fieldIds[field]
+    const { df, ds } = indexData[fieldId] || { ds: {} }
     Object.entries(ds).forEach(([documentId, tf]) =&gt; {
+      const normalizedLength = self._fieldLength[documentId][fieldId] / self._averageFieldLength[fieldId]
       results[documentId] = results[documentId] || { score: 0, match: {}, terms: [] }
       results[documentId].terms.push(term)
       results[documentId].match[term] = results[documentId].match[term] || []
-      results[documentId].score += scoreFn(tf, df, self._documentCount, boost, distance)
+      results[documentId].score += score(tf, df, self._documentCount, normalizedLength, boost, editDistance)
       results[documentId].match[term].push(field)
     })
     return results
   }, {})
+}
+
+const addFieldLength = function (self, documentId, fieldId, count, length) {
+  self._averageFieldLength[fieldId] = self._averageFieldLength[fieldId] || 0
+  const totalLength = (self._averageFieldLength[fieldId] * count) + length
+  self._fieldLength[documentId] = self._fieldLength[documentId] || {}
+  self._fieldLength[documentId][fieldId] = length
+  self._averageFieldLength[fieldId] = totalLength / (count + 1)
 }
 
 const combinators = {
@@ -474,6 +498,7 @@ const combinators = {
         combined[documentId] = { score, match, terms }
       } else {
         combined[documentId].score += score
+        combined[documentId].score *= 1.5
         combined[documentId].terms = [...combined[documentId].terms, ...terms]
         Object.assign(combined[documentId].match, match)
       }
@@ -485,7 +510,7 @@ const combinators = {
     return Object.entries(b).reduce((combined, [documentId, { score, match, terms }]) =&gt; {
       if (a[documentId] === undefined) { return combined }
       combined[documentId] = combined[documentId] || {}
-      combined[documentId].score = Math.min(a[documentId].score, score)
+      combined[documentId].score = a[documentId].score + score
       combined[documentId].match = { ...a[documentId].match, ...match }
       combined[documentId].terms = [...a[documentId].terms, ...terms]
       return combined
@@ -495,6 +520,11 @@ const combinators = {
 
 const tfIdf = function (tf, df, n) {
   return tf * Math.log(n / df)
+}
+
+const score = function (termFrequency, documentFrequency, documentCount, normalizedLength, boost, editDistance) {
+  const weight = boost / (1 + (0.333 * boost * editDistance))
+  return weight * tfIdf(termFrequency, documentFrequency, documentCount) / normalizedLength
 }
 
 const termToQuery = (options) =&gt; (term, i, terms) =&gt; {
@@ -520,11 +550,7 @@ const defaultOptions = {
 const defaultSearchOptions = {
   combineWith: OR,
   prefix: false,
-  fuzzy: false,
-  score: (termFrequency, documentFrequency, documentCount, boost, editDistance) =&gt; {
-    const weight = boost / (1 + (0.333 * boost * editDistance))
-    return weight * tfIdf(termFrequency, documentFrequency, documentCount)
-  }
+  fuzzy: false
 }
 
 const defaultAutoSuggestOptions = {
