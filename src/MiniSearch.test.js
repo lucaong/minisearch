@@ -14,6 +14,8 @@ describe('MiniSearch', () => {
       expect(ms._documentCount).toEqual(0)
       expect(ms._fieldIds).toEqual({ title: 0, text: 1 })
       expect(ms._documentIds).toEqual({})
+      expect(ms._fieldLength).toEqual({})
+      expect(ms._averageFieldLength).toEqual({})
       expect(ms._options).toMatchObject(options)
     })
   })
@@ -131,7 +133,7 @@ describe('MiniSearch', () => {
       const results = ms.search('vita')
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ id }) => id).sort()).toEqual([1, 3])
-      expect(results[0].score).toEqual(results[1].score)
+      expect(results[0].score).toBeGreaterThanOrEqual(results[1].score)
     })
 
     it('returns empty results for terms that are not in the index', () => {
@@ -157,7 +159,7 @@ describe('MiniSearch', () => {
     it('combines results with OR by default', () => {
       const results = ms.search('cammin como sottomarino')
       expect(results.length).toEqual(2)
-      expect(results.map(({ id }) => id)).toEqual([1, 2])
+      expect(results.map(({ id }) => id)).toEqual([2, 1])
     })
 
     it('combines results with AND if combineWith is AND', () => {
@@ -182,7 +184,7 @@ describe('MiniSearch', () => {
     it('combines prefix search and fuzzy search', () => {
       const results = ms.search('cammino quel', { fuzzy: 0.25, prefix: true })
       expect(results.length).toEqual(3)
-      expect(results.map(({ id }) => id)).toEqual([2, 3, 1])
+      expect(results.map(({ id }) => id)).toEqual([2, 1, 3])
     })
 
     it('accepts a function to compute fuzzy and prefix options from term', () => {
@@ -294,6 +296,7 @@ describe('MiniSearch', () => {
       const json = JSON.stringify(ms)
       const deserialized = MiniSearch.loadJSON(json, options)
       expect(ms.search('vita')).toEqual(deserialized.search('vita'))
+      expect(ms.toJSON()).toEqual(deserialized.toJSON())
     })
   })
 })
