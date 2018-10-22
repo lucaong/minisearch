@@ -8,12 +8,11 @@ class App extends React.Component {
     const miniSearch = new MiniSearch({
       fields: ['artist', 'title']
     })
-    this.handleSearchChange = this.handleSearchChange.bind(this)
-    this.handleSearchKeyDown = this.handleSearchKeyDown.bind(this)
-    this.handleSuggestionClick = this.handleSuggestionClick.bind(this)
-    this.handleSearchClear = this.handleSearchClear.bind(this)
-    this.handleAppClick = this.handleAppClick.bind(this)
-    this.setSearchOption = this.setSearchOption.bind(this)
+    ;['handleSearchChange', 'handleSearchKeyDown', 'handleSuggestionClick',
+      'handleSearchClear', 'handleAppClick', 'setSearchOption',
+      'performSearch'].forEach((method) => {
+      this[method] = this[method].bind(this)
+    })
     this.searchInputRef = React.createRef()
     this.state = {
       matchingSongs: [],
@@ -89,17 +88,23 @@ class App extends React.Component {
     if (typeof valueOrFn === 'function') {
       this.setState(({ searchOptions }) => ({
         searchOptions: { ...searchOptions, [option]: valueOrFn(searchOptions[option]) }
-      }))
+      }), this.performSearch)
     } else {
       this.setState(({ searchOptions }) => ({
         searchOptions: { ...searchOptions, [option]: valueOrFn }
-      }))
+      }), this.performSearch)
     }
   }
 
   searchSongs (query) {
     const { miniSearch, songsById, searchOptions } = this.state
     return miniSearch.search(query, searchOptions).map(({ id }) => songsById[id])
+  }
+
+  performSearch () {
+    const { searchValue } = this.state
+    const matchingSongs = this.searchSongs(searchValue)
+    this.setState({ matchingSongs })
   }
 
   getSuggestions (query) {
@@ -235,10 +240,11 @@ const AdvancedOptions = ({ options, setOption }) => {
 
 const Explanation = () => (
   <p>
-    This is a demo of <a href='https://github.com/lucaong/minisearch'>MiniSearch</a>:
-    try searching through a database of more than 5000 top songs in <em>Billboard
-    Hot 100</em> from year 1965 to 2015. This example demonstrates search (with
-    prefix and fuzzy match) and auto-completion.
+    This is a demo of the <a
+      href='https://github.com/lucaong/minisearch'>MiniSearch</a> JavaScript
+    library: try searching through more than 5000 top songs and artists
+    in <em>Billboard Hot 100</em> from year 1965 to 2015. This example
+    demonstrates search (with prefix and fuzzy match) and auto-completion.
   </p>
 )
 
