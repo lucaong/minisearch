@@ -295,10 +295,18 @@ class MiniSearch {
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
       ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
     const exactResult = termResults(this, query.term, boosts, this._index.get(query.term))
-    if (!query.fuzzy && !query.prefix) {
-      return exactResult
-    }
+
+    if (!query.fuzzy && !query.prefix) { return exactResult }
+
     const results = [exactResult]
+
+    if (query.prefix) {
+      this._index.atPrefix(query.term).forEach((term, data) => {
+        const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
+        results.push(termResults(this, term, boosts, data, 0.45, weightedDistance))
+      })
+    }
+
     if (query.fuzzy) {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
@@ -306,12 +314,7 @@ class MiniSearch {
         results.push(termResults(this, term, boosts, data, 0.30, weightedDistance))
       })
     }
-    if (query.prefix) {
-      this._index.atPrefix(query.term).forEach((term, data) => {
-        const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
-        results.push(termResults(this, term, boosts, data, 0.45, weightedDistance))
-      })
-    }
+
     return results.reduce(combinators[OR], {})
   }
 
