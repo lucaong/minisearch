@@ -294,16 +294,17 @@ class MiniSearch {
     options = { ...this._options.searchOptions, ...options }
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
       ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
-    const exactResult = termResults(this, query.term, boosts, this._index.get(query.term))
+    const { boostDocument } = options
+    const exactMatch = termResults(this, query.term, boosts, boostDocument, this._index.get(query.term))
 
-    if (!query.fuzzy && !query.prefix) { return exactResult }
+    if (!query.fuzzy && !query.prefix) { return exactMatch }
 
-    const results = [exactResult]
+    const results = [exactMatch]
 
     if (query.prefix) {
       this._index.atPrefix(query.term).forEach((term, data) => {
         const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
-        results.push(termResults(this, term, boosts, data, 0.45, weightedDistance))
+        results.push(termResults(this, term, boosts, boostDocument, data, 0.45, weightedDistance))
       })
     }
 
@@ -311,7 +312,7 @@ class MiniSearch {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
         const weightedDistance = distance / term.length
-        results.push(termResults(this, term, boosts, data, 0.30, weightedDistance))
+        results.push(termResults(this, term, boosts, boostDocument, data, 0.30, weightedDistance))
       })
     }
 
@@ -432,17 +433,19 @@ const addFields = function (self, fields) {
   fields.forEach((field, i) => { self._fieldIds[field] = i })
 }
 
-const termResults = function (self, term, boosts, indexData, weight = 1, editDistance = 0) {
+const termResults = function (self, term, boosts, boostDocument, indexData, weight = 1, editDistance = 0) {
   if (indexData == null) { return {} }
   return Object.entries(boosts).reduce((results, [field, boost]) => {
     const fieldId = self._fieldIds[field]
     const { df, ds } = indexData[fieldId] || { ds: {} }
     Object.entries(ds).forEach(([documentId, tf]) => {
+      const docBoost = boostDocument ? boostDocument(self._documentIds[documentId], term) : 1
+      if (!docBoost) { return }
       const normalizedLength = self._fieldLength[documentId][fieldId] / self._averageFieldLength[fieldId]
       results[documentId] = results[documentId] || { score: 0, match: {}, terms: [] }
       results[documentId].terms.push(term)
       results[documentId].match[term] = results[documentId].match[term] || []
-      results[documentId].score += score(tf, df, self._documentCount, normalizedLength, boost, editDistance)
+      results[documentId].score += docBoost * score(tf, df, self._documentCount, normalizedLength, boost, editDistance)
       results[documentId].match[term].push(field)
     })
     return results

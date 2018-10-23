@@ -199,6 +199,26 @@ describe('MiniSearch', () => {
       expect(results.map(({ id }) => id)).toEqual([2, 1])
     })
 
+    it('boosts documents by calling boostDocument with document ID and term', () => {
+      const query = 'divina commedia'
+      const boostFactor = 1.234
+      const boostDocument = jest.fn((id, term) => boostFactor)
+      const resultsWithoutBoost = ms.search(query)
+      const results = ms.search(query, { boostDocument })
+      expect(boostDocument).toHaveBeenCalledWith(1, 'divina')
+      expect(boostDocument).toHaveBeenCalledWith(1, 'commedia')
+      expect(results[0].score).toEqual(resultsWithoutBoost[0].score * boostFactor)
+    })
+
+    it('skips document if boostDocument returns a falsy value', () => {
+      const query = 'vita'
+      const boostDocument = jest.fn((id, term) => id === 3 ? null : 1)
+      const resultsWithoutBoost = ms.search(query)
+      const results = ms.search(query, { boostDocument })
+      expect(resultsWithoutBoost.map(({ id }) => id)).toContain(3)
+      expect(results.map(({ id }) => id)).not.toContain(3)
+    })
+
     describe('match data', () => {
       const documents = [
         { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
