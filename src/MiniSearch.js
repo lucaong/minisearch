@@ -294,10 +294,11 @@ class MiniSearch {
     options = { ...this._options.searchOptions, ...options }
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
       ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
+    const exactResult = termResults(this, query.term, boosts, this._index.get(query.term))
     if (!query.fuzzy && !query.prefix) {
-      return termResults(this, query.term, boosts, this._index.get(query.term))
+      return exactResult
     }
-    const results = []
+    const results = [exactResult]
     if (query.fuzzy) {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
