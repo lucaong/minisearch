@@ -304,7 +304,7 @@ class MiniSearch {
     if (query.prefix) {
       this._index.atPrefix(query.term).forEach((term, data) => {
         const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
-        results.push(termResults(this, term, boosts, boostDocument, data, 0.45, weightedDistance))
+        results.push(termResults(this, term, boosts, boostDocument, data, 0.9, weightedDistance))
       })
     }
 
@@ -312,7 +312,7 @@ class MiniSearch {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
         const weightedDistance = distance / term.length
-        results.push(termResults(this, term, boosts, boostDocument, data, 0.30, weightedDistance))
+        results.push(termResults(this, term, boosts, boostDocument, data, 0.75, weightedDistance))
       })
     }
 
