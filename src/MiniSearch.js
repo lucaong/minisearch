@@ -292,9 +292,15 @@ class MiniSearch {
   */
   executeQuery (query, options = {}) {
     options = { ...this._options.searchOptions, ...options }
+
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
       ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
-    const { boostDocument } = options
+
+    const {
+      boostDocument,
+      weights: { fuzzy: fuzzyWeight = 0.9, prefix: prefixWeight = 0.75 }
+    } = options
+
     const exactMatch = termResults(this, query.term, boosts, boostDocument, this._index.get(query.term))
 
     if (!query.fuzzy && !query.prefix) { return exactMatch }
@@ -304,7 +310,7 @@ class MiniSearch {
     if (query.prefix) {
       this._index.atPrefix(query.term).forEach((term, data) => {
         const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
-        results.push(termResults(this, term, boosts, boostDocument, data, 0.9, weightedDistance))
+        results.push(termResults(this, term, boosts, boostDocument, data, prefixWeight, weightedDistance))
       })
     }
 
@@ -312,7 +318,7 @@ class MiniSearch {
       const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
         const weightedDistance = distance / term.length
-        results.push(termResults(this, term, boosts, boostDocument, data, 0.75, weightedDistance))
+        results.push(termResults(this, term, boosts, boostDocument, data, fuzzyWeight, weightedDistance))
       })
     }
 
@@ -519,7 +525,8 @@ const defaultOptions = {
 const defaultSearchOptions = {
   combineWith: OR,
   prefix: false,
-  fuzzy: false
+  fuzzy: false,
+  weights: {}
 }
 
 const defaultAutoSuggestOptions = {
