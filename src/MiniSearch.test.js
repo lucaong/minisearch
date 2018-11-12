@@ -75,6 +75,13 @@ describe('MiniSearch', () => {
       }).toThrowError('Document does not have ID field "foo"')
     })
 
+    it('does not reassign IDs', () => {
+      ms.remove(documents[0])
+      ms.add(documents[0])
+      expect(ms.search('commedia').map(result => result.id)).toEqual([documents[0].id])
+      expect(ms.search('nova').map(result => result.id)).toEqual([documents[documents.length - 1].id])
+    })
+
     describe('when the document was not in the index', () => {
       it('throws an error', () => {
         expect(() => ms.remove({ id: 99 }))

@@ -98,6 +98,9 @@ class MiniSearch {
     /** @private */
     this._averageFieldLength = {}
 
+    /** @private */
+    this._nextId = 0
+
     addFields(this, fields)
   }
 
@@ -345,6 +348,7 @@ class MiniSearch {
     return {
       index: this._index,
       documentCount: this._documentCount,
+      nextId: this._nextId,
       documentIds: this._documentIds,
       fieldIds: this._fieldIds,
       fieldLength: this._fieldLength,
@@ -370,10 +374,11 @@ MiniSearch.loadJSON = function (json, options = {}) {
 * @private
 */
 MiniSearch.loadJS = function (js, options = {}) {
-  const { index: { _tree, _prefix }, documentCount, documentIds, fieldIds, fieldLength, averageFieldLength } = js
+  const { index: { _tree, _prefix }, documentCount, nextId, documentIds, fieldIds, fieldLength, averageFieldLength } = js
   const miniSearch = new MiniSearch(options)
   miniSearch._index = new SearchableMap(_tree, _prefix)
   miniSearch._documentCount = documentCount
+  miniSearch._nextId = nextId
   miniSearch._documentIds = documentIds
   miniSearch._fieldIds = fieldIds
   miniSearch._fieldLength = fieldLength
@@ -429,9 +434,10 @@ const warnDocumentChanged = function (self, shortDocumentId, fieldId, term) {
 }
 
 const addDocumentId = function (self, documentId) {
-  const shortDocumentId = self._documentCount
+  const shortDocumentId = self._nextId
   self._documentIds[shortDocumentId] = documentId
   self._documentCount += 1
+  self._nextId += 1
   return shortDocumentId
 }
 
