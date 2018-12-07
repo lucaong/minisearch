@@ -136,6 +136,9 @@ class MiniSearch {
     /** @private */
     this._averageFieldLength = {}
 
+    /** @private */
+    this._nextId = 0
+
     addFields(this, fields)
   }
 
@@ -196,6 +199,7 @@ class MiniSearch {
         removeTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
       })
     })
+    delete this._documentIds[shortDocumentId]
     this._documentCount -= 1
   }
 
@@ -330,9 +334,15 @@ class MiniSearch {
   */
   executeQuery (query, options = {}) {
     options = { ...this._options.searchOptions, ...options }
+
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =&gt;
       ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
-    const { boostDocument } = options
+
+    const {
+      boostDocument,
+      weights: { fuzzy: fuzzyWeight = 0.9, prefix: prefixWeight = 0.75 }
+    } = options
+
     const exactMatch = termResults(this, query.term, boosts, boostDocument, this._index.get(query.term))
 
     if (!query.fuzzy &amp;&amp; !query.prefix) { return exactMatch }
@@ -342,7 +352,7 @@ class MiniSearch {
     if (query.prefix) {
       this._index.atPrefix(query.term).forEach((term, data) =&gt; {
         const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
-        results.push(termResults(this, term, boosts, boostDocument, data, 0.45, weightedDistance))
+        results.push(termResults(this, term, boosts, boostDocument, data, prefixWeight, weightedDistance))
       })
     }
 
@@ -350,7 +360,7 @@ class MiniSearch {
       const maxDistance = query.fuzzy &lt; 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) =&gt; {
         const weightedDistance = distance / term.length
-        results.push(termResults(this, term, boosts, boostDocument, data, 0.30, weightedDistance))
+        results.push(termResults(this, term, boosts, boostDocument, data, fuzzyWeight, weightedDistance))
       })
     }
 
@@ -377,6 +387,7 @@ class MiniSearch {
     return {
       index: this._index,
       documentCount: this._documentCount,
+      nextId: this._nextId,
       documentIds: this._documentIds,
       fieldIds: this._fieldIds,
       fieldLength: this._fieldLength,
@@ -402,10 +413,11 @@ MiniSearch.loadJSON = function (json, options = {}) {
 * @private
 */
 MiniSearch.loadJS = function (js, options = {}) {
-  const { index: { _tree, _prefix }, documentCount, documentIds, fieldIds, fieldLength, averageFieldLength } = js
+  const { index: { _tree, _prefix }, documentCount, nextId, documentIds, fieldIds, fieldLength, averageFieldLength } = js
   const miniSearch = new MiniSearch(options)
   miniSearch._index = new SearchableMap(_tree, _prefix)
   miniSearch._documentCount = documentCount
+  miniSearch._nextId = nextId
   miniSearch._documentIds = documentIds
   miniSearch._fieldIds = fieldIds
   miniSearch._fieldLength = fieldLength
@@ -437,11 +449,13 @@ const removeTerm = function (self, fieldId, documentId, term) {
       warnDocumentChanged(self, documentId, fieldId, term)
       return indexData
     }
-    if (fieldIndex.df &lt;= 1) {
-      delete indexData[fieldId]
-      return indexData
+    if (fieldIndex.ds[documentId] &lt;= 1) {
+      if (fieldIndex.df &lt;= 1) {
+        delete indexData[fieldId]
+        return indexData
+      }
+      fieldIndex.df -= 1
     }
-    fieldIndex.df -= 1
     if (fieldIndex.ds[documentId] &lt;= 1) {
       delete fieldIndex.ds[documentId]
       return indexData
@@ -461,9 +475,10 @@ const warnDocumentChanged = function (self, shortDocumentId, fieldId, term) {
 }
 
 const addDocumentId = function (self, documentId) {
-  const shortDocumentId = self._documentCount
+  const shortDocumentId = self._nextId
   self._documentIds[shortDocumentId] = documentId
   self._documentCount += 1
+  self._nextId += 1
   return shortDocumentId
 }
 
@@ -557,7 +572,8 @@ const defaultOptions = {
 const defaultSearchOptions = {
   combineWith: OR,
   prefix: false,
-  fuzzy: false
+  fuzzy: false,
+  weights: {}
 }
 
 const defaultAutoSuggestOptions = {
