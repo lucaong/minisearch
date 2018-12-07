@@ -161,6 +161,7 @@ class MiniSearch {
         removeTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
       })
     })
+    delete this._documentIds[shortDocumentId]
     this._documentCount -= 1
   }
 
@@ -410,11 +411,13 @@ const removeTerm = function (self, fieldId, documentId, term) {
       warnDocumentChanged(self, documentId, fieldId, term)
       return indexData
     }
-    if (fieldIndex.df <= 1) {
-      delete indexData[fieldId]
-      return indexData
+    if (fieldIndex.ds[documentId] <= 1) {
+      if (fieldIndex.df <= 1) {
+        delete indexData[fieldId]
+        return indexData
+      }
+      fieldIndex.df -= 1
     }
-    fieldIndex.df -= 1
     if (fieldIndex.ds[documentId] <= 1) {
       delete fieldIndex.ds[documentId]
       return indexData

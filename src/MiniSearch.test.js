@@ -48,10 +48,16 @@ describe('MiniSearch', () => {
       { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria ... cammin' }
     ]
 
-    let ms
+    let ms, _warn
     beforeEach(() => {
       ms = new MiniSearch({ fields: ['title', 'text'] })
       ms.addAll(documents)
+      _warn = console.warn
+      console.warn = jest.fn()
+    })
+
+    afterEach(() => {
+      console.warn = _warn
     })
 
     it('removes the document from the index', () => {
@@ -60,11 +66,26 @@ describe('MiniSearch', () => {
       expect(ms.documentCount).toEqual(2)
       expect(ms.search('commedia').length).toEqual(0)
       expect(ms.search('vita').map(({ id }) => id)).toEqual([3])
+      expect(console.warn).not.toHaveBeenCalled()
+    })
+
+    it('does not remove terms from other documents', () => {
+      ms.remove(documents[0])
+      expect(ms.search('cammin').length).toEqual(1)
+    })
+
+    it('removes re-added document', () => {
+      ms.remove(documents[0])
+      ms.add(documents[0])
+      ms.remove(documents[0])
+      expect(console.warn).not.toHaveBeenCalled()
     })
 
     it('cleans up the index', () => {
+      const originalIdsLength = Object.keys(ms._documentIds).length
       ms.remove(documents[0])
       expect(ms._index.has('commedia')).toEqual(false)
+      expect(Object.keys(ms._documentIds).length).toEqual(originalIdsLength - 1)
       expect(Object.keys(ms._index.get('vita'))).toEqual([ms._fieldIds.title.toString()])
     })
 
@@ -90,15 +111,6 @@ describe('MiniSearch', () => {
     })
 
     describe('when the document has changed', () => {
-      let _warn
-      beforeEach(() => {
-        _warn = console.warn
-        console.warn = jest.fn()
-      })
-      afterEach(() => {
-        console.warn = _warn
-      })
-
       it('warns of possible index corruption', () => {
         expect(() => ms.remove({ id: 1, title: 'Divina Commedia cammin', text: 'something has changed' }))
           .not.toThrow()
