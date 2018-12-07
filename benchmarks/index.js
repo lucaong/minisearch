@@ -7,7 +7,13 @@ import combinedSearch from './combinedSearch.js'
 import loadIndex from './loadIndex.js'
 import autoSuggestion from './autoSuggestion.js'
 
-console.log(`Index size: ${index.size} terms, ${miniSearch.documentCount} documents.\n`)
+const sizeMb = function (string) {
+  return string.length / (1000 * 1000)
+}
+
+const size = sizeMb(JSON.stringify(index)).toFixed(2)
+
+console.log(`Index size: ${index.size} terms, ${miniSearch.documentCount} documents, ${size}MB serialized.\n`)
 
 ;[fuzzySearch, prefixSearch, exactSearch, indexing, combinedSearch, autoSuggestion, loadIndex].forEach(suite => {
   suite.on('start', () => {
