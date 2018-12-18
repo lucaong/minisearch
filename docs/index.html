@@ -124,8 +124,9 @@ can get suggestions for misspelled words using fuzzy search:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
 // =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 1.03998 } ]</code>
 </code></pre>
-<h3 id="tokenization">Tokenization</h3><p>By default, documents and queries are tokenized splitting on non-word
-characters. No stop-word list is applied, but single-character words are
+<h3 id="tokenization">Tokenization</h3><p>By default, documents and queries are tokenized splitting on non-alphanumeric
+characters (accented characters and other diacritics are considered
+alphanumeric). No stop-word list is applied, but single-character words are
 excluded. The tokenization logic can be easily changed by passing a custom
 tokenizer function as the <code>tokenize</code> option:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">let stopWords = new Set([&apos;and&apos;, &apos;or&apos;, &apos;to&apos;, &apos;in&apos;, &apos;a&apos;, &apos;the&apos;, /* ...and more */ ])

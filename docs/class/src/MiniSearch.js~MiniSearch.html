@@ -374,7 +374,7 @@ with MiniSearch.fromJSON</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber72">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber73">source</a></span></span>
     </span>
   </h3>
 
@@ -476,7 +476,8 @@ const miniSearch = MiniSearch.new({
 
   // tokenize: function used to split fields and queries into individual
   // terms
-  tokenize: string =&gt; string.split(/\W+/).filter(term =&gt; term.length &gt; 1),
+  tokenize: string =&gt; string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/)
+                        .filter(term =&gt; term.length &gt; 1),
 
   // processTerm: function used to process document and query terms before
   // indexing or searching. It can be used for stemming and normalization.
@@ -512,7 +513,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber289">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber290">source</a></span></span>
     </span>
   </h3>
 
@@ -559,7 +560,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber112">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber113">source</a></span></span>
     </span>
   </h3>
 
@@ -620,7 +621,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber132">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber133">source</a></span></span>
     </span>
   </h3>
 
@@ -681,7 +682,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber267">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber268">source</a></span></span>
     </span>
   </h3>
 
@@ -786,7 +787,7 @@ miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber149">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber150">source</a></span></span>
     </span>
   </h3>
 
@@ -855,7 +856,7 @@ after a change, the correct order of operations is:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber229">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber230">source</a></span></span>
     </span>
   </h3>
 
@@ -1033,7 +1034,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber348">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber349">source</a></span></span>
     </span>
   </h3>
 
