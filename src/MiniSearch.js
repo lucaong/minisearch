@@ -55,7 +55,8 @@ class MiniSearch {
   *
   *   // tokenize: function used to split fields and queries into individual
   *   // terms
-  *   tokenize: string => string.split(/\W+/).filter(term => term.length > 1),
+  *   tokenize: string => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/)
+  *                         .filter(term => term.length > 1),
   *
   *   // processTerm: function used to process document and query terms before
   *   // indexing or searching. It can be used for stemming and normalization.
@@ -527,7 +528,7 @@ const uniq = function (array) {
 
 const defaultOptions = {
   idField: 'id',
-  tokenize: string => string.split(/\W+/).filter(term => term.length > 1),
+  tokenize: string => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/).filter(term => term.length > 1),
   processTerm: term => term.toLowerCase()
 }
 

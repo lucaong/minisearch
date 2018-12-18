@@ -131,8 +131,9 @@ miniSearch.autoSuggest('neromancer', { fuzzy: 0.2 })
 
 ### Tokenization
 
-By default, documents and queries are tokenized splitting on non-word
-characters. No stop-word list is applied, but single-character words are
+By default, documents and queries are tokenized splitting on non-alphanumeric
+characters (accented characters and other diacritics are considered
+alphanumeric). No stop-word list is applied, but single-character words are
 excluded. The tokenization logic can be easily changed by passing a custom
 tokenizer function as the `tokenize` option:
 

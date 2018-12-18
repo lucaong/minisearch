@@ -284,6 +284,35 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('default tokenization', () => {
+    it('splits on non-alphanumeric taking diacritics into account', () => {
+      const documents = [
+        {
+          id: 1,
+          text:
+          `Se la vita è sventura,
+          perché da noi si dura?
+          Intatta luna, tale
+          è lo stato mortale.
+          Ma tu mortal non sei,
+          e forse del mio dir poco ti cale`
+        },
+        {
+          id: 2,
+          text: `The estimates range from roughly 1 in 100 to 1 in 100,000. The higher figures come from the working engineers, and the very low figures from management. What are the causes and consequences of this lack of agreement? Since 1 part in 100,000 would imply that one could put a Shuttle up each day for 300 years expecting to lose only one, we could properly ask "What is the cause of management's fantastic faith in the machinery?"`
+        }
+      ]
+      const ms = new MiniSearch({ fields: ['text'] })
+      ms.addAll(documents)
+      expect(ms.search('perché').length).toBeGreaterThan(0)
+      expect(ms.search('perch').length).toEqual(0)
+      expect(ms.search('luna').length).toBeGreaterThan(0)
+
+      expect(ms.search('300').length).toBeGreaterThan(0)
+      expect(ms.search('machinery').length).toBeGreaterThan(0)
+    })
+  })
+
   describe('autoSuggest', () => {
     const documents = [
       { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
