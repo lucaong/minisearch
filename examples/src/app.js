@@ -2,7 +2,7 @@ import React from 'react'
 import fetch from 'unfetch'
 import MiniSearch from '../../src/MiniSearch.js'
 
-class App extends React.Component {
+class App extends React.PureComponent {
   constructor (props) {
     super(props)
     const miniSearch = new MiniSearch({
@@ -35,7 +35,10 @@ class App extends React.Component {
     fetch('billboard_1965-2015.json')
       .then(response => response.json())
       .then((allSongs) => {
-        const songsById = allSongs.reduce((byId, song) => ({ ...byId, [song.id]: song }), {})
+        const songsById = allSongs.reduce((byId, song) => {
+          byId[song.id] = song
+          return byId
+        }, {})
         const { miniSearch } = this.state
         miniSearch.addAll(allSongs)
         this.setState({ songsById, ready: true })
