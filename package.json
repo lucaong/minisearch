@@ -1,12 +1,12 @@
 {
   "name": "minisearch",
   "version": "1.0.0",
-  "description": "fun with fulltext search",
+  "description": "simple and powerful full text search engine for browser and node",
   "main": "dist/minisearch.js",
   "author": "Luca Ongaro",
   "keywords": [
     "search",
-    "fulltext",
+    "full text",
     "fuzzy",
     "prefix",
     "auto suggest",
@@ -41,7 +41,7 @@
   ],
   "jest": {
     "testURL": "http://localhost:3000/",
-    "setupTestFrameworkScriptFile": "<rootDir>/src/testSetup/jest.js"
+    "setupFilesAfterEnv": ["<rootDir>/src/testSetup/jest.js"]
   },
   "scripts": {
     "test": "jest",
