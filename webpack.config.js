@@ -19,13 +19,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [
-              ['@babel/preset-env', {
-                'shippedProposals': true,
-                'useBuiltIns': 'usage',
-                'targets': { 'browsers': '> 1%' }
-              }]
-            ],
+            presets: ['@babel/preset-env'],
             plugins: [require('@babel/plugin-proposal-object-rest-spread')]
           }
         }
