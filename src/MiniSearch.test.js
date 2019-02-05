@@ -39,6 +39,36 @@ describe('MiniSearch', () => {
         ms.add({ text: 'I do not have an ID' })
       }).toThrowError('Document does not have ID field "foo"')
     })
+
+    it('rejects falsy terms', () => {
+      const processTerm = term => term === 'foo' ? null : term
+      const ms = new MiniSearch({ fields: ['title', 'text'], processTerm })
+      expect(() => {
+        ms.add({ id: 123, text: 'foo bar' })
+      }).not.toThrowError()
+    })
+
+    it('passes field value and name to tokenizer', () => {
+      const tokenize = jest.fn(string => string.split(/\W+/))
+      const ms = new MiniSearch({ fields: ['text', 'title'], tokenize })
+      const document = { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' }
+      ms.add(document)
+      expect(tokenize).toHaveBeenCalledWith(document.text, 'text')
+      expect(tokenize).toHaveBeenCalledWith(document.title, 'title')
+    })
+
+    it('passes field value and name to term processor', () => {
+      const processTerm = jest.fn(term => term.toLowerCase())
+      const ms = new MiniSearch({ fields: ['text', 'title'], processTerm })
+      const document = { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' }
+      ms.add(document)
+      document.text.split(/\W+/).forEach(term => {
+        expect(processTerm).toHaveBeenCalledWith(term, 'text')
+      })
+      document.title.split(/\W+/).forEach(term => {
+        expect(processTerm).toHaveBeenCalledWith(term, 'title')
+      })
+    })
   })
 
   describe('remove', () => {
@@ -101,6 +131,16 @@ describe('MiniSearch', () => {
       ms.add(documents[0])
       expect(ms.search('commedia').map(result => result.id)).toEqual([documents[0].id])
       expect(ms.search('nova').map(result => result.id)).toEqual([documents[documents.length - 1].id])
+    })
+
+    it('rejects falsy terms', () => {
+      const processTerm = term => term === 'foo' ? null : term
+      const ms = new MiniSearch({ fields: ['title', 'text'], processTerm })
+      const document = { id: 123, title: 'foo bar' }
+      ms.add(document)
+      expect(() => {
+        ms.remove(document)
+      }).not.toThrowError()
     })
 
     describe('when the document was not in the index', () => {
@@ -236,6 +276,27 @@ describe('MiniSearch', () => {
       const results = ms.search(query, { boostDocument })
       expect(resultsWithoutBoost.map(({ id }) => id)).toContain(3)
       expect(results.map(({ id }) => id)).not.toContain(3)
+    })
+
+    it('uses a specific search-time tokenizer if specified', () => {
+      const tokenize = (string) => string.split('X')
+      const results = ms.search('divinaXcommedia', { tokenize })
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([1])
+    })
+
+    it('uses a specific search-time term processing function if specified', () => {
+      const processTerm = (string) => string.replace(/1/g, 'i').replace(/4/g, 'a').toLowerCase()
+      const results = ms.search('d1v1n4', { processTerm })
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([1])
+    })
+
+    it('rejects falsy terms', () => {
+      const processTerm = (term) => term === 'quel' ? null : term
+      const results = ms.search('quel commedia', { processTerm })
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([1])
     })
 
     describe('match data', () => {

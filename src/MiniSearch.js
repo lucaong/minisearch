@@ -32,8 +32,8 @@ class MiniSearch {
   * @param {Object} options - Configuration options
   * @param {Array<string>} options.fields - Fields to be indexed. Required.
   * @param {string} [options.idField='id'] - ID field, uniquely identifying a document
-  * @param {function(text: string): Array<string>} [options.tokenize] - Function used to split a field into individual terms
-  * @param {function(term: string): string} [options.processTerm] - Function used to process a term before indexing it or searching
+  * @param {function(text: string, fieldName: [string]): Array<string>} [options.tokenize] - Function used to split a field into individual terms
+  * @param {function(term: string, fieldName: [string]): string} [options.processTerm] - Function used to process a term before indexing it or searching
   * @param {?Object} options.searchOptions - Default search options (see the `search` method for details)
   *
   * @example
@@ -53,14 +53,19 @@ class MiniSearch {
   *   // idField: field that uniquely identifies a document
   *   idField: 'id',
   *
-  *   // tokenize: function used to split fields and queries into individual
-  *   // terms
-  *   tokenize: string => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/)
-  *                         .filter(term => term.length > 1),
+  *   // tokenize: function used to split fields into individual terms. By
+  *   // default, it is also used to tokenize search queries, unless a specific
+  *   // `tokenize` search option is supplied. When tokenizing an indexed field,
+  *   // the field name is passed as the second argument.
+  *   tokenize: (string, _fieldName) => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/)
   *
-  *   // processTerm: function used to process document and query terms before
-  *   // indexing or searching. It can be used for stemming and normalization.
-  *   processTerm: term => term.toLowerCase()
+  *   // processTerm: function used to process each tokenized term before
+  *   // indexing. It can be used for stemming and normalization. Return a falsy
+  *   // value in order to discard a term. By default, it is also used to process
+  *   // search queries, unless a specific `processTerm` option is supplied as a
+  *   // search option. When processing a term from a indexed field, the field
+  *   // name is passed as the second argument.
+  *   processTerm: (term, _fieldName) => term.length > 1 && term.toLowerCase()
   *
   *   // searchOptions: default search options, see the `search` method for
   *   // details
@@ -117,10 +122,13 @@ class MiniSearch {
     }
     const shortDocumentId = addDocumentId(this, document[idField])
     fields.forEach(field => {
-      const tokens = tokenize(document[field] || '')
+      const tokens = tokenize(document[field] || '', field)
       addFieldLength(this, shortDocumentId, this._fieldIds[field], this.documentCount - 1, tokens.length)
       tokens.forEach(term => {
-        addTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
+        const processedTerm = processTerm(term, field)
+        if (isTruthy(processedTerm)) {
+          addTerm(this, this._fieldIds[field], shortDocumentId, processedTerm)
+        }
       })
     })
   }
@@ -159,7 +167,10 @@ class MiniSearch {
     }
     fields.filter(field => document[field] != null).forEach(field => {
       tokenize(document[field]).forEach(term => {
-        removeTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
+        const processedTerm = processTerm(term)
+        if (isTruthy(processedTerm)) {
+          removeTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
+        }
       })
     })
     delete this._documentIds[shortDocumentId]
@@ -180,6 +191,8 @@ class MiniSearch {
   * @param {boolean|function(term: string, i: number, terms: Array<string>): boolean} [options.prefix=false] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from each tokenized and processed query term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
   * @param {number|function(term: string, i: number, terms: Array<string>): boolean|number} [options.fuzzy=false] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function for each tokenized and processed query term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
   * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')
+  * @param {function(query: string): Array<string>} [options.tokenize] - Function used to tokenize the search query. It defaults to the same tokenizer used for indexing.
+  * @param {function(term: string): string|null|undefined|false} [options.processTerm] - Function used to process each search term. Return a falsy value to discard a term. Defaults to the same function used to process terms upon indexing.
   * @return {Array<{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
   *
   * @example
@@ -229,8 +242,9 @@ class MiniSearch {
   */
   search (queryString, options = {}) {
     const { tokenize, processTerm, searchOptions } = this._options
-    options = { ...searchOptions, ...options }
-    const queries = tokenize(queryString).map(processTerm).map(termToQuery(options))
+    options = { tokenize, processTerm, ...searchOptions, ...options }
+    const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
+    const queries = searchTokenize(queryString).map(searchProcessTerm).filter(isTruthy).map(termToQuery(options))
     const results = queries.map(query => this.executeQuery(query, options))
     const combinedResults = this.combineResults(results, options.combineWith)
 
@@ -526,10 +540,12 @@ const uniq = function (array) {
   return array.filter((element, i, array) => array.indexOf(element) === i)
 }
 
+const isTruthy = (x) => !!x
+
 const defaultOptions = {
   idField: 'id',
-  tokenize: string => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/).filter(term => term.length > 1),
-  processTerm: term => term.toLowerCase()
+  tokenize: (string, _fieldName) => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/),
+  processTerm: (term, _fieldName) => term.length > 1 && term.toLowerCase()
 }
 
 const defaultSearchOptions = {

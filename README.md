@@ -129,31 +129,49 @@ miniSearch.autoSuggest('neromancer', { fuzzy: 0.2 })
 // => [ { suggestion: 'neuromancer', terms: [ 'neuromancer' ], score: 1.03998 } ]
 ```
 
+Suggestions are ranked by the relevance of the documents that would be returned
+by that search.
+
 ### Tokenization
 
-By default, documents and queries are tokenized splitting on non-alphanumeric
-characters (accented characters and other diacritics are considered
-alphanumeric). No stop-word list is applied, but single-character words are
-excluded. The tokenization logic can be easily changed by passing a custom
-tokenizer function as the `tokenize` option:
+By default, documents are tokenized by splitting on non-alphanumeric characters
+(accented characters and other diacritics are considered alphanumeric). The
+tokenization logic can be easily changed by passing a custom tokenizer function
+as the `tokenize` option:
 
 ```javascript
-let stopWords = new Set(['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ])
-
-// Tokenize splitting by space and apply a stop-word list
+// Tokenize splitting by hyphen
 let miniSearch = new MiniSearch({
   fields: ['title', 'text'],
-  tokenize: (string) => string.split(/\s+/).filter(word => !stopWords.has(word))
+  tokenize: (string, _fieldName) => string.split('-')
+})
+```
+
+Upon search, the same tokenization is used by default, but it is possible to
+pass a `tokenize` search option in case a different search-time tokenization is
+necessary:
+
+```javascript
+// Tokenize splitting by hyphen
+let miniSearch = new MiniSearch({
+  fields: ['title', 'text'],
+  tokenize: (string) => string.split('-'), // indexing tokenizer
+  searchOptions: {
+    tokenize: (string) => string.split(/[\s-]+/) // search query tokenizer
+  }
 })
 ```
 
 ### Term processing
 
-Terms are downcased by default. No stemming is performed. To customize how the
-terms are processed upon indexing or searching, for example to normalize them or
-to apply stemming, the `processTerm` option can be used:
+Terms are downcased by default. No stemming is performed, and no stop-word list
+is applied, but single-character words are excluded. To customize how the terms
+are processed upon indexing, for example to normalize them, filter them, or to
+apply stemming, the `processTerm` option can be used:
 
 ```javascript
+let stopWords = new Set(['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ])
+
 const removeAccents = (term) =>
   term.replace(/[àá]/, 'a')
       .replace(/[èé]/, 'e')
@@ -161,10 +179,26 @@ const removeAccents = (term) =>
       .replace(/[òó]/, 'o')
       .replace(/[ùú]/, 'u')
 
-// Perform custom term processing (here removing accents)
+// Perform custom term processing (here removing accents, downcasing, and
+// discarding stop words)
 let miniSearch = new MiniSearch({
   fields: ['title', 'text'],
-  processTerm: (term) => removeAccents(term.toLowerCase())
+  processTerm: (term, _fieldName) =>
+    stopWords.has(term) ? null : removeAccents(term.toLowerCase())
+})
+```
+
+By default, the same processing is applied to search queries. In order to apply
+a different processing to search queries, supply a `processTerm` search option:
+
+```javascript
+let miniSearch = new MiniSearch({
+  fields: ['title', 'text'],
+  processTerm: (term) =>
+    stopWords.has(term) ? null : removeAccents(term.toLowerCase()), // index term processing
+  searchOptions: {
+    processTerm: (term) => removeAccents(term.toLowerCase()) // search query processing
+  }
 })
 ```
 
