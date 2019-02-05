@@ -1,7 +1,6 @@
 import React from 'react'
 import fetch from 'unfetch'
 import MiniSearch from '../../src/MiniSearch.js'
-import throttle from 'lodash/throttle'
 
 class App extends React.PureComponent {
   constructor (props) {
@@ -15,8 +14,6 @@ class App extends React.PureComponent {
       'performSearch'].forEach((method) => {
       this[method] = this[method].bind(this)
     })
-    this.searchSongs = throttle(this.searchSongs.bind(this), 200)
-    this.getSuggestions = throttle(this.getSuggestions.bind(this), 200)
     this.searchInputRef = React.createRef()
     this.state = {
       matchingSongs: [],
@@ -116,7 +113,8 @@ class App extends React.PureComponent {
 
   getSuggestions (query) {
     const { miniSearch, searchOptions } = this.state
-    return miniSearch.autoSuggest(query, { ...searchOptions, prefix: true, boost: { artist: 5 } })
+    const prefix = (term, i, terms) => i === terms.length - 1
+    return miniSearch.autoSuggest(query, { ...searchOptions, prefix, boost: { artist: 5 } })
       .filter(({ suggestion, score }, _, [first]) => score > first.score / 4)
       .slice(0, 5)
   }
