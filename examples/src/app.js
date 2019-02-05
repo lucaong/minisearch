@@ -1,18 +1,22 @@
 import React from 'react'
 import fetch from 'unfetch'
 import MiniSearch from '../../src/MiniSearch.js'
+import throttle from 'lodash/throttle'
 
 class App extends React.PureComponent {
   constructor (props) {
     super(props)
     const miniSearch = new MiniSearch({
-      fields: ['artist', 'title']
+      fields: ['artist', 'title'],
+      processTerm: (term, _fieldName) => (term.length <= 1 || stopWords.has(term)) ? null : term.toLowerCase()
     })
     ;['handleSearchChange', 'handleSearchKeyDown', 'handleSuggestionClick',
       'handleSearchClear', 'handleAppClick', 'setSearchOption',
       'performSearch'].forEach((method) => {
       this[method] = this[method].bind(this)
     })
+    this.searchSongs = throttle(this.searchSongs.bind(this), 200)
+    this.getSuggestions = throttle(this.getSuggestions.bind(this), 200)
     this.searchInputRef = React.createRef()
     this.state = {
       matchingSongs: [],
@@ -47,7 +51,7 @@ class App extends React.PureComponent {
 
   handleSearchChange ({ target: { value } }) {
     this.setState({ searchValue: value })
-    const matchingSongs = this.searchSongs(value)
+    const matchingSongs = value.length > 1 ? this.searchSongs(value) : []
     const selectedSuggestion = -1
     const suggestions = this.getSuggestions(value)
     this.setState({ matchingSongs, suggestions, selectedSuggestion })
@@ -61,7 +65,7 @@ class App extends React.PureComponent {
     } else if (key === 'ArrowUp') {
       selectedSuggestion = Math.max(0, selectedSuggestion - 1)
       searchValue = suggestions[selectedSuggestion].suggestion
-    } else if (key === 'Enter') {
+    } else if (key === 'Enter' || key === 'Escape') {
       selectedSuggestion = -1
       suggestions = []
       this.searchInputRef.current.blur()
@@ -112,8 +116,8 @@ class App extends React.PureComponent {
 
   getSuggestions (query) {
     const { miniSearch, searchOptions } = this.state
-    return miniSearch.autoSuggest(query, { ...searchOptions, prefix: true })
-      .filter(({ suggestion, score }, _, [first]) => score > first.score / 2)
+    return miniSearch.autoSuggest(query, { ...searchOptions, prefix: true, boost: { artist: 5 } })
+      .filter(({ suggestion, score }, _, [first]) => score > first.score / 4)
       .slice(0, 5)
   }
 
@@ -256,5 +260,7 @@ const Loader = ({ text }) => (
 )
 
 const capitalize = (string) => string.replace(/(\b\w)/gi, (char) => char.toUpperCase())
+
+const stopWords = new Set(['the', 'a', 'an', 'and'])
 
 export default App
