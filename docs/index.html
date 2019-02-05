@@ -124,33 +124,60 @@ can get suggestions for misspelled words using fuzzy search:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
 // =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 1.03998 } ]</code>
 </code></pre>
-<h3 id="tokenization">Tokenization</h3><p>By default, documents and queries are tokenized splitting on non-alphanumeric
-characters (accented characters and other diacritics are considered
-alphanumeric). No stop-word list is applied, but single-character words are
-excluded. The tokenization logic can be easily changed by passing a custom
-tokenizer function as the <code>tokenize</code> option:</p>
-<pre><code class="lang-javascript"><code class="source-code prettyprint">let stopWords = new Set([&apos;and&apos;, &apos;or&apos;, &apos;to&apos;, &apos;in&apos;, &apos;a&apos;, &apos;the&apos;, /* ...and more */ ])
-
-// Tokenize splitting by space and apply a stop-word list
+<p>Suggestions are ranked by the relevance of the documents that would be returned
+by that search.</p>
+<h3 id="tokenization">Tokenization</h3><p>By default, documents are tokenized by splitting on non-alphanumeric characters
+(accented characters and other diacritics are considered alphanumeric). The
+tokenization logic can be easily changed by passing a custom tokenizer function
+as the <code>tokenize</code> option:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">// Tokenize splitting by hyphen
 let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
-  tokenize: (string) =&gt; string.split(/\s+/).filter(word =&gt; !stopWords.has(word))
+  tokenize: (string, _fieldName) =&gt; string.split(&apos;-&apos;)
 })</code>
 </code></pre>
-<h3 id="term-processing">Term processing</h3><p>Terms are downcased by default. No stemming is performed. To customize how the
-terms are processed upon indexing or searching, for example to normalize them or
-to apply stemming, the <code>processTerm</code> option can be used:</p>
-<pre><code class="lang-javascript"><code class="source-code prettyprint">const removeAccents = (term) =&gt;
+<p>Upon search, the same tokenization is used by default, but it is possible to
+pass a <code>tokenize</code> search option in case a different search-time tokenization is
+necessary:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">// Tokenize splitting by hyphen
+let miniSearch = new MiniSearch({
+  fields: [&apos;title&apos;, &apos;text&apos;],
+  tokenize: (string) =&gt; string.split(&apos;-&apos;), // indexing tokenizer
+  searchOptions: {
+    tokenize: (string) =&gt; string.split(/[\s-]+/) // search query tokenizer
+  }
+})</code>
+</code></pre>
+<h3 id="term-processing">Term processing</h3><p>Terms are downcased by default. No stemming is performed, and no stop-word list
+is applied, but single-character words are excluded. To customize how the terms
+are processed upon indexing, for example to normalize them, filter them, or to
+apply stemming, the <code>processTerm</code> option can be used:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">let stopWords = new Set([&apos;and&apos;, &apos;or&apos;, &apos;to&apos;, &apos;in&apos;, &apos;a&apos;, &apos;the&apos;, /* ...and more */ ])
+
+const removeAccents = (term) =&gt;
   term.replace(/[&#xE0;&#xE1;]/, &apos;a&apos;)
       .replace(/[&#xE8;&#xE9;]/, &apos;e&apos;)
       .replace(/[&#xEC;&#xED;]/, &apos;i&apos;)
       .replace(/[&#xF2;&#xF3;]/, &apos;o&apos;)
       .replace(/[&#xF9;&#xFA;]/, &apos;u&apos;)
 
-// Perform custom term processing (here removing accents)
+// Perform custom term processing (here removing accents, downcasing, and
+// discarding stop words)
 let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
-  processTerm: (term) =&gt; removeAccents(term.toLowerCase())
+  processTerm: (term, _fieldName) =&gt;
+    stopWords.has(term) ? null : removeAccents(term.toLowerCase())
+})</code>
+</code></pre>
+<p>By default, the same processing is applied to search queries. In order to apply
+a different processing to search queries, supply a <code>processTerm</code> search option:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">let miniSearch = new MiniSearch({
+  fields: [&apos;title&apos;, &apos;text&apos;],
+  processTerm: (term) =&gt;
+    stopWords.has(term) ? null : removeAccents(term.toLowerCase()), // index term processing
+  searchOptions: {
+    processTerm: (term) =&gt; removeAccents(term.toLowerCase()) // search query processing
+  }
 })</code>
 </code></pre>
 <p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>

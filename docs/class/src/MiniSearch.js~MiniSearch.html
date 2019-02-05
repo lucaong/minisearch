@@ -374,7 +374,7 @@ with MiniSearch.fromJSON</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber73">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber78">source</a></span></span>
     </span>
   </h3>
 
@@ -417,14 +417,14 @@ with MiniSearch.fromJSON</p>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.tokenize</td>
-      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>&gt;</span></td>
+      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>(text: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fieldName: <span>[string]</span>)</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>&gt;</span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>Function used to split a field into individual terms</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.processTerm</td>
-      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>(term: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span></td>
+      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>(term: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, fieldName: <span>[string]</span>)</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>Function used to process a term before indexing it or searching</p>
 </td>
@@ -474,14 +474,19 @@ const miniSearch = MiniSearch.new({
   // idField: field that uniquely identifies a document
   idField: &apos;id&apos;,
 
-  // tokenize: function used to split fields and queries into individual
-  // terms
-  tokenize: string =&gt; string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/)
-                        .filter(term =&gt; term.length &gt; 1),
+  // tokenize: function used to split fields into individual terms. By
+  // default, it is also used to tokenize search queries, unless a specific
+  // `tokenize` search option is supplied. When tokenizing an indexed field,
+  // the field name is passed as the second argument.
+  tokenize: (string, _fieldName) =&gt; string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/)
 
-  // processTerm: function used to process document and query terms before
-  // indexing or searching. It can be used for stemming and normalization.
-  processTerm: term =&gt; term.toLowerCase()
+  // processTerm: function used to process each tokenized term before
+  // indexing. It can be used for stemming and normalization. Return a falsy
+  // value in order to discard a term. By default, it is also used to process
+  // search queries, unless a specific `processTerm` option is supplied as a
+  // search option. When processing a term from a indexed field, the field
+  // name is passed as the second argument.
+  processTerm: (term, _fieldName) =&gt; term.length &gt; 1 &amp;&amp; term.toLowerCase()
 
   // searchOptions: default search options, see the `search` method for
   // details
@@ -513,7 +518,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber290">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber304">source</a></span></span>
     </span>
   </h3>
 
@@ -560,7 +565,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber113">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber118">source</a></span></span>
     </span>
   </h3>
 
@@ -621,7 +626,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber133">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber141">source</a></span></span>
     </span>
   </h3>
 
@@ -682,7 +687,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber268">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber282">source</a></span></span>
     </span>
   </h3>
 
@@ -787,7 +792,7 @@ miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber150">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber158">source</a></span></span>
     </span>
   </h3>
 
@@ -856,7 +861,7 @@ after a change, the correct order of operations is:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber230">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber243">source</a></span></span>
     </span>
   </h3>
 
@@ -929,6 +934,20 @@ in which fields.</p>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;OR&apos;</li></ul></td>
       <td data-ice="description"><p>How to combine term queries (it can be &apos;OR&apos; or &apos;AND&apos;)</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.tokenize</td>
+      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>(query: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>&gt;</span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Function used to tokenize the search query. It defaults to the same tokenizer used for indexing.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.processTerm</td>
+      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>(term: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>)</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null">null</a></span> | <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined">undefined</a></span> | <span>false</span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Function used to process each search term. Return a falsy value to discard a term. Defaults to the same function used to process terms upon indexing.</p>
 </td>
     </tr>
 </tbody>
@@ -1034,7 +1053,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber349">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber363">source</a></span></span>
     </span>
   </h3>
 
