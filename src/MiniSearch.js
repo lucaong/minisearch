@@ -309,6 +309,60 @@ class MiniSearch {
   }
 
   /**
+  * Deserializes a JSON index (serialized with `miniSearch.toJSON()`) and
+  * instantiates a MiniSearch instance. It should be given the same options
+  * originally used when serializing the index.
+  *
+  * @param {string} json - JSON-serialized index
+  * @param {Object} options - configuration options, same as the constructor
+  * @return {MiniSearch} an instance of MiniSearch
+  */
+  static loadJSON (json, options = {}) {
+    return MiniSearch.loadJS(JSON.parse(json), options)
+  }
+
+  /**
+  * Get the default value of an option. It will throw an error if no option with
+  * the given name exists.
+  *
+  * @param {string} optionName - name of the option
+  * @return {*} the default value of the given option
+  */
+  static getDefault (optionName) {
+    const validKeys = Object.keys(defaultOptions)
+    if (validKeys.includes(optionName)) {
+      return defaultOptions[optionName]
+    } else {
+      throw new Error(`MiniSearch: unknown option "${optionName}"`)
+    }
+  }
+
+  /**
+  * @private
+  */
+  static loadJS (js, options = {}) {
+    const {
+      index: { _tree, _prefix },
+      documentCount,
+      nextId,
+      documentIds,
+      fieldIds,
+      fieldLength,
+      averageFieldLength
+    } = js
+    const miniSearch = new MiniSearch(options)
+    miniSearch._index = new SearchableMap(_tree, _prefix)
+    miniSearch._documentCount = documentCount
+    miniSearch._nextId = nextId
+    miniSearch._documentIds = documentIds
+    miniSearch._fieldIds = fieldIds
+    miniSearch._fieldLength = fieldLength
+    miniSearch._averageFieldLength = averageFieldLength
+    miniSearch._fieldIds = fieldIds
+    return miniSearch
+  }
+
+  /**
   * @private
   * @ignore
   */
@@ -373,52 +427,6 @@ class MiniSearch {
       fieldLength: this._fieldLength,
       averageFieldLength: this._averageFieldLength
     }
-  }
-}
-
-/**
-* Deserializes a JSON index (serialized with `miniSearch.toJSON()`) and
-* instantiates a MiniSearch instance. It should be given the same options
-* originally used when serializing the index.
-*
-* @param {string} json - JSON-serialized index
-* @param {Object} options - configuration options, same as the constructor
-* @return {MiniSearch} an instance of MiniSearch
-*/
-MiniSearch.loadJSON = function (json, options = {}) {
-  return MiniSearch.loadJS(JSON.parse(json), options)
-}
-
-/**
-* @private
-*/
-MiniSearch.loadJS = function (js, options = {}) {
-  const { index: { _tree, _prefix }, documentCount, nextId, documentIds, fieldIds, fieldLength, averageFieldLength } = js
-  const miniSearch = new MiniSearch(options)
-  miniSearch._index = new SearchableMap(_tree, _prefix)
-  miniSearch._documentCount = documentCount
-  miniSearch._nextId = nextId
-  miniSearch._documentIds = documentIds
-  miniSearch._fieldIds = fieldIds
-  miniSearch._fieldLength = fieldLength
-  miniSearch._averageFieldLength = averageFieldLength
-  miniSearch._fieldIds = fieldIds
-  return miniSearch
-}
-
-/**
-* Get the default value of an option. It will throw an error if no option with
-* the given name exists.
-*
-* @param {string} optionName - name of the option
-* @return {*} the default value of the given option
-*/
-MiniSearch.getDefault = function (optionName) {
-  const validKeys = Object.keys(defaultOptions)
-  if (validKeys.includes(optionName)) {
-    return defaultOptions[optionName]
-  } else {
-    throw new Error(`MiniSearch: unknown option "${optionName}"`)
   }
 }
 
