@@ -327,6 +327,19 @@ class MiniSearch {
   *
   * @param {string} optionName - name of the option
   * @return {*} the default value of the given option
+  *
+  * @example
+  * // Get default tokenizer
+  * MiniSearch.getDefault('tokenize')
+  *
+  * @example
+  * // Get default term processor
+  * MiniSearch.getDefault('processTerm')
+  *
+  * @example
+  * // Unknown options will throw an error
+  * MiniSearch.getDefault('notExisting')
+  * // => throws 'MiniSearch: unknown option "notExisting"'
   */
   static getDefault (optionName) {
     const validKeys = Object.keys(defaultOptions)
