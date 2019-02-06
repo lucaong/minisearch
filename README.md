@@ -167,6 +167,9 @@ let miniSearch = new MiniSearch({
 })
 ```
 
+The default tokenizer can be obtained by calling
+`MiniSearch.getDefault('tokenize')`.
+
 ### Term processing
 
 Terms are downcased by default. No stemming is performed, and no stop-word list
@@ -206,6 +209,11 @@ let miniSearch = new MiniSearch({
   }
 })
 ```
+
+The default term processor can be obtained by calling
+`MiniSearch.getDefault('processTerm')`.
+
+### More
 
 Refer to the [API documentation](https://lucaong.github.io/minisearch/identifiers.html)
 for details about configuration options and methods.
