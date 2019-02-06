@@ -8,8 +8,15 @@ module.exports = {
     umdNamedDefine: true,
     globalObject: 'typeof self !== \'undefined\' ? self : this',
     path: path.resolve(__dirname, 'dist'),
-    library: 'minisearch',
+    library: {
+      amd: 'minisearch',
+      commonjs: 'minisearch',
+      root: 'MiniSearch'
+    },
     libraryExport: 'default'
+  },
+  optimization: {
+    minimize: false
   },
   module: {
     rules: [
@@ -20,7 +27,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
-            plugins: [require('@babel/plugin-proposal-object-rest-spread')]
+            plugins: ['@babel/plugin-proposal-object-rest-spread']
           }
         }
       }

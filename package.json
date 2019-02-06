@@ -39,7 +39,8 @@
     "snazzy": "^8.0.0",
     "standard": "^12.0.1",
     "webpack": "^4.16.5",
-    "webpack-cli": "^3.1.0"
+    "webpack-cli": "^3.1.0",
+    "webpack-merge": "^4.2.1"
   },
   "files": [
     "/dist/minisearch.js",
@@ -56,6 +57,7 @@
     "test-watch": "jest --watch",
     "benchmark": "webpack benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js",
     "build": "webpack --mode=production",
+    "build-minified": "webpack --mode=production --config=webpack.minified.js",
     "build-docs": "esdoc",
     "lint": "standard --verbose 'app/**/*.{js,jsx}' | snazzy",
     "lintfix": "standard --fix 'app/**/*.{js,jsx}'",
