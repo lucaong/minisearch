@@ -1,6 +1,7 @@
 # [![MiniSearch](https://lucaong.github.io/minisearch/MiniSearch.svg)](https://lucaong.github.io/minisearch/) MiniSearch
 
 [![Build Status](https://travis-ci.org/lucaong/minisearch.svg?branch=master)](https://travis-ci.org/lucaong/minisearch)
+[![minified + gzipped size](https://badgen.net/bundlephobia/minzip/minisearch)](https://bundlephobia.com/result?p=minisearch)
 
 `MiniSearch` is a tiny but powerful in-memory fulltext search engine for
 JavaScript. It is respectful of resources, and it can comfortably run both in
