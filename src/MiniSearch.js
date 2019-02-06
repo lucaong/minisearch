@@ -413,12 +413,12 @@ MiniSearch.loadJS = function (js, options = {}) {
 * @param {string} optionName - name of the option
 * @return {*} the default value of the given option
 */
-MiniSearch.getDefault = function (key) {
+MiniSearch.getDefault = function (optionName) {
   const validKeys = Object.keys(defaultOptions)
-  if (validKeys.includes(key)) {
-    return defaultOptions[key]
+  if (validKeys.includes(optionName)) {
+    return defaultOptions[optionName]
   } else {
-    throw new Error(`MiniSearch: unknown option "${key}"`)
+    throw new Error(`MiniSearch: unknown option "${optionName}"`)
   }
 }
 
