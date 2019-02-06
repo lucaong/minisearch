@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.2
+
+  - Add `getDefault` static method to get the default value of configuration options
+
 ## v1.1.1
 
   - Do not minify library when published as NPM package. Run `yarn
