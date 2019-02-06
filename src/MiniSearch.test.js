@@ -342,6 +342,24 @@ describe('MiniSearch', () => {
           ['vita']
         ])
       })
+
+      it('passes only the query to tokenize', () => {
+        const tokenize = jest.fn(string => string.split(/\W+/))
+        const ms = new MiniSearch({ fields: ['text', 'title'], searchOptions: { tokenize } })
+        const query = 'some search query'
+        ms.search(query)
+        expect(tokenize).toHaveBeenCalledWith(query)
+      })
+
+      it('passes only the term to processTerm', () => {
+        const processTerm = jest.fn(term => term.toLowerCase())
+        const ms = new MiniSearch({ fields: ['text', 'title'], searchOptions: { processTerm } })
+        const query = 'some search query'
+        ms.search(query)
+        query.split(/\W+/).forEach(term => {
+          expect(processTerm).toHaveBeenCalledWith(term)
+        })
+      })
     })
   })
 

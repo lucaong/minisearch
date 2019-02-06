@@ -244,7 +244,10 @@ class MiniSearch {
     const { tokenize, processTerm, searchOptions } = this._options
     options = { tokenize, processTerm, ...searchOptions, ...options }
     const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
-    const queries = searchTokenize(queryString).map(searchProcessTerm).filter(isTruthy).map(termToQuery(options))
+    const queries = searchTokenize(queryString)
+      .map((term) => searchProcessTerm(term))
+      .filter(isTruthy)
+      .map(termToQuery(options))
     const results = queries.map(query => this.executeQuery(query, options))
     const combinedResults = this.combineResults(results, options.combineWith)
 
