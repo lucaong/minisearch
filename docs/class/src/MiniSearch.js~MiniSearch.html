@@ -438,7 +438,7 @@ with MiniSearch.fromJSON</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber331">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber344">source</a></span></span>
     </span>
   </h3>
 
@@ -494,7 +494,26 @@ the given name exists.</p>
 
   
 
-  
+  <div data-ice="example">
+    <h4>Example:</h4>
+    
+  <div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get default tokenizer
+MiniSearch.getDefault(&apos;tokenize&apos;)</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get default term processor
+MiniSearch.getDefault(&apos;processTerm&apos;)</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Unknown options will throw an error
+MiniSearch.getDefault(&apos;notExisting&apos;)
+// =&gt; throws &apos;MiniSearch: unknown option &quot;notExisting&quot;&apos;</code></pre>
+    </div>
+</div>
 
   
 
@@ -1278,7 +1297,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber420">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber433">source</a></span></span>
     </span>
   </h3>
 
