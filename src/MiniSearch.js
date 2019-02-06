@@ -406,6 +406,22 @@ MiniSearch.loadJS = function (js, options = {}) {
   return miniSearch
 }
 
+/**
+* Get the default value of an option. It will throw an error if no option with
+* the given name exists.
+*
+* @param {string} optionName - name of the option
+* @return {*} the default value of the given option
+*/
+MiniSearch.getDefault = function (key) {
+  const validKeys = Object.keys(defaultOptions)
+  if (validKeys.includes(key)) {
+    return defaultOptions[key]
+  } else {
+    throw new Error(`MiniSearch: unknown option "${key}"`)
+  }
+}
+
 MiniSearch.SearchableMap = SearchableMap
 
 const addTerm = function (self, fieldId, documentId, term) {
@@ -548,7 +564,9 @@ const isTruthy = (x) => !!x
 const defaultOptions = {
   idField: 'id',
   tokenize: (string, _fieldName) => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/),
-  processTerm: (term, _fieldName) => term.length > 1 && term.toLowerCase()
+  processTerm: (term, _fieldName) => term.length > 1 && term.toLowerCase(),
+  fields: undefined,
+  searchOptions: undefined
 }
 
 const defaultSearchOptions = {

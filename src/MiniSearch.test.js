@@ -446,4 +446,18 @@ describe('MiniSearch', () => {
       expect(ms.toJSON()).toEqual(deserialized.toJSON())
     })
   })
+
+  describe('getDefault', () => {
+    it('returns the default value of the given option', () => {
+      expect(MiniSearch.getDefault('idField')).toEqual('id')
+      expect(MiniSearch.getDefault('tokenize')).toBeInstanceOf(Function)
+      expect(MiniSearch.getDefault('processTerm')).toBeInstanceOf(Function)
+      expect(MiniSearch.getDefault('searchOptions')).toBe(undefined)
+      expect(MiniSearch.getDefault('fields')).toBe(undefined)
+    })
+
+    it('throws an error if there is no option with the given name', () => {
+      expect(() => { MiniSearch.getDefault('foo') }).toThrowError('MiniSearch: unknown option "foo"')
+    })
+  })
 })
