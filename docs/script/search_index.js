@@ -348,6 +348,18 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/minisearch.js~minisearch.getdefault",
+    "class/src/MiniSearch.js~MiniSearch.html#static-method-getDefault",
+    "src/MiniSearch.js~MiniSearch.getDefault",
+    "method"
+  ],
+  [
+    "src/minisearch.js~minisearch.loadjson",
+    "class/src/MiniSearch.js~MiniSearch.html#static-method-loadJSON",
+    "src/MiniSearch.js~MiniSearch.loadJSON",
+    "method"
+  ],
+  [
     "src/searchablemap/searchablemap.js",
     "file/src/SearchableMap/SearchableMap.js.html",
     "src/SearchableMap/SearchableMap.js",
