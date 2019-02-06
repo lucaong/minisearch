@@ -8,6 +8,7 @@ Node and in the browser.
 
 Try out the [demo application](https://lucaong.github.io/minisearch/examples/).
 
+
 ## Use case
 
 `MiniSearch` addresses use cases where full-text search features are needed
@@ -53,6 +54,10 @@ yarn add minisearch
 ```
 
 Then `require` or `import` it in your project.
+
+Alternatively, to manually build the library, clone the repository and run `yarn
+build` (or `yarn build-minified` for a minified version + source maps). The
+compiled source will be created in the `dist` folder.
 
 
 ## Usage
