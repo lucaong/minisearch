@@ -83,7 +83,7 @@ class MiniSearch {
     const { fields } = this._options
 
     if (fields == null) {
-      throw new Error('Option "fields" must be provided')
+      throw new Error('MiniSearch: option "fields" must be provided')
     }
 
     /** @private */
@@ -118,7 +118,7 @@ class MiniSearch {
   add (document) {
     const { tokenize, processTerm, fields, idField } = this._options
     if (document[idField] == null) {
-      throw new Error(`Document does not have ID field "${idField}"`)
+      throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
     const shortDocumentId = addDocumentId(this, document[idField])
     fields.forEach(field => {
@@ -158,12 +158,12 @@ class MiniSearch {
   remove (document) {
     const { tokenize, processTerm, fields, idField } = this._options
     if (document[idField] == null) {
-      throw new Error(`Document does not have ID field "${idField}"`)
+      throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
     const [shortDocumentId] = Object.entries(this._documentIds)
       .find(([_, longId]) => document[idField] === longId) || []
     if (shortDocumentId == null) {
-      throw new Error(`Cannot remove document with ID ${document[idField]}: it is not in the index`)
+      throw new Error(`MiniSearch: cannot remove document with ID ${document[idField]}: it is not in the index`)
     }
     fields.filter(field => document[field] != null).forEach(field => {
       tokenize(document[field]).forEach(term => {

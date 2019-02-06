@@ -5,7 +5,7 @@ import MiniSearch from './MiniSearch.js'
 describe('MiniSearch', () => {
   describe('constructor', () => {
     it('throws error if fields option is missing', () => {
-      expect(() => new MiniSearch()).toThrow('Option "fields" must be provided')
+      expect(() => new MiniSearch()).toThrow('MiniSearch: option "fields" must be provided')
     })
 
     it('initializes the attributes', () => {
@@ -37,7 +37,7 @@ describe('MiniSearch', () => {
       const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] })
       expect(() => {
         ms.add({ text: 'I do not have an ID' })
-      }).toThrowError('Document does not have ID field "foo"')
+      }).toThrowError('MiniSearch: document does not have ID field "foo"')
     })
 
     it('rejects falsy terms', () => {
@@ -123,7 +123,7 @@ describe('MiniSearch', () => {
       const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] })
       expect(() => {
         ms.remove({ text: 'I do not have an ID' })
-      }).toThrowError('Document does not have ID field "foo"')
+      }).toThrowError('MiniSearch: document does not have ID field "foo"')
     })
 
     it('does not reassign IDs', () => {
@@ -146,7 +146,7 @@ describe('MiniSearch', () => {
     describe('when the document was not in the index', () => {
       it('throws an error', () => {
         expect(() => ms.remove({ id: 99 }))
-          .toThrow('Cannot remove document with ID 99: it is not in the index')
+          .toThrow('MiniSearch: cannot remove document with ID 99: it is not in the index')
       })
     })
 
