@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.1.1
+
+  - Do not minify library when published as NPM package. Run `yarn
+    build-minified` (or `npm run build-minified`) to produce a minified build
+    with source maps.
+  - **Bugfix**: as per specification, `processTerm` is called with only one
+    argument upon search (see [#5](https://github.com/lucaong/minisearch/issues/5))
+
 ## v1.1.0
 
   - Add possibility to configure separate index-time and search-time
