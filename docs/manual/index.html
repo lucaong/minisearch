@@ -41,6 +41,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#auto-suggestions" data-ice="link">Auto suggestions</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#tokenization" data-ice="link">Tokenization</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#more" data-ice="link">More</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/README.html"><a href="manual/README.html#browser-compatibility" data-ice="link">Browser compatibility</a></li>
 </ul>
   </div>
@@ -100,7 +101,9 @@ like mobile browsers.</p>
 </li>
 </ul><h2>Installation</h2><p>With <code>npm</code>:</p><pre><code><code class="source-code prettyprint">npm install --save minisearch</code>
 </code></pre><p>With <code>yarn</code>:</p><pre><code><code class="source-code prettyprint">yarn add minisearch</code>
-</code></pre><p>Then <code>require</code> or <code>import</code> it in your project.</p><h2>Usage</h2><h3>Basic usage</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our examples
+</code></pre><p>Then <code>require</code> or <code>import</code> it in your project.</p><p>Alternatively, to manually build the library, clone the repository and run <code>yarn
+build</code> (or <code>yarn build-minified</code> for a minified version + source maps). The
+compiled source will be created in the <code>dist</code> folder.</p><h2>Usage</h2><h3>Basic usage</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our examples
 const documents = [
   { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
   { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, text: &apos;I can see by my watch...&apos; },
@@ -167,7 +170,8 @@ let miniSearch = new MiniSearch({
     tokenize: (string) =&gt; string.split(/[\s-]+/) // search query tokenizer
   }
 })</code>
-</code></pre><h3>Term processing</h3><p>Terms are downcased by default. No stemming is performed, and no stop-word list
+</code></pre><p>The default tokenizer can be obtained by calling
+<code>MiniSearch.getDefault(&apos;tokenize&apos;)</code>.</p><h3>Term processing</h3><p>Terms are downcased by default. No stemming is performed, and no stop-word list
 is applied, but single-character words are excluded. To customize how the terms
 are processed upon indexing, for example to normalize them, filter them, or to
 apply stemming, the <code>processTerm</code> option can be used:</p><pre><code class="lang-javascript"><code class="source-code prettyprint">let stopWords = new Set([&apos;and&apos;, &apos;or&apos;, &apos;to&apos;, &apos;in&apos;, &apos;a&apos;, &apos;the&apos;, /* ...and more */ ])
@@ -195,7 +199,8 @@ a different processing to search queries, supply a <code>processTerm</code> sear
     processTerm: (term) =&gt; removeAccents(term.toLowerCase()) // search query processing
   }
 })</code>
-</code></pre><p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>
+</code></pre><p>The default term processor can be obtained by calling
+<code>MiniSearch.getDefault(&apos;processTerm&apos;)</code>.</p><h3>More</h3><p>Refer to the <a href="https://lucaong.github.io/minisearch/identifiers.html">API documentation</a>
 for details about configuration options and methods.</p><h2>Browser compatibility</h2><p><code>MiniSearch</code> natively supports all modern browsers implementing JavaScript
 standards, but requires a polyfill when used in Internet Explorer, as it makes
 use functions like <code>Object.entries</code>, <code>Array.includes</code>, and <code>Array.from</code>, which

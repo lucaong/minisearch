@@ -121,7 +121,7 @@ class MiniSearch {
     const { fields } = this._options
 
     if (fields == null) {
-      throw new Error(&apos;Option &quot;fields&quot; must be provided&apos;)
+      throw new Error(&apos;MiniSearch: option &quot;fields&quot; must be provided&apos;)
     }
 
     /** @private */
@@ -156,7 +156,7 @@ class MiniSearch {
   add (document) {
     const { tokenize, processTerm, fields, idField } = this._options
     if (document[idField] == null) {
-      throw new Error(`Document does not have ID field &quot;${idField}&quot;`)
+      throw new Error(`MiniSearch: document does not have ID field &quot;${idField}&quot;`)
     }
     const shortDocumentId = addDocumentId(this, document[idField])
     fields.forEach(field =&gt; {
@@ -196,12 +196,12 @@ class MiniSearch {
   remove (document) {
     const { tokenize, processTerm, fields, idField } = this._options
     if (document[idField] == null) {
-      throw new Error(`Document does not have ID field &quot;${idField}&quot;`)
+      throw new Error(`MiniSearch: document does not have ID field &quot;${idField}&quot;`)
     }
     const [shortDocumentId] = Object.entries(this._documentIds)
       .find(([_, longId]) =&gt; document[idField] === longId) || []
     if (shortDocumentId == null) {
-      throw new Error(`Cannot remove document with ID ${document[idField]}: it is not in the index`)
+      throw new Error(`MiniSearch: cannot remove document with ID ${document[idField]}: it is not in the index`)
     }
     fields.filter(field =&gt; document[field] != null).forEach(field =&gt; {
       tokenize(document[field]).forEach(term =&gt; {
@@ -444,6 +444,22 @@ MiniSearch.loadJS = function (js, options = {}) {
   return miniSearch
 }
 
+/**
+* Get the default value of an option. It will throw an error if no option with
+* the given name exists.
+*
+* @param {string} optionName - name of the option
+* @return {*} the default value of the given option
+*/
+MiniSearch.getDefault = function (optionName) {
+  const validKeys = Object.keys(defaultOptions)
+  if (validKeys.includes(optionName)) {
+    return defaultOptions[optionName]
+  } else {
+    throw new Error(`MiniSearch: unknown option &quot;${optionName}&quot;`)
+  }
+}
+
 MiniSearch.SearchableMap = SearchableMap
 
 const addTerm = function (self, fieldId, documentId, term) {
@@ -586,7 +602,9 @@ const isTruthy = (x) =&gt; !!x
 const defaultOptions = {
   idField: &apos;id&apos;,
   tokenize: (string, _fieldName) =&gt; string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/),
-  processTerm: (term, _fieldName) =&gt; term.length &gt; 1 &amp;&amp; term.toLowerCase()
+  processTerm: (term, _fieldName) =&gt; term.length &gt; 1 &amp;&amp; term.toLowerCase(),
+  fields: undefined,
+  searchOptions: undefined
 }
 
 const defaultSearchOptions = {
