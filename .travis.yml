@@ -16,3 +16,4 @@ cache:
 
 script:
   - yarn test
+  - yarn coverage --coverageReporters=text-lcov | coverall

@@ -5,3 +5,4 @@
 /dist
 /examples/dist
 /examples/node_modules
+/coverage
