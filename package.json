@@ -55,6 +55,7 @@
   "scripts": {
     "test": "jest",
     "test-watch": "jest --watch",
+    "coverage": "jest --coverage",
     "benchmark": "webpack benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js",
     "build": "webpack --mode=production",
     "build-minified": "webpack --mode=production --config=webpack.minified.js",
