@@ -195,6 +195,16 @@ describe('MiniSearch', () => {
       expect(results[0].score).toBeGreaterThanOrEqual(results[1].score)
     })
 
+    it('returns empty array if there is no match', () => {
+      const results = ms.search('paguro')
+      expect(results).toEqual([])
+    })
+
+    it('returns empty array for empty search', () => {
+      const results = ms.search('')
+      expect(results).toEqual([])
+    })
+
     it('returns empty results for terms that are not in the index', () => {
       let results
       expect(() => {
@@ -226,6 +236,7 @@ describe('MiniSearch', () => {
       expect(results.length).toEqual(1)
       expect(results.map(({ id }) => id)).toEqual([1])
       expect(ms.search('vita sottomarino', { combineWith: 'AND' }).length).toEqual(0)
+      expect(ms.search('sottomarino vita', { combineWith: 'AND' }).length).toEqual(0)
     })
 
     it('executes fuzzy search', () => {
@@ -406,6 +417,16 @@ describe('MiniSearch', () => {
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ suggestion }) => suggestion)).toEqual(['como', 'commedia'])
       expect(results[0].score).toBeGreaterThan(results[1].score)
+    })
+
+    it('returns empty array if there is no match', () => {
+      const results = ms.autoSuggest('paguro')
+      expect(results).toEqual([])
+    })
+
+    it('returns empty array for empty search', () => {
+      const results = ms.autoSuggest('')
+      expect(results).toEqual([])
     })
 
     it('returns scored suggestions for multi-word queries', () => {
