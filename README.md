@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/lucaong/minisearch.svg?branch=master)](https://travis-ci.org/lucaong/minisearch)
 [![Coverage Status](https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master)](https://coveralls.io/github/lucaong/minisearch?branch=master)
-[![minified + gzipped size](https://badgen.net/bundlephobia/minzip/minisearch)](https://bundlephobia.com/result?p=minisearch)
+[![Minzipped Size](https://img.shields.io/bundlephobia/minzip/minisearch.svg?style=flat)](https://bundlephobia.com/result?p=minisearch)
 
 `MiniSearch` is a tiny but powerful in-memory fulltext search engine for
 JavaScript. It is respectful of resources, and it can comfortably run both in
