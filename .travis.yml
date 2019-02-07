@@ -16,4 +16,4 @@ cache:
 
 script:
   - yarn test
-  - jest --coverage --coverageReporters=text-lcov | coverall
+  - jest --coverage --coverageReporters=text-lcov | coveralls
