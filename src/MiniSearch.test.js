@@ -164,6 +164,12 @@ describe('MiniSearch', () => {
           expect(console.warn).toHaveBeenNthCalledWith(i + 1, `MiniSearch: document with ID 1 has changed before removal: term "${term}" was not present in field "${field}". Removing a document after it has changed can corrupt the index!`)
         })
       })
+
+      it('does not throw error if console.warn is undefined', () => {
+        console.warn = undefined
+        expect(() => ms.remove({ id: 1, title: 'Divina Commedia cammin', text: 'something has changed' }))
+          .not.toThrow()
+      })
     })
   })
 
@@ -434,6 +440,11 @@ describe('MiniSearch', () => {
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ suggestion }) => suggestion)).toEqual(['vita nova', 'vita nostra'])
       expect(results[0].score).toBeGreaterThan(results[1].score)
+    })
+
+    it('respects the order of the terms in the query', () => {
+      const results = ms.autoSuggest('no vi')
+      expect(results.map(({ suggestion }) => suggestion)).toEqual(['nova vita', 'nostra vita'])
     })
 
     it('returns empty suggestions for terms that are not in the index', () => {
