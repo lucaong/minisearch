@@ -316,7 +316,7 @@ class MiniSearch {
   * **Warning:** JSON (de)serialization of the index is currently tightly
   * coupled to the index implementation. For this reason, the current
   * implementation is to be considered a _beta_ feature, subject to breaking
-  * changes changes in future releases. If a breaking change will be introduced,
+  * changes changes in future releases. If a breaking change is introduced,
   * though, it will be properly reported in the changelog.
   *
   * @param {string} json - JSON-serialized index
