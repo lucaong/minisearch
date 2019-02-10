@@ -401,14 +401,14 @@ instantiates a MiniSearch instance.</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-toJSON">toJSON</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-toJSON">toJSON</a></span></span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Serializes the index to JSON, to allow storing it and later deserializing
-with MiniSearch.fromJSON</p>
+        <div data-ice="description"><p>Allows serialization of the index to JSON, to possibly store it and later
+deserialize it with MiniSearch.fromJSON</p>
 </div>
       </div>
     </td>
@@ -542,11 +542,11 @@ MiniSearch.getDefault(&apos;notExisting&apos;)
   <div data-ice="description"><p>Deserializes a JSON index (serialized with <code>miniSearch.toJSON()</code>) and
 instantiates a MiniSearch instance. It should be given the same options
 originally used when serializing the index.</p>
-<p><strong>Warning:</strong> JSON (de)serialization of the index is inefficient in some
-browsers (e.g. iOS Safari), and it is often more performant to just rebuild
-the index on the fly. For this reason, the current implementation is to be
-considered a <em>beta</em> feature, subject to breaking changes changes in future
-releases.</p>
+<p><strong>Warning:</strong> JSON (de)serialization of the index is currently tightly
+coupled to the index implementation. For this reason, the current
+implementation is to be considered a <em>beta</em> feature, subject to breaking
+changes changes in future releases. If a breaking change will be introduced,
+though, it will be properly reported in the changelog.</p>
 </div>
 
   
@@ -1298,7 +1298,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     
     
     
-    <span class="code" data-ice="name">toJSON</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="code" data-ice="name">toJSON</span><span class="code" data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></span>
     <span class="right-info">
       
       
@@ -1309,13 +1309,13 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
   
   
   
-  <div data-ice="description"><p>Serializes the index to JSON, to allow storing it and later deserializing
-with MiniSearch.fromJSON</p>
-<p><strong>Warning:</strong> JSON (de)serialization of the index is inefficient in some
-browsers (e.g. iOS Safari), and it is often more performant to just rebuild
-the index on the fly. For this reason, the current implementation is to be
-considered a <em>beta</em> feature, subject to breaking changes changes in future
-releases.</p>
+  <div data-ice="description"><p>Allows serialization of the index to JSON, to possibly store it and later
+deserialize it with MiniSearch.fromJSON</p>
+<p><strong>Warning:</strong> JSON (de)serialization of the index is currently tightly
+coupled to the index implementation. For this reason, the current
+implementation is to be considered a <em>beta</em> feature, subject to breaking
+changes changes in future releases. If a breaking change is introduced,
+though, it will be reported in the changelog.</p>
 </div>
 
   
@@ -1328,8 +1328,8 @@ releases.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
-          <td class="return-desc" data-ice="returnDescription"><p>the JSON-serialized index</p>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>the serializeable representation of the search index</p>
 </td>
         </tr>
       </tbody>
