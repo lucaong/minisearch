@@ -438,7 +438,7 @@ with MiniSearch.fromJSON</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber344">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber350">source</a></span></span>
     </span>
   </h3>
 
@@ -532,7 +532,7 @@ MiniSearch.getDefault(&apos;notExisting&apos;)
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber320">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber326">source</a></span></span>
     </span>
   </h3>
 
@@ -542,6 +542,11 @@ MiniSearch.getDefault(&apos;notExisting&apos;)
   <div data-ice="description"><p>Deserializes a JSON index (serialized with <code>miniSearch.toJSON()</code>) and
 instantiates a MiniSearch instance. It should be given the same options
 originally used when serializing the index.</p>
+<p><strong>Warning:</strong> JSON (de)serialization of the index is inefficient in some
+browsers (e.g. iOS Safari), and it is often more performant to just rebuild
+the index on the fly. For this reason, the current implementation is to be
+considered a <em>beta</em> feature, subject to breaking changes changes in future
+releases.</p>
 </div>
 
   
@@ -1297,7 +1302,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber433">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber445">source</a></span></span>
     </span>
   </h3>
 
@@ -1306,6 +1311,11 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
   
   <div data-ice="description"><p>Serializes the index to JSON, to allow storing it and later deserializing
 with MiniSearch.fromJSON</p>
+<p><strong>Warning:</strong> JSON (de)serialization of the index is inefficient in some
+browsers (e.g. iOS Safari), and it is often more performant to just rebuild
+the index on the fly. For this reason, the current implementation is to be
+considered a <em>beta</em> feature, subject to breaking changes changes in future
+releases.</p>
 </div>
 
   

@@ -351,6 +351,12 @@ class MiniSearch {
   * instantiates a MiniSearch instance. It should be given the same options
   * originally used when serializing the index.
   *
+  * **Warning:** JSON (de)serialization of the index is inefficient in some
+  * browsers (e.g. iOS Safari), and it is often more performant to just rebuild
+  * the index on the fly. For this reason, the current implementation is to be
+  * considered a _beta_ feature, subject to breaking changes changes in future
+  * releases.
+  *
   * @param {string} json - JSON-serialized index
   * @param {Object} options - configuration options, same as the constructor
   * @return {MiniSearch} an instance of MiniSearch
@@ -465,6 +471,12 @@ class MiniSearch {
   /**
   * Serializes the index to JSON, to allow storing it and later deserializing
   * with MiniSearch.fromJSON
+  *
+  * **Warning:** JSON (de)serialization of the index is inefficient in some
+  * browsers (e.g. iOS Safari), and it is often more performant to just rebuild
+  * the index on the fly. For this reason, the current implementation is to be
+  * considered a _beta_ feature, subject to breaking changes changes in future
+  * releases.
   *
   * @return {string} the JSON-serialized index
   */

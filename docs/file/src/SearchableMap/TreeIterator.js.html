@@ -40,7 +40,7 @@
 * @private
 */
 class TreeIterator {
-  constructor (set, type = ENTRIES) {
+  constructor (set, type) {
     const node = set._tree
     const keys = Object.keys(node)
     this.set = set
