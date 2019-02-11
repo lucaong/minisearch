@@ -4,11 +4,11 @@ This design document has the aim to explain the details of `MiniSearch`
 design and implementation to library developers that intend to contribute to
 this project, or that are simply curious about the internals.
 
-**Last update: Oct. 9, 2018**
+**Last update: Feb. 11, 2019**
 
 ## Goals (and non-goals)
 
-`MiniSearch` is aimed at providing rich fulltext search functionalities in a
+`MiniSearch` is aimed at providing rich full-text search functionalities in a
 local setup (e.g. client side, in the browser). It is therefore optimized for:
 
   1. Small memory footprint of the index data structure
@@ -38,7 +38,7 @@ fact necessarily go against the primary project goals.
 `MiniSearch` is composed of two layers:
 
   1. A compact and versatile data structure for indexing terms, providing
-     prefix search and fuzzy get
+     prefix and fuzzy lookup
   2. An API layer on top of this data structure, providing the search
     features
 
@@ -47,9 +47,9 @@ Here follows a description of these two layers.
 ### Index data structure
 
 The data structure chosen for the index is a [radix
-tree](https://en.wikipedia.org/wiki/Radix_tree), which is a trie where nodes
-with no siblings are merged with the parent node. The reason for choosing this
-data structure follows from the project goals:
+tree](https://en.wikipedia.org/wiki/Radix_tree), which is a prefix tree where
+nodes with no siblings are merged with the parent node. The reason for choosing
+this data structure follows from the project goals:
 
   - The radix tree minimizes the memory footprint of the index, because common
     prefixes are stored only once, and nodes are compressed into a single
@@ -61,12 +61,13 @@ data structure follows from the project goals:
     within a certain maximum edit distance from a given key. This search rapidly
     becomes complex as the maximum distance grows, but for practical search
     use-cases the maximum distance is small enough for this algorithm to be
-    performant. Other more performant solutions for fuzzy search require more
-    space.
+    performant. Other more performant solutions for fuzzy search would require
+    more space (e.g. n-gram indexes).
 
 The class implementing the radix tree is called `SearchableMap`, because it
-implements the standard JavaScript `Map` interface, adding on top of it more
-advanced key lookup features:
+implements the standard JavaScript [`Map`
+interface](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map),
+adding on top of it some key lookup methods:
 
   - `SearchableMap.prototype.atPrefix(prefix)`, returning another
     `SearchableMap` representing a mutable view of the original one, containing
@@ -81,7 +82,9 @@ restricted to use only string keys.
 The `SearchableMap` data type is part of the public API of `MiniSearch`, exposed
 as `MiniSearch.SearchableMap`. Its usefulness is in fact not limited to
 providing a data structure for the inverted index, and developers can use it as
-a building block for other solutions (e.g. autocompletion).
+a building block for other solutions. When modifying this class, one should
+think about it in terms of a generic data structure, that could in principle be
+released as a separate library.
 
 ### Fuzzy search algorithm
 
@@ -128,7 +131,7 @@ Note that this algorithm can get complex if the maximum edit distance is large,
 as many paths would be followed. The reason why this algorithm is employed is a
 trade-off:
 
-  - for fulltext search purposes, the maximum edit distance is small, so the
+  - For full-text search purposes, the maximum edit distance is small, so the
     algorithm is performant enough
   - The alternatives (e.g. trigram indexes), would require much more space
   - As `MiniSearch` is optimized for local and possibly memory-constrained
@@ -149,7 +152,7 @@ The inverted index is implemented with `SearchableMap`, and posting lists are
 stored as values in the Map. This way, the same data structure provides both the
 inverted index and the set of indexed terms. Different document fields are
 indexed within the same index, to further save space. The index is therefore
-structure as following:
+structured as following:
 
 ```
 term -> field -> { document frequency, posting list }
@@ -161,3 +164,8 @@ search), then the documents are scored with a variant of
 [Tf-Idf](https://en.wikipedia.org/wiki/Tf–idf), and finally results for
 different search terms are merged with the given combinator function (by default
 `OR`, but `AND` can be specified).
+
+As the document IDs necessarily occur many times in the posting list, as a space
+optimization they are substituted by short generated IDs. An index of short ID
+to original ID is maintained alongside the search index, to reconstruct the
+original IDs. A similar optimization is applied to the field names.
