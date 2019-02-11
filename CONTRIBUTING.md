@@ -7,17 +7,14 @@ Contributions to `MiniSearch` are welcome :) Just follow the guidelines below.
 If you have an idea for a feature, or spotted a bug, please [open an
 issue on GitHub](https://github.com/lucaong/minisearch/issues).
 
-  - Make sure to search if your issue was already reported. In that case, better
+  - Check if your issue was already reported. In that case, better
     to comment on the existing issue rather than open a duplicate one.
-
   - When reporting a bug, whenever possible, provide some example code to
     reproduce the bug: that will make the process of fixing it much faster.
-
   - Remember this is an open-source project. Your feature requests will be
     discussed and taken into consideration, but please do not take it
     personally if the feature does not get implemented. This project uses a
     permissive license, so pull requests are welcome and forks are permitted.
-
   - Always be respectful of others when discussing issues. The project
     maintainer reserves the right to remove or close discussions where the
     tone or language is derogatory or offensive toward others.
@@ -44,8 +41,6 @@ Also, please follow these guidelines:
   - Add tests for your code. This ensures that your feature won't be broken by
     further code changes. If you are not sure of how to test, feel free to send
     the pull request and ask for advices in the comment.
-
   - Don't change the version number. That will be done by the mainteiner upon
     releasing a new version.
-
   - Make sure that the full test suite passes before sending the pull request.
