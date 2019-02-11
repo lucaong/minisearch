@@ -215,7 +215,7 @@ let miniSearch = new MiniSearch({
 The default term processor can be obtained by calling
 `MiniSearch.getDefault('processTerm')`.
 
-### More
+### API Documentation
 
 Refer to the [API documentation](https://lucaong.github.io/minisearch/identifiers.html)
 for details about configuration options and methods.
@@ -229,3 +229,11 @@ use functions like `Object.entries`, `Array.includes`, and `Array.from`, which
 are standard but not available on older browsers. The
 [`@babel/polyfill`](https://babeljs.io/docs/en/babel-polyfill) is one such
 polyfill that can be used to provide those functions.
+
+## Contributing
+
+Contributions to `MiniSearch` are welcome! Please read the [contributions
+guidelines](https://lucaong.github.io/minisearch/manual/CONTRIBUTING.html).
+Reading the [design
+document](https://lucaong.github.io/minisearch/manual/DESIGN_DOCUMENT.html) is
+also useful to understand the project goals and the technical implementation.
