@@ -4,7 +4,7 @@ This design document has the aim to explain the details of `MiniSearch`
 design and implementation to library developers that intend to contribute to
 this project, or that are simply curious about the internals.
 
-**Last update: Feb. 11, 2019**
+**Latest update: Feb. 11, 2019**
 
 ## Goals (and non-goals)
 
