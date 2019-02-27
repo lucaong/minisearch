@@ -32,10 +32,10 @@ class MiniSearch {
   * @param {Object} options - Configuration options
   * @param {Array<string>} options.fields - Fields to be indexed. Required.
   * @param {string} [options.idField='id'] - ID field, uniquely identifying a document
-  * @param {function(document: Object, fieldName: [string]): string} [options.extractField] - Function used to get the value of a field in a document
-  * @param {function(text: string, fieldName: [string]): Array<string>} [options.tokenize] - Function used to split a field into individual terms
-  * @param {function(term: string, fieldName: [string]): string} [options.processTerm] - Function used to process a term before indexing it or searching
-  * @param {?Object} options.searchOptions - Default search options (see the `search` method for details)
+  * @param {function(document: Object, fieldName: string): string} [options.extractField] - Function used to get the value of a field in a document
+  * @param {function(text: string, [fieldName]: string): Array<string>} [options.tokenize] - Function used to split a field into individual terms
+  * @param {function(term: string, [fieldName]: string): string} [options.processTerm] - Function used to process a term before indexing it or searching
+  * @param {Object} [options.searchOptions] - Default search options (see the `search` method for details)
   *
   * @example
   * // Create a search engine that indexes the 'title' and 'text' fields of your
