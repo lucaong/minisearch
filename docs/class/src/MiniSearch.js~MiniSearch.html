@@ -438,7 +438,7 @@ deserialize it with MiniSearch.fromJSON</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber350">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber357">source</a></span></span>
     </span>
   </h3>
 
@@ -532,7 +532,7 @@ MiniSearch.getDefault(&apos;notExisting&apos;)
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber326">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber333">source</a></span></span>
     </span>
   </h3>
 
@@ -623,7 +623,7 @@ though, it will be properly reported in the changelog.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber78">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber85">source</a></span></span>
     </span>
   </h3>
 
@@ -662,6 +662,13 @@ though, it will be properly reported in the changelog.</p>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;id&apos;</li></ul></td>
       <td data-ice="description"><p>ID field, uniquely identifying a document</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.extractField</td>
+      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>(document: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, fieldName: <span>[string]</span>)</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Function used to get the value of a field in a document</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
@@ -723,11 +730,17 @@ const miniSearch = MiniSearch.new({
   // idField: field that uniquely identifies a document
   idField: &apos;id&apos;,
 
+  // extractField: function used to get the value of a field in a document.
+  // By default, it assumes the document is a flat object with field names as
+  // property keys and field values as string property values, but custom logic
+  // can be implemented by setting this option to a custom extractor function.
+  extractField: (document, fieldName) =&gt; document[fieldName],
+
   // tokenize: function used to split fields into individual terms. By
   // default, it is also used to tokenize search queries, unless a specific
   // `tokenize` search option is supplied. When tokenizing an indexed field,
   // the field name is passed as the second argument.
-  tokenize: (string, _fieldName) =&gt; string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/)
+  tokenize: (string, _fieldName) =&gt; string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/),
 
   // processTerm: function used to process each tokenized term before
   // indexing. It can be used for stemming and normalization. Return a falsy
@@ -735,14 +748,14 @@ const miniSearch = MiniSearch.new({
   // search queries, unless a specific `processTerm` option is supplied as a
   // search option. When processing a term from a indexed field, the field
   // name is passed as the second argument.
-  processTerm: (term, _fieldName) =&gt; term.length &gt; 1 &amp;&amp; term.toLowerCase()
+  processTerm: (term, _fieldName) =&gt; term.length &gt; 1 &amp;&amp; term.toLowerCase(),
 
   // searchOptions: default search options, see the `search` method for
   // details
-  searchOptions: undefined
+  searchOptions: undefined,
 
   // fields: document fields to be indexed. Mandatory, but not set by default
-  fields: undefined,
+  fields: undefined
 })</code></pre>
     </div>
 </div>
@@ -767,7 +780,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber307">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber314">source</a></span></span>
     </span>
   </h3>
 
@@ -814,7 +827,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber118">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber125">source</a></span></span>
     </span>
   </h3>
 
@@ -875,7 +888,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber141">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber148">source</a></span></span>
     </span>
   </h3>
 
@@ -936,7 +949,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber285">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber292">source</a></span></span>
     </span>
   </h3>
 
@@ -1041,7 +1054,7 @@ miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber158">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber165">source</a></span></span>
     </span>
   </h3>
 
@@ -1110,7 +1123,7 @@ after a change, the correct order of operations is:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber243">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber250">source</a></span></span>
     </span>
   </h3>
 
@@ -1302,7 +1315,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber445">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber452">source</a></span></span>
     </span>
   </h3>
 

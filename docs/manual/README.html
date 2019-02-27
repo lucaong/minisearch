@@ -39,6 +39,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#basic-usage" data-ice="link">Basic usage</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#search-options" data-ice="link">Search options</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#auto-suggestions" data-ice="link">Auto suggestions</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#field-extraction" data-ice="link">Field extraction</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#tokenization" data-ice="link">Tokenization</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#api-documentation" data-ice="link">API Documentation</a></li>
@@ -164,6 +165,34 @@ can get suggestions for misspelled words using fuzzy search:</p>
 </code></pre>
 <p>Suggestions are ranked by the relevance of the documents that would be returned
 by that search.</p>
+<h3 id="field-extraction">Field extraction</h3><p>By default, documents are assumed to be plain key-value objects with field names
+as keys and field values as string values. In order to support custom field
+extraction logic (for example for nested fields, or non-string field values
+needing processing before tokenization), a custom field extractor function can
+be passed as the <code>extractField</code> option:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">// Assuming that our documents look like:
+const documents = [
+  { id: 1, title: &apos;Moby Dick&apos;, author: { name: &apos;Herman Melville&apos; }, tags: [&apos;fiction&apos;, &apos;whale&apos;] },
+  { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, author: { name: &apos;Robert Pirsig&apos; }, tags: [&apos;fiction&apos;, &apos;zen&apos;] },
+  { id: 3, title: &apos;Neuromancer&apos;, author: { name: &apos;William Gibson&apos; }, tags: [&apos;fiction&apos;, &apos;cyberpunk&apos;] },
+  { id: 4, title: &apos;Zen and the Art of Archery&apos;, author: { name: &apos;Eugen Herrigel&apos; }, tags: [&apos;non-fiction&apos;, &apos;zen&apos;] },
+  // ...and more
+]
+
+// We can support nested fields (author.name) and array fields (tags) with a
+// custom `extractField` fuction:
+let miniSearch = new MiniSearch({
+  fields: [&apos;title&apos;, &apos;author.name&apos;, &apos;tags&apos;],
+  extractField: (document, fieldName) =&gt; {
+    // Access nested fields
+    const value = fieldName.split(&apos;.&apos;).reduce((doc, key) =&gt; doc &amp;&amp; doc[key], document)
+    // If field value is an array, join by space
+    return Array.isArray(value) ? value.join(&apos; &apos;) : value
+  }
+})</code>
+</code></pre>
+<p>The default field extractor can be obtained by calling
+<code>MiniSearch.getDefault(&apos;extractField&apos;)</code>.</p>
 <h3 id="tokenization">Tokenization</h3><p>By default, documents are tokenized by splitting on non-alphanumeric characters
 (accented characters and other diacritics are considered alphanumeric). The
 tokenization logic can be easily changed by passing a custom tokenizer function

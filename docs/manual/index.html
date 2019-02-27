@@ -39,6 +39,7 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#basic-usage" data-ice="link">Basic usage</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#search-options" data-ice="link">Search options</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#auto-suggestions" data-ice="link">Auto suggestions</a></li>
+<li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#field-extraction" data-ice="link">Field extraction</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#tokenization" data-ice="link">Tokenization</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#term-processing" data-ice="link">Term processing</a></li>
 <li data-ice="manualNav" class="indent-h3" data-link="manual/README.html"><a href="manual/README.html#api-documentation" data-ice="link">API Documentation</a></li>
@@ -155,7 +156,32 @@ miniSearch.search(&apos;zen and motorcycles&apos;)</code>
 can get suggestions for misspelled words using fuzzy search:</p><pre><code class="lang-javascript"><code class="source-code prettyprint">miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
 // =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 1.03998 } ]</code>
 </code></pre><p>Suggestions are ranked by the relevance of the documents that would be returned
-by that search.</p><h3>Tokenization</h3><p>By default, documents are tokenized by splitting on non-alphanumeric characters
+by that search.</p><h3>Field extraction</h3><p>By default, documents are assumed to be plain key-value objects with field names
+as keys and field values as string values. In order to support custom field
+extraction logic (for example for nested fields, or non-string field values
+needing processing before tokenization), a custom field extractor function can
+be passed as the <code>extractField</code> option:</p><pre><code class="lang-javascript"><code class="source-code prettyprint">// Assuming that our documents look like:
+const documents = [
+  { id: 1, title: &apos;Moby Dick&apos;, author: { name: &apos;Herman Melville&apos; }, tags: [&apos;fiction&apos;, &apos;whale&apos;] },
+  { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, author: { name: &apos;Robert Pirsig&apos; }, tags: [&apos;fiction&apos;, &apos;zen&apos;] },
+  { id: 3, title: &apos;Neuromancer&apos;, author: { name: &apos;William Gibson&apos; }, tags: [&apos;fiction&apos;, &apos;cyberpunk&apos;] },
+  { id: 4, title: &apos;Zen and the Art of Archery&apos;, author: { name: &apos;Eugen Herrigel&apos; }, tags: [&apos;non-fiction&apos;, &apos;zen&apos;] },
+  // ...and more
+]
+
+// We can support nested fields (author.name) and array fields (tags) with a
+// custom `extractField` fuction:
+let miniSearch = new MiniSearch({
+  fields: [&apos;title&apos;, &apos;author.name&apos;, &apos;tags&apos;],
+  extractField: (document, fieldName) =&gt; {
+    // Access nested fields
+    const value = fieldName.split(&apos;.&apos;).reduce((doc, key) =&gt; doc &amp;&amp; doc[key], document)
+    // If field value is an array, join by space
+    return Array.isArray(value) ? value.join(&apos; &apos;) : value
+  }
+})</code>
+</code></pre><p>The default field extractor can be obtained by calling
+<code>MiniSearch.getDefault(&apos;extractField&apos;)</code>.</p><h3>Tokenization</h3><p>By default, documents are tokenized by splitting on non-alphanumeric characters
 (accented characters and other diacritics are considered alphanumeric). The
 tokenization logic can be easily changed by passing a custom tokenizer function
 as the <code>tokenize</code> option:</p><pre><code class="lang-javascript"><code class="source-code prettyprint">// Tokenize splitting by hyphen
@@ -221,21 +247,17 @@ also useful to understand the project goals and the technical implementation.</p
       <div class="manual-card">
         <div data-ice="card"><h1>Contributing</h1><p>Contributions to <code>MiniSearch</code> are welcome :) Just follow the guidelines below.</p><h2>Bugs and feature requests</h2><p>If you have an idea for a feature, or spotted a bug, please <a href="https://github.com/lucaong/minisearch/issues">open an
 issue on GitHub</a>.</p><ul>
-<li><p>Make sure to search if your issue was already reported. In that case, better
-to comment on the existing issue rather than open a duplicate one.</p>
-</li>
-<li><p>When reporting a bug, whenever possible, provide some example code to
-reproduce the bug: that will make the process of fixing it much faster.</p>
-</li>
-<li><p>Remember this is an open-source project. Your feature requests will be
+<li>Check if your issue was already reported. In that case, better
+to comment on the existing issue rather than open a duplicate one.</li>
+<li>When reporting a bug, whenever possible, provide some example code to
+reproduce the bug: that will make the process of fixing it much faster.</li>
+<li>Remember this is an open-source project. Your feature requests will be
 discussed and taken into consideration, but please do not take it
 personally if the feature does not get implemented. This project uses a
-permissive license, so pull requests are welcome and forks are permitted.</p>
-</li>
-<li><p>Always be respectful of others when discussing issues. The project
+permissive license, so pull requests are welcome and forks are permitted.</li>
+<li>Always be respectful of others when discussing issues. The project
 maintainer reserves the right to remove or close discussions where the
-tone or language is derogatory or offensive toward others.</p>
-</li>
+tone or language is derogatory or offensive toward others.</li>
 </ul><h2>Pull requests</h2><p>Thinking about sending a pull request? That is great :) Here is how you can
 setup your development environment:</p><ol>
 <li>Clone the <a href="https://github.com/lucaong/minisearch">repository</a></li>
@@ -248,15 +270,12 @@ performance benchmarks with <code>yarn benchmark</code></li>
 build-docs</code></li>
 </ol><p>In order to understand implementation details and design goals, read the <a href="https://lucaong.github.io/minisearch/manual/DESIGN_DOCUMENT.html">design
 document</a>.</p><p>Also, please follow these guidelines:</p><ul>
-<li><p>Add tests for your code. This ensures that your feature won&apos;t be broken by
+<li>Add tests for your code. This ensures that your feature won&apos;t be broken by
 further code changes. If you are not sure of how to test, feel free to send
-the pull request and ask for advices in the comment.</p>
-</li>
-<li><p>Don&apos;t change the version number. That will be done by the mainteiner upon
-releasing a new version.</p>
-</li>
-<li><p>Make sure that the full test suite passes before sending the pull request.</p>
-</li>
+the pull request and ask for advices in the comment.</li>
+<li>Don&apos;t change the version number. That will be done by the mainteiner upon
+releasing a new version.</li>
+<li>Make sure that the full test suite passes before sending the pull request.</li>
 </ul></div>
         <a data-ice="link" href="manual/CONTRIBUTING.html"></a>
       </div>
