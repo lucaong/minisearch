@@ -170,7 +170,7 @@ const documents = [
 ]
 
 // We can support nested fields (author.name) and array fields (tags) with a
-// custom `extractField` fuction:
+// custom `extractField` function:
 let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;author.name&apos;, &apos;tags&apos;],
   extractField: (document, fieldName) =&gt; {
