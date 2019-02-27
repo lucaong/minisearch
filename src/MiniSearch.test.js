@@ -48,6 +48,28 @@ describe('MiniSearch', () => {
       }).not.toThrowError()
     })
 
+    it('passes document and field name to the field extractor', () => {
+      const extractField = jest.fn((document, fieldName) => {
+        const value = fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
+        return Array.isArray(value) ? value.join(' ') : value
+      })
+      const tokenize = jest.fn(string => string.split(/\W+/))
+      const ms = new MiniSearch({ fields: ['title', 'tags', 'author.name'], extractField, tokenize })
+      const document = {
+        id: 1,
+        title: 'Divina Commedia',
+        tags: ['divina', 'commedia', 'dante', 'alighieri'],
+        author: { name: 'Dante Alighieri' }
+      }
+      ms.add(document)
+      expect(extractField).toHaveBeenCalledWith(document, 'title')
+      expect(extractField).toHaveBeenCalledWith(document, 'tags')
+      expect(extractField).toHaveBeenCalledWith(document, 'author.name')
+      expect(tokenize).toHaveBeenCalledWith(document.title, 'title')
+      expect(tokenize).toHaveBeenCalledWith(document.tags.join(' '), 'tags')
+      expect(tokenize).toHaveBeenCalledWith(document.author.name, 'author.name')
+    })
+
     it('passes field value and name to tokenizer', () => {
       const tokenize = jest.fn(string => string.split(/\W+/))
       const ms = new MiniSearch({ fields: ['text', 'title'], tokenize })
@@ -482,6 +504,7 @@ describe('MiniSearch', () => {
   describe('getDefault', () => {
     it('returns the default value of the given option', () => {
       expect(MiniSearch.getDefault('idField')).toEqual('id')
+      expect(MiniSearch.getDefault('extractField')).toBeInstanceOf(Function)
       expect(MiniSearch.getDefault('tokenize')).toBeInstanceOf(Function)
       expect(MiniSearch.getDefault('processTerm')).toBeInstanceOf(Function)
       expect(MiniSearch.getDefault('searchOptions')).toBe(undefined)

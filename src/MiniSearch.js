@@ -32,6 +32,7 @@ class MiniSearch {
   * @param {Object} options - Configuration options
   * @param {Array<string>} options.fields - Fields to be indexed. Required.
   * @param {string} [options.idField='id'] - ID field, uniquely identifying a document
+  * @param {function(document: Object, fieldName: [string]): string} [options.extractField] - Function used to get the value of a field in a document
   * @param {function(text: string, fieldName: [string]): Array<string>} [options.tokenize] - Function used to split a field into individual terms
   * @param {function(term: string, fieldName: [string]): string} [options.processTerm] - Function used to process a term before indexing it or searching
   * @param {?Object} options.searchOptions - Default search options (see the `search` method for details)
@@ -53,11 +54,17 @@ class MiniSearch {
   *   // idField: field that uniquely identifies a document
   *   idField: 'id',
   *
+  *   // extractField: function used to get the value of a field in a document.
+  *   // By default, it assumes the document is a flat object with field names as
+  *   // property keys and field values as string property values, but custom logic
+  *   // can be implemented by setting this option to a custom extractor function.
+  *   extractField: (document, fieldName) => document[fieldName],
+  *
   *   // tokenize: function used to split fields into individual terms. By
   *   // default, it is also used to tokenize search queries, unless a specific
   *   // `tokenize` search option is supplied. When tokenizing an indexed field,
   *   // the field name is passed as the second argument.
-  *   tokenize: (string, _fieldName) => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/)
+  *   tokenize: (string, _fieldName) => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/),
   *
   *   // processTerm: function used to process each tokenized term before
   *   // indexing. It can be used for stemming and normalization. Return a falsy
@@ -65,14 +72,14 @@ class MiniSearch {
   *   // search queries, unless a specific `processTerm` option is supplied as a
   *   // search option. When processing a term from a indexed field, the field
   *   // name is passed as the second argument.
-  *   processTerm: (term, _fieldName) => term.length > 1 && term.toLowerCase()
+  *   processTerm: (term, _fieldName) => term.length > 1 && term.toLowerCase(),
   *
   *   // searchOptions: default search options, see the `search` method for
   *   // details
-  *   searchOptions: undefined
+  *   searchOptions: undefined,
   *
   *   // fields: document fields to be indexed. Mandatory, but not set by default
-  *   fields: undefined,
+  *   fields: undefined
   * })
   */
   constructor (options = {}) {
@@ -116,13 +123,13 @@ class MiniSearch {
   * @param {Object} document - the document to be indexed
   */
   add (document) {
-    const { tokenize, processTerm, fields, idField } = this._options
+    const { extractField, tokenize, processTerm, fields, idField } = this._options
     if (document[idField] == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
     const shortDocumentId = addDocumentId(this, document[idField])
     fields.forEach(field => {
-      const tokens = tokenize(document[field] || '', field)
+      const tokens = tokenize(extractField(document, field) || '', field)
       addFieldLength(this, shortDocumentId, this._fieldIds[field], this.documentCount - 1, tokens.length)
       tokens.forEach(term => {
         const processedTerm = processTerm(term, field)
@@ -596,6 +603,7 @@ const isTruthy = (x) => !!x
 
 const defaultOptions = {
   idField: 'id',
+  extractField: (document, fieldName) => document[fieldName],
   tokenize: (string, _fieldName) => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/),
   processTerm: (term, _fieldName) => term.length > 1 && term.toLowerCase(),
   fields: undefined,

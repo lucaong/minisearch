@@ -139,6 +139,40 @@ miniSearch.autoSuggest('neromancer', { fuzzy: 0.2 })
 Suggestions are ranked by the relevance of the documents that would be returned
 by that search.
 
+### Field extraction
+
+By default, documents are assumed to be plain key-value objects with field names
+as keys and field values as string values. In order to support custom field
+extraction logic (for example for nested fields, or non-string field values
+needing processing before tokenization), a custom field extractor function can
+be passed as the `extractField` option:
+
+```javascript
+// Assuming that our documents look like:
+const documents = [
+  { id: 1, title: 'Moby Dick', author: { name: 'Herman Melville' }, tags: ['fiction', 'whale'] },
+  { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', author: { name: 'Robert Pirsig' }, tags: ['fiction', 'zen'] },
+  { id: 3, title: 'Neuromancer', author: { name: 'William Gibson' }, tags: ['fiction', 'cyberpunk'] },
+  { id: 4, title: 'Zen and the Art of Archery', author: { name: 'Eugen Herrigel' }, tags: ['non-fiction', 'zen'] },
+  // ...and more
+]
+
+// We can support nested fields (author.name) and array fields (tags) with a
+// custom `extractField` fuction:
+let miniSearch = new MiniSearch({
+  fields: ['title', 'author.name', 'tags'],
+  extractField: (document, fieldName) => {
+    // Access nested fields
+    const value = fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
+    // If field value is an array, join by space
+    return Array.isArray(value) ? value.join(' ') : value
+  }
+})
+```
+
+The default field extractor can be obtained by calling
+`MiniSearch.getDefault('extractField')`.
+
 ### Tokenization
 
 By default, documents are tokenized by splitting on non-alphanumeric characters
