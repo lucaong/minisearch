@@ -1,5 +1,13 @@
 # Changelog
 
+`MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
+
+## v1.2.0
+
+  - Add possibility to configure a custom field extraction function by setting
+      the `extractField` option (to support cases like nested fields, non-string
+      fields, getter methods, field pre-processing, etc.)
+
 ## v1.1.2
 
   - Add `getDefault` static method to get the default value of configuration options
