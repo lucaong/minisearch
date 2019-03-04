@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master)](https://coveralls.io/github/lucaong/minisearch?branch=master)
 [![Minzipped Size](https://img.shields.io/bundlephobia/minzip/minisearch.svg?style=flat)](https://bundlephobia.com/result?p=minisearch)
 
-`MiniSearch` is a tiny but powerful in-memory fulltext search engine for
+`MiniSearch` is a tiny but powerful in-memory fulltext search engine written in
 JavaScript. It is respectful of resources, and it can comfortably run both in
 Node and in the browser.
 
@@ -19,15 +19,15 @@ post](https://lucaongaro.eu/blog/2019/01/30/minisearch-client-side-fulltext-sear
 ## Use case
 
 `MiniSearch` addresses use cases where full-text search features are needed
-(e.g. prefix search, fuzzy search, boosting of fields), but the data to be
-indexed can fit locally in the process memory. While you won't index the whole
-Internet with it, there are surprisingly many use cases that are served well by
-`MiniSearch`. By storing the index in local memory, `MiniSearch` can work
-offline, and can process queries quickly, without network latency.
+(e.g. prefix search, fuzzy search, ranking, boosting of fields…), but the data
+to be indexed can fit locally in the process memory. While you won't index the
+whole Internet with it, there are surprisingly many use cases that are served
+well by `MiniSearch`. By storing the index in local memory, `MiniSearch` can
+work offline, and can process queries quickly, without network latency.
 
-A prominent use-case is real tyme as-you-type search in web and mobile
-applications, where keeping the index on the client-side enables fast and
-reactive UIs, removing the need to make requests to a search server.
+A prominent use-case is real time search "as you type" in web and mobile
+applications, where keeping the index on the client enables fast and reactive
+UIs, removing the need to make requests to a search server.
 
 
 ## Features
@@ -35,7 +35,7 @@ reactive UIs, removing the need to make requests to a search server.
   * Memory-efficient index, designed to support memory-constrained use cases
     like mobile browsers.
 
-  * Exact match, prefix search, and fuzzy match
+  * Exact match, prefix search, fuzzy match, field boosting
 
   * Auto-suggestion engine, for auto-completion of search queries
 

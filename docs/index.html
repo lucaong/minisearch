@@ -38,7 +38,7 @@
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="-a-href--https---lucaong-github-io-minisearch----img-src--https---lucaong-github-io-minisearch-minisearch-svg--alt--minisearch----a--minisearch"><a href="https://lucaong.github.io/minisearch/"><img src="https://lucaong.github.io/minisearch/MiniSearch.svg" alt="MiniSearch"></a> MiniSearch</h1><p><a href="https://travis-ci.org/lucaong/minisearch"><img src="https://travis-ci.org/lucaong/minisearch.svg?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/github/lucaong/minisearch?branch=master"><img src="https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master" alt="Coverage Status"></a>
 <a href="https://bundlephobia.com/result?p=minisearch"><img src="https://img.shields.io/bundlephobia/minzip/minisearch.svg?style=flat" alt="Minzipped Size"></a></p>
-<p><code>MiniSearch</code> is a tiny but powerful in-memory fulltext search engine for
+<p><code>MiniSearch</code> is a tiny but powerful in-memory fulltext search engine written in
 JavaScript. It is respectful of resources, and it can comfortably run both in
 Node and in the browser.</p>
 <p>Try out the <a href="https://lucaong.github.io/minisearch/examples/">demo application</a>.</p>
@@ -47,19 +47,19 @@ here</a>, and more background about
 <code>MiniSearch</code>, including a comparison with other similar libraries, in <a href="https://lucaongaro.eu/blog/2019/01/30/minisearch-client-side-fulltext-search-engine.html">this blog
 post</a>.</p>
 <h2 id="use-case">Use case</h2><p><code>MiniSearch</code> addresses use cases where full-text search features are needed
-(e.g. prefix search, fuzzy search, boosting of fields), but the data to be
-indexed can fit locally in the process memory. While you won&apos;t index the whole
-Internet with it, there are surprisingly many use cases that are served well by
-<code>MiniSearch</code>. By storing the index in local memory, <code>MiniSearch</code> can work
-offline, and can process queries quickly, without network latency.</p>
-<p>A prominent use-case is real tyme as-you-type search in web and mobile
-applications, where keeping the index on the client-side enables fast and
-reactive UIs, removing the need to make requests to a search server.</p>
+(e.g. prefix search, fuzzy search, ranking, boosting of fields&#x2026;), but the data
+to be indexed can fit locally in the process memory. While you won&apos;t index the
+whole Internet with it, there are surprisingly many use cases that are served
+well by <code>MiniSearch</code>. By storing the index in local memory, <code>MiniSearch</code> can
+work offline, and can process queries quickly, without network latency.</p>
+<p>A prominent use-case is real time search &quot;as you type&quot; in web and mobile
+applications, where keeping the index on the client enables fast and reactive
+UIs, removing the need to make requests to a search server.</p>
 <h2 id="features">Features</h2><ul>
 <li><p>Memory-efficient index, designed to support memory-constrained use cases
 like mobile browsers.</p>
 </li>
-<li><p>Exact match, prefix search, and fuzzy match</p>
+<li><p>Exact match, prefix search, fuzzy match, field boosting</p>
 </li>
 <li><p>Auto-suggestion engine, for auto-completion of search queries</p>
 </li>
