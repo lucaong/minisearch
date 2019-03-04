@@ -12,7 +12,7 @@ Try out the [demo application](https://lucaong.github.io/minisearch/examples/).
 
 Find the complete [documentation and API reference
 here](https://lucaong.github.io/minisearch), and more background about
-MiniSearch, including a comparison with other similar libraries in [this blog
+`MiniSearch`, including a comparison with other similar libraries, in [this blog
 post](https://lucaongaro.eu/blog/2019/01/30/minisearch-client-side-fulltext-search-engine.html).
 
 
