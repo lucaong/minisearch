@@ -3252,7 +3252,7 @@
     "__docId__": 140,
     "kind": "file",
     "name": "src/SearchableMap/fuzzySearch.js",
-    "content": "import { LEAF } from './TreeIterator.js'\n\n/**\n* @ignore\n*/\nexport const fuzzySearch = function (node, query, maxDistance) {\n  const stack = [{ distance: 0, i: 0, key: '', node }]\n  const results = {}\n  while (stack.length > 0) {\n    const { node, distance, key, i, edit } = stack.pop()\n    Object.keys(node).forEach(k => {\n      if (k === LEAF) {\n        const totDistance = distance + (query.length - i)\n        const [, d] = results[key] || [null, Infinity]\n        if (totDistance <= maxDistance && totDistance < d) {\n          results[key] = [node[k], totDistance]\n        }\n      } else {\n        withinDistance(query, k, maxDistance - distance, i, edit).forEach(({ distance: d, i, edit }) => {\n          stack.push({ node: node[k], distance: distance + d, key: key + k, i, edit })\n        })\n      }\n    })\n  }\n  return results\n}\n\n/**\n* @ignore\n*/\nexport const withinDistance = function (a, b, maxDistance, i, edit) {\n  const stack = [{ distance: 0, ia: i, ib: 0, edit }]\n  const mem = []\n  const results = []\n  while (stack.length > 0) {\n    const { distance, ia, ib, edit } = stack.pop()\n    mem[ia] = mem[ia] || []\n    if (mem[ia][ib] && mem[ia][ib] <= distance) { continue }\n    mem[ia][ib] = distance\n    if (ib === b.length) {\n      results.push({ distance, i: ia, edit })\n      continue\n    }\n    if (a[ia] === b[ib]) {\n      stack.push({ distance, ia: ia + 1, ib: ib + 1, edit: NONE })\n    } else {\n      if (distance >= maxDistance) { continue }\n      if (edit !== ADD) { stack.push({ distance: distance + 1, ia, ib: ib + 1, edit: DELETE }) }\n      if (ia < a.length) {\n        if (edit !== DELETE) { stack.push({ distance: distance + 1, ia: ia + 1, ib, edit: ADD }) }\n        if (edit !== DELETE && edit !== ADD) { stack.push({ distance: distance + 1, ia: ia + 1, ib: ib + 1, edit: CHANGE }) }\n      }\n    }\n  }\n  return results\n}\n\nconst NONE = 0\nconst CHANGE = 1\nconst ADD = 2\nconst DELETE = 3\n\nexport default fuzzySearch\n",
+    "content": "import { LEAF } from './TreeIterator.js'\n\n/**\n* @ignore\n*/\nexport const fuzzySearch = function (node, query, maxDistance) {\n  const stack = [{ distance: 0, i: 0, key: '', node }]\n  const results = {}\n  const innerStack = []\n\n  while (stack.length > 0) {\n    const { node, distance, key, i, edit } = stack.pop()\n    Object.keys(node).forEach((k) => {\n      if (k === LEAF) {\n        const totDistance = distance + (query.length - i)\n        const [, d] = results[key] || [null, Infinity]\n        if (totDistance <= maxDistance && totDistance < d) {\n          results[key] = [node[k], totDistance]\n        }\n      } else {\n        withinDistance(query, k, maxDistance - distance, i, edit, innerStack).forEach(({ distance: d, i, edit }) => {\n          stack.push({ node: node[k], distance: distance + d, key: key + k, i, edit })\n        })\n      }\n    })\n  }\n  return results\n}\n\n/**\n* @ignore\n*/\nexport const withinDistance = function (a, b, maxDistance, i, edit, stack) {\n  stack.push({ distance: 0, ia: i, ib: 0, edit })\n  const results = []\n\n  while (stack.length > 0) {\n    const { distance, ia, ib, edit } = stack.pop()\n\n    if (ib === b.length) {\n      results.push({ distance, i: ia, edit })\n      continue\n    }\n\n    if (a[ia] === b[ib]) {\n      stack.push({ distance, ia: ia + 1, ib: ib + 1, edit: NONE })\n    } else {\n      if (distance >= maxDistance) { continue }\n\n      if (edit !== ADD) {\n        stack.push({ distance: distance + 1, ia, ib: ib + 1, edit: DELETE })\n      }\n\n      if (ia < a.length) {\n        if (edit !== DELETE) {\n          stack.push({ distance: distance + 1, ia: ia + 1, ib, edit: ADD })\n        }\n\n        if (edit !== DELETE && edit !== ADD) {\n          stack.push({ distance: distance + 1, ia: ia + 1, ib: ib + 1, edit: CHANGE })\n        }\n      }\n    }\n  }\n\n  return results\n}\n\nconst NONE = 0\nconst CHANGE = 1\nconst ADD = 2\nconst DELETE = 3\n\nexport default fuzzySearch\n",
     "static": true,
     "longname": "/Users/luca/Code/minisearch/src/SearchableMap/fuzzySearch.js",
     "access": "public",
@@ -3315,7 +3315,7 @@
     "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
     "importStyle": "{withinDistance}",
     "description": "",
-    "lineNumber": 31,
+    "lineNumber": 33,
     "ignore": true,
     "params": [
       {
@@ -3347,6 +3347,12 @@
         "types": [
           "*"
         ]
+      },
+      {
+        "name": "stack",
+        "types": [
+          "*"
+        ]
       }
     ],
     "return": {
@@ -3367,7 +3373,7 @@
     "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 58,
+    "lineNumber": 69,
     "undocument": true,
     "type": {
       "types": [
@@ -3388,7 +3394,7 @@
     "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 59,
+    "lineNumber": 70,
     "undocument": true,
     "type": {
       "types": [
@@ -3409,7 +3415,7 @@
     "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 60,
+    "lineNumber": 71,
     "undocument": true,
     "type": {
       "types": [
@@ -3430,7 +3436,7 @@
     "importPath": "minisearch/src/SearchableMap/fuzzySearch.js",
     "importStyle": null,
     "description": null,
-    "lineNumber": 61,
+    "lineNumber": 72,
     "undocument": true,
     "type": {
       "types": [
@@ -3460,7 +3466,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"minisearch\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Tiny but powerful full-text search engine for browser and Node\",\n  \"main\": \"dist/minisearch.js\",\n  \"author\": \"Luca Ongaro\",\n  \"homepage\": \"https://lucaong.github.io/minisearch/\",\n  \"bugs\": \"https://github.com/lucaong/minisearch/issues\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lucaong/minisearch.git\"\n  },\n  \"keywords\": [\n    \"search\",\n    \"full text\",\n    \"fuzzy\",\n    \"prefix\",\n    \"auto suggest\",\n    \"auto complete\",\n    \"index\"\n  ],\n  \"license\": \"MIT\",\n  \"dependencies\": {},\n  \"devDependencies\": {\n    \"@babel/cli\": \"^7.0.0\",\n    \"@babel/core\": \"^7.0.1\",\n    \"@babel/plugin-proposal-object-rest-spread\": \"^7.0.0\",\n    \"@babel/preset-env\": \"^7.0.0\",\n    \"babel-core\": \"^7.0.0-0\",\n    \"babel-jest\": \"^24.0.0\",\n    \"babel-loader\": \"^8.0.4\",\n    \"benchmark\": \"^2.1.4\",\n    \"coveralls\": \"^3.0.2\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-ecmascript-proposal-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"fast-check\": \"^1.5.0\",\n    \"jest\": \"^24.0.0\",\n    \"regenerator-runtime\": \"^0.13.1\",\n    \"snazzy\": \"^8.0.0\",\n    \"standard\": \"^12.0.1\",\n    \"webpack\": \"^4.16.5\",\n    \"webpack-cli\": \"^3.1.0\",\n    \"webpack-merge\": \"^4.2.1\"\n  },\n  \"files\": [\n    \"/dist/minisearch.js\",\n    \"/src/**/*\"\n  ],\n  \"jest\": {\n    \"testURL\": \"http://localhost:3000/\",\n    \"setupFilesAfterEnv\": [\n      \"<rootDir>/src/testSetup/jest.js\"\n    ]\n  },\n  \"scripts\": {\n    \"test\": \"jest\",\n    \"test-watch\": \"jest --watch\",\n    \"coverage\": \"jest --coverage\",\n    \"benchmark\": \"webpack benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js\",\n    \"build\": \"webpack --mode=production\",\n    \"build-minified\": \"webpack --mode=production --config=webpack.minified.js\",\n    \"build-docs\": \"esdoc\",\n    \"lint\": \"standard --verbose 'app/**/*.{js,jsx}' | snazzy\",\n    \"lintfix\": \"standard --fix 'app/**/*.{js,jsx}'\",\n    \"prepublishOnly\": \"yarn test && yarn build\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"minisearch\",\n  \"version\": \"1.2.1\",\n  \"description\": \"Tiny but powerful full-text search engine for browser and Node\",\n  \"main\": \"dist/minisearch.js\",\n  \"author\": \"Luca Ongaro\",\n  \"homepage\": \"https://lucaong.github.io/minisearch/\",\n  \"bugs\": \"https://github.com/lucaong/minisearch/issues\",\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/lucaong/minisearch.git\"\n  },\n  \"keywords\": [\n    \"search\",\n    \"full text\",\n    \"fuzzy\",\n    \"prefix\",\n    \"auto suggest\",\n    \"auto complete\",\n    \"index\"\n  ],\n  \"license\": \"MIT\",\n  \"dependencies\": {},\n  \"devDependencies\": {\n    \"@babel/cli\": \"^7.0.0\",\n    \"@babel/core\": \"^7.0.1\",\n    \"@babel/plugin-proposal-object-rest-spread\": \"^7.0.0\",\n    \"@babel/preset-env\": \"^7.0.0\",\n    \"babel-core\": \"^7.0.0-0\",\n    \"babel-jest\": \"^24.0.0\",\n    \"babel-loader\": \"^8.0.4\",\n    \"benchmark\": \"^2.1.4\",\n    \"coveralls\": \"^3.0.2\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-ecmascript-proposal-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"fast-check\": \"^1.5.0\",\n    \"jest\": \"^24.0.0\",\n    \"regenerator-runtime\": \"^0.13.1\",\n    \"snazzy\": \"^8.0.0\",\n    \"standard\": \"^12.0.1\",\n    \"webpack\": \"^4.16.5\",\n    \"webpack-cli\": \"^3.1.0\",\n    \"webpack-merge\": \"^4.2.1\"\n  },\n  \"files\": [\n    \"/dist/minisearch.js\",\n    \"/src/**/*\"\n  ],\n  \"jest\": {\n    \"testURL\": \"http://localhost:3000/\",\n    \"setupFilesAfterEnv\": [\n      \"<rootDir>/src/testSetup/jest.js\"\n    ]\n  },\n  \"scripts\": {\n    \"test\": \"jest\",\n    \"test-watch\": \"jest --watch\",\n    \"coverage\": \"jest --coverage\",\n    \"benchmark\": \"webpack benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js\",\n    \"build\": \"webpack --mode=production\",\n    \"build-minified\": \"webpack --mode=production --config=webpack.minified.js\",\n    \"build-docs\": \"esdoc\",\n    \"lint\": \"standard --verbose 'app/**/*.{js,jsx}' | snazzy\",\n    \"lintfix\": \"standard --fix 'app/**/*.{js,jsx}'\",\n    \"prepublishOnly\": \"yarn test && yarn build\"\n  }\n}\n",
     "longname": "/Users/luca/Code/minisearch/package.json",
     "name": "package.json",
     "static": true,
