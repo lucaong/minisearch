@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.2.1
+
+  - Improve fuzzy search performance (common cases are now ~4x faster, as shown
+    by the benchmark)
+
 ## v1.2.0
 
   - Add possibility to configure a custom field extraction function by setting
