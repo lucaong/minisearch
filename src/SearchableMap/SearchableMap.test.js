@@ -257,8 +257,9 @@ describe('SearchableMap', () => {
     it('adds and removes entries', () => {
       const arrayOfStrings = fc.array(fc.oneof(fc.unicodeString(), fc.string()), 70)
       const string = fc.oneof(fc.unicodeString(0, 4), fc.string(0, 4))
+      const int = fc.integer(1, 4)
 
-      fc.assert(fc.property(arrayOfStrings, string, (terms, prefix) => {
+      fc.assert(fc.property(arrayOfStrings, string, int, (terms, prefix, maxDist) => {
         const map = new SearchableMap()
         const standardMap = new Map()
         const uniqueTerms = [...new Set(terms)]
@@ -276,9 +277,10 @@ describe('SearchableMap', () => {
         expect(Array.from(map.atPrefix(prefix).keys()).sort())
           .toEqual(Array.from(new Set(terms)).filter(t => t.startsWith(prefix)).sort())
 
-        const fuzzy = map.fuzzyGet(terms[0], 2)
+        const fuzzy = map.fuzzyGet(terms[0], maxDist)
         expect(Object.entries(fuzzy).map(([key, [value, dist]]) => [key, dist]).sort())
-          .toEqual(uniqueTerms.map(term => [term, editDistance(terms[0], term)]).filter(([, d]) => d <= 2).sort())
+          .toEqual(uniqueTerms.map(term => [term, editDistance(terms[0], term)])
+            .filter(([, dist]) => dist <= maxDist).sort())
 
         terms.forEach(term => {
           map.delete(term)
