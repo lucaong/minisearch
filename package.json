@@ -1,6 +1,6 @@
 {
   "name": "minisearch",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Tiny but powerful full-text search engine for browser and Node",
   "main": "dist/minisearch.js",
   "author": "Luca Ongaro",
