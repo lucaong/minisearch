@@ -6,9 +6,11 @@ import { LEAF } from './TreeIterator.js'
 export const fuzzySearch = function (node, query, maxDistance) {
   const stack = [{ distance: 0, i: 0, key: '', node }]
   const results = {}
+  const innerStack = []
+
   while (stack.length > 0) {
     const { node, distance, key, i, edit } = stack.pop()
-    Object.keys(node).forEach(k => {
+    Object.keys(node).forEach((k) => {
       if (k === LEAF) {
         const totDistance = distance + (query.length - i)
         const [, d] = results[key] || [null, Infinity]
@@ -16,7 +18,7 @@ export const fuzzySearch = function (node, query, maxDistance) {
           results[key] = [node[k], totDistance]
         }
       } else {
-        withinDistance(query, k, maxDistance - distance, i, edit).forEach(({ distance: d, i, edit }) => {
+        withinDistance(query, k, maxDistance - distance, i, edit, innerStack).forEach(({ distance: d, i, edit }) => {
           stack.push({ node: node[k], distance: distance + d, key: key + k, i, edit })
         })
       }
@@ -28,8 +30,8 @@ export const fuzzySearch = function (node, query, maxDistance) {
 /**
 * @ignore
 */
-export const withinDistance = function (a, b, maxDistance, i, edit) {
-  const stack = [{ distance: 0, ia: i, ib: 0, edit }]
+export const withinDistance = function (a, b, maxDistance, i, edit, stack) {
+  stack.push({ distance: 0, ia: i, ib: 0, edit })
   const results = []
 
   while (stack.length > 0) {
