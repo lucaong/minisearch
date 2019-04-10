@@ -30,15 +30,10 @@ export const fuzzySearch = function (node, query, maxDistance) {
 */
 export const withinDistance = function (a, b, maxDistance, i, edit) {
   const stack = [{ distance: 0, ia: i, ib: 0, edit }]
-  const mem = []
   const results = []
 
   while (stack.length > 0) {
     const { distance, ia, ib, edit } = stack.pop()
-
-    mem[ia] = mem[ia] || []
-    if (mem[ia][ib] && mem[ia][ib] <= distance) { continue }
-    mem[ia][ib] = distance
 
     if (ib === b.length) {
       results.push({ distance, i: ia, edit })
@@ -65,6 +60,7 @@ export const withinDistance = function (a, b, maxDistance, i, edit) {
       }
     }
   }
+
   return results
 }
 
