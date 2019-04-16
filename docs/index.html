@@ -164,9 +164,9 @@ let miniSearch = new MiniSearch({
 <p>The default field extractor can be obtained by calling
 <code>MiniSearch.getDefault(&apos;extractField&apos;)</code>.</p>
 <h3 id="tokenization">Tokenization</h3><p>By default, documents are tokenized by splitting on non-alphanumeric characters
-(accented characters and other diacritics are considered alphanumeric). The
-tokenization logic can be easily changed by passing a custom tokenizer function
-as the <code>tokenize</code> option:</p>
+(accented characters, diacritics, and non-latin scripts are properly handled).
+The tokenization logic can be easily changed by passing a custom tokenizer
+function as the <code>tokenize</code> option:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">// Tokenize splitting by hyphen
 let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
