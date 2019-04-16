@@ -429,6 +429,24 @@ describe('MiniSearch', () => {
       expect(ms.search('300').length).toBeGreaterThan(0)
       expect(ms.search('machinery').length).toBeGreaterThan(0)
     })
+
+    it('supports non-latin alphabets', () => {
+      const documents = [
+        { id: 1, title: 'София' },
+        { id: 2, title: 'アネモネ' },
+        { id: 3, title: 'τέχνη' },
+        { id: 4, title: 'سمت الرأس' },
+        { id: 5, title: '123 45' }
+      ]
+      const ms = new MiniSearch({ fields: ['title'] })
+      ms.addAll(documents)
+
+      expect(ms.search('софия').map(({ id }) => id)).toEqual([1])
+      expect(ms.search('アネモネ').map(({ id }) => id)).toEqual([2])
+      expect(ms.search('τέχνη').map(({ id }) => id)).toEqual([3])
+      expect(ms.search('الرأس').map(({ id }) => id)).toEqual([4])
+      expect(ms.search('123').map(({ id }) => id)).toEqual([5])
+    })
   })
 
   describe('autoSuggest', () => {
