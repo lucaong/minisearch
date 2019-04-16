@@ -2,6 +2,10 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.3.0
+
+  - Support for non-latin scripts
+
 ## v1.2.1
 
   - Improve fuzzy search performance (common cases are now ~4x faster, as shown
