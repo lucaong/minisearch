@@ -64,7 +64,7 @@ class MiniSearch {
   *   // default, it is also used to tokenize search queries, unless a specific
   *   // `tokenize` search option is supplied. When tokenizing an indexed field,
   *   // the field name is passed as the second argument.
-  *   tokenize: (string, _fieldName) => string.split(/[^a-zA-Z0-9\u00C0-\u017F]+/),
+  *   tokenize: (string, _fieldName) => string.split(NON_WORD_CHARS),
   *
   *   // processTerm: function used to process each tokenized term before
   *   // indexing. It can be used for stemming and normalization. Return a falsy

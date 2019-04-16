@@ -181,9 +181,9 @@ The default field extractor can be obtained by calling
 ### Tokenization
 
 By default, documents are tokenized by splitting on non-alphanumeric characters
-(accented characters and other diacritics are considered alphanumeric). The
-tokenization logic can be easily changed by passing a custom tokenizer function
-as the `tokenize` option:
+(accented characters, diacritics, and non-latin scripts are properly handled).
+The tokenization logic can be easily changed by passing a custom tokenizer
+function as the `tokenize` option:
 
 ```javascript
 // Tokenize splitting by hyphen
