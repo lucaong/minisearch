@@ -432,10 +432,10 @@ describe('MiniSearch', () => {
 
     it('supports non-latin alphabets', () => {
       const documents = [
-        { id: 1, title: 'София' },
+        { id: 1, title: 'София София' },
         { id: 2, title: 'アネモネ' },
-        { id: 3, title: 'τέχνη' },
-        { id: 4, title: 'سمت الرأس' },
+        { id: 3, title: '«τέχνη»' },
+        { id: 4, title: 'سمت  الرأس' },
         { id: 5, title: '123 45' }
       ]
       const ms = new MiniSearch({ fields: ['title'] })
