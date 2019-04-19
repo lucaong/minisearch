@@ -41,9 +41,10 @@ UIs, removing the need to make requests to a search server.
 
   * Documents can be added and removed from the index at any time
 
-  * Simple API, providing building blocks to build specific solutions
+  * Zero external dependencies
 
-  * Zero external dependencies, small and well tested code-base
+`MiniSearch` strives to expose a simple API that provides the building blocks to
+build custom solutions, while keeping a small and well tested codebase.
 
 
 ## Installation
@@ -180,10 +181,9 @@ The default field extractor can be obtained by calling
 
 ### Tokenization
 
-By default, documents are tokenized by splitting on non-alphanumeric characters
-(accented characters, diacritics, and non-latin scripts are properly handled).
-The tokenization logic can be easily changed by passing a custom tokenizer
-function as the `tokenize` option:
+By default, documents are tokenized by splitting on space, punctuation, or other
+non-word Unicode symbols. The tokenization logic can be easily changed by
+passing a custom tokenizer function as the `tokenize` option:
 
 ```javascript
 // Tokenize splitting by hyphen

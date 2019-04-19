@@ -740,7 +740,7 @@ const miniSearch = MiniSearch.new({
   // default, it is also used to tokenize search queries, unless a specific
   // `tokenize` search option is supplied. When tokenizing an indexed field,
   // the field name is passed as the second argument.
-  tokenize: (string, _fieldName) =&gt; string.split(NON_WORD_CHARS),
+  tokenize: (string, _fieldName) =&gt; string.split(SPACE_PUNCTUATION_OR_SYMBOL),
 
   // processTerm: function used to process each tokenized term before
   // indexing. It can be used for stemming and normalization. Return a falsy

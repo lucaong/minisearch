@@ -65,11 +65,11 @@ like mobile browsers.</p>
 </li>
 <li><p>Documents can be added and removed from the index at any time</p>
 </li>
-<li><p>Simple API, providing building blocks to build specific solutions</p>
-</li>
-<li><p>Zero external dependencies, small and well tested code-base</p>
+<li><p>Zero external dependencies</p>
 </li>
 </ul>
+<p><code>MiniSearch</code> strives to expose a simple API that provides the building blocks to
+build custom solutions, while keeping a small and well tested codebase.</p>
 <h2 id="installation">Installation</h2><p>With <code>npm</code>:</p>
 <pre><code><code class="source-code prettyprint">npm install --save minisearch</code>
 </code></pre><p>With <code>yarn</code>:</p>
@@ -163,10 +163,9 @@ let miniSearch = new MiniSearch({
 </code></pre>
 <p>The default field extractor can be obtained by calling
 <code>MiniSearch.getDefault(&apos;extractField&apos;)</code>.</p>
-<h3 id="tokenization">Tokenization</h3><p>By default, documents are tokenized by splitting on non-alphanumeric characters
-(accented characters, diacritics, and non-latin scripts are properly handled).
-The tokenization logic can be easily changed by passing a custom tokenizer
-function as the <code>tokenize</code> option:</p>
+<h3 id="tokenization">Tokenization</h3><p>By default, documents are tokenized by splitting on space, punctuation, or other
+non-word Unicode symbols. The tokenization logic can be easily changed by
+passing a custom tokenizer function as the <code>tokenize</code> option:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">// Tokenize splitting by hyphen
 let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
