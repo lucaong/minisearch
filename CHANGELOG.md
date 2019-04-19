@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.3.1
+
+  - Better and more compact regular expression in the default tokenizer,
+    separating on Unicode spaces, punctuation, and symbols
+
 ## v1.3.0
 
   - Support for non-latin scripts
