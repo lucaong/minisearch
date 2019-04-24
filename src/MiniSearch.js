@@ -72,7 +72,7 @@ class MiniSearch {
   *   // search queries, unless a specific `processTerm` option is supplied as a
   *   // search option. When processing a term from a indexed field, the field
   *   // name is passed as the second argument.
-  *   processTerm: (term, _fieldName) => term.length > 1 && term.toLowerCase(),
+  *   processTerm: (term, _fieldName) => term.toLowerCase(),
   *
   *   // searchOptions: default search options, see the `search` method for
   *   // details
@@ -605,7 +605,7 @@ const defaultOptions = {
   idField: 'id',
   extractField: (document, fieldName) => document[fieldName],
   tokenize: (string, _fieldName) => string.split(SPACE_OR_PUNCTUATION),
-  processTerm: (term, _fieldName) => term.length > 1 && term.toLowerCase(),
+  processTerm: (term, _fieldName) => term.toLowerCase(),
   fields: undefined,
   searchOptions: undefined
 }

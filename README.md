@@ -214,9 +214,9 @@ The default tokenizer can be obtained by calling
 ### Term processing
 
 Terms are downcased by default. No stemming is performed, and no stop-word list
-is applied, but single-character words are excluded. To customize how the terms
-are processed upon indexing, for example to normalize them, filter them, or to
-apply stemming, the `processTerm` option can be used:
+is applied. To customize how the terms are processed upon indexing, for example
+to normalize them, filter them, or to apply stemming, the `processTerm` option
+can be used:
 
 ```javascript
 let stopWords = new Set(['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ])
