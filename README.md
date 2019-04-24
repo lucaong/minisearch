@@ -181,9 +181,9 @@ The default field extractor can be obtained by calling
 
 ### Tokenization
 
-By default, documents are tokenized by splitting on space, punctuation, or other
-non-word Unicode symbols. The tokenization logic can be easily changed by
-passing a custom tokenizer function as the `tokenize` option:
+By default, documents are tokenized by splitting on Unicode space or punctuation
+characters. The tokenization logic can be easily changed by passing a custom
+tokenizer function as the `tokenize` option:
 
 ```javascript
 // Tokenize splitting by hyphen
