@@ -2,6 +2,24 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.0.0
+
+This release introduces better defaults. It is considered a major release, as
+the default options are slightly different, but the API is not changed.
+
+  - *Breaking change*: default tokenizer splits by Unicode space or punctuation
+    (before it was splitting by space, punctuation, or _symbol_). The difference
+    is that currency symbols and other non-punctuation symbols will not be
+    discarded: "it's 100€" is now tokenized as `["it", "s", "100€"]` instead of
+    `["it", "s", "100"]`.
+
+  - *Breaking change*: default term processing does not discard 1-character
+    words.
+
+  - *Breaking change*: auto suggestions by default perform prefix search only on
+    the last term in the query. So "super cond" will suggest "super
+    conductivity", but not "superposition condition".
+
 ## v1.3.1
 
   - Better and more compact regular expression in the default tokenizer,
