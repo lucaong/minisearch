@@ -18,6 +18,7 @@ module.exports = {
               ['@babel/preset-env', {
                 'shippedProposals': true,
                 'useBuiltIns': 'usage',
+                'corejs': 3,
                 'targets': { 'browsers': '> 1%' }
               }],
               ['@babel/preset-react', {}]
