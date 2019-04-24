@@ -270,7 +270,7 @@ class MiniSearch {
   * given search query, each with a relevance score, sorted by descending score.
   *
   * @param {string} queryString - Query string to be expanded into suggestions
-  * @param {Object} [options] - Search options. The supported options and default values are the same as for the `search` method, except that `options.fuzzy` defaults to `true`.
+  * @param {Object} [options] - Search options. The supported options and default values are the same as for the `search` method, except that by default prefix search is performed on the last term in the query.
   * @return {Array<{ suggestion: string, score: number }>} A sorted array of suggestions sorted by relevance score.
   *
   * @example
@@ -618,7 +618,7 @@ const defaultSearchOptions = {
 }
 
 const defaultAutoSuggestOptions = {
-  prefix: true
+  prefix: (term, i, terms) => i === terms.length - 1
 }
 
 // This regular expression matches any Unicode space or punctuation character

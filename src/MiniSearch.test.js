@@ -476,15 +476,15 @@ describe('MiniSearch', () => {
     })
 
     it('returns scored suggestions for multi-word queries', () => {
-      const results = ms.autoSuggest('vi no')
+      const results = ms.autoSuggest('vita no')
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ suggestion }) => suggestion)).toEqual(['vita nova', 'vita nostra'])
       expect(results[0].score).toBeGreaterThan(results[1].score)
     })
 
     it('respects the order of the terms in the query', () => {
-      const results = ms.autoSuggest('no vi')
-      expect(results.map(({ suggestion }) => suggestion)).toEqual(['nova vita', 'nostra vita'])
+      const results = ms.autoSuggest('nostra vi')
+      expect(results.map(({ suggestion }) => suggestion)).toEqual(['nostra vita', 'vita'])
     })
 
     it('returns empty suggestions for terms that are not in the index', () => {
