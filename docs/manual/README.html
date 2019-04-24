@@ -209,9 +209,9 @@ let miniSearch = new MiniSearch({
 </code></pre>
 <p>The default field extractor can be obtained by calling
 <code>MiniSearch.getDefault(&apos;extractField&apos;)</code>.</p>
-<h3 id="tokenization">Tokenization</h3><p>By default, documents are tokenized by splitting on space, punctuation, or other
-non-word Unicode symbols. The tokenization logic can be easily changed by
-passing a custom tokenizer function as the <code>tokenize</code> option:</p>
+<h3 id="tokenization">Tokenization</h3><p>By default, documents are tokenized by splitting on Unicode space or punctuation
+characters. The tokenization logic can be easily changed by passing a custom
+tokenizer function as the <code>tokenize</code> option:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">// Tokenize splitting by hyphen
 let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
@@ -233,9 +233,9 @@ let miniSearch = new MiniSearch({
 <p>The default tokenizer can be obtained by calling
 <code>MiniSearch.getDefault(&apos;tokenize&apos;)</code>.</p>
 <h3 id="term-processing">Term processing</h3><p>Terms are downcased by default. No stemming is performed, and no stop-word list
-is applied, but single-character words are excluded. To customize how the terms
-are processed upon indexing, for example to normalize them, filter them, or to
-apply stemming, the <code>processTerm</code> option can be used:</p>
+is applied. To customize how the terms are processed upon indexing, for example
+to normalize them, filter them, or to apply stemming, the <code>processTerm</code> option
+can be used:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">let stopWords = new Set([&apos;and&apos;, &apos;or&apos;, &apos;to&apos;, &apos;in&apos;, &apos;a&apos;, &apos;the&apos;, /* ...and more */ ])
 
 const removeAccents = (term) =&gt;

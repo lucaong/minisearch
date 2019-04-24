@@ -314,7 +314,7 @@ instantiates a MiniSearch instance.</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-autoSuggest">autoSuggest</a></span></span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{suggestion: <span=""><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{suggestion:></span>
+          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-autoSuggest">autoSuggest</a></span></span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{suggestion: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{suggestion:></span>
         </p>
       </div>
       <div>
@@ -372,7 +372,7 @@ instantiates a MiniSearch instance.</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-search">search</a></span></span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span="">any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, match: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>}&gt;</{id:></span>
+          <span class="code" data-ice="name"><span><a href="class/src/MiniSearch.js~MiniSearch.html#instance-method-search">search</a></span></span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span>any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, match: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>}&gt;</{id:></span>
         </p>
       </div>
       <div>
@@ -740,7 +740,7 @@ const miniSearch = MiniSearch.new({
   // default, it is also used to tokenize search queries, unless a specific
   // `tokenize` search option is supplied. When tokenizing an indexed field,
   // the field name is passed as the second argument.
-  tokenize: (string, _fieldName) =&gt; string.split(SPACE_PUNCTUATION_OR_SYMBOL),
+  tokenize: (string, _fieldName) =&gt; string.split(SPACE_OR_PUNCTUATION),
 
   // processTerm: function used to process each tokenized term before
   // indexing. It can be used for stemming and normalization. Return a falsy
@@ -748,7 +748,7 @@ const miniSearch = MiniSearch.new({
   // search queries, unless a specific `processTerm` option is supplied as a
   // search option. When processing a term from a indexed field, the field
   // name is passed as the second argument.
-  processTerm: (term, _fieldName) =&gt; term.length &gt; 1 &amp;&amp; term.toLowerCase(),
+  processTerm: (term, _fieldName) =&gt; term.toLowerCase(),
 
   // searchOptions: default search options, see the `search` method for
   // details
@@ -945,7 +945,7 @@ const miniSearch = MiniSearch.new({
     
     
     
-    <span class="code" data-ice="name">autoSuggest</span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{suggestion: <span=""><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{suggestion:></span>
+    <span class="code" data-ice="name">autoSuggest</span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{suggestion: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{suggestion:></span>
     <span class="right-info">
       
       
@@ -982,7 +982,7 @@ given search query, each with a relevance score, sorted by descending score.</p>
       <td data-ice="name" class="code" data-depth="0">options</td>
       <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
-      <td data-ice="description"><p>Search options. The supported options and default values are the same as for the <code>search</code> method, except that <code>options.fuzzy</code> defaults to <code>true</code>.</p>
+      <td data-ice="description"><p>Search options. The supported options and default values are the same as for the <code>search</code> method, except that by default prefix search is performed on the last term in the query.</p>
 </td>
     </tr>
 </tbody>
@@ -995,7 +995,7 @@ given search query, each with a relevance score, sorted by descending score.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{suggestion: <span=""><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{suggestion:></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{suggestion: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>}&gt;</{suggestion:></td>
           <td class="return-desc" data-ice="returnDescription"><p>A sorted array of suggestions sorted by relevance score.</p>
 </td>
         </tr>
@@ -1119,7 +1119,7 @@ after a change, the correct order of operations is:</p>
     
     
     
-    <span class="code" data-ice="name">search</span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span="">any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, match: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>}&gt;</{id:></span>
+    <span class="code" data-ice="name">search</span><span class="code" data-ice="signature">(queryString: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>, options: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span>any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, match: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>}&gt;</{id:></span>
     <span class="right-info">
       
       
@@ -1222,7 +1222,7 @@ in which fields.</p>
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span="">any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, match: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>}&gt;</{id:></td>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span><{id: <span>any, score: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>, match: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>}&gt;</{id:></td>
           <td class="return-desc" data-ice="returnDescription"><p>A sorted array of scored document IDs matching the search</p>
 </td>
         </tr>
