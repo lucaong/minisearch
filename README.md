@@ -266,8 +266,8 @@ for details about configuration options and methods.
 standards, but requires a polyfill when used in Internet Explorer, as it makes
 use functions like `Object.entries`, `Array.includes`, and `Array.from`, which
 are standard but not available on older browsers. The
-[`@babel/polyfill`](https://babeljs.io/docs/en/babel-polyfill) is one such
-polyfill that can be used to provide those functions.
+[`core-js`](https://github.com/zloirock/core-js) is one such polyfill that can
+be used to provide those functions.
 
 ## Contributing
 
