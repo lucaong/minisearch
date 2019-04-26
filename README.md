@@ -265,7 +265,7 @@ for details about configuration options and methods.
 `MiniSearch` natively supports all modern browsers implementing JavaScript
 standards, but requires a polyfill when used in Internet Explorer, as it makes
 use functions like `Object.entries`, `Array.includes`, and `Array.from`, which
-are standard but not available on older browsers. The
+are standard but not available on older browsers. The package
 [`core-js`](https://github.com/zloirock/core-js) is one such polyfill that can
 be used to provide those functions.
 
