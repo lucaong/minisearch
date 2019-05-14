@@ -503,12 +503,13 @@ describe('MiniSearch', () => {
   })
 
   describe('loadJSON', () => {
+    const documents = [
+      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
+    ]
+
     it('loads a JSON-serialized search index', () => {
-      const documents = [
-        { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
-        { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
-        { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
-      ]
       const options = { fields: ['title', 'text'] }
       const ms = new MiniSearch(options)
       ms.addAll(documents)
@@ -516,6 +517,16 @@ describe('MiniSearch', () => {
       const deserialized = MiniSearch.loadJSON(json, options)
       expect(ms.search('vita')).toEqual(deserialized.search('vita'))
       expect(ms.toJSON()).toEqual(deserialized.toJSON())
+    })
+
+    it('raises an error if called without options', () => {
+      const options = { fields: ['title', 'text'] }
+      const ms = new MiniSearch(options)
+      ms.addAll(documents)
+      const json = JSON.stringify(ms)
+      expect(() => {
+        MiniSearch.loadJSON(json)
+      }).toThrowError('MiniSearch: loadJSON should be given the same options used when serializing the index')
     })
   })
 
