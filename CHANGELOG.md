@@ -2,6 +2,10 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.0.1
+
+  - Throw a more descriptive error when `loadJSON` is called without options
+
 ## v2.0.0
 
 This release introduces better defaults. It is considered a major release, as
