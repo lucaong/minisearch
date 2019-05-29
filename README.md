@@ -216,24 +216,17 @@ The default tokenizer can be obtained by calling
 Terms are downcased by default. No stemming is performed, and no stop-word list
 is applied. To customize how the terms are processed upon indexing, for example
 to normalize them, filter them, or to apply stemming, the `processTerm` option
-can be used:
+can be used. The `processTerm` function should return the processed term as a
+string, or a falsy value if the term should be discarded:
 
 ```javascript
 let stopWords = new Set(['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ])
 
-const removeAccents = (term) =>
-  term.replace(/[àá]/, 'a')
-      .replace(/[èé]/, 'e')
-      .replace(/[ìí]/, 'i')
-      .replace(/[òó]/, 'o')
-      .replace(/[ùú]/, 'u')
-
-// Perform custom term processing (here removing accents, downcasing, and
-// discarding stop words)
+// Perform custom term processing (here discarding stop words and downcasing)
 let miniSearch = new MiniSearch({
   fields: ['title', 'text'],
   processTerm: (term, _fieldName) =>
-    stopWords.has(term) ? null : removeAccents(term.toLowerCase())
+    stopWords.has(term) ? null : term.toLowerCase()
 })
 ```
 
@@ -244,9 +237,9 @@ a different processing to search queries, supply a `processTerm` search option:
 let miniSearch = new MiniSearch({
   fields: ['title', 'text'],
   processTerm: (term) =>
-    stopWords.has(term) ? null : removeAccents(term.toLowerCase()), // index term processing
+    stopWords.has(term) ? null : term.toLowerCase(), // index term processing
   searchOptions: {
-    processTerm: (term) => removeAccents(term.toLowerCase()) // search query processing
+    processTerm: (term) => term.toLowerCase() // search query processing
   }
 })
 ```

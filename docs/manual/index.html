@@ -216,29 +216,22 @@ let miniSearch = new MiniSearch({
 <code>MiniSearch.getDefault(&apos;tokenize&apos;)</code>.</p><h3>Term processing</h3><p>Terms are downcased by default. No stemming is performed, and no stop-word list
 is applied. To customize how the terms are processed upon indexing, for example
 to normalize them, filter them, or to apply stemming, the <code>processTerm</code> option
-can be used:</p><pre><code class="lang-javascript"><code class="source-code prettyprint">let stopWords = new Set([&apos;and&apos;, &apos;or&apos;, &apos;to&apos;, &apos;in&apos;, &apos;a&apos;, &apos;the&apos;, /* ...and more */ ])
+can be used. The <code>processTerm</code> function should return the processed term as a
+string, or a falsy value if the term should be discarded:</p><pre><code class="lang-javascript"><code class="source-code prettyprint">let stopWords = new Set([&apos;and&apos;, &apos;or&apos;, &apos;to&apos;, &apos;in&apos;, &apos;a&apos;, &apos;the&apos;, /* ...and more */ ])
 
-const removeAccents = (term) =&gt;
-  term.replace(/[&#xE0;&#xE1;]/, &apos;a&apos;)
-      .replace(/[&#xE8;&#xE9;]/, &apos;e&apos;)
-      .replace(/[&#xEC;&#xED;]/, &apos;i&apos;)
-      .replace(/[&#xF2;&#xF3;]/, &apos;o&apos;)
-      .replace(/[&#xF9;&#xFA;]/, &apos;u&apos;)
-
-// Perform custom term processing (here removing accents, downcasing, and
-// discarding stop words)
+// Perform custom term processing (here discarding stop words and downcasing)
 let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
   processTerm: (term, _fieldName) =&gt;
-    stopWords.has(term) ? null : removeAccents(term.toLowerCase())
+    stopWords.has(term) ? null : term.toLowerCase()
 })</code>
 </code></pre><p>By default, the same processing is applied to search queries. In order to apply
 a different processing to search queries, supply a <code>processTerm</code> search option:</p><pre><code class="lang-javascript"><code class="source-code prettyprint">let miniSearch = new MiniSearch({
   fields: [&apos;title&apos;, &apos;text&apos;],
   processTerm: (term) =&gt;
-    stopWords.has(term) ? null : removeAccents(term.toLowerCase()), // index term processing
+    stopWords.has(term) ? null : term.toLowerCase(), // index term processing
   searchOptions: {
-    processTerm: (term) =&gt; removeAccents(term.toLowerCase()) // search query processing
+    processTerm: (term) =&gt; term.toLowerCase() // search query processing
   }
 })</code>
 </code></pre><p>The default term processor can be obtained by calling
