@@ -230,6 +230,29 @@ describe('MiniSearch', () => {
         expect(ms.documentCount).toEqual(documents.length)
       })
     })
+
+    it('accepts a chunkSize option', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Nel mezzo' },
+        { id: 2, text: 'del cammin' },
+        { id: 3, text: 'di nostra vita' },
+        { id: 4, text: 'Mi ritrovai' },
+        { id: 5, text: 'per una' },
+        { id: 6, text: 'selva oscura' },
+        { id: 7, text: 'ché la' },
+        { id: 8, text: 'diritta via' },
+        { id: 9, text: 'era smarrita' },
+        { id: 10, text: 'ahi quanto' },
+        { id: 11, text: 'a dir' },
+        { id: 12, text: 'qual era' },
+        { id: 13, text: 'è cosa dura' }
+      ]
+
+      return ms.addAllAsync(documents, { chunkSize: 3 }).then(() => {
+        expect(ms.documentCount).toEqual(documents.length)
+      })
+    })
   })
 
   describe('search', () => {
