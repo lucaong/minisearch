@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.0.2
+
+  - Add `addAllAsync` method, adding many documents asynchronously and in chunks
+    to avoid blocking the main thread
+
 ## v2.0.1
 
   - Throw a more descriptive error when `loadJSON` is called without options
