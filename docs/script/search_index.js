@@ -312,6 +312,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/minisearch.js~minisearch#addallasync",
+    "class/src/MiniSearch.js~MiniSearch.html#instance-method-addAllAsync",
+    "src/MiniSearch.js~MiniSearch#addAllAsync",
+    "method"
+  ],
+  [
     "src/minisearch.js~minisearch#autosuggest",
     "class/src/MiniSearch.js~MiniSearch.html#instance-method-autoSuggest",
     "src/MiniSearch.js~MiniSearch#autoSuggest",
