@@ -150,6 +150,34 @@ class MiniSearch {
   }
 
   /**
+  * Adds all the given documents to the index asynchronously.
+  *
+  * Returns a promise that resolves to null when the indexing is done.
+  * Thi method is useful to index many documents while avoiding blocking the
+  * main thread. The indexing is performed asynchronously and in chunks.
+  *
+  * @param {Object[]} documents - an array of documents to be indexed
+  * @param {Object} [options] - Configuration options
+  * @param {number} [options.chunkSize] - Size of the document chunks indexed, 10 by default
+  * @return {Promise} A promise resolving to `null` when the indexing is done
+  */
+  addAllAsync (documents, options = {}) {
+    const { chunkSize = 10 } = options
+    const acc = { chunk: [], promise: Promise.resolve(null) }
+
+    const { chunk, promise } = documents.reduce(({ chunk, promise }, document, i) => {
+      chunk.push(document)
+      if ((i + 1) % chunkSize === 0) {
+        return { chunk: [], promise: promise.then(() => this.addAll(chunk)) }
+      } else {
+        return { chunk, promise }
+      }
+    }, acc)
+
+    return promise.then(() => this.addAll(chunk))
+  }
+
+  /**
   * Removes the given document from the index.
   *
   * The document to delete must NOT have changed between indexing and deletion,
