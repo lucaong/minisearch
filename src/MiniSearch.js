@@ -152,7 +152,7 @@ class MiniSearch {
   /**
   * Adds all the given documents to the index asynchronously.
   *
-  * Returns a promise that resolves to null when the indexing is done.  This
+  * Returns a promise that resolves to undefined when the indexing is done. This
   * method is useful when index many documents, to avoid blocking the main
   * thread. The indexing is performed asynchronously and in chunks.
   *
