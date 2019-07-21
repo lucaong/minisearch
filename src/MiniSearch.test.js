@@ -457,11 +457,11 @@ describe('MiniSearch', () => {
           id: 1,
           text:
           `Se la vita è sventura,
-          perché da noi si dura?
-          Intatta luna, tale
-          è lo stato mortale.
-          Ma tu mortal non sei,
-          e forse del mio dir poco ti cale`
+perché da noi si dura?
+Intatta luna, tale
+è lo stato mortale.
+Ma tu mortal non sei,
+e forse del mio dir poco ti cale`
         },
         {
           id: 2,
