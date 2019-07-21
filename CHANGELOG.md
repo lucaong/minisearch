@@ -2,6 +2,10 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.0.4
+
+  - [fix] tokenizer behavior with newline characters (by [@samuelmeuli](https://github.com/samuelmeuli))
+
 ## v2.0.3
 
   - Fix small imprecision in documentation
