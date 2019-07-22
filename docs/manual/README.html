@@ -83,7 +83,8 @@
 
 <div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="-a-href--https---lucaong-github-io-minisearch----img-src--https---lucaong-github-io-minisearch-minisearch-svg--alt--minisearch----a--minisearch"><a href="https://lucaong.github.io/minisearch/"><img src="https://lucaong.github.io/minisearch/MiniSearch.svg" alt="MiniSearch"></a> MiniSearch</h1><p><a href="https://travis-ci.org/lucaong/minisearch"><img src="https://travis-ci.org/lucaong/minisearch.svg?branch=master" alt="Build Status"></a>
 <a href="https://coveralls.io/github/lucaong/minisearch?branch=master"><img src="https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master" alt="Coverage Status"></a>
-<a href="https://bundlephobia.com/result?p=minisearch"><img src="https://img.shields.io/bundlephobia/minzip/minisearch.svg?style=flat" alt="Minzipped Size"></a></p>
+<a href="https://bundlephobia.com/result?p=minisearch"><img src="https://img.shields.io/bundlephobia/minzip/minisearch.svg?style=flat" alt="Minzipped Size"></a>
+<a href="https://www.jsdelivr.com/package/npm/minisearch"><img src="https://data.jsdelivr.com/v1/package/npm/minisearch/badge?style=rounded" alt></a></p>
 <p><code>MiniSearch</code> is a tiny but powerful in-memory fulltext search engine written in
 JavaScript. It is respectful of resources, and it can comfortably run both in
 Node and in the browser.</p>
@@ -121,9 +122,12 @@ build custom solutions, while keeping a small and well tested codebase.</p>
 </code></pre><p>With <code>yarn</code>:</p>
 <pre><code><code class="source-code prettyprint">yarn add minisearch</code>
 </code></pre><p>Then <code>require</code> or <code>import</code> it in your project.</p>
-<p>Alternatively, to manually build the library, clone the repository and run <code>yarn
-build</code> (or <code>yarn build-minified</code> for a minified version + source maps). The
-compiled source will be created in the <code>dist</code> folder.</p>
+<p>Alternatively, if you prefer to use a <code>&lt;script&gt;</code> tag, you can require MiniSearch
+from a CDN:</p>
+<pre><code><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.jsdelivr.net/npm/minisearch@2.0.4/dist/minisearch.min.js&quot;&gt;&lt;/script&gt;</code>
+</code></pre><p>Finally, if you want to manually build the library, clone the repository and run
+<code>yarn build</code> (or <code>yarn build-minified</code> for a minified version + source maps).
+The compiled source will be created in the <code>dist</code> folder.</p>
 <h2 id="usage">Usage</h2><h3 id="basic-usage">Basic usage</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our examples
 const documents = [
   { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
