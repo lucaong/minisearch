@@ -4,7 +4,7 @@ export as namespace MiniSearch;
 export = MiniSearch;
 
 declare class MiniSearch {
-    constructor(options: object);
+    constructor(options: Options);
 
     documentCount: number;
 
@@ -12,13 +12,13 @@ declare class MiniSearch {
 
     addAll(documents: object[]): void;
 
-    addAllAsync(documents: object[], options: { chunkSize?: number }): Promise<undefined>;
+    addAllAsync(documents: object[], options?: { chunkSize?: number }): Promise<undefined>;
 
-    autoSuggest(query: string, options: SearchOptions): Suggestion[];
+    autoSuggest(query: string, options?: SearchOptions): Suggestion[];
 
     remove(document: object): void;
 
-    search(query: string, options: SearchOptions): SearchResult[];
+    search(query: string, options?: SearchOptions): SearchResult[];
 
     toJSON(): object;
 
