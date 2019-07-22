@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/lucaong/minisearch.svg?branch=master)](https://travis-ci.org/lucaong/minisearch)
 [![Coverage Status](https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master)](https://coveralls.io/github/lucaong/minisearch?branch=master)
 [![Minzipped Size](https://img.shields.io/bundlephobia/minzip/minisearch.svg?style=flat)](https://bundlephobia.com/result?p=minisearch)
+[![](https://data.jsdelivr.com/v1/package/npm/minisearch/badge?style=rounded)](https://www.jsdelivr.com/package/npm/minisearch)
 
 `MiniSearch` is a tiny but powerful in-memory fulltext search engine written in
 JavaScript. It is respectful of resources, and it can comfortably run both in
@@ -63,9 +64,16 @@ yarn add minisearch
 
 Then `require` or `import` it in your project.
 
-Alternatively, to manually build the library, clone the repository and run `yarn
-build` (or `yarn build-minified` for a minified version + source maps). The
-compiled source will be created in the `dist` folder.
+Alternatively, if you prefer to use a `<script>` tag, you can require MiniSearch
+from a CDN:
+
+```
+<script src="https://cdn.jsdelivr.net/npm/minisearch@2.0.4/dist/minisearch.min.js"></script>
+```
+
+Finally, if you want to manually build the library, clone the repository and run
+`yarn build` (or `yarn build-minified` for a minified version + source maps).
+The compiled source will be created in the `dist` folder.
 
 
 ## Usage
