@@ -1,8 +1,5 @@
 // Type definitions for MiniSearch
 
-export as namespace MiniSearch;
-export = MiniSearch;
-
 declare class MiniSearch {
     constructor(options: Options);
 
@@ -27,7 +24,7 @@ declare class MiniSearch {
     static loadJSON(json: string, options: Options): MiniSearch;
 }
 
-interface SearchOptions {
+export declare interface SearchOptions {
   fields?: string[],
 
   boost?: { [fieldName: string]: number },
@@ -47,7 +44,7 @@ interface SearchOptions {
   processTerm?: (term: string) => string | null | undefined | false
 }
 
-interface Options {
+export declare interface Options {
   fields: string[],
 
   idField?: string,
@@ -61,20 +58,22 @@ interface Options {
   searchOptions?: SearchOptions
 }
 
-interface Suggestion {
+export declare interface Suggestion {
   suggestion: string,
 
   score: number
 }
 
-interface MatchInfo {
+export declare interface MatchInfo {
   [term: string]: string[]
 }
 
-interface SearchResult {
+export declare interface SearchResult {
   id: any,
 
   score: number,
 
   match: MatchInfo
 }
+
+export default MiniSearch
