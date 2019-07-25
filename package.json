@@ -67,5 +67,5 @@
     "lintfix": "standard --fix 'app/**/*.{js,jsx}'",
     "prepublishOnly": "yarn test && yarn build"
   },
-  "typings": "./src/index.d.ts"
+  "types": "./src/index.d.ts"
 }
