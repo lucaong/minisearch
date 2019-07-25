@@ -2,6 +2,10 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.0.6
+
+  - Better TypeScript definitions (by [@samuelmeuli](https://github.com/samuelmeuli))
+
 ## v2.0.5
 
   - Add TypeScript definitions for ease of use in TypeScript projects
