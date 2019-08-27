@@ -54,20 +54,28 @@ describe('MiniSearch', () => {
         return Array.isArray(value) ? value.join(' ') : value
       })
       const tokenize = jest.fn(string => string.split(/\W+/))
-      const ms = new MiniSearch({ fields: ['title', 'tags', 'author.name'], extractField, tokenize })
+      const ms = new MiniSearch({
+        fields: ['title', 'tags', 'author.name'],
+        storeFields: ['category'],
+        extractField,
+        tokenize
+      })
       const document = {
         id: 1,
         title: 'Divina Commedia',
         tags: ['divina', 'commedia', 'dante', 'alighieri'],
-        author: { name: 'Dante Alighieri' }
+        author: { name: 'Dante Alighieri' },
+        category: 'poetry'
       }
       ms.add(document)
       expect(extractField).toHaveBeenCalledWith(document, 'title')
       expect(extractField).toHaveBeenCalledWith(document, 'tags')
       expect(extractField).toHaveBeenCalledWith(document, 'author.name')
+      expect(extractField).toHaveBeenCalledWith(document, 'category')
       expect(tokenize).toHaveBeenCalledWith(document.title, 'title')
       expect(tokenize).toHaveBeenCalledWith(document.tags.join(' '), 'tags')
       expect(tokenize).toHaveBeenCalledWith(document.author.name, 'author.name')
+      expect(tokenize).not.toHaveBeenCalledWith(document.category, 'category')
     })
 
     it('passes field value and name to tokenizer', () => {
@@ -258,10 +266,10 @@ describe('MiniSearch', () => {
   describe('search', () => {
     const documents = [
       { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
-      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
-      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
+      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como', category: 'fiction' },
+      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria', category: 'poetry' }
     ]
-    const ms = new MiniSearch({ fields: ['title', 'text'] })
+    const ms = new MiniSearch({ fields: ['title', 'text'], storeFields: ['category'] })
     ms.addAll(documents)
 
     it('returns scored results', () => {
@@ -269,6 +277,12 @@ describe('MiniSearch', () => {
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ id }) => id).sort()).toEqual([1, 3])
       expect(results[0].score).toBeGreaterThanOrEqual(results[1].score)
+    })
+
+    it('returns stored fields in the results', () => {
+      const results = ms.search('del')
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ category }) => category).sort()).toEqual(['fiction', 'poetry', undefined])
     })
 
     it('returns empty array if there is no match', () => {
@@ -386,6 +400,14 @@ describe('MiniSearch', () => {
       expect(results.map(({ id }) => id).sort()).toEqual([1])
     })
 
+    it('allows custom filtering of results on the basis of stored fields', () => {
+      const results = ms.search('del', {
+        filter: ({ category }) => category === 'poetry'
+      })
+      expect(results.length).toBe(1)
+      expect(results.every(({ category }) => category === 'poetry')).toBe(true)
+    })
+
     describe('match data', () => {
       const documents = [
         { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
@@ -499,11 +521,11 @@ e forse del mio dir poco ti cale`
 
   describe('autoSuggest', () => {
     const documents = [
-      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
-      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
-      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
+      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita', category: 'poetry' },
+      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como', category: 'fiction' },
+      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria', category: 'poetry' }
     ]
-    const ms = new MiniSearch({ fields: ['title', 'text'] })
+    const ms = new MiniSearch({ fields: ['title', 'text'], storeFields: ['category'] })
     ms.addAll(documents)
 
     it('returns scored suggestions', () => {
@@ -548,17 +570,31 @@ e forse del mio dir poco ti cale`
       expect(results[0].suggestion).toEqual('vita')
       expect(results[0].terms).toEqual(['vita'])
     })
+
+    it('applies the given custom filter', () => {
+      let results = ms.autoSuggest('que', {
+        filter: ({ category }) => category === 'fiction'
+      })
+      expect(results[0].suggestion).toEqual('quel')
+      expect(results).toHaveLength(1)
+
+      results = ms.autoSuggest('que', {
+        filter: ({ category }) => category === 'poetry'
+      })
+      expect(results[0].suggestion).toEqual('quella')
+      expect(results).toHaveLength(1)
+    })
   })
 
   describe('loadJSON', () => {
     const documents = [
-      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
-      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
-      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria' }
+      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita', category: 'poetry' },
+      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como', category: 'fiction' },
+      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria', category: 'poetry' }
     ]
 
     it('loads a JSON-serialized search index', () => {
-      const options = { fields: ['title', 'text'] }
+      const options = { fields: ['title', 'text'], storeFields: ['category'] }
       const ms = new MiniSearch(options)
       ms.addAll(documents)
       const json = JSON.stringify(ms)

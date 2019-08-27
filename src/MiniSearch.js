@@ -32,6 +32,7 @@ class MiniSearch {
   * @param {Object} options - Configuration options
   * @param {Array<string>} options.fields - Fields to be indexed. Required.
   * @param {string} [options.idField='id'] - ID field, uniquely identifying a document
+  * @param {Array<string>} [options.storeFields] - Fields to store, so that search results would include them. By default none, so resuts would only contain the id field.
   * @param {function(document: Object, fieldName: string): string} [options.extractField] - Function used to get the value of a field in a document
   * @param {function(text: string, [fieldName]: string): Array<string>} [options.tokenize] - Function used to split a field into individual terms
   * @param {function(term: string, [fieldName]: string): string} [options.processTerm] - Function used to process a term before indexing it or searching
@@ -114,6 +115,9 @@ class MiniSearch {
     /** @private */
     this._nextId = 0
 
+    /** @private */
+    this._storedFields = {}
+
     addFields(this, fields)
   }
 
@@ -128,6 +132,8 @@ class MiniSearch {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
     const shortDocumentId = addDocumentId(this, document[idField])
+    saveStoredFields(this, shortDocumentId, document)
+
     fields.forEach(field => {
       const tokens = tokenize(extractField(document, field) || '', field)
       addFieldLength(this, shortDocumentId, this._fieldIds[field], this.documentCount - 1, tokens.length)
@@ -208,6 +214,7 @@ class MiniSearch {
         }
       })
     })
+    delete this._storedFields[shortDocumentId]
     delete this._documentIds[shortDocumentId]
     this._documentCount -= 1
   }
@@ -228,6 +235,7 @@ class MiniSearch {
   * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')
   * @param {function(query: string): Array<string>} [options.tokenize] - Function used to tokenize the search query. It defaults to the same tokenizer used for indexing.
   * @param {function(term: string): string|null|undefined|false} [options.processTerm] - Function used to process each search term. Return a falsy value to discard a term. Defaults to the same function used to process terms upon indexing.
+  * @param {function(result: Object): boolean} [options.filter] - Function used to filter search results, for example on the basis of stored fields
   * @return {Array<{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
   *
   * @example
@@ -274,6 +282,13 @@ class MiniSearch {
   * // Combine search terms with AND (to match only documents that contain both
   * // "motorcycle" and "art")
   * miniSearch.search('motorcycle art', { combineWith: 'AND' })
+  *
+  * @example
+  * // Filter only results in the 'fiction' category (assuming that 'category'
+  * is a stored field)
+  * miniSearch.search('motorcycle art', {
+  *   filter: (result) => result.category === 'fiction'
+  * })
   */
   search (queryString, options = {}) {
     const { tokenize, processTerm, searchOptions } = this._options
@@ -283,12 +298,24 @@ class MiniSearch {
       .map((term) => searchProcessTerm(term))
       .filter(isTruthy)
       .map(termToQuery(options))
-    const results = queries.map(query => this.executeQuery(query, options))
-    const combinedResults = this.combineResults(results, options.combineWith)
+    let results = queries.map(query => this.executeQuery(query, options))
+    results = this.combineResults(results, options.combineWith)
 
-    return Object.entries(combinedResults)
-      .map(([docId, { score, match, terms }]) => ({ id: this._documentIds[docId], terms: uniq(terms), score, match }))
+    results = Object.entries(results)
+      .map(([docId, { score, match, terms }]) => ({
+        ...(this._storedFields[docId] || {}),
+        id: this._documentIds[docId],
+        terms: uniq(terms),
+        score,
+        match
+      }))
       .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
+
+    if (typeof options.filter === 'function') {
+      results = results.filter(options.filter)
+    }
+
+    return results
   }
 
   /**
@@ -405,7 +432,8 @@ class MiniSearch {
       documentIds,
       fieldIds,
       fieldLength,
-      averageFieldLength
+      averageFieldLength,
+      storedFields
     } = js
     const miniSearch = new MiniSearch(options)
     miniSearch._index = new SearchableMap(_tree, _prefix)
@@ -416,6 +444,7 @@ class MiniSearch {
     miniSearch._fieldLength = fieldLength
     miniSearch._averageFieldLength = averageFieldLength
     miniSearch._fieldIds = fieldIds
+    miniSearch._storedFields = storedFields
     return miniSearch
   }
 
@@ -488,7 +517,8 @@ class MiniSearch {
       documentIds: this._documentIds,
       fieldIds: this._fieldIds,
       fieldLength: this._fieldLength,
-      averageFieldLength: this._averageFieldLength
+      averageFieldLength: this._averageFieldLength,
+      storedFields: this._storedFields
     }
   }
 }
@@ -580,6 +610,18 @@ const addFieldLength = function (self, documentId, fieldId, count, length) {
   self._averageFieldLength[fieldId] = totalLength / (count + 1)
 }
 
+const saveStoredFields = function (self, documentId, doc) {
+  const { storeFields, extractField } = self._options
+  if (storeFields == null || storeFields.length === 0) { return }
+  self._storedFields[documentId] = self._storedFields[documentId] || {}
+
+  storeFields.forEach((fieldName) => {
+    const fieldValue = extractField(doc, fieldName)
+    if (fieldValue === undefined) { return }
+    self._storedFields[documentId][fieldName] = fieldValue
+  })
+}
+
 const combinators = {
   [OR]: function (a, b) {
     return Object.entries(b).reduce((combined, [documentId, { score, match, terms }]) => {
@@ -638,7 +680,8 @@ const defaultOptions = {
   tokenize: (string, _fieldName) => string.split(SPACE_OR_PUNCTUATION),
   processTerm: (term, _fieldName) => term.toLowerCase(),
   fields: undefined,
-  searchOptions: undefined
+  searchOptions: undefined,
+  storeFields: []
 }
 
 const defaultSearchOptions = {
