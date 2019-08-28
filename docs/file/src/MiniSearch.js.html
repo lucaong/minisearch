@@ -46,30 +46,58 @@ const AND = &apos;and&apos;
 * engine.
 *
 * @example
-* // Create a search engine that indexes the &apos;title&apos; and &apos;text&apos; fields of your
-* // documents:
-* const miniSearch = MiniSearch.new({ fields: [&apos;title&apos;, &apos;text&apos;] })
-*
 * const documents = [
-*   { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
-*   { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, text: &apos;I can see by my watch...&apos; },
-*   { id: 3, title: &apos;Neuromancer&apos;, text: &apos;The sky above the port was...&apos; },
-*   { id: 4, title: &apos;Zen and the Art of Archery&apos;, text: &apos;At first sight it must seem...&apos; },
+*   {
+*     id: 1,
+*     title: &apos;Moby Dick&apos;,
+*     text: &apos;Call me Ishmael. Some years ago...&apos;,
+*     category: &apos;fiction&apos;
+*   },
+*   {
+*     id: 2,
+*     title: &apos;Zen and the Art of Motorcycle Maintenance&apos;,
+*     text: &apos;I can see by my watch...&apos;,
+*     category: &apos;fiction&apos;
+*   },
+*   {
+*     id: 3,
+*     title: &apos;Neuromancer&apos;,
+*     text: &apos;The sky above the port was...&apos;,
+*     category: &apos;fiction&apos;
+*   },
+*   {
+*     id: 4,
+*     title: &apos;Zen and the Art of Archery&apos;,
+*     text: &apos;At first sight it must seem...&apos;,
+*     category: &apos;non-fiction&apos;
+*   },
 *   // ...and more
 * ]
+*
+* // Create a search engine that indexes the &apos;title&apos; and &apos;text&apos; fields for
+* // full-text search. Search results will include &apos;title&apos; and &apos;category&apos; (plus the
+* // id field, that is always stored and returned)
+* const miniSearch = MiniSearch.new({
+*   fields: [&apos;title&apos;, &apos;text&apos;],
+*   storeFields: [&apos;title&apos;, &apos;category&apos;]
+* })
 *
 * // Add documents to the index
 * miniSearch.addAll(documents)
 *
 * // Search for documents:
 * let results = miniSearch.search(&apos;zen art motorcycle&apos;)
-* // =&gt; [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]
+* // =&gt; [
+*   { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, category: &apos;fiction&apos;, score: 2.77258 },
+*   { id: 4, title: &apos;Zen and the Art of Archery&apos;, category: &apos;non-fiction&apos;, score: 1.38629 }
+* ]
 * */
 class MiniSearch {
   /**
   * @param {Object} options - Configuration options
   * @param {Array&lt;string&gt;} options.fields - Fields to be indexed. Required.
   * @param {string} [options.idField=&apos;id&apos;] - ID field, uniquely identifying a document
+  * @param {Array&lt;string&gt;} [options.storeFields] - Fields to store, so that search results would include them. By default none, so resuts would only contain the id field.
   * @param {function(document: Object, fieldName: string): string} [options.extractField] - Function used to get the value of a field in a document
   * @param {function(text: string, [fieldName]: string): Array&lt;string&gt;} [options.tokenize] - Function used to split a field into individual terms
   * @param {function(term: string, [fieldName]: string): string} [options.processTerm] - Function used to process a term before indexing it or searching
@@ -118,6 +146,10 @@ class MiniSearch {
   *
   *   // fields: document fields to be indexed. Mandatory, but not set by default
   *   fields: undefined
+  *
+  *   // storeFields: document fields to be stored and returned as part of the
+  *   // search results.
+  *   storeFields: []
   * })
   */
   constructor (options = {}) {
@@ -152,6 +184,9 @@ class MiniSearch {
     /** @private */
     this._nextId = 0
 
+    /** @private */
+    this._storedFields = {}
+
     addFields(this, fields)
   }
 
@@ -166,6 +201,8 @@ class MiniSearch {
       throw new Error(`MiniSearch: document does not have ID field &quot;${idField}&quot;`)
     }
     const shortDocumentId = addDocumentId(this, document[idField])
+    saveStoredFields(this, shortDocumentId, document)
+
     fields.forEach(field =&gt; {
       const tokens = tokenize(extractField(document, field) || &apos;&apos;, field)
       addFieldLength(this, shortDocumentId, this._fieldIds[field], this.documentCount - 1, tokens.length)
@@ -246,6 +283,7 @@ class MiniSearch {
         }
       })
     })
+    delete this._storedFields[shortDocumentId]
     delete this._documentIds[shortDocumentId]
     this._documentCount -= 1
   }
@@ -266,6 +304,7 @@ class MiniSearch {
   * @param {string} [options.combineWith=&apos;OR&apos;] - How to combine term queries (it can be &apos;OR&apos; or &apos;AND&apos;)
   * @param {function(query: string): Array&lt;string&gt;} [options.tokenize] - Function used to tokenize the search query. It defaults to the same tokenizer used for indexing.
   * @param {function(term: string): string|null|undefined|false} [options.processTerm] - Function used to process each search term. Return a falsy value to discard a term. Defaults to the same function used to process terms upon indexing.
+  * @param {function(result: Object): boolean} [options.filter] - Function used to filter search results, for example on the basis of stored fields
   * @return {Array&lt;{ id: any, score: number, match: Object }&gt;} A sorted array of scored document IDs matching the search
   *
   * @example
@@ -312,6 +351,13 @@ class MiniSearch {
   * // Combine search terms with AND (to match only documents that contain both
   * // &quot;motorcycle&quot; and &quot;art&quot;)
   * miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })
+  *
+  * @example
+  * // Filter only results in the &apos;fiction&apos; category (assuming that &apos;category&apos;
+  * // is a stored field)
+  * miniSearch.search(&apos;motorcycle art&apos;, {
+  *   filter: (result) =&gt; result.category === &apos;fiction&apos;
+  * })
   */
   search (queryString, options = {}) {
     const { tokenize, processTerm, searchOptions } = this._options
@@ -321,12 +367,24 @@ class MiniSearch {
       .map((term) =&gt; searchProcessTerm(term))
       .filter(isTruthy)
       .map(termToQuery(options))
-    const results = queries.map(query =&gt; this.executeQuery(query, options))
-    const combinedResults = this.combineResults(results, options.combineWith)
+    let results = queries.map(query =&gt; this.executeQuery(query, options))
+    results = this.combineResults(results, options.combineWith)
 
-    return Object.entries(combinedResults)
-      .map(([docId, { score, match, terms }]) =&gt; ({ id: this._documentIds[docId], terms: uniq(terms), score, match }))
+    results = Object.entries(results)
+      .map(([docId, { score, match, terms }]) =&gt; ({
+        ...(this._storedFields[docId] || {}),
+        id: this._documentIds[docId],
+        terms: uniq(terms),
+        score,
+        match
+      }))
       .sort(({ score: a }, { score: b }) =&gt; a &lt; b ? 1 : -1)
+
+    if (typeof options.filter === &apos;function&apos;) {
+      results = results.filter(options.filter)
+    }
+
+    return results
   }
 
   /**
@@ -347,13 +405,26 @@ class MiniSearch {
   * @example
   * // Get suggestions for &apos;zen ar&apos;:
   * miniSearch.autoSuggest(&apos;zen ar&apos;)
-  * // =&gt; [ { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
-  * //      { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 } ]
+  * // =&gt; [
+  * //  { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
+  * //  { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 }
+  * // ]
   *
   * @example
   * // Correct spelling mistakes using fuzzy search:
   * miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
   * // =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 1.03998 } ]
+  *
+  * @example
+  * // Get suggestions for &apos;zen ar&apos;, but only within the &apos;fiction&apos; category
+  * // (assuming that &apos;category&apos; is a stored field):
+  * miniSearch.autoSuggest(&apos;zen ar&apos;, {
+  *   filter: (result) =&gt; result.category === &apos;fiction&apos;
+  * })
+  * // =&gt; [
+  * //  { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
+  * //  { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 }
+  * // ]
   */
   autoSuggest (queryString, options = {}) {
     options = { ...defaultAutoSuggestOptions, ...options }
@@ -443,7 +514,8 @@ class MiniSearch {
       documentIds,
       fieldIds,
       fieldLength,
-      averageFieldLength
+      averageFieldLength,
+      storedFields
     } = js
     const miniSearch = new MiniSearch(options)
     miniSearch._index = new SearchableMap(_tree, _prefix)
@@ -454,6 +526,7 @@ class MiniSearch {
     miniSearch._fieldLength = fieldLength
     miniSearch._averageFieldLength = averageFieldLength
     miniSearch._fieldIds = fieldIds
+    miniSearch._storedFields = storedFields
     return miniSearch
   }
 
@@ -526,7 +599,8 @@ class MiniSearch {
       documentIds: this._documentIds,
       fieldIds: this._fieldIds,
       fieldLength: this._fieldLength,
-      averageFieldLength: this._averageFieldLength
+      averageFieldLength: this._averageFieldLength,
+      storedFields: this._storedFields
     }
   }
 }
@@ -618,6 +692,18 @@ const addFieldLength = function (self, documentId, fieldId, count, length) {
   self._averageFieldLength[fieldId] = totalLength / (count + 1)
 }
 
+const saveStoredFields = function (self, documentId, doc) {
+  const { storeFields, extractField } = self._options
+  if (storeFields == null || storeFields.length === 0) { return }
+  self._storedFields[documentId] = self._storedFields[documentId] || {}
+
+  storeFields.forEach((fieldName) =&gt; {
+    const fieldValue = extractField(doc, fieldName)
+    if (fieldValue === undefined) { return }
+    self._storedFields[documentId][fieldName] = fieldValue
+  })
+}
+
 const combinators = {
   [OR]: function (a, b) {
     return Object.entries(b).reduce((combined, [documentId, { score, match, terms }]) =&gt; {
@@ -676,7 +762,8 @@ const defaultOptions = {
   tokenize: (string, _fieldName) =&gt; string.split(SPACE_OR_PUNCTUATION),
   processTerm: (term, _fieldName) =&gt; term.toLowerCase(),
   fields: undefined,
-  searchOptions: undefined
+  searchOptions: undefined,
+  storeFields: []
 }
 
 const defaultSearchOptions = {

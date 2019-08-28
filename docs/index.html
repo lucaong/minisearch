@@ -84,21 +84,47 @@ from a CDN:</p>
 The compiled source will be created in the <code>dist</code> folder.</p>
 <h2 id="usage">Usage</h2><h3 id="basic-usage">Basic usage</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our examples
 const documents = [
-  { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
-  { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, text: &apos;I can see by my watch...&apos; },
-  { id: 3, title: &apos;Neuromancer&apos;, text: &apos;The sky above the port was...&apos; },
-  { id: 4, title: &apos;Zen and the Art of Archery&apos;, text: &apos;At first sight it must seem...&apos; },
+  {
+    id: 1,
+    title: &apos;Moby Dick&apos;,
+    text: &apos;Call me Ishmael. Some years ago...&apos;,
+    category: &apos;fiction&apos;
+  },
+  {
+    id: 2,
+    title: &apos;Zen and the Art of Motorcycle Maintenance&apos;,
+    text: &apos;I can see by my watch...&apos;,
+    category: &apos;fiction&apos;
+  },
+  {
+    id: 3,
+    title: &apos;Neuromancer&apos;,
+    text: &apos;The sky above the port was...&apos;,
+    category: &apos;fiction&apos;
+  },
+  {
+    id: 4,
+    title: &apos;Zen and the Art of Archery&apos;,
+    text: &apos;At first sight it must seem...&apos;,
+    category: &apos;non-fiction&apos;
+  },
   // ...and more
 ]
 
-let miniSearch = new MiniSearch({ fields: [&apos;title&apos;, &apos;text&apos;] })
+let miniSearch = new MiniSearch({
+  fields: [&apos;title&apos;, &apos;text&apos;], // fields to index for full-text search
+  storeFields: [&apos;title&apos;, &apos;category&apos;] // fields to return with search results
+})
 
 // Index all documents
 miniSearch.addAll(documents)
 
 // Search with default options
 let results = miniSearch.search(&apos;zen art motorcycle&apos;)
-// =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]</code>
+// =&gt; [
+//   { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, category: &apos;fiction&apos;, score: 2.77258, match: { ... } },
+//   { id: 4, title: &apos;Zen and the Art of Archery&apos;, category: &apos;non-fiction&apos;, score: 1.38629, match: { ... } }
+// ]</code>
 </code></pre>
 <h3 id="search-options">Search options</h3><p><code>MiniSearch</code> supports several options for more advanced search behavior:</p>
 <pre><code class="lang-javascript"><code class="source-code prettyprint">// Search only specific fields
@@ -109,6 +135,11 @@ miniSearch.search(&apos;zen&apos;, { boost: { title: 2 } })
 
 // Prefix search (so that &apos;moto&apos; will match &apos;motorcycle&apos;)
 miniSearch.search(&apos;moto&apos;, { prefix: true })
+
+// Search within a specific category
+miniSearch.search(&apos;zen&apos;, {
+  filter: (result) =&gt; result.category === &apos;fiction&apos;
+})
 
 // Fuzzy search, in this example, with a max edit distance of 0.2 * term length,
 // rounded to nearest integer. The mispelled &apos;ismael&apos; will match &apos;ishmael&apos;.
@@ -139,6 +170,13 @@ can get suggestions for misspelled words using fuzzy search:</p>
 </code></pre>
 <p>Suggestions are ranked by the relevance of the documents that would be returned
 by that search.</p>
+<p>Sometimes, you might need to filter auto suggestions to, say, only a specific
+category. You can do so by providing a <code>filter</code> option:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">miniSearch.autoSuggest(&apos;zen ar&apos;, {
+  filter: (result) =&gt; result.category === &apos;fiction&apos;
+})
+// =&gt; [ { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 } ]</code>
+</code></pre>
 <h3 id="field-extraction">Field extraction</h3><p>By default, documents are assumed to be plain key-value objects with field names
 as keys and field values as string values. In order to support custom field
 extraction logic (for example for nested fields, or non-string field values
