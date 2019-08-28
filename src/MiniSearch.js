@@ -488,7 +488,7 @@ class MiniSearch {
     miniSearch._fieldLength = fieldLength
     miniSearch._averageFieldLength = averageFieldLength
     miniSearch._fieldIds = fieldIds
-    miniSearch._storedFields = storedFields
+    miniSearch._storedFields = storedFields || {}
     return miniSearch
   }
 
