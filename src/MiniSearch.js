@@ -329,24 +329,24 @@ class MiniSearch {
       .map((term) => searchProcessTerm(term))
       .filter(isTruthy)
       .map(termToQuery(options))
-    let results = queries.map(query => this.executeQuery(query, options))
-    results = this.combineResults(results, options.combineWith)
+    const results = queries.map(query => this.executeQuery(query, options))
+    const combinedResults = this.combineResults(results, options.combineWith)
 
-    results = Object.entries(results)
-      .map(([docId, { score, match, terms }]) => ({
-        ...(this._storedFields[docId] || {}),
-        id: this._documentIds[docId],
-        terms: uniq(terms),
-        score,
-        match
-      }))
+    return Object.entries(combinedResults)
+      .reduce((results, [docId, { score, match, terms }]) => {
+        const result = {
+          id: this._documentIds[docId],
+          terms: uniq(terms),
+          score,
+          match
+        }
+        Object.assign(result, this._storedFields[docId])
+        if (options.filter == null || options.filter(result)) {
+          results.push(result)
+        }
+        return results
+      }, [])
       .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
-
-    if (typeof options.filter === 'function') {
-      results = results.filter(options.filter)
-    }
-
-    return results
   }
 
   /**
