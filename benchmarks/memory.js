@@ -10,7 +10,7 @@ const bytesToMb = (bytes) => {
 }
 
 const memory = (docs) => {
-  const miniSearch = new MiniSearch({ fields: ['txt'] })
+  const miniSearch = new MiniSearch({ fields: ['txt'], storeFields: ['txt'] })
 
   const heapBefore = heapSize()
   miniSearch.addAll(docs)
