@@ -36,13 +36,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import MiniSearch from &apos;<span><a href="file/src/MiniSearch.js.html#lineNumber30">minisearch/src/MiniSearch.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import MiniSearch from &apos;<span><a href="file/src/MiniSearch.js.html#lineNumber57">minisearch/src/MiniSearch.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/MiniSearch.js.html#lineNumber30">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/MiniSearch.js.html#lineNumber57">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -74,24 +74,51 @@ engine.</p>
     
   <div class="example-doc" data-ice="exampleDoc">
       
-      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Create a search engine that indexes the &apos;title&apos; and &apos;text&apos; fields of your
-// documents:
-const miniSearch = MiniSearch.new({ fields: [&apos;title&apos;, &apos;text&apos;] })
-
-const documents = [
-  { id: 1, title: &apos;Moby Dick&apos;, text: &apos;Call me Ishmael. Some years ago...&apos; },
-  { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, text: &apos;I can see by my watch...&apos; },
-  { id: 3, title: &apos;Neuromancer&apos;, text: &apos;The sky above the port was...&apos; },
-  { id: 4, title: &apos;Zen and the Art of Archery&apos;, text: &apos;At first sight it must seem...&apos; },
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">const documents = [
+  {
+    id: 1,
+    title: &apos;Moby Dick&apos;,
+    text: &apos;Call me Ishmael. Some years ago...&apos;,
+    category: &apos;fiction&apos;
+  },
+  {
+    id: 2,
+    title: &apos;Zen and the Art of Motorcycle Maintenance&apos;,
+    text: &apos;I can see by my watch...&apos;,
+    category: &apos;fiction&apos;
+  },
+  {
+    id: 3,
+    title: &apos;Neuromancer&apos;,
+    text: &apos;The sky above the port was...&apos;,
+    category: &apos;fiction&apos;
+  },
+  {
+    id: 4,
+    title: &apos;Zen and the Art of Archery&apos;,
+    text: &apos;At first sight it must seem...&apos;,
+    category: &apos;non-fiction&apos;
+  },
   // ...and more
 ]
+
+// Create a search engine that indexes the &apos;title&apos; and &apos;text&apos; fields for
+// full-text search. Search results will include &apos;title&apos; and &apos;category&apos; (plus the
+// id field, that is always stored and returned)
+const miniSearch = MiniSearch.new({
+  fields: [&apos;title&apos;, &apos;text&apos;],
+  storeFields: [&apos;title&apos;, &apos;category&apos;]
+})
 
 // Add documents to the index
 miniSearch.addAll(documents)
 
 // Search for documents:
 let results = miniSearch.search(&apos;zen art motorcycle&apos;)
-// =&gt; [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]</code></pre>
+// =&gt; [
+  { id: 2, title: &apos;Zen and the Art of Motorcycle Maintenance&apos;, category: &apos;fiction&apos;, score: 2.77258 },
+  { id: 4, title: &apos;Zen and the Art of Archery&apos;, category: &apos;non-fiction&apos;, score: 1.38629 }
+]</code></pre>
     </div>
 </div>
 
@@ -467,7 +494,7 @@ deserialize it with MiniSearch.loadJSON</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber388">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber459">source</a></span></span>
     </span>
   </h3>
 
@@ -561,7 +588,7 @@ MiniSearch.getDefault(&apos;notExisting&apos;)
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber361">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber432">source</a></span></span>
     </span>
   </h3>
 
@@ -652,7 +679,7 @@ though, it will be properly reported in the changelog.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber85">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber117">source</a></span></span>
     </span>
   </h3>
 
@@ -691,6 +718,13 @@ though, it will be properly reported in the changelog.</p>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: &apos;id&apos;</li></ul></td>
       <td data-ice="description"><p>ID field, uniquely identifying a document</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.storeFields</td>
+      <td data-ice="type" class="code"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span>&gt;</td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Fields to store, so that search results would include them. By default none, so resuts would only contain the id field.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
@@ -785,6 +819,10 @@ const miniSearch = MiniSearch.new({
 
   // fields: document fields to be indexed. Mandatory, but not set by default
   fields: undefined
+
+  // storeFields: document fields to be stored and returned as part of the
+  // search results.
+  storeFields: []
 })</code></pre>
     </div>
 </div>
@@ -809,7 +847,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber342">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber413">source</a></span></span>
     </span>
   </h3>
 
@@ -856,7 +894,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber125">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber160">source</a></span></span>
     </span>
   </h3>
 
@@ -917,7 +955,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber148">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber185">source</a></span></span>
     </span>
   </h3>
 
@@ -978,7 +1016,7 @@ const miniSearch = MiniSearch.new({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber164">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber201">source</a></span></span>
     </span>
   </h3>
 
@@ -1069,7 +1107,7 @@ thread. The indexing is performed asynchronously and in chunks.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber320">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber391">source</a></span></span>
     </span>
   </h3>
 
@@ -1146,14 +1184,28 @@ miniSearch.autoSuggest(&apos;neuro&apos;)
       
       <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get suggestions for &apos;zen ar&apos;:
 miniSearch.autoSuggest(&apos;zen ar&apos;)
-// =&gt; [ { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
-//      { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 } ]</code></pre>
+// =&gt; [
+//  { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
+//  { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 }
+// ]</code></pre>
     </div>
 <div class="example-doc" data-ice="exampleDoc">
       
       <pre class="prettyprint source-code"><code data-ice="exampleCode">// Correct spelling mistakes using fuzzy search:
 miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
 // =&gt; [ { suggestion: &apos;neuromancer&apos;, terms: [ &apos;neuromancer&apos; ], score: 1.03998 } ]</code></pre>
+    </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Get suggestions for &apos;zen ar&apos;, but only within the &apos;fiction&apos; category
+// (assuming that &apos;category&apos; is a stored field):
+miniSearch.autoSuggest(&apos;zen ar&apos;, {
+  filter: (result) =&gt; result.category === &apos;fiction&apos;
+})
+// =&gt; [
+//  { suggestion: &apos;zen archery art&apos;, terms: [ &apos;zen&apos;, &apos;archery&apos;, &apos;art&apos; ], score: 1.73332 },
+//  { suggestion: &apos;zen art&apos;, terms: [ &apos;zen&apos;, &apos;art&apos; ], score: 1.21313 }
+// ]</code></pre>
     </div>
 </div>
 
@@ -1174,7 +1226,7 @@ miniSearch.autoSuggest(&apos;neromancer&apos;, { fuzzy: 0.2 })
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber193">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber230">source</a></span></span>
     </span>
   </h3>
 
@@ -1243,7 +1295,7 @@ after a change, the correct order of operations is:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber278">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber324">source</a></span></span>
     </span>
   </h3>
 
@@ -1332,6 +1384,13 @@ in which fields.</p>
       <td data-ice="description"><p>Function used to process each search term. Return a falsy value to discard a term. Defaults to the same function used to process terms upon indexing.</p>
 </td>
     </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.filter</td>
+      <td data-ice="type" class="code"><span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>(result: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>)</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
+      <td data-ice="description"><p>Function used to filter search results, for example on the basis of stored fields</p>
+</td>
+    </tr>
 </tbody>
   </table>
 </div>
@@ -1416,6 +1475,14 @@ miniSearch.search(&apos;ismael mob&apos;, {
 // &quot;motorcycle&quot; and &quot;art&quot;)
 miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })</code></pre>
     </div>
+<div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">// Filter only results in the &apos;fiction&apos; category (assuming that &apos;category&apos;
+// is a stored field)
+miniSearch.search(&apos;motorcycle art&apos;, {
+  filter: (result) =&gt; result.category === &apos;fiction&apos;
+})</code></pre>
+    </div>
 </div>
 
   
@@ -1435,7 +1502,7 @@ miniSearch.search(&apos;motorcycle art&apos;, { combineWith: &apos;AND&apos; })<
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber483">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/MiniSearch.js.html#lineNumber556">source</a></span></span>
     </span>
   </h3>
 
