@@ -24,6 +24,7 @@
   "devDependencies": {
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.1",
+    "@babel/node": "^7.5.5",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "babel-core": "^7.0.0-0",
@@ -59,7 +60,7 @@
     "test": "jest",
     "test-watch": "jest --watch",
     "coverage": "jest --coverage",
-    "benchmark": "webpack benchmarks/index.js -o dist/benchmarks.js --mode=production && node dist/benchmarks.js",
+    "benchmark": "NODE_ENV=production babel-node --expose-gc benchmarks/index.js",
     "build": "webpack --mode=production",
     "build-minified": "webpack --mode=production --config=webpack.minified.js",
     "build-docs": "esdoc",
