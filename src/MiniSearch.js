@@ -8,24 +8,51 @@ const AND = 'and'
 * engine.
 *
 * @example
-* // Create a search engine that indexes the 'title' and 'text' fields of your
-* // documents:
-* const miniSearch = MiniSearch.new({ fields: ['title', 'text'] })
-*
 * const documents = [
-*   { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },
-*   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },
-*   { id: 3, title: 'Neuromancer', text: 'The sky above the port was...' },
-*   { id: 4, title: 'Zen and the Art of Archery', text: 'At first sight it must seem...' },
+*   {
+*     id: 1,
+*     title: 'Moby Dick',
+*     text: 'Call me Ishmael. Some years ago...',
+*     category: 'fiction'
+*   },
+*   {
+*     id: 2,
+*     title: 'Zen and the Art of Motorcycle Maintenance',
+*     text: 'I can see by my watch...',
+*     category: 'fiction'
+*   },
+*   {
+*     id: 3,
+*     title: 'Neuromancer',
+*     text: 'The sky above the port was...',
+*     category: 'fiction'
+*   },
+*   {
+*     id: 4,
+*     title: 'Zen and the Art of Archery',
+*     text: 'At first sight it must seem...',
+*     category: 'non-fiction'
+*   },
 *   // ...and more
 * ]
+*
+* // Create a search engine that indexes the 'title' and 'text' fields for
+* // full-text search. Search results will include 'title' and 'category' (plus the
+* // id field, that is always stored and returned)
+* const miniSearch = MiniSearch.new({
+*   fields: ['title', 'text'],
+*   storeFields: ['title', 'category']
+* })
 *
 * // Add documents to the index
 * miniSearch.addAll(documents)
 *
 * // Search for documents:
 * let results = miniSearch.search('zen art motorcycle')
-* // => [ { id: 2, score: 2.77258 }, { id: 4, score: 1.38629 } ]
+* // => [
+*   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', category: 'fiction', score: 2.77258 },
+*   { id: 4, title: 'Zen and the Art of Archery', category: 'non-fiction', score: 1.38629 }
+* ]
 * */
 class MiniSearch {
   /**
@@ -81,6 +108,10 @@ class MiniSearch {
   *
   *   // fields: document fields to be indexed. Mandatory, but not set by default
   *   fields: undefined
+  *
+  *   // storeFields: document fields to be stored and returned as part of the
+  *   // search results.
+  *   storeFields: []
   * })
   */
   constructor (options = {}) {
@@ -285,7 +316,7 @@ class MiniSearch {
   *
   * @example
   * // Filter only results in the 'fiction' category (assuming that 'category'
-  * is a stored field)
+  * // is a stored field)
   * miniSearch.search('motorcycle art', {
   *   filter: (result) => result.category === 'fiction'
   * })
@@ -336,13 +367,26 @@ class MiniSearch {
   * @example
   * // Get suggestions for 'zen ar':
   * miniSearch.autoSuggest('zen ar')
-  * // => [ { suggestion: 'zen archery art', terms: [ 'zen', 'archery', 'art' ], score: 1.73332 },
-  * //      { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 } ]
+  * // => [
+  * //  { suggestion: 'zen archery art', terms: [ 'zen', 'archery', 'art' ], score: 1.73332 },
+  * //  { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 }
+  * // ]
   *
   * @example
   * // Correct spelling mistakes using fuzzy search:
   * miniSearch.autoSuggest('neromancer', { fuzzy: 0.2 })
   * // => [ { suggestion: 'neuromancer', terms: [ 'neuromancer' ], score: 1.03998 } ]
+  *
+  * @example
+  * // Get suggestions for 'zen ar', but only within the 'fiction' category
+  * // (assuming that 'category' is a stored field):
+  * miniSearch.autoSuggest('zen ar', {
+  *   filter: (result) => result.category === 'fiction'
+  * })
+  * // => [
+  * //  { suggestion: 'zen archery art', terms: [ 'zen', 'archery', 'art' ], score: 1.73332 },
+  * //  { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 }
+  * // ]
   */
   autoSuggest (queryString, options = {}) {
     options = { ...defaultAutoSuggestOptions, ...options }

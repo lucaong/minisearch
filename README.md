@@ -83,21 +83,47 @@ The compiled source will be created in the `dist` folder.
 ```javascript
 // A collection of documents for our examples
 const documents = [
-  { id: 1, title: 'Moby Dick', text: 'Call me Ishmael. Some years ago...' },
-  { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', text: 'I can see by my watch...' },
-  { id: 3, title: 'Neuromancer', text: 'The sky above the port was...' },
-  { id: 4, title: 'Zen and the Art of Archery', text: 'At first sight it must seem...' },
+  {
+    id: 1,
+    title: 'Moby Dick',
+    text: 'Call me Ishmael. Some years ago...',
+    category: 'fiction'
+  },
+  {
+    id: 2,
+    title: 'Zen and the Art of Motorcycle Maintenance',
+    text: 'I can see by my watch...',
+    category: 'fiction'
+  },
+  {
+    id: 3,
+    title: 'Neuromancer',
+    text: 'The sky above the port was...',
+    category: 'fiction'
+  },
+  {
+    id: 4,
+    title: 'Zen and the Art of Archery',
+    text: 'At first sight it must seem...',
+    category: 'non-fiction'
+  },
   // ...and more
 ]
 
-let miniSearch = new MiniSearch({ fields: ['title', 'text'] })
+let miniSearch = new MiniSearch({
+  fields: ['title', 'text'], // fields to index for full-text search
+  storeFields: ['title', 'category'] // fields to return with search results
+})
 
 // Index all documents
 miniSearch.addAll(documents)
 
 // Search with default options
 let results = miniSearch.search('zen art motorcycle')
-// => [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]
+// => [
+//   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', category: 'fiction', score: 2.77258, match: { ... } },
+//   { id: 4, title: 'Zen and the Art of Archery', category: 'non-fiction', score: 1.38629, match: { ... } }
+// ]
 ```
 
 ### Search options
@@ -113,6 +139,11 @@ miniSearch.search('zen', { boost: { title: 2 } })
 
 // Prefix search (so that 'moto' will match 'motorcycle')
 miniSearch.search('moto', { prefix: true })
+
+// Search within a specific category
+miniSearch.search('zen', {
+  filter: (result) => result.category === 'fiction'
+})
 
 // Fuzzy search, in this example, with a max edit distance of 0.2 * term length,
 // rounded to nearest integer. The mispelled 'ismael' will match 'ishmael'.
@@ -152,6 +183,16 @@ miniSearch.autoSuggest('neromancer', { fuzzy: 0.2 })
 
 Suggestions are ranked by the relevance of the documents that would be returned
 by that search.
+
+Sometimes, you might need to filter auto suggestions to, say, only a specific
+category. You can do so by providing a `filter` option:
+
+```javascript
+miniSearch.autoSuggest('zen ar', {
+  filter: (result) => result.category === 'fiction'
+})
+// => [ { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 } ]
+```
 
 ### Field extraction
 
