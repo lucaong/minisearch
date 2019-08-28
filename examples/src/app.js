@@ -7,11 +7,12 @@ class App extends React.PureComponent {
     super(props)
     const miniSearch = new MiniSearch({
       fields: ['artist', 'title'],
+      storeFields: ['year'],
       processTerm: (term, _fieldName) => (term.length <= 1 || stopWords.has(term)) ? null : term.toLowerCase()
     })
     ;['handleSearchChange', 'handleSearchKeyDown', 'handleSuggestionClick',
       'handleSearchClear', 'handleAppClick', 'setSearchOption',
-      'performSearch'].forEach((method) => {
+      'performSearch', 'setFromYear', 'setToYear'].forEach((method) => {
       this[method] = this[method].bind(this)
     })
     this.searchInputRef = React.createRef()
@@ -22,11 +23,14 @@ class App extends React.PureComponent {
       ready: false,
       suggestions: [],
       selectedSuggestion: -1,
+      fromYear: 1965,
+      toYear: 2015,
       searchOptions: {
         fuzzy: 0.2,
         prefix: true,
         fields: ['title', 'artist'],
-        combineWith: 'OR'
+        combineWith: 'OR',
+        filter: null
       },
       miniSearch
     }
@@ -102,6 +106,36 @@ class App extends React.PureComponent {
     }
   }
 
+  setFromYear (year) {
+    this.setState(({ toYear, searchOptions }) => {
+      const fromYear = parseInt(year, 10)
+      if (fromYear <= 1965 && toYear >= 2015) {
+        return { fromYear, searchOptions: { ...searchOptions, filter: null } }
+      } else {
+        const filter = ({ year }) => {
+          year = parseInt(year, 10)
+          return year >= fromYear && year <= toYear
+        }
+        return { fromYear, searchOptions: { ...searchOptions, filter } }
+      }
+    }, this.performSearch)
+  }
+
+  setToYear (year) {
+    this.setState(({ fromYear, searchOptions }) => {
+      const toYear = parseInt(year, 10)
+      if (fromYear <= 1965 && toYear >= 2015) {
+        return { toYear, searchOptions: { ...searchOptions, filter: null } }
+      } else {
+        const filter = ({ year }) => {
+          year = parseInt(year, 10)
+          return year >= fromYear && year <= toYear
+        }
+        return { toYear, searchOptions: { ...searchOptions, filter } }
+      }
+    }, this.performSearch)
+  }
+
   searchSongs (query) {
     const { miniSearch, songsById, searchOptions } = this.state
     return miniSearch.search(query, searchOptions).map(({ id }) => songsById[id])
@@ -122,7 +156,7 @@ class App extends React.PureComponent {
   }
 
   render () {
-    const { matchingSongs, searchValue, ready, suggestions, selectedSuggestion, searchOptions } = this.state
+    const { matchingSongs, searchValue, ready, suggestions, selectedSuggestion, searchOptions, fromYear, toYear } = this.state
     return (
       <div className='App' onClick={this.handleAppClick}>
         <article className='main'>
@@ -132,7 +166,9 @@ class App extends React.PureComponent {
                 onChange={this.handleSearchChange} onKeyDown={this.handleSearchKeyDown}
                 selectedSuggestion={selectedSuggestion} onSuggestionClick={this.handleSuggestionClick}
                 onSearchClear={this.handleSearchClear} value={searchValue} suggestions={suggestions}
-                searchInputRef={this.searchInputRef} searchOptions={searchOptions} setSearchOption={this.setSearchOption} />
+                searchInputRef={this.searchInputRef} searchOptions={searchOptions} setSearchOption={this.setSearchOption}
+                setFromYear={this.setFromYear} setToYear={this.setToYear} fromYear={fromYear} toYear={toYear}
+              />
               : <Loader />
           }
           {
@@ -170,7 +206,22 @@ const Header = (props) => (
   </header>
 )
 
-const SearchBox = ({ onChange, onKeyDown, onSuggestionClick, onSearchClear, value, suggestions, selectedSuggestion, searchInputRef, searchOptions, setSearchOption }) => (
+const SearchBox = ({
+  onChange,
+  onKeyDown,
+  onSuggestionClick,
+  onSearchClear,
+  value,
+  suggestions,
+  selectedSuggestion,
+  searchInputRef,
+  searchOptions,
+  setSearchOption,
+  setFromYear,
+  setToYear,
+  fromYear,
+  toYear
+}) => (
   <div className='SearchBox'>
     <div className='Search'>
       <input type='text' value={value} onChange={onChange} onKeyDown={onKeyDown} ref={searchInputRef}
@@ -183,7 +234,8 @@ const SearchBox = ({ onChange, onKeyDown, onSuggestionClick, onSearchClear, valu
         selectedSuggestion={selectedSuggestion}
         onSuggestionClick={onSuggestionClick} />
     }
-    <AdvancedOptions options={searchOptions} setOption={setSearchOption} />
+    <AdvancedOptions options={searchOptions} setOption={setSearchOption}
+      setFromYear={setFromYear} setToYear={setToYear} fromYear={fromYear} toYear={toYear} />
   </div>
 )
 
@@ -201,7 +253,7 @@ const Suggestion = ({ value, selected, onClick }) => (
   <li className={`Suggestion ${selected ? 'selected' : ''}`} onClick={onClick}>{ value }</li>
 )
 
-const AdvancedOptions = ({ options, setOption }) => {
+const AdvancedOptions = ({ options, setOption, setFromYear, setToYear, fromYear, toYear }) => {
   const setField = (field) => ({ target: { checked } }) => {
     setOption('fields', (fields) => {
       return checked ? [...fields, field] : fields.filter(f => f !== field)
@@ -240,6 +292,33 @@ const AdvancedOptions = ({ options, setOption }) => {
           <label><input type='radio' checked={combineWith === 'AND'}
             onChange={setKey('combineWith', 'AND', 'OR')} /> AND</label>
         </div>
+        <div>
+          <b>Filter:</b>
+          <label>
+            from year:
+            <select
+              value={fromYear}
+              onChange={({ target: { value } }) => setFromYear(value)}>
+              {
+                years
+                  .filter((year) => year <= toYear)
+                  .map((year) => <option key={year} value={year}>{year}</option>)
+              }
+            </select>
+          </label>
+          <label>
+            to year:
+            <select
+              value={toYear}
+              onChange={({ target: { value } }) => setToYear(value)}>
+              {
+                years
+                  .filter((year) => year >= fromYear)
+                  .map((year) => <option key={year} value={year}>{year}</option>)
+              }
+            </select>
+          </label>
+        </div>
       </div>
     </details>
   )
@@ -262,5 +341,8 @@ const Loader = ({ text }) => (
 const capitalize = (string) => string.replace(/(\b\w)/gi, (char) => char.toUpperCase())
 
 const stopWords = new Set(['the', 'a', 'an', 'and'])
+
+const years = []
+for (let y = 1965; y <= 2015; y++) { years.push(y) }
 
 export default App
