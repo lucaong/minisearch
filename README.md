@@ -67,7 +67,7 @@ Then `require` or `import` it in your project.
 Alternatively, if you prefer to use a `<script>` tag, you can require MiniSearch
 from a CDN:
 
-```
+```html
 <script src="https://cdn.jsdelivr.net/npm/minisearch@2.1.0/dist/minisearch.min.js"></script>
 ```
 
