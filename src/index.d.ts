@@ -27,6 +27,10 @@ declare class MiniSearch {
 export declare interface SearchOptions {
   fields?: string[],
 
+  storeFields?: string[],
+
+  filter?: (document: object) => boolean,
+
   boost?: { [fieldName: string]: number },
 
   prefix?: boolean
