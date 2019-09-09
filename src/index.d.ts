@@ -27,6 +27,10 @@ declare class MiniSearch {
 export declare interface SearchOptions {
   fields?: string[],
 
+  storeFields?: string[],
+
+  filter?: (result: SearchResult) => boolean,
+
   boost?: { [fieldName: string]: number },
 
   prefix?: boolean
@@ -73,7 +77,9 @@ export declare interface SearchResult {
 
   score: number,
 
-  match: MatchInfo
+  match: MatchInfo,
+
+  [key: string]: any
 }
 
 export default MiniSearch
