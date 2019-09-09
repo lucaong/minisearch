@@ -105,59 +105,98 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="code-of-conduct">Code of Conduct</h1><h2 id="our-pledge">Our Pledge</h2><p>In the interest of fostering an open and welcoming environment, we as
-contributors and maintainers pledge to making participation in our project and
-our community a harassment-free experience for everyone, regardless of age, body
-size, disability, ethnicity, sex characteristics, gender identity and expression,
-level of experience, education, socio-economic status, nationality, personal
-appearance, race, religion, or sexual identity and orientation.</p>
-<h2 id="our-standards">Our Standards</h2><p>Examples of behavior that contributes to creating a positive environment
-include:</p>
-<ul>
-<li>Using welcoming and inclusive language</li>
-<li>Being respectful of differing viewpoints and experiences</li>
-<li>Gracefully accepting constructive criticism</li>
-<li>Focusing on what is best for the community</li>
-<li>Showing empathy towards other community members</li>
+<div class="content" data-ice="content"><div class="github-markdown" data-ice="content"><h1 id="changelog">Changelog</h1><p><code>MiniSearch</code> follows <a href="https://semver.org/spec/v2.0.0.html">semantic versioning</a>.</p>
+<h2 id="v2-1-1">v2.1.1</h2><ul>
+<li>[fix] Fix TypeScript definitions adding <code>filter</code> and <code>storeFields</code> options
+(by <a href="https://github.com/emilianox">@emilianox</a>)</li>
 </ul>
-<p>Examples of unacceptable behavior by participants include:</p>
-<ul>
-<li>The use of sexualized language or imagery and unwelcome sexual attention or
-advances</li>
-<li>Trolling, insulting/derogatory comments, and personal or political attacks</li>
-<li>Public or private harassment</li>
-<li>Publishing others&apos; private information, such as a physical or electronic
-address, without explicit permission</li>
-<li>Other conduct which could reasonably be considered inappropriate in a
-professional setting</li>
+<h2 id="v2-1-0">v2.1.0</h2><ul>
+<li><p>[feature] Add support for stored fields</p>
+</li>
+<li><p>[feature] Add filtering of search results and auto suggestions</p>
+</li>
 </ul>
-<h2 id="our-responsibilities">Our Responsibilities</h2><p>Project maintainers are responsible for clarifying the standards of acceptable
-behavior and are expected to take appropriate and fair corrective action in
-response to any instances of unacceptable behavior.</p>
-<p>Project maintainers have the right and responsibility to remove, edit, or
-reject comments, commits, code, wiki edits, issues, and other contributions
-that are not aligned to this Code of Conduct, or to ban temporarily or
-permanently any contributor for other behaviors that they deem inappropriate,
-threatening, offensive, or harmful.</p>
-<h2 id="scope">Scope</h2><p>This Code of Conduct applies both within project spaces and in public spaces
-when an individual is representing the project or its community. Examples of
-representing a project or community include using an official project e-mail
-address, posting via an official social media account, or acting as an appointed
-representative at an online or offline event. Representation of a project may be
-further defined and clarified by project maintainers.</p>
-<h2 id="enforcement">Enforcement</h2><p>Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting the project maintainer at <code>mail[AT]lucaongaro.eu</code>. All
-complaints will be reviewed and investigated and will result in a response that
-is deemed necessary and appropriate to the circumstances. The project team is
-obligated to maintain confidentiality with regard to the reporter of an incident.
-Further details of specific enforcement policies may be posted separately.</p>
-<p>Project maintainers who do not follow or enforce the Code of Conduct in good
-faith may face temporary or permanent repercussions as determined by other
-members of the project&apos;s leadership.</p>
-<h2 id="attribution">Attribution</h2><p>This Code of Conduct is adapted from the <a href="https://www.contributor-covenant.org">Contributor Covenant</a>, version 1.4,
-available at <a href="https://www.contributor-covenant.org/version/1/4/code-of-conduct.html">https://www.contributor-covenant.org/version/1/4/code-of-conduct.html</a></p>
-<p>For answers to common questions about this code of conduct, see
-<a href="https://www.contributor-covenant.org/faq">https://www.contributor-covenant.org/faq</a></p>
+<h2 id="v2-0-6">v2.0.6</h2><ul>
+<li>Better TypeScript definitions (by <a href="https://github.com/samuelmeuli">@samuelmeuli</a>)</li>
+</ul>
+<h2 id="v2-0-5">v2.0.5</h2><ul>
+<li>Add TypeScript definitions for ease of use in TypeScript projects</li>
+</ul>
+<h2 id="v2-0-4">v2.0.4</h2><ul>
+<li>[fix] tokenizer behavior with newline characters (by <a href="https://github.com/samuelmeuli">@samuelmeuli</a>)</li>
+</ul>
+<h2 id="v2-0-3">v2.0.3</h2><ul>
+<li>Fix small imprecision in documentation</li>
+</ul>
+<h2 id="v2-0-2">v2.0.2</h2><ul>
+<li>Add <code>addAllAsync</code> method, adding many documents asynchronously and in chunks
+to avoid blocking the main thread</li>
+</ul>
+<h2 id="v2-0-1">v2.0.1</h2><ul>
+<li>Throw a more descriptive error when <code>loadJSON</code> is called without options</li>
+</ul>
+<h2 id="v2-0-0">v2.0.0</h2><p>This release introduces better defaults. It is considered a major release, as
+the default options are slightly different, but the API is not changed.</p>
+<ul>
+<li><p><em>Breaking change</em>: default tokenizer splits by Unicode space or punctuation
+(before it was splitting by space, punctuation, or <em>symbol</em>). The difference
+is that currency symbols and other non-punctuation symbols will not be
+discarded: &quot;it&apos;s 100&#x20AC;&quot; is now tokenized as <code>[&quot;it&quot;, &quot;s&quot;, &quot;100&#x20AC;&quot;]</code> instead of
+<code>[&quot;it&quot;, &quot;s&quot;, &quot;100&quot;]</code>.</p>
+</li>
+<li><p><em>Breaking change</em>: default term processing does not discard 1-character
+words.</p>
+</li>
+<li><p><em>Breaking change</em>: auto suggestions by default perform prefix search only on
+the last term in the query. So &quot;super cond&quot; will suggest &quot;super
+conductivity&quot;, but not &quot;superposition condition&quot;.</p>
+</li>
+</ul>
+<h2 id="v1-3-1">v1.3.1</h2><ul>
+<li>Better and more compact regular expression in the default tokenizer,
+separating on Unicode spaces, punctuation, and symbols</li>
+</ul>
+<h2 id="v1-3-0">v1.3.0</h2><ul>
+<li>Support for non-latin scripts</li>
+</ul>
+<h2 id="v1-2-1">v1.2.1</h2><ul>
+<li>Improve fuzzy search performance (common cases are now ~4x faster, as shown
+by the benchmark)</li>
+</ul>
+<h2 id="v1-2-0">v1.2.0</h2><ul>
+<li>Add possibility to configure a custom field extraction function by setting
+  the <code>extractField</code> option (to support cases like nested fields, non-string
+  fields, getter methods, field pre-processing, etc.)</li>
+</ul>
+<h2 id="v1-1-2">v1.1.2</h2><ul>
+<li>Add <code>getDefault</code> static method to get the default value of configuration options</li>
+</ul>
+<h2 id="v1-1-1">v1.1.1</h2><ul>
+<li>Do not minify library when published as NPM package. Run <code>yarn
+build-minified</code> (or <code>npm run build-minified</code>) to produce a minified build
+with source maps.</li>
+<li><strong>Bugfix</strong>: as per specification, <code>processTerm</code> is called with only one
+argument upon search (see <a href="https://github.com/lucaong/minisearch/issues/5">#5</a>)</li>
+</ul>
+<h2 id="v1-1-0">v1.1.0</h2><ul>
+<li>Add possibility to configure separate index-time and search-time
+tokenization and term processing functions</li>
+<li>The <code>processTerm</code> function can now reject a term by returning a falsy value</li>
+<li>Upon indexing, the <code>tokenize</code> and <code>processTerm</code> functions receive the field
+name as the second argument. This makes it possible to process or tokenize
+each field differently.</li>
+</ul>
+<h2 id="v1-0-1">v1.0.1</h2><ul>
+<li>Reduce bundle size by optimizing babel preset env options</li>
+</ul>
+<h2 id="v1-0-0">v1.0.0</h2><p>Production-ready release.</p>
+<p>Features:</p>
+<ul>
+<li>Space-optimized index</li>
+<li>Exact match, prefix match, fuzzy search</li>
+<li>Auto suggestions</li>
+<li>Add/remove documents at any time</li>
+</ul>
 </div>
 </div>
 

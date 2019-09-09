@@ -78,6 +78,30 @@
 <li data-ice="manualNav" class="indent-h3" data-link="manual/DESIGN_DOCUMENT.html"><a href="manual/DESIGN_DOCUMENT.html#search-api-layer" data-ice="link">Search API layer</a></li>
 </ul>
   </div>
+<div data-ice="manual">
+    <ul class="manual-toc">
+      
+    <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-1-1" data-ice="link">v2.1.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-1-0" data-ice="link">v2.1.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-0-6" data-ice="link">v2.0.6</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-0-5" data-ice="link">v2.0.5</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-0-4" data-ice="link">v2.0.4</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-0-3" data-ice="link">v2.0.3</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-0-2" data-ice="link">v2.0.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-0-1" data-ice="link">v2.0.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-0-0" data-ice="link">v2.0.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v1-3-1" data-ice="link">v1.3.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v1-3-0" data-ice="link">v1.3.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v1-2-1" data-ice="link">v1.2.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v1-2-0" data-ice="link">v1.2.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v1-1-2" data-ice="link">v1.1.2</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v1-1-1" data-ice="link">v1.1.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v1-1-0" data-ice="link">v1.1.0</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v1-0-1" data-ice="link">v1.0.1</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v1-0-0" data-ice="link">v1.0.0</a></li>
+</ul>
+  </div>
 </div>
 </nav>
 
@@ -515,6 +539,82 @@ optimization they are substituted by short generated IDs. An index of short ID
 to original ID is maintained alongside the search index, to reconstruct the
 original IDs. A similar optimization is applied to the field names.</p></div>
         <a data-ice="link" href="manual/DESIGN_DOCUMENT.html"></a>
+      </div>
+    </div>
+<div class="manual-card-wrap" data-ice="cards">
+      <div class="manual-card">
+        <div data-ice="card"><h1>Changelog</h1><p><code>MiniSearch</code> follows <a href="https://semver.org/spec/v2.0.0.html">semantic versioning</a>.</p><h2>v2.1.1</h2><ul>
+<li>[fix] Fix TypeScript definitions adding <code>filter</code> and <code>storeFields</code> options
+(by <a href="https://github.com/emilianox">@emilianox</a>)</li>
+</ul><h2>v2.1.0</h2><ul>
+<li><p>[feature] Add support for stored fields</p>
+</li>
+<li><p>[feature] Add filtering of search results and auto suggestions</p>
+</li>
+</ul><h2>v2.0.6</h2><ul>
+<li>Better TypeScript definitions (by <a href="https://github.com/samuelmeuli">@samuelmeuli</a>)</li>
+</ul><h2>v2.0.5</h2><ul>
+<li>Add TypeScript definitions for ease of use in TypeScript projects</li>
+</ul><h2>v2.0.4</h2><ul>
+<li>[fix] tokenizer behavior with newline characters (by <a href="https://github.com/samuelmeuli">@samuelmeuli</a>)</li>
+</ul><h2>v2.0.3</h2><ul>
+<li>Fix small imprecision in documentation</li>
+</ul><h2>v2.0.2</h2><ul>
+<li>Add <code>addAllAsync</code> method, adding many documents asynchronously and in chunks
+to avoid blocking the main thread</li>
+</ul><h2>v2.0.1</h2><ul>
+<li>Throw a more descriptive error when <code>loadJSON</code> is called without options</li>
+</ul><h2>v2.0.0</h2><p>This release introduces better defaults. It is considered a major release, as
+the default options are slightly different, but the API is not changed.</p><ul>
+<li><p><em>Breaking change</em>: default tokenizer splits by Unicode space or punctuation
+(before it was splitting by space, punctuation, or <em>symbol</em>). The difference
+is that currency symbols and other non-punctuation symbols will not be
+discarded: &quot;it&apos;s 100&#x20AC;&quot; is now tokenized as <code>[&quot;it&quot;, &quot;s&quot;, &quot;100&#x20AC;&quot;]</code> instead of
+<code>[&quot;it&quot;, &quot;s&quot;, &quot;100&quot;]</code>.</p>
+</li>
+<li><p><em>Breaking change</em>: default term processing does not discard 1-character
+words.</p>
+</li>
+<li><p><em>Breaking change</em>: auto suggestions by default perform prefix search only on
+the last term in the query. So &quot;super cond&quot; will suggest &quot;super
+conductivity&quot;, but not &quot;superposition condition&quot;.</p>
+</li>
+</ul><h2>v1.3.1</h2><ul>
+<li>Better and more compact regular expression in the default tokenizer,
+separating on Unicode spaces, punctuation, and symbols</li>
+</ul><h2>v1.3.0</h2><ul>
+<li>Support for non-latin scripts</li>
+</ul><h2>v1.2.1</h2><ul>
+<li>Improve fuzzy search performance (common cases are now ~4x faster, as shown
+by the benchmark)</li>
+</ul><h2>v1.2.0</h2><ul>
+<li>Add possibility to configure a custom field extraction function by setting
+  the <code>extractField</code> option (to support cases like nested fields, non-string
+  fields, getter methods, field pre-processing, etc.)</li>
+</ul><h2>v1.1.2</h2><ul>
+<li>Add <code>getDefault</code> static method to get the default value of configuration options</li>
+</ul><h2>v1.1.1</h2><ul>
+<li>Do not minify library when published as NPM package. Run <code>yarn
+build-minified</code> (or <code>npm run build-minified</code>) to produce a minified build
+with source maps.</li>
+<li><strong>Bugfix</strong>: as per specification, <code>processTerm</code> is called with only one
+argument upon search (see <a href="https://github.com/lucaong/minisearch/issues/5">#5</a>)</li>
+</ul><h2>v1.1.0</h2><ul>
+<li>Add possibility to configure separate index-time and search-time
+tokenization and term processing functions</li>
+<li>The <code>processTerm</code> function can now reject a term by returning a falsy value</li>
+<li>Upon indexing, the <code>tokenize</code> and <code>processTerm</code> functions receive the field
+name as the second argument. This makes it possible to process or tokenize
+each field differently.</li>
+</ul><h2>v1.0.1</h2><ul>
+<li>Reduce bundle size by optimizing babel preset env options</li>
+</ul><h2>v1.0.0</h2><p>Production-ready release.</p><p>Features:</p><ul>
+<li>Space-optimized index</li>
+<li>Exact match, prefix match, fuzzy search</li>
+<li>Auto suggestions</li>
+<li>Add/remove documents at any time</li>
+</ul></div>
+        <a data-ice="link" href="manual/CHANGELOG.html"></a>
       </div>
     </div>
 </div>
