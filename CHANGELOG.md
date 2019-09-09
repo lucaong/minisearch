@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.1.1
+
+  - [fix] Fix TypeScript definitions adding `filter` and `storeFields` options
+    (by [@emilianox](https://github.com/emilianox))
+
 ## v2.1.0
 
   - [feature] Add support for stored fields
