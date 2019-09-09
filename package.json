@@ -40,7 +40,7 @@
     "jest": "^24.0.0",
     "regenerator-runtime": "^0.13.1",
     "snazzy": "^8.0.0",
-    "standard": "^12.0.1",
+    "standard": "^14.1.0",
     "typescript": "^3.5.3",
     "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0",
@@ -64,8 +64,8 @@
     "build": "webpack --mode=production",
     "build-minified": "webpack --mode=production --config=webpack.minified.js",
     "build-docs": "esdoc",
-    "lint": "standard --verbose 'app/**/*.{js,jsx}' | snazzy",
-    "lintfix": "standard --fix 'app/**/*.{js,jsx}'",
+    "lint": "standard --verbose 'app/**/*.js' | snazzy",
+    "lintfix": "standard --fix 'app/**/*.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "types": "./src/index.d.ts"
