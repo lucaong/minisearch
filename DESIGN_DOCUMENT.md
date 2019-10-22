@@ -4,7 +4,7 @@ This design document has the aim to explain the details of `MiniSearch`
 design and implementation to library developers that intend to contribute to
 this project, or that are simply curious about the internals.
 
-**Latest update: Feb. 11, 2019**
+**Latest update: Oct. 22, 2019**
 
 ## Goals (and non-goals)
 
@@ -24,9 +24,9 @@ local setup (e.g. client side, in the browser). It is therefore optimized for:
   - A solution for use cases requiring large index data structure size
   - Distributed setup where the index resides on multiple nodes and need to be
     kept in sync
-  - Turn-key opinionated solutions (e.g. supporting multiple locales):
-    `MiniSearch` _enables_ developer to build these on top of the core API, but
-    does not provide it out of the box.
+  - Turn-key opinionated solutions (e.g. supporting specific locales with custom
+    stemmers, stopwords, etc.): `MiniSearch` _enables_ developer to build these
+    on top of its core API, but does not provide them out of the box.
 
 For these points listed as non-goals, other solutions exist that should be
 preferred to `MiniSearch`. Adapting `MiniSearch` to support those goals would in
@@ -38,7 +38,7 @@ fact necessarily go against the primary project goals.
 `MiniSearch` is composed of two layers:
 
   1. A compact and versatile data structure for indexing terms, providing
-     prefix and fuzzy lookup
+     lookup by exact match, prefix match, and fuzzy match
   2. An API layer on top of this data structure, providing the search
     features
 
@@ -56,7 +56,8 @@ this data structure follows from the project goals:
     multi-character node whenever possible.
   - Radix trees offer fast key lookup, with performance proportional to the key
     length, and fast lookup of subtrees sharing the same key prefix. These
-    properties make it possible to offer exact match and prefix search.
+    properties make it possible to offer performant exact match and prefix
+    search.
   - On top of a radix tree it is possible to implement lookup of keys that are
     within a certain maximum edit distance from a given key. This search rapidly
     becomes complex as the maximum distance grows, but for practical search
