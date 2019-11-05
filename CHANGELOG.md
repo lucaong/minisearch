@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.1.2
+
+  - [fix] Fix TypeScript definition for `fuzzy` option (by
+    [@alessandrobardini](https://github.com/alessandrobardini))
+
 ## v2.1.1
 
   - [fix] Fix TypeScript definitions adding `filter` and `storeFields` options
