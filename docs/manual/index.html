@@ -82,6 +82,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-1-2" data-ice="link">v2.1.2</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-1-1" data-ice="link">v2.1.1</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-1-0" data-ice="link">v2.1.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-0-6" data-ice="link">v2.0.6</a></li>
@@ -415,7 +416,7 @@ available at <a href="https://www.contributor-covenant.org/version/1/4/code-of-c
       <div class="manual-card">
         <div data-ice="card"><h1>Design Document</h1><p>This design document has the aim to explain the details of <code>MiniSearch</code>
 design and implementation to library developers that intend to contribute to
-this project, or that are simply curious about the internals.</p><p><strong>Latest update: Feb. 11, 2019</strong></p><h2>Goals (and non-goals)</h2><p><code>MiniSearch</code> is aimed at providing rich full-text search functionalities in a
+this project, or that are simply curious about the internals.</p><p><strong>Latest update: Oct. 22, 2019</strong></p><h2>Goals (and non-goals)</h2><p><code>MiniSearch</code> is aimed at providing rich full-text search functionalities in a
 local setup (e.g. client side, in the browser). It is therefore optimized for:</p><ol>
 <li>Small memory footprint of the index data structure</li>
 <li>Fast indexing of documents</li>
@@ -428,14 +429,14 @@ be built by application developers</li>
 <li>A solution for use cases requiring large index data structure size</li>
 <li>Distributed setup where the index resides on multiple nodes and need to be
 kept in sync</li>
-<li>Turn-key opinionated solutions (e.g. supporting multiple locales):
-<code>MiniSearch</code> <em>enables</em> developer to build these on top of the core API, but
-does not provide it out of the box.</li>
+<li>Turn-key opinionated solutions (e.g. supporting specific locales with custom
+stemmers, stopwords, etc.): <code>MiniSearch</code> <em>enables</em> developer to build these
+on top of its core API, but does not provide them out of the box.</li>
 </ul><p>For these points listed as non-goals, other solutions exist that should be
 preferred to <code>MiniSearch</code>. Adapting <code>MiniSearch</code> to support those goals would in
 fact necessarily go against the primary project goals.</p><h2>Technical design</h2><p><code>MiniSearch</code> is composed of two layers:</p><ol>
 <li>A compact and versatile data structure for indexing terms, providing
-prefix and fuzzy lookup</li>
+lookup by exact match, prefix match, and fuzzy match</li>
 <li>An API layer on top of this data structure, providing the search
 features</li>
 </ol><p>Here follows a description of these two layers.</p><h3>Index data structure</h3><p>The data structure chosen for the index is a <a href="https://en.wikipedia.org/wiki/Radix_tree">radix
@@ -447,7 +448,8 @@ prefixes are stored only once, and nodes are compressed into a single
 multi-character node whenever possible.</li>
 <li>Radix trees offer fast key lookup, with performance proportional to the key
 length, and fast lookup of subtrees sharing the same key prefix. These
-properties make it possible to offer exact match and prefix search.</li>
+properties make it possible to offer performant exact match and prefix
+search.</li>
 <li>On top of a radix tree it is possible to implement lookup of keys that are
 within a certain maximum edit distance from a given key. This search rapidly
 becomes complex as the maximum distance grows, but for practical search
@@ -543,7 +545,10 @@ original IDs. A similar optimization is applied to the field names.</p></div>
     </div>
 <div class="manual-card-wrap" data-ice="cards">
       <div class="manual-card">
-        <div data-ice="card"><h1>Changelog</h1><p><code>MiniSearch</code> follows <a href="https://semver.org/spec/v2.0.0.html">semantic versioning</a>.</p><h2>v2.1.1</h2><ul>
+        <div data-ice="card"><h1>Changelog</h1><p><code>MiniSearch</code> follows <a href="https://semver.org/spec/v2.0.0.html">semantic versioning</a>.</p><h2>v2.1.2</h2><ul>
+<li>[fix] Fix TypeScript definition for <code>fuzzy</code> option (by
+<a href="https://github.com/alessandrobardini">@alessandrobardini</a>)</li>
+</ul><h2>v2.1.1</h2><ul>
 <li>[fix] Fix TypeScript definitions adding <code>filter</code> and <code>storeFields</code> options
 (by <a href="https://github.com/emilianox">@emilianox</a>)</li>
 </ul><h2>v2.1.0</h2><ul>
