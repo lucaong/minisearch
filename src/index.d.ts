@@ -36,7 +36,7 @@ export declare interface SearchOptions {
   prefix?: boolean
     | ((term: string, index: number, terms: string[]) => boolean),
 
-  fuzzy?: boolean
+  fuzzy?: boolean | number 
     | ((term: string, index: number, terms: string[]) => boolean | number),
 
   combineWith?: string,
