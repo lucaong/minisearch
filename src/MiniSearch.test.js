@@ -177,7 +177,7 @@ describe('MiniSearch', () => {
       const documents = [
         { id: 1, title: 'Divina Commedia', tags: 'dante,virgilio', author: { name: 'Dante Alighieri' } },
         { id: 2, title: 'I Promessi Sposi', tags: 'renzo,lucia', author: { name: 'Alessandro Manzoni' } },
-        { id: 3, title: 'Vita Nova', tags: 'dante', author: { name: 'Dante Alighieri' } }
+        { id: 3, title: 'Vita Nova', author: { name: 'Dante Alighieri' } }
       ]
 
       let ms, _warn
