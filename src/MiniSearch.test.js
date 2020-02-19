@@ -173,6 +173,58 @@ describe('MiniSearch', () => {
       }).not.toThrowError()
     })
 
+    describe('when using custom per-field extraction/tokenizer/processing', () => {
+      const documents = [
+        { id: 1, title: 'Divina Commedia', tags: 'dante,virgilio', author: { name: 'Dante Alighieri' } },
+        { id: 2, title: 'I Promessi Sposi', tags: 'renzo,lucia', author: { name: 'Alessandro Manzoni' } },
+        { id: 3, title: 'Vita Nova', tags: 'dante', author: { name: 'Dante Alighieri' } }
+      ]
+
+      let ms, _warn
+      beforeEach(() => {
+        ms = new MiniSearch({
+          fields: ['title', 'tags', 'authorName'],
+          extractField: (doc, fieldName) => {
+            if (fieldName === 'authorName') {
+              return doc.author.name
+            } else {
+              return doc[fieldName]
+            }
+          },
+          tokenize: (field, fieldName) => {
+            if (fieldName === 'tags') {
+              return field.split(',')
+            } else {
+              return field.split(/\s+/)
+            }
+          },
+          processTerm: (term, fieldName) => {
+            if (fieldName === 'tags') {
+              return term.toUpperCase()
+            } else {
+              return term.toLowerCase()
+            }
+          }
+        })
+        ms.addAll(documents)
+        _warn = console.warn
+        console.warn = jest.fn()
+      })
+
+      afterEach(() => {
+        console.warn = _warn
+      })
+
+      it('removes the document from the index', () => {
+        expect(ms.documentCount).toEqual(3)
+        ms.remove(documents[0])
+        expect(ms.documentCount).toEqual(2)
+        expect(ms.search('commedia').length).toEqual(0)
+        expect(ms.search('vita').map(({ id }) => id)).toEqual([3])
+        expect(console.warn).not.toHaveBeenCalled()
+      })
+    })
+
     describe('when the document was not in the index', () => {
       it('throws an error', () => {
         expect(() => ms.remove({ id: 99 }))

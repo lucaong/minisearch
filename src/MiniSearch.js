@@ -228,23 +228,30 @@ class MiniSearch {
   * @param {Object} document - the document to be indexed
   */
   remove (document) {
-    const { tokenize, processTerm, fields, idField } = this._options
+    const { tokenize, processTerm, extractField, fields, idField } = this._options
+
     if (document[idField] == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
+
     const [shortDocumentId] = Object.entries(this._documentIds)
       .find(([_, longId]) => document[idField] === longId) || []
+
     if (shortDocumentId == null) {
       throw new Error(`MiniSearch: cannot remove document with ID ${document[idField]}: it is not in the index`)
     }
+
     fields.filter(field => document[field] != null).forEach(field => {
-      tokenize(document[field], field).forEach(term => {
-        const processedTerm = processTerm(term)
+      const tokens = tokenize(extractField(document, field) || '', field)
+
+      tokens.forEach(term => {
+        const processedTerm = processTerm(term, field)
         if (isTruthy(processedTerm)) {
-          removeTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
+          removeTerm(this, this._fieldIds[field], shortDocumentId, processedTerm)
         }
       })
     })
+
     delete this._storedFields[shortDocumentId]
     delete this._documentIds[shortDocumentId]
     this._documentCount -= 1
