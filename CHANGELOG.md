@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.1.4
+
+  - [fix] Fix document removal in presence of custom per field tokenizer, field
+    extractor, or term processor (thanks [@CaptainChaos](https://github.com/CaptainChaos))
+
 ## v2.1.3
 
   - [fix] Fix TypeScript definition for `storeFields` option (by
