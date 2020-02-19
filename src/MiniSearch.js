@@ -238,7 +238,7 @@ class MiniSearch {
       throw new Error(`MiniSearch: cannot remove document with ID ${document[idField]}: it is not in the index`)
     }
     fields.filter(field => document[field] != null).forEach(field => {
-      tokenize(document[field]).forEach(term => {
+      tokenize(document[field], field).forEach(term => {
         const processedTerm = processTerm(term)
         if (isTruthy(processedTerm)) {
           removeTerm(this, this._fieldIds[field], shortDocumentId, processTerm(term))
