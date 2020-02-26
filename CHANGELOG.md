@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## upcoming
+
+  - [fix] Fix documentation of `SearchableMap.prototype.atPrefix` (by
+    [@graphman65](https://github.com/graphman65))
+
 ## v2.1.4
 
   - [fix] Fix document removal in presence of custom per field tokenizer, field
