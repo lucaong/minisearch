@@ -36,9 +36,9 @@ class SearchableMap {
   * uni.get("hello") // => undefined
   *
   * let univer = map.atPrefix("univer")
-  * uni.get("unique") // => undefined
-  * uni.get("universe") // => 2
-  * uni.get("university") // => 3
+  * univer.get("unique") // => undefined
+  * univer.get("universe") // => 2
+  * univer.get("university") // => 3
   *
   * @param {string} prefix - The prefix
   * @return {SearchableMap} A `SearchableMap` representing a mutable view of the original Map at the given prefix
