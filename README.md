@@ -68,12 +68,13 @@ Alternatively, if you prefer to use a `<script>` tag, you can require MiniSearch
 from a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/minisearch@2.1.4/dist/minisearch.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@2.2.0/dist/umd/index.min.js"></script>
 ```
 
 Finally, if you want to manually build the library, clone the repository and run
 `yarn build` (or `yarn build-minified` for a minified version + source maps).
-The compiled source will be created in the `dist` folder.
+The compiled source will be created in the `dist` folder (UMD, ES6 and ES2015
+module versions are provided).
 
 
 ## Usage

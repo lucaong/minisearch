@@ -2,10 +2,12 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-## upcoming
+## v2.2.0
 
   - [fix] Fix documentation of `SearchableMap.prototype.atPrefix` (by
     [@graphman65](https://github.com/graphman65))
+  - Switch to Rollup for bundling (by [stalniy](https://github.com/stalniy)),
+    reducing size of build and providing ES6 and ES5 module versions too.
 
 ## v2.1.4
 
