@@ -82,7 +82,7 @@
     <ul class="manual-toc">
       
     <li data-ice="manualNav" class="indent-h1" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html" data-ice="link">Changelog</a></li>
-<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#upcoming" data-ice="link">upcoming</a></li>
+<li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-2-0" data-ice="link">v2.2.0</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-1-4" data-ice="link">v2.1.4</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-1-3" data-ice="link">v2.1.3</a></li>
 <li data-ice="manualNav" class="indent-h2" data-link="manual/CHANGELOG.html"><a href="manual/CHANGELOG.html#v2-1-2" data-ice="link">v2.1.2</a></li>
@@ -152,11 +152,12 @@ build custom solutions, while keeping a small and well tested codebase.</p>
 </code></pre><p>Then <code>require</code> or <code>import</code> it in your project.</p>
 <p>Alternatively, if you prefer to use a <code>&lt;script&gt;</code> tag, you can require MiniSearch
 from a CDN:</p>
-<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.jsdelivr.net/npm/minisearch@2.1.4/dist/minisearch.min.js&quot;&gt;&lt;/script&gt;</code>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://cdn.jsdelivr.net/npm/minisearch@2.2.0/dist/umd/index.min.js&quot;&gt;&lt;/script&gt;</code>
 </code></pre>
 <p>Finally, if you want to manually build the library, clone the repository and run
 <code>yarn build</code> (or <code>yarn build-minified</code> for a minified version + source maps).
-The compiled source will be created in the <code>dist</code> folder.</p>
+The compiled source will be created in the <code>dist</code> folder (UMD, ES6 and ES2015
+module versions are provided).</p>
 <h2 id="usage">Usage</h2><h3 id="basic-usage">Basic usage</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">// A collection of documents for our examples
 const documents = [
   {
