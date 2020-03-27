@@ -48,7 +48,9 @@
     "typescript": "^3.5.3"
   },
   "files": [
-    "/dist/minisearch.js",
+    "/dist/umd/index.js",
+    "/dist/es/index.js",
+    "/dist/es5m/index.js",
     "/src/**/*"
   ],
   "jest": {
@@ -62,8 +64,8 @@
     "test-watch": "jest --watch",
     "coverage": "jest --coverage",
     "benchmark": "NODE_ENV=production BABEL_OUTPUT=commonjs babel-node --expose-gc benchmarks/index.js",
-    "build": "rollup -c",
-    "build-minified": "NODE_ENV=production npm run build",
+    "build": "NODE_ENV=production rollup -c",
+    "build-minified": "MINIFY=true yarn build",
     "build-docs": "esdoc",
     "lint": "standard --verbose 'app/**/*.js' | snazzy",
     "lintfix": "standard --fix 'app/**/*.js'",
