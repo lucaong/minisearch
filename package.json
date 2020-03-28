@@ -71,5 +71,6 @@
     "lintfix": "standard --fix 'app/**/*.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
+  "sideEffects": false,
   "types": "./src/index.d.ts"
 }
