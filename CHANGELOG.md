@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.2.1
+
+  - Add `"sideEffects": false` to `package.json` to allow bundlers to perform
+    tree shaking
+
 ## v2.2.0
 
   - [fix] Fix documentation of `SearchableMap.prototype.atPrefix` (by
