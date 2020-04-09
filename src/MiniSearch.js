@@ -477,7 +477,7 @@ class MiniSearch {
   */
   static loadJS (js, options = {}) {
     const {
-      index: { _tree, _prefix },
+      index,
       documentCount,
       nextId,
       documentIds,
@@ -487,7 +487,7 @@ class MiniSearch {
       storedFields
     } = js
     const miniSearch = new MiniSearch(options)
-    miniSearch._index = new SearchableMap(_tree, _prefix)
+    miniSearch._index = new SearchableMap(index._tree, index._prefix)
     miniSearch._documentCount = documentCount
     miniSearch._nextId = nextId
     miniSearch._documentIds = documentIds
