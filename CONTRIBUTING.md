@@ -56,3 +56,7 @@ Also, please follow these guidelines:
     releasing a new version.
 
   - Make sure that the full test suite passes before sending the pull request.
+
+  - Try to follow the project's code conventions and style when possible. You
+    can run `yarn lint` to check if your code follows the project style, and
+    linting errors can often be fixed automatically by running `yarn lintfix`.
