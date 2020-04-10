@@ -464,8 +464,7 @@ class MiniSearch {
   * // => throws 'MiniSearch: unknown option "notExisting"'
   */
   static getDefault (optionName) {
-    const validKeys = Object.keys(defaultOptions)
-    if (validKeys.includes(optionName)) {
+    if (defaultOptions.hasOwnProperty(optionName)) {
       return defaultOptions[optionName]
     } else {
       throw new Error(`MiniSearch: unknown option "${optionName}"`)
