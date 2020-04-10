@@ -2,6 +2,16 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v2.2.2
+
+  - Avoid destructuring variables named with an underscore prefix. This plays
+    nicer to some common minifier and builder configurations.
+
+  - Performance improvement in `getDefault` (by
+    [stalniy](https://github.com/stalniy))
+
+  - Fix the linter setup, to ensure code style consistency
+
 ## v2.2.1
 
   - Add `"sideEffects": false` to `package.json` to allow bundlers to perform
