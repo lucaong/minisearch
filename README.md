@@ -68,7 +68,7 @@ Alternatively, if you prefer to use a `<script>` tag, you can require MiniSearch
 from a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/minisearch@2.2.0/dist/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@2.2.2/dist/umd/index.min.js"></script>
 ```
 
 Finally, if you want to manually build the library, clone the repository and run
