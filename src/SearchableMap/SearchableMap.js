@@ -89,7 +89,7 @@ class SearchableMap {
   * @return {undefined}
   */
   forEach (fn) {
-    for (let [key, value] of this) {
+    for (const [key, value] of this) {
       fn(key, value, this)
     }
   }
@@ -223,7 +223,7 @@ class SearchableMap {
 **/
 SearchableMap.from = function (entries) {
   const tree = new SearchableMap()
-  for (let [key, value] of entries) {
+  for (const [key, value] of entries) {
     tree.set(key, value)
   }
   return tree
