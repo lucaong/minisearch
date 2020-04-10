@@ -37,6 +37,12 @@
     "esdoc": "^1.1.0",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-standard-plugin": "^1.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
     "fast-check": "^1.5.0",
     "jest": "^25.1.0",
     "regenerator-runtime": "^0.13.1",
@@ -44,7 +50,6 @@
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-terser": "^5.3.0",
     "snazzy": "^8.0.0",
-    "standard": "^14.1.0",
     "typescript": "^3.5.3"
   },
   "files": [
@@ -67,8 +72,8 @@
     "build": "NODE_ENV=production rollup -c",
     "build-minified": "MINIFY=true yarn build",
     "build-docs": "esdoc",
-    "lint": "standard --verbose 'app/**/*.js' | snazzy",
-    "lintfix": "standard --fix 'app/**/*.js'",
+    "lint": "eslint 'src/**/*.js'",
+    "lintfix": "eslint --fix 'src/**/*.js'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "sideEffects": false,
