@@ -502,8 +502,7 @@ class MiniSearch {
   * // =&gt; throws &apos;MiniSearch: unknown option &quot;notExisting&quot;&apos;
   */
   static getDefault (optionName) {
-    const validKeys = Object.keys(defaultOptions)
-    if (validKeys.includes(optionName)) {
+    if (defaultOptions.hasOwnProperty(optionName)) {
       return defaultOptions[optionName]
     } else {
       throw new Error(`MiniSearch: unknown option &quot;${optionName}&quot;`)
@@ -515,7 +514,7 @@ class MiniSearch {
   */
   static loadJS (js, options = {}) {
     const {
-      index: { _tree, _prefix },
+      index,
       documentCount,
       nextId,
       documentIds,
@@ -525,7 +524,7 @@ class MiniSearch {
       storedFields
     } = js
     const miniSearch = new MiniSearch(options)
-    miniSearch._index = new SearchableMap(_tree, _prefix)
+    miniSearch._index = new SearchableMap(index._tree, index._prefix)
     miniSearch._documentCount = documentCount
     miniSearch._nextId = nextId
     miniSearch._documentIds = documentIds
