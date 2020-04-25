@@ -27,7 +27,7 @@
     "search": true,
     "menu": {
       "GitHub Repository": {
-        "href":"https://gitlab.com/lucaong/minisearch",
+        "href":"https://github.com/lucaong/minisearch",
         "target":"_blank",
         "class":"menu-item",
         "id":"github_repo_link"
