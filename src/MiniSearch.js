@@ -491,7 +491,7 @@ class MiniSearch {
   * the given name exists.
   *
   * @param {string} optionName - name of the option
-  * @return {*} the default value of the given option
+  * @return {any} the default value of the given option
   *
   * @example
   * // Get default tokenizer
