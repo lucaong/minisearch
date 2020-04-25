@@ -1,4 +1,50 @@
-import SearchableMap from './SearchableMap/SearchableMap.js'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>MiniSearch.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://gitlab.com/lucaong/minisearch" target="_blank" class="menu-item" id="github_repo_link" >GitHub Repository</a></h2><h3>Classes</h3><ul><li><a href="MiniSearch.html">MiniSearch</a><ul class='methods'><li data-type='method'><a href="MiniSearch.html#.getDefault">getDefault</a></li><li data-type='method'><a href="MiniSearch.html#.loadJSON">loadJSON</a></li><li data-type='method'><a href="MiniSearch.html#add">add</a></li><li data-type='method'><a href="MiniSearch.html#addAll">addAll</a></li><li data-type='method'><a href="MiniSearch.html#addAllAsync">addAllAsync</a></li><li data-type='method'><a href="MiniSearch.html#autoSuggest">autoSuggest</a></li><li data-type='method'><a href="MiniSearch.html#remove">remove</a></li><li data-type='method'><a href="MiniSearch.html#search">search</a></li><li data-type='method'><a href="MiniSearch.html#toJSON">toJSON</a></li></ul></li><li><a href="SearchableMap.html">SearchableMap</a><ul class='methods'><li data-type='method'><a href="SearchableMap.html#.from">from</a></li><li data-type='method'><a href="SearchableMap.html#.fromObject">fromObject</a></li><li data-type='method'><a href="SearchableMap.html#atPrefix">atPrefix</a></li><li data-type='method'><a href="SearchableMap.html#clear">clear</a></li><li data-type='method'><a href="SearchableMap.html#delete">delete</a></li><li data-type='method'><a href="SearchableMap.html#entries">entries</a></li><li data-type='method'><a href="SearchableMap.html#forEach">forEach</a></li><li data-type='method'><a href="SearchableMap.html#fuzzyGet">fuzzyGet</a></li><li data-type='method'><a href="SearchableMap.html#get">get</a></li><li data-type='method'><a href="SearchableMap.html#has">has</a></li><li data-type='method'><a href="SearchableMap.html#keys">keys</a></li><li data-type='method'><a href="SearchableMap.html#set">set</a></li><li data-type='method'><a href="SearchableMap.html#update">update</a></li><li data-type='method'><a href="SearchableMap.html#values">values</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">MiniSearch.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import SearchableMap from './SearchableMap/SearchableMap.js'
 
 const OR = 'or'
 const AND = 'and'
@@ -78,9 +124,9 @@ class MiniSearch {
 
   /**
   * @param {Object} options - Configuration options
-  * @param {Array<string>} options.fields - Fields to be indexed. Required.
+  * @param {Array&lt;string>} options.fields - Fields to be indexed. Required.
   * @param {string} [options.idField='id'] - ID field, uniquely identifying a document
-  * @param {Array<string>} [options.storeFields] - Fields to store, so that search results would include them. By default none, so resuts would only contain the id field.
+  * @param {Array&lt;string>} [options.storeFields] - Fields to store, so that search results would include them. By default none, so resuts would only contain the id field.
   * @param {MiniSearch~extractField} [options.extractField] - Function used to get the value of a field in a document
   * @param {MiniSearch~tokenize} [options.tokenize] - Function used to split a field into individual terms
   * @param {MiniSearch~processTerm} [options.processTerm] - Function used to process a term before indexing it or searching
@@ -309,15 +355,15 @@ class MiniSearch {
   *
   * @param {string} queryString - Query string to search for
   * @param {Object} [options] - Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
-  * @param {Array<string>} [options.fields] - Fields to search in. If omitted, all fields are searched
-  * @param {Object<string, number>} [options.boost] - Key-value object of boosting values for fields
-  * @param {boolean|MiniSearch~prefixFn} [options.prefix=false] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from each tokenized and processed query term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
-  * @param {number|false|MiniSearch~fuzzyFn} [options.fuzzy=false] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function for each tokenized and processed query term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
+  * @param {Array&lt;string>} [options.fields] - Fields to search in. If omitted, all fields are searched
+  * @param {Object&lt;string, number>} [options.boost] - Key-value object of boosting values for fields
+  * @param {boolean|MiniSearch~prefixFn} [options.prefix=false] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from each tokenized and processed query term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array&lt;string>` - the array of query terms.
+  * @param {number|false|MiniSearch~fuzzyFn} [options.fuzzy=false] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function for each tokenized and processed query term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array&lt;string>` - the array of query terms.
   * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')
   * @param {MiniSearch~tokenize} [options.tokenize] - Function used to tokenize the search query. It defaults to the same tokenizer used for indexing.
   * @param {MiniSearch~processTerm} [options.processTerm] - Function used to process each search term. Return a falsy value to discard a term. Defaults to the same function used to process terms upon indexing.
   * @param {MiniSearch~filter} [options.filter] - Function used to filter search results, for example on the basis of stored fields
-  * @return {Array<{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
+  * @return {Array&lt;{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
   *
   * @example
   * // Search for "zen art motorcycle" with default options: terms have to match
@@ -396,7 +442,7 @@ class MiniSearch {
         }
         return results
       }, [])
-      .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
+      .sort(({ score: a }, { score: b }) => a &lt; b ? 1 : -1)
   }
 
   /**
@@ -407,7 +453,7 @@ class MiniSearch {
   *
   * @param {string} queryString - Query string to be expanded into suggestions
   * @param {Object} [options] - Search options. The supported options and default values are the same as for the `search` method, except that by default prefix search is performed on the last term in the query.
-  * @return {Array<{ suggestion: string, score: number }>} A sorted array of suggestions sorted by relevance score.
+  * @return {Array&lt;{ suggestion: string, score: number }>} A sorted array of suggestions sorted by relevance score.
   *
   * @example
   * // Get suggestions for 'neuro':
@@ -452,7 +498,7 @@ class MiniSearch {
     }, {})
     return Object.entries(suggestions)
       .map(([suggestion, { score, terms, count }]) => ({ suggestion, terms, score: score / count }))
-      .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
+      .sort(({ score: a }, { score: b }) => a &lt; b ? 1 : -1)
   }
 
   /**
@@ -558,7 +604,7 @@ class MiniSearch {
 
     const exactMatch = termResults(this, query.term, boosts, boostDocument, this._index.get(query.term))
 
-    if (!query.fuzzy && !query.prefix) { return exactMatch }
+    if (!query.fuzzy &amp;&amp; !query.prefix) { return exactMatch }
 
     const results = [exactMatch]
 
@@ -570,7 +616,7 @@ class MiniSearch {
     }
 
     if (query.fuzzy) {
-      const maxDistance = query.fuzzy < 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
+      const maxDistance = query.fuzzy &lt; 1 ? Math.round(query.term.length * query.fuzzy) : query.fuzzy
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
         const weightedDistance = distance / term.length
         results.push(termResults(this, term, boosts, boostDocument, data, fuzzyWeight, weightedDistance))
@@ -639,14 +685,14 @@ const removeTerm = function (self, fieldId, documentId, term) {
       warnDocumentChanged(self, documentId, fieldId, term)
       return indexData
     }
-    if (fieldIndex.ds[documentId] <= 1) {
-      if (fieldIndex.df <= 1) {
+    if (fieldIndex.ds[documentId] &lt;= 1) {
+      if (fieldIndex.df &lt;= 1) {
         delete indexData[fieldId]
         return indexData
       }
       fieldIndex.df -= 1
     }
-    if (fieldIndex.ds[documentId] <= 1) {
+    if (fieldIndex.ds[documentId] &lt;= 1) {
       delete fieldIndex.ds[documentId]
       return indexData
     }
@@ -789,7 +835,34 @@ const defaultAutoSuggestOptions = {
 }
 
 // This regular expression matches any Unicode space or punctuation character
-// Adapted from https://unicode.org/cldr/utility/list-unicodeset.jsp?a=%5Cp%7BZ%7D%5Cp%7BP%7D&abb=on&c=on&esc=on
+// Adapted from https://unicode.org/cldr/utility/list-unicodeset.jsp?a=%5Cp%7BZ%7D%5Cp%7BP%7D&amp;abb=on&amp;c=on&amp;esc=on
 const SPACE_OR_PUNCTUATION = /[\n\r -#%-*,-/:;?@[-\]_{}\u00A0\u00A1\u00A7\u00AB\u00B6\u00B7\u00BB\u00BF\u037E\u0387\u055A-\u055F\u0589\u058A\u05BE\u05C0\u05C3\u05C6\u05F3\u05F4\u0609\u060A\u060C\u060D\u061B\u061E\u061F\u066A-\u066D\u06D4\u0700-\u070D\u07F7-\u07F9\u0830-\u083E\u085E\u0964\u0965\u0970\u09FD\u0A76\u0AF0\u0C77\u0C84\u0DF4\u0E4F\u0E5A\u0E5B\u0F04-\u0F12\u0F14\u0F3A-\u0F3D\u0F85\u0FD0-\u0FD4\u0FD9\u0FDA\u104A-\u104F\u10FB\u1360-\u1368\u1400\u166E\u1680\u169B\u169C\u16EB-\u16ED\u1735\u1736\u17D4-\u17D6\u17D8-\u17DA\u1800-\u180A\u1944\u1945\u1A1E\u1A1F\u1AA0-\u1AA6\u1AA8-\u1AAD\u1B5A-\u1B60\u1BFC-\u1BFF\u1C3B-\u1C3F\u1C7E\u1C7F\u1CC0-\u1CC7\u1CD3\u2000-\u200A\u2010-\u2029\u202F-\u2043\u2045-\u2051\u2053-\u205F\u207D\u207E\u208D\u208E\u2308-\u230B\u2329\u232A\u2768-\u2775\u27C5\u27C6\u27E6-\u27EF\u2983-\u2998\u29D8-\u29DB\u29FC\u29FD\u2CF9-\u2CFC\u2CFE\u2CFF\u2D70\u2E00-\u2E2E\u2E30-\u2E4F\u3000-\u3003\u3008-\u3011\u3014-\u301F\u3030\u303D\u30A0\u30FB\uA4FE\uA4FF\uA60D-\uA60F\uA673\uA67E\uA6F2-\uA6F7\uA874-\uA877\uA8CE\uA8CF\uA8F8-\uA8FA\uA8FC\uA92E\uA92F\uA95F\uA9C1-\uA9CD\uA9DE\uA9DF\uAA5C-\uAA5F\uAADE\uAADF\uAAF0\uAAF1\uABEB\uFD3E\uFD3F\uFE10-\uFE19\uFE30-\uFE52\uFE54-\uFE61\uFE63\uFE68\uFE6A\uFE6B\uFF01-\uFF03\uFF05-\uFF0A\uFF0C-\uFF0F\uFF1A\uFF1B\uFF1F\uFF20\uFF3B-\uFF3D\uFF3F\uFF5B\uFF5D\uFF5F-\uFF65]+/u
 
 export default MiniSearch
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Sat Apr 25 2020 13:58:36 GMT+0200 (Central European Summer Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>

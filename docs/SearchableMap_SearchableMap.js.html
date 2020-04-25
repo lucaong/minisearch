@@ -1,4 +1,50 @@
-import { TreeIterator, ENTRIES, KEYS, VALUES, LEAF } from './TreeIterator.js'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>SearchableMap/SearchableMap.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://gitlab.com/lucaong/minisearch" target="_blank" class="menu-item" id="github_repo_link" >GitHub Repository</a></h2><h3>Classes</h3><ul><li><a href="MiniSearch.html">MiniSearch</a><ul class='methods'><li data-type='method'><a href="MiniSearch.html#.getDefault">getDefault</a></li><li data-type='method'><a href="MiniSearch.html#.loadJSON">loadJSON</a></li><li data-type='method'><a href="MiniSearch.html#add">add</a></li><li data-type='method'><a href="MiniSearch.html#addAll">addAll</a></li><li data-type='method'><a href="MiniSearch.html#addAllAsync">addAllAsync</a></li><li data-type='method'><a href="MiniSearch.html#autoSuggest">autoSuggest</a></li><li data-type='method'><a href="MiniSearch.html#remove">remove</a></li><li data-type='method'><a href="MiniSearch.html#search">search</a></li><li data-type='method'><a href="MiniSearch.html#toJSON">toJSON</a></li></ul></li><li><a href="SearchableMap.html">SearchableMap</a><ul class='methods'><li data-type='method'><a href="SearchableMap.html#.from">from</a></li><li data-type='method'><a href="SearchableMap.html#.fromObject">fromObject</a></li><li data-type='method'><a href="SearchableMap.html#atPrefix">atPrefix</a></li><li data-type='method'><a href="SearchableMap.html#clear">clear</a></li><li data-type='method'><a href="SearchableMap.html#delete">delete</a></li><li data-type='method'><a href="SearchableMap.html#entries">entries</a></li><li data-type='method'><a href="SearchableMap.html#forEach">forEach</a></li><li data-type='method'><a href="SearchableMap.html#fuzzyGet">fuzzyGet</a></li><li data-type='method'><a href="SearchableMap.html#get">get</a></li><li data-type='method'><a href="SearchableMap.html#has">has</a></li><li data-type='method'><a href="SearchableMap.html#keys">keys</a></li><li data-type='method'><a href="SearchableMap.html#set">set</a></li><li data-type='method'><a href="SearchableMap.html#update">update</a></li><li data-type='method'><a href="SearchableMap.html#values">values</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">SearchableMap/SearchableMap.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { TreeIterator, ENTRIES, KEYS, VALUES, LEAF } from './TreeIterator.js'
 import fuzzySearch from './fuzzySearch.js'
 
 /**
@@ -48,7 +94,7 @@ class SearchableMap {
     const [node, path] = trackDown(this._tree, prefix.slice(this._prefix.length))
     if (node === undefined) {
       const [parentNode, key] = last(path)
-      const nodeKey = Object.keys(parentNode).find(k => k !== LEAF && k.startsWith(key))
+      const nodeKey = Object.keys(parentNode).find(k => k !== LEAF &amp;&amp; k.startsWith(key))
       if (nodeKey !== undefined) {
         return new SearchableMap({ [nodeKey.slice(key.length)]: parentNode[nodeKey] }, prefix)
       }
@@ -124,7 +170,7 @@ class SearchableMap {
   *
   * @param {string} key - The search key
   * @param {number} maxEditDistance - The maximum edit distance
-  * @return {Object<string, Array>} A key-value object of the matching keys to their value and edit distance
+  * @return {Object&lt;string, Array>} A key-value object of the matching keys to their value and edit distance
   */
   fuzzyGet (key, maxEditDistance) {
     return fuzzySearch(this._tree, key, maxEditDistance)
@@ -147,7 +193,7 @@ class SearchableMap {
   */
   has (key) {
     const node = lookup(this._tree, key)
-    return node !== undefined && node.hasOwnProperty(LEAF)
+    return node !== undefined &amp;&amp; node.hasOwnProperty(LEAF)
   }
 
   /**
@@ -254,23 +300,23 @@ SearchableMap.fromObject = function (object) {
 
 const trackDown = function (tree, key, path = []) {
   if (key.length === 0) { return [tree, path] }
-  const nodeKey = Object.keys(tree).find(k => k !== LEAF && key.startsWith(k))
+  const nodeKey = Object.keys(tree).find(k => k !== LEAF &amp;&amp; key.startsWith(k))
   if (nodeKey === undefined) { return trackDown(undefined, '', [...path, [tree, key]]) }
   return trackDown(tree[nodeKey], key.slice(nodeKey.length), [...path, [tree, nodeKey]])
 }
 
 const lookup = function (tree, key) {
   if (key.length === 0) { return tree }
-  const nodeKey = Object.keys(tree).find(k => k !== LEAF && key.startsWith(k))
+  const nodeKey = Object.keys(tree).find(k => k !== LEAF &amp;&amp; key.startsWith(k))
   if (nodeKey === undefined) { return undefined }
   return lookup(tree[nodeKey], key.slice(nodeKey.length))
 }
 
 const createPath = function (tree, key) {
   if (key.length === 0) { return tree }
-  const nodeKey = Object.keys(tree).find(k => k !== LEAF && key.startsWith(k))
+  const nodeKey = Object.keys(tree).find(k => k !== LEAF &amp;&amp; key.startsWith(k))
   if (nodeKey === undefined) {
-    const toSplit = Object.keys(tree).find(k => k !== LEAF && k.startsWith(key[0]))
+    const toSplit = Object.keys(tree).find(k => k !== LEAF &amp;&amp; k.startsWith(key[0]))
     if (toSplit === undefined) {
       tree[key] = {}
     } else {
@@ -321,3 +367,30 @@ const last = function (array) {
 
 export default SearchableMap
 export { SearchableMap }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Sat Apr 25 2020 13:58:36 GMT+0200 (Central European Summer Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>

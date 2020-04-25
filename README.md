@@ -1,4 +1,4 @@
-# [![MiniSearch](https://lucaong.github.io/minisearch/MiniSearch.svg)](https://lucaong.github.io/minisearch/) MiniSearch
+# MiniSearch
 
 [![Build Status](https://travis-ci.org/lucaong/minisearch.svg?branch=master)](https://travis-ci.org/lucaong/minisearch)
 [![Coverage Status](https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master)](https://coveralls.io/github/lucaong/minisearch?branch=master)
@@ -299,7 +299,7 @@ The default term processor can be obtained by calling
 
 ### API Documentation
 
-Refer to the [API documentation](https://lucaong.github.io/minisearch/identifiers.html)
+Refer to the [API documentation](https://lucaong.github.io/minisearch/)
 for details about configuration options and methods.
 
 
@@ -315,7 +315,7 @@ be used to provide those functions.
 ## Contributing
 
 Contributions to `MiniSearch` are welcome! Please read the [contributions
-guidelines](https://lucaong.github.io/minisearch/manual/CONTRIBUTING.html).
+guidelines](https://github.com/lucaong/minisearch/CONTRIBUTING.html).
 Reading the [design
-document](https://lucaong.github.io/minisearch/manual/DESIGN_DOCUMENT.html) is
+document](https://github.com/lucaong/minisearch/DESIGN_DOCUMENT.html) is
 also useful to understand the project goals and the technical implementation.
