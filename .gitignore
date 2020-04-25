@@ -6,3 +6,4 @@
 /examples/dist
 /examples/node_modules
 /coverage
+yarn-error.log
