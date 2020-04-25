@@ -315,7 +315,7 @@ be used to provide those functions.
 ## Contributing
 
 Contributions to `MiniSearch` are welcome! Please read the [contributions
-guidelines](https://github.com/lucaong/minisearch/CONTRIBUTING.md).
+guidelines](https://github.com/lucaong/minisearch/blob/master/CONTRIBUTING.md).
 Reading the [design
-document](https://github.com/lucaong/minisearch/DESIGN_DOCUMENT.md) is
+document](https://github.com/lucaong/minisearch/blob/master/DESIGN_DOCUMENT.md) is
 also useful to understand the project goals and the technical implementation.
