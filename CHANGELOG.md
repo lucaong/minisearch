@@ -2,6 +2,10 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v2.3.0
+
+  - Add `removeAll` method, to remove many documents, or all documents, at once.
+
 # v2.2.2
 
   - Avoid destructuring variables named with an underscore prefix. This plays
