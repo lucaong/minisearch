@@ -255,6 +255,50 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('removeAll', () => {
+    const documents = [
+      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita ... cammin' },
+      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria ... cammin' }
+    ]
+
+    let ms, _warn
+    beforeEach(() => {
+      ms = new MiniSearch({ fields: ['title', 'text'] })
+      _warn = console.warn
+      console.warn = jest.fn()
+    })
+
+    afterEach(() => {
+      console.warn = _warn
+    })
+
+    it('removes all documents from the index if called with no argument', () => {
+      const empty = MiniSearch.loadJSON(JSON.stringify(ms), {
+        fields: ['title', 'text']
+      })
+
+      ms.addAll(documents)
+      expect(ms.documentCount).toEqual(3)
+
+      ms.removeAll()
+
+      expect(ms).toEqual(empty)
+    })
+
+    it('removes the given documents from the index', () => {
+      ms.addAll(documents)
+      expect(ms.documentCount).toEqual(3)
+
+      ms.removeAll([documents[0], documents[2]])
+
+      expect(ms.documentCount).toEqual(1)
+      expect(ms.search('commedia').length).toEqual(0)
+      expect(ms.search('vita').length).toEqual(0)
+      expect(ms.search('lago').length).toEqual(1)
+    })
+  })
+
   describe('addAll', () => {
     it('adds all the documents to the index', () => {
       const ms = new MiniSearch({ fields: ['text'] })

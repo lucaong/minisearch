@@ -15,6 +15,8 @@ declare class MiniSearch {
 
     remove(document: object): void;
 
+    removeAll(documents?: object[]): void;
+
     search(query: string, options?: SearchOptions): SearchResult[];
 
     toJSON(): object;

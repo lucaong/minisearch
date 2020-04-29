@@ -246,7 +246,7 @@ class MiniSearch {
   *   2. apply changes
   *   3. index new version
   *
-  * @param {Object} document - the document to be indexed
+  * @param {Object} document - the document to be removed
   */
   remove (document) {
     const { tokenize, processTerm, extractField, fields, idField } = this._options
@@ -276,6 +276,26 @@ class MiniSearch {
     delete this._storedFields[shortDocumentId]
     delete this._documentIds[shortDocumentId]
     this._documentCount -= 1
+  }
+
+  /**
+  * Removes all the given documents from the index. If called with no arguments,
+  * it removes _all_ documents from the index.
+  *
+  * @param {Array<Object>} [documents] - the documents to be removed
+  */
+  removeAll (documents) {
+    if (arguments.length === 0) {
+      this._index = new SearchableMap()
+      this._documentCount = 0
+      this._documentIds = {}
+      this._fieldLength = {}
+      this._averageFieldLength = {}
+      this._storedFields = {}
+      this._nextId = 0
+    } else {
+      documents.forEach(document => this.remove(document))
+    }
   }
 
   /**
