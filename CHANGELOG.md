@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v2.3.1
+
+  - Version `v2.3.1` mistakenly did not contain the commit adding `removeAll`,
+    this patch release fixes it.
+
 # v2.3.0
 
   - Add `removeAll` method, to remove many documents, or all documents, at once.
