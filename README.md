@@ -198,30 +198,35 @@ miniSearch.autoSuggest('zen ar', {
 ### Field extraction
 
 By default, documents are assumed to be plain key-value objects with field names
-as keys and field values as string values. In order to support custom field
-extraction logic (for example for nested fields, or non-string field values
-needing processing before tokenization), a custom field extractor function can
-be passed as the `extractField` option:
+as keys and field values as simple values. In order to support custom field
+extraction logic (for example for nested fields, or non-string field values that
+need processing before tokenization), a custom field extractor function can be
+passed as the `extractField` option:
 
 ```javascript
 // Assuming that our documents look like:
 const documents = [
-  { id: 1, title: 'Moby Dick', author: { name: 'Herman Melville' }, tags: ['fiction', 'whale'] },
-  { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', author: { name: 'Robert Pirsig' }, tags: ['fiction', 'zen'] },
-  { id: 3, title: 'Neuromancer', author: { name: 'William Gibson' }, tags: ['fiction', 'cyberpunk'] },
-  { id: 4, title: 'Zen and the Art of Archery', author: { name: 'Eugen Herrigel' }, tags: ['non-fiction', 'zen'] },
+  { id: 1, title: 'Moby Dick', author: { name: 'Herman Melville' }, pubDate: new Date(1851, 9, 18) },
+  { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', author: { name: 'Robert Pirsig' }, pubDate: new Date(1974, 3, 1) },
+  { id: 3, title: 'Neuromancer', author: { name: 'William Gibson' }, pubDate: new Date(1984, 6, 1) },
+  { id: 4, title: 'Zen in the Art of Archery', author: { name: 'Eugen Herrigel' }, pubDate: new Date(1948, 0, 1) },
   // ...and more
 ]
 
-// We can support nested fields (author.name) and array fields (tags) with a
+// We can support nested fields (author.name) and date fields (pubDate) with a
 // custom `extractField` function:
+
 let miniSearch = new MiniSearch({
-  fields: ['title', 'author.name', 'tags'],
+  fields: ['title', 'author.name', 'pubYear'],
   extractField: (document, fieldName) => {
+    // If field name is 'pubYear', extract just the year from 'pubDate'
+    if (fieldName === 'pubYear') {
+      const pubDate = document['pubDate']
+      return pubDate && pubDate.getFullYear().toString()
+    }
+
     // Access nested fields
-    const value = fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
-    // If field value is an array, join by space
-    return Array.isArray(value) ? value.join(' ') : value
+    return fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
   }
 })
 ```

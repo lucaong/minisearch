@@ -187,8 +187,11 @@ class MiniSearch {
     saveStoredFields(this, shortDocumentId, document)
 
     fields.forEach(field => {
-      const tokens = tokenize(extractField(document, field) || '', field)
+      const fieldValue = extractField(document, field)
+      const tokens = tokenize(fieldValue == null ? '' : fieldValue.toString(), field)
+
       addFieldLength(this, shortDocumentId, this._fieldIds[field], this.documentCount - 1, tokens.length)
+
       tokens.forEach(term => {
         const processedTerm = processTerm(term, field)
         if (isTruthy(processedTerm)) {
