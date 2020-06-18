@@ -2,6 +2,12 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v2.4.0
+
+  - Convert field value to string before tokenization and indexing. This makes
+    a custom field extractor unnecessary for basic cases like integers or simple
+    arrays.
+
 # v2.3.1
 
   - Version `v2.3.1` mistakenly did not contain the commit adding `removeAll`,
