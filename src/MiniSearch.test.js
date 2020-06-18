@@ -48,14 +48,32 @@ describe('MiniSearch', () => {
       }).not.toThrowError()
     })
 
+    it('turns the field to string before tokenization', () => {
+      const tokenize = jest.fn(x => x.split(/\W+/))
+      const ms = new MiniSearch({ fields: ['id', 'tags', 'isBlinky'], tokenize })
+      expect(() => {
+        ms.add({ id: 123, tags: ['foo', 'bar'], isBlinky: false })
+        ms.add({ id: 321, isBlinky: true })
+      }).not.toThrowError()
+
+      expect(tokenize).toHaveBeenCalledWith('123', 'id')
+      expect(tokenize).toHaveBeenCalledWith('foo,bar', 'tags')
+      expect(tokenize).toHaveBeenCalledWith('false', 'isBlinky')
+
+      expect(tokenize).toHaveBeenCalledWith('321', 'id')
+      expect(tokenize).toHaveBeenCalledWith('true', 'isBlinky')
+    })
+
     it('passes document and field name to the field extractor', () => {
       const extractField = jest.fn((document, fieldName) => {
-        const value = fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
-        return Array.isArray(value) ? value.join(' ') : value
+        if (fieldName === 'pubDate') {
+          return document[fieldName] && document[fieldName].toLocaleDateString('it-IT')
+        }
+        return fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
       })
       const tokenize = jest.fn(string => string.split(/\W+/))
       const ms = new MiniSearch({
-        fields: ['title', 'tags', 'author.name'],
+        fields: ['title', 'pubDate', 'author.name'],
         storeFields: ['category'],
         extractField,
         tokenize
@@ -63,17 +81,17 @@ describe('MiniSearch', () => {
       const document = {
         id: 1,
         title: 'Divina Commedia',
-        tags: ['divina', 'commedia', 'dante', 'alighieri'],
+        pubDate: new Date(1320, 0, 1),
         author: { name: 'Dante Alighieri' },
         category: 'poetry'
       }
       ms.add(document)
       expect(extractField).toHaveBeenCalledWith(document, 'title')
-      expect(extractField).toHaveBeenCalledWith(document, 'tags')
+      expect(extractField).toHaveBeenCalledWith(document, 'pubDate')
       expect(extractField).toHaveBeenCalledWith(document, 'author.name')
       expect(extractField).toHaveBeenCalledWith(document, 'category')
       expect(tokenize).toHaveBeenCalledWith(document.title, 'title')
-      expect(tokenize).toHaveBeenCalledWith(document.tags.join(' '), 'tags')
+      expect(tokenize).toHaveBeenCalledWith('1/1/1320', 'pubDate')
       expect(tokenize).toHaveBeenCalledWith(document.author.name, 'author.name')
       expect(tokenize).not.toHaveBeenCalledWith(document.category, 'category')
     })
