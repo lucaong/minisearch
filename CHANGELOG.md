@@ -2,6 +2,14 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v2.4.1
+
+  - [fix] Fix issue with the term `constructor` (reported by
+    [@scambier](https://github.com/scambier))
+
+  - [fix] Fix issues when a field is named like a default property of JavaScript
+    objects
+
 # v2.4.0
 
   - Convert field value to string before tokenization and indexing. This makes
