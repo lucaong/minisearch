@@ -583,6 +583,22 @@ describe('MiniSearch', () => {
           expect(processTerm).toHaveBeenCalledWith(term)
         })
       })
+
+      it('does not break when special properties of object are used as a term', () => {
+        const specialWords = ['constructor', 'hasOwnProperty', 'isPrototypeOf']
+        const ms = new MiniSearch({ fields: ['text'] })
+        const processTerm = MiniSearch.getDefault('processTerm')
+
+        ms.add({ id: 1, text: specialWords.join(' ') })
+
+        specialWords.forEach((word) => {
+          expect(() => { ms.search(word) }).not.toThrowError()
+
+          const results = ms.search(word)
+          expect(results[0].id).toEqual(1)
+          expect(results[0].match[processTerm(word)]).toEqual(['text'])
+        })
+      })
     })
   })
 

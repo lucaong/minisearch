@@ -710,12 +710,16 @@ const termResults = function (self, term, boosts, boostDocument, indexData, weig
       const normalizedLength = self._fieldLength[documentId][fieldId] / self._averageFieldLength[fieldId]
       results[documentId] = results[documentId] || { score: 0, match: {}, terms: [] }
       results[documentId].terms.push(term)
-      results[documentId].match[term] = results[documentId].match[term] || []
+      results[documentId].match[term] = getOwnProperty(results[documentId].match, term) || []
       results[documentId].score += docBoost * score(tf, df, self._documentCount, normalizedLength, boost, editDistance)
       results[documentId].match[term].push(field)
     })
     return results
   }, {})
+}
+
+const getOwnProperty = function (object, property) {
+  return Object.prototype.hasOwnProperty.call(object, property) ? object[property] : undefined
 }
 
 const addFieldLength = function (self, documentId, fieldId, count, length) {
