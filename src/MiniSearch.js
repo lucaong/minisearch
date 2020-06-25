@@ -180,7 +180,7 @@ class MiniSearch {
   */
   add (document) {
     const { extractField, tokenize, processTerm, fields, idField } = this._options
-    if (document[idField] == null) {
+    if (getOwnProperty(document, idField) == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
     const shortDocumentId = addDocumentId(this, document[idField])
@@ -254,7 +254,7 @@ class MiniSearch {
   remove (document) {
     const { tokenize, processTerm, extractField, fields, idField } = this._options
 
-    if (document[idField] == null) {
+    if (getOwnProperty(document, idField) == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
 
@@ -265,7 +265,7 @@ class MiniSearch {
       throw new Error(`MiniSearch: cannot remove document with ID ${document[idField]}: it is not in the index`)
     }
 
-    fields.filter(field => document[field] != null).forEach(field => {
+    fields.filter(field => getOwnProperty(document, field) != null).forEach(field => {
       const tokens = tokenize(extractField(document, field) || '', field)
 
       tokens.forEach(term => {
@@ -572,7 +572,7 @@ class MiniSearch {
     options = { ...this._options.searchOptions, ...options }
 
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
-      ({ ...boosts, [field]: boosts[field] || 1 }), options.boost || {})
+      ({ ...boosts, [field]: getOwnProperty(boosts, field) || 1 }), options.boost || {})
 
     const {
       boostDocument,
