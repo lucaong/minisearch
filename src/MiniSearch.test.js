@@ -40,6 +40,13 @@ describe('MiniSearch', () => {
       }).toThrowError('MiniSearch: document does not have ID field "foo"')
     })
 
+    it('throws error if the document does not have the ID field, even when named like a default object property', () => {
+      const ms = new MiniSearch({ idField: 'constructor', fields: ['title', 'text'] })
+      expect(() => {
+        ms.add({ text: 'I do not have an ID' })
+      }).toThrowError('MiniSearch: document does not have ID field "constructor"')
+    })
+
     it('rejects falsy terms', () => {
       const processTerm = term => term === 'foo' ? null : term
       const ms = new MiniSearch({ fields: ['title', 'text'], processTerm })
@@ -172,6 +179,23 @@ describe('MiniSearch', () => {
       expect(() => {
         ms.remove({ text: 'I do not have an ID' })
       }).toThrowError('MiniSearch: document does not have ID field "foo"')
+    })
+
+    it('throws error if the document does not have the ID field, even if named like a default property of object', () => {
+      const ms = new MiniSearch({ idField: 'constructor', fields: ['title', 'text'] })
+      expect(() => {
+        ms.remove({ text: 'I do not have an ID' })
+      }).toThrowError('MiniSearch: document does not have ID field "constructor"')
+    })
+
+    it('does not crash when the document has field named like default properties of object', () => {
+      const ms = new MiniSearch({ fields: ['constructor'] })
+      const document = { id: 1 }
+      ms.add(document)
+
+      expect(() => {
+        ms.remove(document)
+      }).not.toThrowError()
     })
 
     it('does not reassign IDs', () => {
@@ -423,6 +447,17 @@ describe('MiniSearch', () => {
       expect(results[0].score).toBeGreaterThan(results[1].score)
     })
 
+    it('computes a meaningful score when fields are named liked default properties of object', () => {
+      const ms = new MiniSearch({ fields: ['constructor'] })
+      ms.add({ id: 1, constructor: 'something' })
+      ms.add({ id: 1, constructor: 'something else' })
+
+      const results = ms.search('something')
+      results.forEach((result) => {
+        expect(Number.isFinite(result.score)).toBe(true)
+      })
+    })
+
     it('searches in the given fields', () => {
       const results = ms.search('vita', { fields: ['title'] })
       expect(results).toHaveLength(1)
@@ -581,6 +616,22 @@ describe('MiniSearch', () => {
         ms.search(query)
         query.split(/\W+/).forEach(term => {
           expect(processTerm).toHaveBeenCalledWith(term)
+        })
+      })
+
+      it('does not break when special properties of object are used as a term', () => {
+        const specialWords = ['constructor', 'hasOwnProperty', 'isPrototypeOf']
+        const ms = new MiniSearch({ fields: ['text'] })
+        const processTerm = MiniSearch.getDefault('processTerm')
+
+        ms.add({ id: 1, text: specialWords.join(' ') })
+
+        specialWords.forEach((word) => {
+          expect(() => { ms.search(word) }).not.toThrowError()
+
+          const results = ms.search(word)
+          expect(results[0].id).toEqual(1)
+          expect(results[0].match[processTerm(word)]).toEqual(['text'])
         })
       })
     })
