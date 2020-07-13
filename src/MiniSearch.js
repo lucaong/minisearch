@@ -492,6 +492,14 @@ class MiniSearch {
   * instantiates a MiniSearch instance. It should be given the same options
   * originally used when serializing the index.
   *
+  * @example
+  * // If the index was serialized with:
+  * let miniSearch = new MiniSearch({ fields: ['title', 'text'] })
+  * miniSearch.addAll(documents)
+  * const json = JSON.stringify(miniSearch)
+  * // It can later be deserialized like this:
+  * miniSearch = MiniSearch.loadJSON(json, { fields: ['title', 'text'] })
+  *
   * **Warning:** JSON (de)serialization of the index is currently tightly
   * coupled to the index implementation. For this reason, the current
   * implementation is to be considered a _beta_ feature, subject to breaking
@@ -615,7 +623,19 @@ class MiniSearch {
 
   /**
   * Allows serialization of the index to JSON, to possibly store it and later
-  * deserialize it with MiniSearch.loadJSON
+  * deserialize it with `MiniSearch.loadJSON`.
+  *
+  * Normally one does not directly call this method, but rather call
+  * the standard JavaScript `JSON.stringify()` passing the `MiniSearch`
+  * instance, and JavaScript will internally call this method:
+  *
+  * @example
+  * // Serialize the index:
+  * let miniSearch = new MiniSearch({ fields: ['title', 'text'] })
+  * miniSearch.addAll(documents)
+  * const json = JSON.stringify(miniSearch)
+  * // Later, to deserialize:
+  * miniSearch = MiniSearch.loadJSON(json, { fields: ['title', 'text'] })
   *
   * **Warning:** JSON (de)serialization of the index is currently tightly
   * coupled to the index implementation. For this reason, the current
