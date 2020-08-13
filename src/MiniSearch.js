@@ -180,10 +180,11 @@ class MiniSearch {
   */
   add (document) {
     const { extractField, tokenize, processTerm, fields, idField } = this._options
-    if (getOwnProperty(document, idField) == null) {
+    const id = extractField(document, idField)
+    if (id == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
-    const shortDocumentId = addDocumentId(this, document[idField])
+    const shortDocumentId = addDocumentId(this, id)
     saveStoredFields(this, shortDocumentId, document)
 
     fields.forEach(field => {
@@ -253,16 +254,17 @@ class MiniSearch {
   */
   remove (document) {
     const { tokenize, processTerm, extractField, fields, idField } = this._options
+    const id = extractField(document, idField)
 
-    if (getOwnProperty(document, idField) == null) {
+    if (id == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
 
     const [shortDocumentId] = Object.entries(this._documentIds)
-      .find(([_, longId]) => document[idField] === longId) || []
+      .find(([_, longId]) => id === longId) || []
 
     if (shortDocumentId == null) {
-      throw new Error(`MiniSearch: cannot remove document with ID ${document[idField]}: it is not in the index`)
+      throw new Error(`MiniSearch: cannot remove document with ID ${id}: it is not in the index`)
     }
 
     fields.filter(field => getOwnProperty(document, field) != null).forEach(field => {

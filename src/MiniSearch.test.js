@@ -40,11 +40,17 @@ describe('MiniSearch', () => {
       }).toThrowError('MiniSearch: document does not have ID field "foo"')
     })
 
-    it('throws error if the document does not have the ID field, even when named like a default object property', () => {
-      const ms = new MiniSearch({ idField: 'constructor', fields: ['title', 'text'] })
-      expect(() => {
-        ms.add({ text: 'I do not have an ID' })
-      }).toThrowError('MiniSearch: document does not have ID field "constructor"')
+    it('extracts the ID field using extractField', () => {
+      const extractField = (document, fieldName) => {
+        if (fieldName === 'id') { return document['id']['value'] }
+        return MiniSearch.getDefault('extractField')(document, fieldName)
+      }
+      const ms = new MiniSearch({ fields: ['text'], extractField })
+
+      ms.add({ id: { value: 123 }, text: 'Nel mezzo del cammin di nostra vita' })
+
+      const results = ms.search('vita')
+      expect(results[0].id).toEqual(123)
     })
 
     it('rejects falsy terms', () => {
@@ -179,13 +185,6 @@ describe('MiniSearch', () => {
       expect(() => {
         ms.remove({ text: 'I do not have an ID' })
       }).toThrowError('MiniSearch: document does not have ID field "foo"')
-    })
-
-    it('throws error if the document does not have the ID field, even if named like a default property of object', () => {
-      const ms = new MiniSearch({ idField: 'constructor', fields: ['title', 'text'] })
-      expect(() => {
-        ms.remove({ text: 'I do not have an ID' })
-      }).toThrowError('MiniSearch: document does not have ID field "constructor"')
     })
 
     it('does not crash when the document has field named like default properties of object', () => {
