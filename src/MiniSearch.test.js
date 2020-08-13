@@ -42,7 +42,7 @@ describe('MiniSearch', () => {
 
     it('extracts the ID field using extractField', () => {
       const extractField = (document, fieldName) => {
-        if (fieldName === 'id') { return document['id']['value'] }
+        if (fieldName === 'id') { return document.id.value }
         return MiniSearch.getDefault('extractField')(document, fieldName)
       }
       const ms = new MiniSearch({ fields: ['text'], extractField })
