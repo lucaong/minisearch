@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v2.5.1
+
+  - [fix] Fix document removal when using a custom `extractField` function
+    (thanks [@ahri](https://github.com/ahri) for reporting and reproducting)
+
 # v2.5.0
 
   - Make `idField` extraction customizeable and consistent with other fields,
