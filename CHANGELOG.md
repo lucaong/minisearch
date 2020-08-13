@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v2.5.0
+
+  - Make `idField` extraction customizeable and consistent with other fields,
+    using `extractField`
+
 # v2.4.1
 
   - [fix] Fix issue with the term `constructor` (reported by
