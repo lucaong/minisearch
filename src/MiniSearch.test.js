@@ -187,6 +187,22 @@ describe('MiniSearch', () => {
       }).toThrowError('MiniSearch: document does not have ID field "foo"')
     })
 
+    it('extracts the ID field using extractField', () => {
+      const extractField = (document, fieldName) => {
+        if (fieldName === 'id') { return document.id.value }
+        return MiniSearch.getDefault('extractField')(document, fieldName)
+      }
+      const ms = new MiniSearch({ fields: ['text'], extractField })
+      const document = { id: { value: 123 }, text: 'Nel mezzo del cammin di nostra vita' }
+      ms.add(document)
+
+      expect(() => {
+        ms.remove(document)
+      }).not.toThrowError()
+
+      expect(ms.search('vita')).toEqual([])
+    })
+
     it('does not crash when the document has field named like default properties of object', () => {
       const ms = new MiniSearch({ fields: ['constructor'] })
       const document = { id: 1 }
