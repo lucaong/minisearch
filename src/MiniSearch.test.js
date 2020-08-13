@@ -172,6 +172,22 @@ describe('MiniSearch', () => {
       expect(console.warn).not.toHaveBeenCalled()
     })
 
+    it('removes documents when using a custom extractField', () => {
+      const extractField = (document, fieldName) => {
+        const path = fieldName.split('.')
+        return path.reduce((doc, key) => doc && doc[key], document)
+      }
+      const ms = new MiniSearch({ fields: ['text.value'], storeFields: ['id'], extractField })
+      const document = { id: 123, text: { value: 'Nel mezzo del cammin di nostra vita' } }
+      ms.add(document)
+
+      expect(() => {
+        ms.remove(document)
+      }).not.toThrowError()
+
+      expect(ms.search('vita')).toEqual([])
+    })
+
     it('cleans up the index', () => {
       const originalIdsLength = Object.keys(ms._documentIds).length
       ms.remove(documents[0])

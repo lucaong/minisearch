@@ -189,7 +189,9 @@ class MiniSearch {
 
     fields.forEach(field => {
       const fieldValue = extractField(document, field)
-      const tokens = tokenize(fieldValue == null ? '' : fieldValue.toString(), field)
+      if (fieldValue == null) { return }
+
+      const tokens = tokenize(fieldValue.toString(), field)
 
       addFieldLength(this, shortDocumentId, this._fieldIds[field], this.documentCount - 1, tokens.length)
 
@@ -267,8 +269,11 @@ class MiniSearch {
       throw new Error(`MiniSearch: cannot remove document with ID ${id}: it is not in the index`)
     }
 
-    fields.filter(field => getOwnProperty(document, field) != null).forEach(field => {
-      const tokens = tokenize(extractField(document, field) || '', field)
+    fields.forEach(field => {
+      const fieldValue = extractField(document, field)
+      if (fieldValue == null) { return }
+
+      const tokens = tokenize(fieldValue.toString(), field)
 
       tokens.forEach(term => {
         const processedTerm = processTerm(term, field)
