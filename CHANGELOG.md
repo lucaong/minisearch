@@ -4,12 +4,12 @@
 
 # v2.6.1
 
-  - Better TypeScript typings using generics, letting the user (optionally)
-    specify the document type.
+  - No change from 2.6.0
 
 # v2.6.0
 
-  - UNPUBLISHED due to publishing error
+  - Better TypeScript typings using generics, letting the user (optionally)
+    specify the document type.
 
 # v2.5.1
 
