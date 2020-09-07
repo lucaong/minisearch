@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v2.6.0
+
+  - Better TypeScript typings using generics, letting the user (optionally)
+    specify the document type.
+
 # v2.5.1
 
   - [fix] Fix document removal when using a custom `extractField` function
