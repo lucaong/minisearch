@@ -1,32 +1,32 @@
 // Type definitions for MiniSearch
 
-declare class MiniSearch {
-    constructor(options: Options);
+declare class MiniSearch<T = object> {
+    constructor(options: Options<T>);
 
     documentCount: number;
 
-    add(document: object): void;
+    add(document: T): void;
 
-    addAll(documents: object[]): void;
+    addAll(documents: T[]): void;
 
-    addAllAsync(documents: object[], options?: { chunkSize?: number }): Promise<undefined>;
+    addAllAsync(documents: T[], options?: { chunkSize?: number }): Promise<undefined>;
 
-    autoSuggest(query: string, options?: SearchOptions): Suggestion[];
+    autoSuggest(query: string, options?: SearchOptions<T>): Suggestion[];
 
-    remove(document: object): void;
+    remove(document: T): void;
 
-    removeAll(documents?: object[]): void;
+    removeAll(documents?: T[]): void;
 
-    search(query: string, options?: SearchOptions): SearchResult[];
+    search(query: string, options?: SearchOptions<T>): SearchResult[];
 
     toJSON(): object;
 
     static getDefault(optionName: string): any;
 
-    static loadJSON(json: string, options: Options): MiniSearch;
+    static loadJSON<T = object>(json: string, options: Options<T>): MiniSearch<T>;
 }
 
-export declare interface SearchOptions {
+export declare interface SearchOptions<T = object> {
   fields?: string[],
 
   filter?: (result: SearchResult) => boolean,
@@ -41,27 +41,27 @@ export declare interface SearchOptions {
 
   combineWith?: string,
 
-  extractField?: (document: object, fieldName: string) => string,
+  extractField?: (document: T, fieldName: string) => string,
 
   tokenize?: (text: string) => string[],
 
   processTerm?: (term: string) => string | null | undefined | false
 }
 
-export declare interface Options {
+export declare interface Options<T = object> {
   fields: string[],
 
   storeFields?: string[],
 
   idField?: string,
 
-  extractField?: (document: object, fieldName: string) => string,
+  extractField?: (document: T, fieldName: string) => string,
 
   tokenize?: (text: string, fieldName: string) => string[],
 
   processTerm?: (term: string, fieldName: string) => string | null | undefined | false,
 
-  searchOptions?: SearchOptions
+  searchOptions?: SearchOptions<T>
 }
 
 export declare interface Suggestion {
