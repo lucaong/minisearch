@@ -2,10 +2,14 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-# v2.6.0
+# v2.6.1
 
   - Better TypeScript typings using generics, letting the user (optionally)
     specify the document type.
+
+# v2.6.0
+
+  - UNPUBLISHED due to publishing error
 
 # v2.5.1
 
