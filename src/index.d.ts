@@ -1,6 +1,6 @@
 // Type definitions for MiniSearch
 
-declare class MiniSearch<T = object> {
+declare class MiniSearch<T = any> {
     constructor(options: Options<T>);
 
     documentCount: number;
@@ -23,10 +23,10 @@ declare class MiniSearch<T = object> {
 
     static getDefault(optionName: string): any;
 
-    static loadJSON<T = object>(json: string, options: Options<T>): MiniSearch<T>;
+    static loadJSON<T = any>(json: string, options: Options<T>): MiniSearch<T>;
 }
 
-export declare interface SearchOptions<T = object> {
+export declare interface SearchOptions<T = any> {
   fields?: string[],
 
   filter?: (result: SearchResult) => boolean,
@@ -48,7 +48,7 @@ export declare interface SearchOptions<T = object> {
   processTerm?: (term: string) => string | null | undefined | false
 }
 
-export declare interface Options<T = object> {
+export declare interface Options<T = any> {
   fields: string[],
 
   storeFields?: string[],
