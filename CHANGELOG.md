@@ -2,6 +2,10 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v2.6.2
+
+  - [fix] Improve TypeScript types: default generic document type is `any`, not `object`
+
 # v2.6.1
 
   - No change from 2.6.0
