@@ -1,8 +1,8 @@
-import babel from 'rollup-plugin-babel'
+import typescript from '@rollup/plugin-typescript'
 import { terser } from 'rollup-plugin-terser'
 
 const config = ({ format, output, name, dir }) => ({
-  input: 'src/index.js',
+  input: 'src/index.ts',
   output: {
     sourcemap: true,
     dir: `dist/${dir || format}`,
@@ -19,14 +19,7 @@ const config = ({ format, output, name, dir }) => ({
       })]
       : []
   },
-  plugins: [
-    babel({
-      rootMode: 'upward',
-      caller: {
-        output
-      }
-    })
-  ]
+  plugins: [typescript()]
 })
 
 export default [
