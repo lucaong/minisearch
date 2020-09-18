@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import SearchableMap from './SearchableMap.js'
+import SearchableMap from './SearchableMap'
 import * as fc from 'fast-check'
 
 describe('SearchableMap', () => {

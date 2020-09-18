@@ -1,25 +1,53 @@
-import { LEAF } from './TreeIterator.js'
+import { LEAF } from './TreeIterator'
+import { RadixTree } from './types'
+
+const NONE = 0
+const CHANGE = 1
+const ADD = 2
+const DELETE = 3
+
+type Edit = 0 | 1 | 2 | 3 | undefined
+
+type StackElement<T> = {
+  distance: number,
+  i: number,
+  key: string,
+  node: RadixTree<T>,
+  edit?: Edit
+}
+
+type InnerStackElement = {
+  distance: number,
+  ia: number,
+  ib: number,
+  edit: Edit
+}
+
+export type FuzzyResult<T> = [T, number]
+
+export type FuzzyResults<T> = { [key: string]: FuzzyResult<T> }
 
 /**
-* @ignore
-*/
-export const fuzzySearch = function (node, query, maxDistance) {
-  const stack = [{ distance: 0, i: 0, key: '', node }]
-  const results = {}
-  const innerStack = []
+ * @ignore
+ */
+export const fuzzySearch = <T = any>(node: RadixTree<T>, query: string, maxDistance: number): FuzzyResults<T> => {
+  const stack: StackElement<T>[] = [{ distance: 0, i: 0, key: '', node }]
+  const results: FuzzyResults<T> = {}
+  const innerStack: InnerStackElement[] = []
 
   while (stack.length > 0) {
-    const { node, distance, key, i, edit } = stack.pop()
+    const { node, distance, key, i, edit } = stack.pop()!
+
     Object.keys(node).forEach((k) => {
       if (k === LEAF) {
         const totDistance = distance + (query.length - i)
         const [, d] = results[key] || [null, Infinity]
         if (totDistance <= maxDistance && totDistance < d) {
-          results[key] = [node[k], totDistance]
+          results[key] = [node[k] as T, totDistance]
         }
       } else {
         withinDistance(query, k, maxDistance - distance, i, edit, innerStack).forEach(({ distance: d, i, edit }) => {
-          stack.push({ node: node[k], distance: distance + d, key: key + k, i, edit })
+          stack.push({ node: node[k] as RadixTree<T>, distance: distance + d, key: key + k, i, edit })
         })
       }
     })
@@ -28,14 +56,14 @@ export const fuzzySearch = function (node, query, maxDistance) {
 }
 
 /**
-* @ignore
-*/
-export const withinDistance = function (a, b, maxDistance, i, edit, stack) {
+ * @ignore
+ */
+export const withinDistance = (a: string, b: string, maxDistance: number, i: number, edit: Edit, stack: InnerStackElement[]) => {
   stack.push({ distance: 0, ia: i, ib: 0, edit })
-  const results = []
+  const results: { distance: number, i: number, edit: Edit }[] = []
 
   while (stack.length > 0) {
-    const { distance, ia, ib, edit } = stack.pop()
+    const { distance, ia, ib, edit } = stack.pop()!
 
     if (ib === b.length) {
       results.push({ distance, i: ia, edit })
@@ -65,10 +93,5 @@ export const withinDistance = function (a, b, maxDistance, i, edit, stack) {
 
   return results
 }
-
-const NONE = 0
-const CHANGE = 1
-const ADD = 2
-const DELETE = 3
 
 export default fuzzySearch
