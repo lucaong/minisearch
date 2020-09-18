@@ -25,7 +25,7 @@ const config = ({ format, output, name, dir }) => ({
 const benchmarks = {
   input: 'benchmarks/index.js',
   output: {
-    sourcemap: false,
+    sourcemap: true,
     dir: 'benchmarks/dist',
     format: 'commonjs',
     entryFileNames: '[name].js',
