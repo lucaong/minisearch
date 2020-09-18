@@ -938,7 +938,7 @@ type CombinatorFunction = (a: RawResult | null, b: RawResult) => RawResult
 
 const combinators: { [kind: string]: CombinatorFunction } = {
   [OR]: (a: RawResult | null, b: RawResult) => {
-    return Object.entries(b).reduce((combined, [documentId, { score, match, terms }]) => {
+    return Object.entries(b).reduce((combined: RawResult, [documentId, { score, match, terms }]) => {
       if (combined[documentId] == null) {
         combined[documentId] = { score, match, terms }
       } else {
