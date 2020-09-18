@@ -534,7 +534,7 @@ class MiniSearch<T = any> {
     const combinedResults: RawResult = this.combineResults(results, options.combineWith)
 
     return Object.entries(combinedResults)
-      .reduce((results: { id: any, terms: string[], score: number, match: MatchInfo }[], [docId, { score, match, terms }]) => {
+      .reduce((results: SearchResult[], [docId, { score, match, terms }]) => {
         const result = {
           id: this._documentIds[docId],
           terms: uniq(terms),
