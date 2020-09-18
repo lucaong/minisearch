@@ -263,9 +263,16 @@ class SearchableMap<T = any> implements IterableSet<T> {
 
 const trackDown = <T = any>(tree: RadixTree<T> | undefined, key: string, path: Path<T> = []): [RadixTree<T> | undefined, Path<T>] => {
   if (key.length === 0 || tree == null) { return [tree, path] }
-  const nodeKey = Object.keys(tree || {}).find(k => k !== LEAF && key.startsWith(k))
-  if (nodeKey === undefined) { return trackDown(undefined, '', [...path, [tree, key]]) }
-  return trackDown(tree[nodeKey] as RadixTree<T>, key.slice(nodeKey.length), [...path, [tree, nodeKey]])
+
+  const nodeKey = Object.keys(tree).find(k => k !== LEAF && key.startsWith(k))
+
+  if (nodeKey === undefined) {
+    path.push([tree, key]) // performance: update in place
+    return trackDown(undefined, '', path)
+  }
+
+  path.push([tree, nodeKey]) // performance: update in place
+  return trackDown(tree[nodeKey] as RadixTree<T>, key.slice(nodeKey.length), path)
 }
 
 const lookup = <T = any>(tree: RadixTree<T>, key: string): RadixTree<T> | undefined => {

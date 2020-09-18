@@ -944,7 +944,7 @@ const combinators: { [kind: string]: CombinatorFunction } = {
       } else {
         combined[documentId].score += score
         combined[documentId].score *= 1.5
-        combined[documentId].terms = [...combined[documentId].terms, ...terms]
+        combined[documentId].terms.push(...terms)
         Object.assign(combined[documentId].match, match)
       }
       return combined
