@@ -1,4 +1,4 @@
-import Benchmark from 'benchmark'
+const Benchmark = require('benchmark')
 import MiniSearch from '../src/MiniSearch.js'
 import { miniSearch as ms } from './divinaCommedia.js'
 

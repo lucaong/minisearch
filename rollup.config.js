@@ -22,8 +22,20 @@ const config = ({ format, output, name, dir }) => ({
   plugins: [typescript()]
 })
 
-export default [
+const benchmarks = {
+  input: 'benchmarks/index.js',
+  output: {
+    sourcemap: false,
+    dir: 'benchmarks/dist',
+    format: 'commonjs',
+    entryFileNames: '[name].js',
+    plugins: []
+  },
+  plugins: [typescript()]
+}
+
+export default process.env.BENCHMARKS === 'true' ? [benchmarks] : [
   config({ format: 'es', output: 'es6' }),
   config({ format: 'es', output: 'es5m', dir: 'es5m' }),
-  config({ format: 'umd', output: 'es5m', name: 'MiniSearch' })
+  config({ format: 'umd', output: 'es5m', name: 'MiniSearch' }),
 ]

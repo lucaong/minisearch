@@ -72,7 +72,7 @@
     "test": "jest",
     "test-watch": "jest --watch",
     "coverage": "jest --coverage",
-    "benchmark": "NODE_ENV=production BABEL_OUTPUT=commonjs babel-node --expose-gc benchmarks/index.js",
+    "benchmark": "BENCHMARKS=true yarn build && NODE_ENV=production node --expose-gc benchmarks/dist/index.js",
     "build": "yarn build-typedef && NODE_ENV=production rollup -c",
     "build-minified": "MINIFY=true yarn build",
     "build-docs": "jsdoc --configure jsdoc.json",
