@@ -1,6 +1,6 @@
 import React from 'react'
 import fetch from 'unfetch'
-import MiniSearch from '../../src/MiniSearch.js'
+import MiniSearch from 'minisearch'
 
 class App extends React.PureComponent {
   constructor (props) {
