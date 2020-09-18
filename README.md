@@ -1,6 +1,6 @@
 # MiniSearch
 
-[![Build Status](https://travis-ci.org/lucaong/minisearch.svg?branch=master)](https://travis-ci.org/lucaong/minisearch)
+[![Build Status](https://travis-ci.com/lucaong/minisearch.svg?branch=master)](https://travis-ci.com/lucaong/minisearch)
 [![Coverage Status](https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master)](https://coveralls.io/github/lucaong/minisearch?branch=master)
 [![Minzipped Size](https://badgen.net/bundlephobia/minzip/minisearch)](https://bundlephobia.com/result?p=minisearch)
 [![](https://data.jsdelivr.com/v1/package/npm/minisearch/badge?style=rounded)](https://www.jsdelivr.com/package/npm/minisearch)
