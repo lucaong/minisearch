@@ -3,31 +3,101 @@ import SearchableMap from './SearchableMap/SearchableMap'
 const OR = 'or'
 const AND = 'and'
 
-export type SearchOptions<T = any> = {
+/**
+ * Search options to customize the search behavior.
+ */
+export type SearchOptions = {
+  /**
+   * Names of the fields to search in. If omitted, all fields are searched.
+   */
   fields?: string[],
 
+  /**
+   * Function used to filter search results, for example on the basis of stored
+   * fields. It takes as argument each search result and should return a boolean
+   * to indicate if the result should be kept or not.
+   */
   filter?: (result: SearchResult) => boolean,
 
+  /**
+   * Key-value object of field names to boosting values. By default, fields are
+   * assigned a boosting factor of 1. If one assigns to a field a boosting value
+   * of 2, a result that matches the query in that field is assigned a score
+   * twice as high as a result matching the query in another field, all else
+   * being equal.
+   */
   boost?: { [fieldName: string]: number },
 
+  /**
+   * Relative weights to assign to prefix search results and fuzzy search
+   * results. Exact matches are assigned a weight of 1.
+   */
   weights?: { fuzzy: number, prefix: number },
 
+  /**
+   * Function to calculate a boost factor for documents. It takes as arguments
+   * the document ID, and a term that matches the search in that document, and
+   * should return a boosting factor.
+   */
   boostDocument?: (documentId: any, term: string) => number,
 
+  /**
+   * Controls whether to perform prefix search. It can be a simple boolean, or a
+   * function.
+   *
+   * If a boolean is passed, prefix search is performed if true.
+   *
+   * If a function is passed, it is called upon search with a search term, the
+   * positional index of that search term in the tokenized search query, and the
+   * tokenized search query. The function should return a boolean to indicate
+   * whether to perform prefix search for that search term.
+   */
   prefix?: boolean | ((term: string, index: number, terms: string[]) => boolean),
 
+  /**
+   * Controls whether to perform fuzzy search. It can be a simple boolean, or a
+   * number, or a function.
+   *
+   * If a boolean is given, fuzzy search with a default fuzziness parameter is
+   * performed if true.
+   *
+   * If a number higher or equal to 1 is given, fuzzy search is performed, with
+   * a mazimum edit distance (Levenshtein) equal to the number.
+   *
+   * If a number between 0 and 1 is given, fuzzy search is performed within a
+   * maximum edit distance corresponding to that fraction of the term length,
+   * approximated to the nearest integer. For example, 0.2 would mean an edit
+   * distance of 20% of the term length, so 1 character in a 5-characters term.
+   *
+   * If a function is passed, the function is called upon search with a search
+   * term, a positional index of that term in the tokenized search query, and
+   * the tokenized search query. It should return a boolean or a number, with
+   * the meaning documented above.
+   */
   fuzzy?: boolean | number | ((term: string, index: number, terms: string[]) => boolean | number),
 
+  /**
+   * The operand to combine partial results for each term. By default it is
+   * "OR", so results matching _any_ of the search terms are returned by a
+   * search. If "AND" is given, only results matching _all_ the search terms are
+   * returned by a search.
+   */
   combineWith?: string,
 
-  extractField?: (document: T, fieldName: string) => string,
-
+  /**
+   * Function to tokenize the search query. By default, the same tokenizer used
+   * for indexing is used also for search.
+   */
   tokenize?: (text: string) => string[],
 
+  /**
+   * Function to process or normalize terms in the search query. By default, the
+   * same term processor used for indexing is used also for search.
+   */
   processTerm?: (term: string) => string | null | undefined | false
 }
 
-export type SearchOptionsWithDefaults<T = any> = SearchOptions<T> & {
+type SearchOptionsWithDefaults = SearchOptions & {
   boost: { [fieldName: string]: number },
 
   weights: { fuzzy: number, prefix: number },
@@ -39,20 +109,67 @@ export type SearchOptionsWithDefaults<T = any> = SearchOptions<T> & {
   combineWith: string
 }
 
+/**
+ * Configuration options passed to the [[MiniSearch]] constructor
+ *
+ * @typeParam T  The type of documents being indexed.
+ */
 export type Options<T = any> = {
+   /**
+    * Names of the document fields to be indexed.
+    */
   fields: string[],
 
-  storeFields?: string[],
-
+   /**
+    * Name of the ID field, uniquely identifying a document.
+    */
   idField?: string,
 
+   /**
+    * Names of fields to store, so that search results would include them. By
+    * default none, so resuts would only contain the id field.
+    */
+  storeFields?: string[],
+
+   /**
+    * Function used to extract the value of each field in documents. By default,
+    * the documents are assumed to be plain objects with field names as keys,
+    * but by specifying a custom `extractField` function one can completely
+    * customize how the fields are extracted.
+    *
+    * The function takes as arguments the document, and the name of the field to
+    * extract from it. It should return the field value as a string.
+    */
   extractField?: (document: T, fieldName: string) => string,
 
+   /*
+    * Function used to split a field value into individual terms to be indexed.
+    * The default tokenizer separates terms by space or punctuation, but a
+    * custom tokenizer can be provided for custom logic.
+    *
+    * The function takes as arguments string to tokenize, and the name of the
+    * field it comes from. It should return the terms as an array of strings.
+    * When used for tokenizing a search query instead of a document field, the
+    * `fieldName` is undefined.
+    */
   tokenize?: (text: string, fieldName?: string) => string[],
 
+   /**
+    * Function used to process a term before indexing or search. This can be
+    * used for normalization (such as stemming). By default, terms are
+    * downcased, and otherwise no other normalization is performed.
+    *
+    * The function takes as arguments a term to process, and the name of the
+    * field it comes from. It should return the processed term as a string, or a
+    * falsy value to reject the term entirely.
+    */
   processTerm?: (term: string, fieldName?: string) => string | null | undefined | false,
 
-  searchOptions?: SearchOptions<T>
+   /**
+    * Default search options (see the [[SearchOptions]] type and the
+    * [[MiniSearch.search]] method for details)
+    */
+  searchOptions?: SearchOptions
 }
 
 type OptionsWithDefaults<T = any> = Options<T> & {
@@ -66,27 +183,73 @@ type OptionsWithDefaults<T = any> = Options<T> & {
 
   processTerm: (term: string, fieldName: string) => string | null | undefined | false,
 
-  searchOptions: SearchOptionsWithDefaults<T>
+  searchOptions: SearchOptionsWithDefaults
 }
 
+/**
+ * The type of auto-suggestions
+ */
 export type Suggestion = {
+  /**
+   * The suggestion
+   */
   suggestion: string,
+
+  /**
+   * Suggestion as an array of terms
+   */
   terms: string[],
+
+  /**
+   * Score for the suggestion
+   */
   score: number
 }
 
+/**
+ * Match information for a search result. It is a key-value object where keys
+ * are terms that matched, and values are the list of fields that the term was
+ * found in.
+ */
 export type MatchInfo = {
   [term: string]: string[]
 }
 
+/**
+ * Type of the search results. Each search result indicates the document ID, the
+ * terms that matched, the match information, the score, and all the stored
+ * fields.
+ */
 export type SearchResult = {
+  /**
+   * The document ID
+   */
   id: any,
+
+  /**
+   * List of terms that matched
+   */
   terms: string[],
+
+  /**
+   * Score of the search results
+   */
   score: number,
+
+  /**
+   * Match information, see [[MatchInfo]]
+   */
   match: MatchInfo,
+
+  /**
+   * Stored fields
+   */
   [key: string]: any
 }
 
+/**
+ * @ignore
+ */
 export type AsPlainObject = {
   index: { _tree: {}, _prefix: string },
   documentCount: number,
@@ -113,10 +276,14 @@ type RawResult = {
 }
 
 /**
- * MiniSearch is the main entrypoint class, and represents a full-text search
- * engine.
+ * [[MiniSearch]] is the main entrypoint class, implementing a full-text search
+ * engine in memory.
  *
- * @example
+ * @typeParam T  The type of the documents being indexed.
+ *
+ * ### Basic example:
+ *
+ * ```javascript
  * const documents = [
  *   {
  *     id: 1,
@@ -159,56 +326,47 @@ type RawResult = {
  * // Search for documents:
  * let results = miniSearch.search('zen art motorcycle')
  * // => [
- *   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', category: 'fiction', score: 2.77258 },
- *   { id: 4, title: 'Zen and the Art of Archery', category: 'non-fiction', score: 1.38629 }
- * ]
+ * //   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', category: 'fiction', score: 2.77258 },
+ * //   { id: 4, title: 'Zen and the Art of Archery', category: 'non-fiction', score: 1.38629 }
+ * // ]
+ * ```
  */
-class MiniSearch<T = any> {
-  /**
-   * @callback MiniSearch~extractField
-   * @param {Object} document - A document object
-   * @param {string} fieldName - Name of the field to extract
-   * @return string - Value of the field
-   */
+export class MiniSearch<T = any> {
+  protected _options: OptionsWithDefaults<T>
+  protected _index: SearchableMap
+  protected _documentCount: number
+  protected _documentIds: { [shortId: string]: any }
+  protected _fieldIds: { [fieldName: string]: number }
+  protected _fieldLength: { [shortId: string]: { [fieldId: string]: number } }
+  protected _averageFieldLength: { [fieldId: string]: number }
+  protected _nextId: number
+  protected _storedFields: { [shortId: string]: any }
 
   /**
-   * @callback MiniSearch~tokenize
-   * @param {string} text - Text to tokenize
-   * @param {?string} fieldName - Name of the field to tokenize
-   * @return string[] - Tokenized terms
-   */
-
-  /**
-   * @callback MiniSearch~processTerm
-   * @param {string} text - The text to tokenize
-   * @param {?string} fieldName - The name of the field to tokenize
-   * @return string|null|undefined|false - Processed term, or a falsy value to discard the term
-   */
-
-  /**
-   * @param {Object} options - Configuration options
-   * @param {Array<string>} options.fields - Fields to be indexed. Required.
-   * @param {string} [options.idField='id'] - ID field, uniquely identifying a document
-   * @param {Array<string>} [options.storeFields] - Fields to store, so that search results would include them. By default none, so resuts would only contain the id field.
-   * @param {MiniSearch~extractField} [options.extractField] - Function used to get the value of a field in a document
-   * @param {MiniSearch~tokenize} [options.tokenize] - Function used to split a field into individual terms
-   * @param {MiniSearch~processTerm} [options.processTerm] - Function used to process a term before indexing it or searching
-   * @param {Object} [options.searchOptions] - Default search options (see the `search` method for details)
+   * @param options  Configuration options
    *
-   * @example
+   * ### Examples:
+   *
+   * ```javascript
    * // Create a search engine that indexes the 'title' and 'text' fields of your
    * // documents:
-   * const miniSearch = MiniSearch.new({ fields: ['title', 'text'] })
+   * const miniSearch = new MiniSearch({ fields: ['title', 'text'] })
+   * ```
    *
-   * @example
+   * ### ID Field:
+   *
+   * ```javascript
    * // Your documents are assumed to include a unique 'id' field, but if you want
    * // to use a different field for document identification, you can set the
    * // 'idField' option:
-   * const miniSearch = MiniSearch.new({ idField: 'key', fields: ['title', 'text'] })
+   * const miniSearch = new MiniSearch({ idField: 'key', fields: ['title', 'text'] })
+   * ```
    *
-   * @example
+   * ### Options and defaults:
+   *
+   * ```javascript
    * // The full set of options (here with their default value) is:
-   * const miniSearch = MiniSearch.new({
+   * const miniSearch = new MiniSearch({
    *   // idField: field that uniquely identifies a document
    *   idField: 'id',
    *
@@ -243,52 +401,33 @@ class MiniSearch<T = any> {
    *   // search results.
    *   storeFields: []
    * })
+   * ```
    */
-
-  protected _options: OptionsWithDefaults<T>
-  protected _index: SearchableMap
-  protected _documentCount: number
-  protected _documentIds: { [shortId: string]: any }
-  protected _fieldIds: { [fieldName: string]: number }
-  protected _fieldLength: { [shortId: string]: { [fieldId: string]: number } }
-  protected _averageFieldLength: { [fieldId: string]: number }
-  protected _nextId: number
-  protected _storedFields: { [shortId: string]: any }
-
   constructor (options: Options<T>) {
     if (options?.fields == null) {
       throw new Error('MiniSearch: option "fields" must be provided')
     }
 
-    /** @private */
     this._options = {
       ...defaultOptions,
       ...options,
       searchOptions: { ...defaultSearchOptions, ...(options.searchOptions || {}) }
     }
 
-    /** @private */
     this._index = new SearchableMap()
 
-    /** @private */
     this._documentCount = 0
 
-    /** @private */
     this._documentIds = {}
 
-    /** @private */
     this._fieldIds = {}
 
-    /** @private */
     this._fieldLength = {}
 
-    /** @private */
     this._averageFieldLength = {}
 
-    /** @private */
     this._nextId = 0
 
-    /** @private */
     this._storedFields = {}
 
     this.addFields(this._options.fields)
@@ -297,7 +436,7 @@ class MiniSearch<T = any> {
   /**
    * Adds a document to the index
    *
-   * @param {Object} document - the document to be indexed
+   * @param document  The document to be indexed
    */
   add (document: T): void {
     const { extractField, tokenize, processTerm, fields, idField } = this._options
@@ -328,7 +467,7 @@ class MiniSearch<T = any> {
   /**
    * Adds all the given documents to the index
    *
-   * @param {Object[]} documents - an array of documents to be indexed
+   * @param documents  An array of documents to be indexed
    */
   addAll (documents: T[]): void {
     documents.forEach(document => this.add(document))
@@ -337,14 +476,13 @@ class MiniSearch<T = any> {
   /**
    * Adds all the given documents to the index asynchronously.
    *
-   * Returns a promise that resolves to undefined when the indexing is done. This
-   * method is useful when index many documents, to avoid blocking the main
+   * Returns a promise that resolves (to `undefined`) when the indexing is done.
+   * This method is useful when index many documents, to avoid blocking the main
    * thread. The indexing is performed asynchronously and in chunks.
    *
-   * @param {Object[]} documents - an array of documents to be indexed
-   * @param {Object} [options] - Configuration options
-   * @param {number} [options.chunkSize] - Size of the document chunks indexed, 10 by default
-   * @return {Promise} A promise resolving to `null` when the indexing is done
+   * @param documents  An array of documents to be indexed
+   * @param options  Configuration options
+   * @return A promise resolving to `undefined` when the indexing is done
    */
   addAllAsync (documents: T[], options: { chunkSize?: number } = {}): Promise<void> {
     const { chunkSize = 10 } = options
@@ -373,7 +511,7 @@ class MiniSearch<T = any> {
    *   2. apply changes
    *   3. index new version
    *
-   * @param {Object} document - the document to be removed
+   * @param document  The document to be removed
    */
   remove (document: T): void {
     const { tokenize, processTerm, extractField, fields, idField } = this._options
@@ -413,7 +551,10 @@ class MiniSearch<T = any> {
    * Removes all the given documents from the index. If called with no arguments,
    * it removes _all_ documents from the index.
    *
-   * @param {Array<Object>} [documents] - the documents to be removed
+   * @param documents  The documents to be removed. If this argument is omitted,
+   * all documents are removed. Note that, for removing all documents, it is
+   * more efficient to call this method with no arguments than to pass all
+   * documents.
    */
   removeAll (documents: T[]): void {
     if (arguments.length === 0) {
@@ -430,99 +571,95 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @callback MiniSearch~prefixFn
-   * @param {string} term - Search term
-   * @param {number} i - Index of the term in the query terms array
-   * @param {string[]} terms - Array of all query terms
-   * @return boolean - `true` to perform prefix search, `false` to not perform it
-   */
-
-  /**
-   * @callback MiniSearch~fuzzyFn
-   * @param {string} term - Search term
-   * @param {number} i - Index of the search term in the tokenized search query
-   * @param {string[]} terms - Array of all query terms
-   * @return number|false - Maximum edit distance, or `false` to not perform fuzzy search
-   */
-
-  /**
-   * @callback MiniSearch~filter
-   * @param {Object} result - A search result
-   * @return boolean - `true` to keep the result, `false` to filter it out
-   */
-
-  /**
    * Search for documents matching the given search query.
    *
    * The result is a list of scored document IDs matching the query, sorted by
    * descending score, and each including data about which terms were matched and
    * in which fields.
    *
-   * @param {string} queryString - Query string to search for
-   * @param {Object} [options] - Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
-   * @param {Array<string>} [options.fields] - Fields to search in. If omitted, all fields are searched
-   * @param {Object<string, number>} [options.boost] - Key-value object of boosting values for fields
-   * @param {boolean|MiniSearch~prefixFn} [options.prefix=false] - Whether to perform prefix search. Value can be a boolean, or a function computing the boolean from each tokenized and processed query term. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
-   * @param {number|false|MiniSearch~fuzzyFn} [options.fuzzy=false] - If set to a number greater than or equal 1, it performs fuzzy search within a maximum edit distance equal to that value. If set to a number less than 1, it performs fuzzy search with a maximum edit distance equal to the term length times the value, rouded at the nearest integer. If set to a function, it calls the function for each tokenized and processed query term and expects a numeric value indicating the maximum edit distance, or a falsy falue if fuzzy search should not be performed. If a function is given, it is called with the following arguments: `term: string` - the query term; `i: number` - the term index in the query terms; `terms: Array<string>` - the array of query terms.
-   * @param {string} [options.combineWith='OR'] - How to combine term queries (it can be 'OR' or 'AND')
-   * @param {MiniSearch~tokenize} [options.tokenize] - Function used to tokenize the search query. It defaults to the same tokenizer used for indexing.
-   * @param {MiniSearch~processTerm} [options.processTerm] - Function used to process each search term. Return a falsy value to discard a term. Defaults to the same function used to process terms upon indexing.
-   * @param {MiniSearch~filter} [options.filter] - Function used to filter search results, for example on the basis of stored fields
-   * @return {Array<{ id: any, score: number, match: Object }>} A sorted array of scored document IDs matching the search
+   * ### Basic usage:
    *
-   * @example
+   * ```javascript
    * // Search for "zen art motorcycle" with default options: terms have to match
    * // exactly, and individual terms are joined with OR
    * miniSearch.search('zen art motorcycle')
    * // => [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]
+   * ```
    *
-   * @example
+   * ### Restrict search to specific fields:
+   *
+   * ```javascript
    * // Search only in the 'title' field
    * miniSearch.search('zen', { fields: ['title'] })
+   * ```
    *
-   * @example
+   * ### Field boosting:
+   *
+   * ```javascript
    * // Boost a field
    * miniSearch.search('zen', { boost: { title: 2 } })
+   * ```
    *
-   * @example
+   * ### Prefix search:
+   *
+   * ```javascript
    * // Search for "moto" with prefix search (it will match documents
    * // containing terms that start with "moto" or "neuro")
    * miniSearch.search('moto neuro', { prefix: true })
+   * ```
    *
-   * @example
+   * ### Fuzzy search:
+   *
+   * ```javascript
    * // Search for "ismael" with fuzzy search (it will match documents containing
    * // terms similar to "ismael", with a maximum edit distance of 0.2 term.length
    * // (rounded to nearest integer)
    * miniSearch.search('ismael', { fuzzy: 0.2 })
+   * ```
    *
-   * @example
+   * ### Combining strategies:
+   *
+   * ```javascript
    * // Mix of exact match, prefix search, and fuzzy search
    * miniSearch.search('ismael mob', {
    *  prefix: true,
    *  fuzzy: 0.2
    * })
+   * ```
    *
-   * @example
+   * ### Advanced prefix and fuzzy search:
+   *
+   * ```javascript
    * // Perform fuzzy and prefix search depending on the search term. Here
    * // performing prefix and fuzzy search only on terms longer than 3 characters
    * miniSearch.search('ismael mob', {
    *  prefix: term => term.length > 3
    *  fuzzy: term => term.length > 3 ? 0.2 : null
    * })
+   * ```
    *
-   * @example
+   * ### Combine with AND:
+   *
+   * ```javascript
    * // Combine search terms with AND (to match only documents that contain both
    * // "motorcycle" and "art")
    * miniSearch.search('motorcycle art', { combineWith: 'AND' })
+   * ```
    *
-   * @example
+   * ### Filtering results:
+   *
+   * ```javascript
    * // Filter only results in the 'fiction' category (assuming that 'category'
    * // is a stored field)
    * miniSearch.search('motorcycle art', {
    *   filter: (result) => result.category === 'fiction'
    * })
+   * ```
+   *
+   * @param queryString  Query string to search for
+   * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
-  search (queryString: string, searchOptions: SearchOptions<T> = {}): SearchResult[] {
+  search (queryString: string, searchOptions: SearchOptions = {}): SearchResult[] {
     const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
     const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
     const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
@@ -556,29 +693,36 @@ class MiniSearch<T = any> {
    * The result is a list of suggested modified search queries, derived from the
    * given search query, each with a relevance score, sorted by descending score.
    *
-   * @param {string} queryString - Query string to be expanded into suggestions
-   * @param {Object} [options] - Search options. The supported options and default values are the same as for the `search` method, except that by default prefix search is performed on the last term in the query.
-   * @return {Array<{ suggestion: string, score: number }>} A sorted array of suggestions sorted by relevance score.
+   * ### Basic usage:
    *
-   * @example
+   * ```javascript
    * // Get suggestions for 'neuro':
    * miniSearch.autoSuggest('neuro')
    * // => [ { suggestion: 'neuromancer', terms: [ 'neuromancer' ], score: 0.46240 } ]
+   * ```
    *
-   * @example
+   * ### Multiple words:
+   *
+   * ```javascript
    * // Get suggestions for 'zen ar':
    * miniSearch.autoSuggest('zen ar')
    * // => [
    * //  { suggestion: 'zen archery art', terms: [ 'zen', 'archery', 'art' ], score: 1.73332 },
    * //  { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 }
    * // ]
+   * ```
    *
-   * @example
+   * ### Fuzzy suggestions:
+   *
+   * ```javascript
    * // Correct spelling mistakes using fuzzy search:
    * miniSearch.autoSuggest('neromancer', { fuzzy: 0.2 })
    * // => [ { suggestion: 'neuromancer', terms: [ 'neuromancer' ], score: 1.03998 } ]
+   * ```
    *
-   * @example
+   * ### Filtering:
+   *
+   * ```javascript
    * // Get suggestions for 'zen ar', but only within the 'fiction' category
    * // (assuming that 'category' is a stored field):
    * miniSearch.autoSuggest('zen ar', {
@@ -588,8 +732,15 @@ class MiniSearch<T = any> {
    * //  { suggestion: 'zen archery art', terms: [ 'zen', 'archery', 'art' ], score: 1.73332 },
    * //  { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 }
    * // ]
+   * ```
+   *
+   * @param queryString  Query string to be expanded into suggestions
+   * @param options  Search options. The supported options and default values
+   * are the same as for the `search` method, except that by default prefix
+   * search is performed on the last term in the query.
+   * @return  A sorted array of suggestions sorted by relevance score.
    */
-  autoSuggest (queryString: string, options: SearchOptions<T> = {}): Suggestion[] {
+  autoSuggest (queryString: string, options: SearchOptions = {}): Suggestion[] {
     options = { ...defaultAutoSuggestOptions, ...options }
     const suggestions = this.search(queryString, options).reduce((
       suggestions: { [phrase: string]: Omit<Suggestion, 'suggestion'> & { count: number } },
@@ -611,8 +762,6 @@ class MiniSearch<T = any> {
 
   /**
    * Number of documents in the index
-   *
-   * @type {number}
    */
   get documentCount (): number {
     return this._documentCount
@@ -623,7 +772,9 @@ class MiniSearch<T = any> {
    * instantiates a MiniSearch instance. It should be given the same options
    * originally used when serializing the index.
    *
-   * @example
+   * ### Usage:
+   *
+   * ```javascript
    * // If the index was serialized with:
    * let miniSearch = new MiniSearch({ fields: ['title', 'text'] })
    * miniSearch.addAll(documents)
@@ -631,10 +782,11 @@ class MiniSearch<T = any> {
    * const json = JSON.stringify(miniSearch)
    * // It can later be deserialized like this:
    * miniSearch = MiniSearch.loadJSON(json, { fields: ['title', 'text'] })
+   * ```
    *
-   * @param {string} json - JSON-serialized index
-   * @param {Object} options - configuration options, same as the constructor
-   * @return {MiniSearch} an instance of MiniSearch
+   * @param json  JSON-serialized index
+   * @param options  configuration options, same as the constructor
+   * @return An instance of MiniSearch deserialized from the given JSON.
    */
   static loadJSON<T = any> (json: string, options: Options<T>): MiniSearch<T> {
     if (options == null) {
@@ -644,24 +796,25 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * Get the default value of an option. It will throw an error if no option with
-   * the given name exists.
+   * Returns the default value of an option. It will throw an error if no option
+   * with the given name exists.
    *
-   * @param {string} optionName - name of the option
-   * @return {any} the default value of the given option
+   * @param optionName  Name of the option
+   * @return The default value of the given option
    *
-   * @example
+   * ### Usage:
+   *
+   * ```javascript
    * // Get default tokenizer
    * MiniSearch.getDefault('tokenize')
    *
-   * @example
    * // Get default term processor
    * MiniSearch.getDefault('processTerm')
    *
-   * @example
    * // Unknown options will throw an error
    * MiniSearch.getDefault('notExisting')
    * // => throws 'MiniSearch: unknown option "notExisting"'
+   * ```
    */
   static getDefault (optionName: string): any {
     if (defaultOptions.hasOwnProperty(optionName)) {
@@ -672,7 +825,7 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
+   * @ignore
    */
   static loadJS<T = any> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
     const {
@@ -701,11 +854,10 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
-  private executeQuery (query: Query, searchOptions: SearchOptions<T>): RawResult {
-    const options: SearchOptionsWithDefaults<T> = { ...this._options.searchOptions, ...searchOptions }
+  private executeQuery (query: Query, searchOptions: SearchOptions): RawResult {
+    const options: SearchOptionsWithDefaults = { ...this._options.searchOptions, ...searchOptions }
 
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
       ({ ...boosts, [field]: getOwnProperty(boosts, field) || 1 }), options.boost || {})
@@ -744,10 +896,9 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
-  combineResults (results: RawResult[], combineWith = OR): RawResult {
+  private combineResults (results: RawResult[], combineWith = OR): RawResult {
     if (results.length === 0) { return {} }
     const operator = combineWith.toLowerCase()
     return results.reduce(combinators[operator], null) || {}
@@ -763,7 +914,9 @@ class MiniSearch<T = any> {
    * must pass to `loadJSON` the same options used to create the original
    * instance that was serialized.
    *
-   * @example
+   * ### Usage:
+   *
+   * ```javascript
    * // Serialize the index:
    * let miniSearch = new MiniSearch({ fields: ['title', 'text'] })
    * miniSearch.addAll(documents)
@@ -771,8 +924,9 @@ class MiniSearch<T = any> {
    *
    * // Later, to deserialize it:
    * miniSearch = MiniSearch.loadJSON(json, { fields: ['title', 'text'] })
+   * ```
    *
-   * @return {Object} the serializeable representation of the search index
+   * @return A plain-object serializeable representation of the search index.
    */
   toJSON (): AsPlainObject {
     return {
@@ -788,7 +942,6 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
   private termResults (
@@ -823,7 +976,6 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
   private addTerm (fieldId: number, documentId: string, term: string): void {
@@ -837,7 +989,6 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
   private removeTerm (fieldId: number, documentId: string, term: string): void {
@@ -871,7 +1022,6 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
   private warnDocumentChanged (shortDocumentId: string, fieldId: number, term: string): void {
@@ -881,7 +1031,6 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
   private addDocumentId (documentId: any): string {
@@ -893,7 +1042,6 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
   private addFields (fields: string[]): void {
@@ -901,7 +1049,6 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
   private addFieldLength (documentId: string, fieldId: number, count: number, length: number): void {
@@ -913,7 +1060,6 @@ class MiniSearch<T = any> {
   }
 
   /**
-   * @private
    * @ignore
    */
   private saveStoredFields (documentId: string, doc: T): void {
@@ -928,6 +1074,9 @@ class MiniSearch<T = any> {
     })
   }
 
+  /**
+   * @ignore
+   */
   static SearchableMap = SearchableMap
 }
 
@@ -977,7 +1126,7 @@ const score = (
   return weight * tfIdf(termFrequency, documentFrequency, documentCount) / normalizedLength
 }
 
-const termToQuery = <T>(options: SearchOptions<T>) => (term: string, i: number, terms: string[]): Query => {
+const termToQuery = (options: SearchOptions) => (term: string, i: number, terms: string[]): Query => {
   const fuzzy = (typeof options.fuzzy === 'function')
     ? options.fuzzy(term, i, terms)
     : (options.fuzzy || false)

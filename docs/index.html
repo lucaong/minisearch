@@ -1,349 +1,383 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="default no-js">
 <head>
-    
-    <meta charset="utf-8">
-    <title>Home - Documentation</title>
-    
-    
-    <script src="scripts/prettify/prettify.js"></script>
-    <script src="scripts/prettify/lang-css.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
-    <script src="scripts/nav.js" defer></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MiniSearch</title>
+	<meta name="description" content="Documentation for MiniSearch">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">MiniSearch</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>MiniSearch</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#minisearch" id="minisearch" style="color: inherit; text-decoration: none;">
+					<h1>MiniSearch</h1>
+				</a>
+				<p><a href="https://travis-ci.com/lucaong/minisearch"><img src="https://travis-ci.com/lucaong/minisearch.svg?branch=master" alt="Build Status"></a>
+					<a href="https://coveralls.io/github/lucaong/minisearch?branch=master"><img src="https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master" alt="Coverage Status"></a>
+					<a href="https://bundlephobia.com/result?p=minisearch"><img src="https://badgen.net/bundlephobia/minzip/minisearch" alt="Minzipped Size"></a>
+				<a href="https://www.jsdelivr.com/package/npm/minisearch"><img src="https://data.jsdelivr.com/v1/package/npm/minisearch/badge?style=rounded" alt=""></a></p>
+				<p><code>MiniSearch</code> is a tiny but powerful in-memory fulltext search engine written in
+					JavaScript. It is respectful of resources, and it can comfortably run both in
+				Node and in the browser.</p>
+				<p>Try out the <a href="https://lucaong.github.io/minisearch/examples/">demo application</a>.</p>
+				<p>Find the complete <a href="https://lucaong.github.io/minisearch">documentation and API reference
+					here</a>, and more background about
+					<code>MiniSearch</code>, including a comparison with other similar libraries, in <a href="https://lucaongaro.eu/blog/2019/01/30/minisearch-client-side-fulltext-search-engine.html">this blog
+				post</a>.</p>
+				<a href="#use-case" id="use-case" style="color: inherit; text-decoration: none;">
+					<h2>Use case</h2>
+				</a>
+				<p><code>MiniSearch</code> addresses use cases where full-text search features are needed
+					(e.g. prefix search, fuzzy search, ranking, boosting of fields…), but the data
+					to be indexed can fit locally in the process memory. While you won&#39;t index the
+					whole Internet with it, there are surprisingly many use cases that are served
+					well by <code>MiniSearch</code>. By storing the index in local memory, <code>MiniSearch</code> can
+				work offline, and can process queries quickly, without network latency.</p>
+				<p>A prominent use-case is real time search &quot;as you type&quot; in web and mobile
+					applications, where keeping the index on the client enables fast and reactive
+				UIs, removing the need to make requests to a search server.</p>
+				<a href="#features" id="features" style="color: inherit; text-decoration: none;">
+					<h2>Features</h2>
+				</a>
+				<ul>
+					<li><p>Memory-efficient index, designed to support memory-constrained use cases
+						like mobile browsers.</p>
+					</li>
+					<li><p>Exact match, prefix search, fuzzy match, field boosting</p>
+					</li>
+					<li><p>Auto-suggestion engine, for auto-completion of search queries</p>
+					</li>
+					<li><p>Documents can be added and removed from the index at any time</p>
+					</li>
+					<li><p>Zero external dependencies</p>
+					</li>
+				</ul>
+				<p><code>MiniSearch</code> strives to expose a simple API that provides the building blocks to
+				build custom solutions, while keeping a small and well tested codebase.</p>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h2>Installation</h2>
+				</a>
+				<p>With <code>npm</code>:</p>
+				<pre><code>npm <span class="hljs-keyword">install</span> <span class="hljs-comment">--save minisearch</span></code></pre>
+				<p>With <code>yarn</code>:</p>
+				<pre><code>yarn <span class="hljs-keyword">add</span><span class="bash"> minisearch</span></code></pre>
+				<p>Then <code>require</code> or <code>import</code> it in your project:</p>
+				<pre><code class="language-javascript"><span class="hljs-comment">// If you are using import:</span>
+<span class="hljs-keyword">import</span> MiniSearch <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;minisearch&#x27;</span>
 
-<input type="checkbox" id="nav-trigger" class="nav-trigger" />
-<label for="nav-trigger" class="navicon-button x">
-  <div class="navicon"></div>
-</label>
-
-<label for="nav-trigger" class="overlay"></label>
-
-<nav >
-    
-    <input type="text" id="nav-search" placeholder="Search" />
-    
-    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/lucaong/minisearch" target="_blank" class="menu-item" id="github_repo_link" >GitHub Repository</a></h2><h3>Classes</h3><ul><li><a href="MiniSearch.html">MiniSearch</a><ul class='methods'><li data-type='method'><a href="MiniSearch.html#.getDefault">getDefault</a></li><li data-type='method'><a href="MiniSearch.html#.loadJSON">loadJSON</a></li><li data-type='method'><a href="MiniSearch.html#add">add</a></li><li data-type='method'><a href="MiniSearch.html#addAll">addAll</a></li><li data-type='method'><a href="MiniSearch.html#addAllAsync">addAllAsync</a></li><li data-type='method'><a href="MiniSearch.html#autoSuggest">autoSuggest</a></li><li data-type='method'><a href="MiniSearch.html#remove">remove</a></li><li data-type='method'><a href="MiniSearch.html#removeAll">removeAll</a></li><li data-type='method'><a href="MiniSearch.html#search">search</a></li><li data-type='method'><a href="MiniSearch.html#toJSON">toJSON</a></li></ul></li><li><a href="SearchableMap.html">SearchableMap</a><ul class='methods'><li data-type='method'><a href="SearchableMap.html#.from">from</a></li><li data-type='method'><a href="SearchableMap.html#.fromObject">fromObject</a></li><li data-type='method'><a href="SearchableMap.html#atPrefix">atPrefix</a></li><li data-type='method'><a href="SearchableMap.html#clear">clear</a></li><li data-type='method'><a href="SearchableMap.html#delete">delete</a></li><li data-type='method'><a href="SearchableMap.html#entries">entries</a></li><li data-type='method'><a href="SearchableMap.html#forEach">forEach</a></li><li data-type='method'><a href="SearchableMap.html#fuzzyGet">fuzzyGet</a></li><li data-type='method'><a href="SearchableMap.html#get">get</a></li><li data-type='method'><a href="SearchableMap.html#has">has</a></li><li data-type='method'><a href="SearchableMap.html#keys">keys</a></li><li data-type='method'><a href="SearchableMap.html#set">set</a></li><li data-type='method'><a href="SearchableMap.html#update">update</a></li><li data-type='method'><a href="SearchableMap.html#values">values</a></li></ul></li></ul>
-</nav>
-
-<div id="main">
-    
-
-    
-
-
-
-    
-
-
-    <section class="package">
-        <h3> </h3>		
-    </section>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    <section class="readme usertext">
-        <article><h1>MiniSearch</h1>
-<p><a href="https://travis-ci.com/lucaong/minisearch"><img src="https://travis-ci.com/lucaong/minisearch.svg?branch=master" alt="Build Status"></a>
-<a href="https://coveralls.io/github/lucaong/minisearch?branch=master"><img src="https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master" alt="Coverage Status"></a>
-<a href="https://bundlephobia.com/result?p=minisearch"><img src="https://badgen.net/bundlephobia/minzip/minisearch" alt="Minzipped Size"></a>
-<a href="https://www.jsdelivr.com/package/npm/minisearch"><img src="https://data.jsdelivr.com/v1/package/npm/minisearch/badge?style=rounded" alt=""></a></p>
-<p><code>MiniSearch</code> is a tiny but powerful in-memory fulltext search engine written in
-JavaScript. It is respectful of resources, and it can comfortably run both in
-Node and in the browser.</p>
-<p>Try out the <a href="https://lucaong.github.io/minisearch/examples/">demo application</a>.</p>
-<p>Find the complete <a href="https://lucaong.github.io/minisearch">documentation and API reference
-here</a>, and more background about
-<code>MiniSearch</code>, including a comparison with other similar libraries, in <a href="https://lucaongaro.eu/blog/2019/01/30/minisearch-client-side-fulltext-search-engine.html">this blog
-post</a>.</p>
-<h2>Use case</h2>
-<p><code>MiniSearch</code> addresses use cases where full-text search features are needed
-(e.g. prefix search, fuzzy search, ranking, boosting of fields…), but the data
-to be indexed can fit locally in the process memory. While you won't index the
-whole Internet with it, there are surprisingly many use cases that are served
-well by <code>MiniSearch</code>. By storing the index in local memory, <code>MiniSearch</code> can
-work offline, and can process queries quickly, without network latency.</p>
-<p>A prominent use-case is real time search &quot;as you type&quot; in web and mobile
-applications, where keeping the index on the client enables fast and reactive
-UIs, removing the need to make requests to a search server.</p>
-<h2>Features</h2>
-<ul>
-<li>
-<p>Memory-efficient index, designed to support memory-constrained use cases
-like mobile browsers.</p>
-</li>
-<li>
-<p>Exact match, prefix search, fuzzy match, field boosting</p>
-</li>
-<li>
-<p>Auto-suggestion engine, for auto-completion of search queries</p>
-</li>
-<li>
-<p>Documents can be added and removed from the index at any time</p>
-</li>
-<li>
-<p>Zero external dependencies</p>
-</li>
-</ul>
-<p><code>MiniSearch</code> strives to expose a simple API that provides the building blocks to
-build custom solutions, while keeping a small and well tested codebase.</p>
-<h2>Installation</h2>
-<p>With <code>npm</code>:</p>
-<pre class="prettyprint source"><code>npm install --save minisearch
-</code></pre>
-<p>With <code>yarn</code>:</p>
-<pre class="prettyprint source"><code>yarn add minisearch
-</code></pre>
-<p>Then <code>require</code> or <code>import</code> it in your project.</p>
-<p>Alternatively, if you prefer to use a <code>&lt;script&gt;</code> tag, you can require MiniSearch
-from a CDN:</p>
-<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;https://cdn.jsdelivr.net/npm/minisearch@2.6.0/dist/umd/index.min.js&quot;>&lt;/script>
-</code></pre>
-<p>Finally, if you want to manually build the library, clone the repository and run
-<code>yarn build</code> (or <code>yarn build-minified</code> for a minified version + source maps).
-The compiled source will be created in the <code>dist</code> folder (UMD, ES6 and ES2015
-module versions are provided).</p>
-<h2>Usage</h2>
-<h3>Basic usage</h3>
-<pre class="prettyprint source lang-javascript"><code>// A collection of documents for our examples
-const documents = [
+<span class="hljs-comment">// If you are using require:</span>
+<span class="hljs-keyword">const</span> MiniSearch = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;minisearch&#x27;</span>)</code></pre>
+				<p>Alternatively, if you prefer to use a <code>&lt;script&gt;</code> tag, you can require MiniSearch
+				from a CDN:</p>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://cdn.jsdelivr.net/npm/minisearch@2.6.0/dist/umd/index.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+				<p>In this case, <code>MiniSearch</code> will appear as a global variable in your project.</p>
+				<p>Finally, if you want to manually build the library, clone the repository and run
+					<code>yarn build</code> (or <code>yarn build-minified</code> for a minified version + source maps).
+					The compiled source will be created in the <code>dist</code> folder (UMD, ES6 and ES2015
+				module versions are provided).</p>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<a href="#basic-usage" id="basic-usage" style="color: inherit; text-decoration: none;">
+					<h3>Basic usage</h3>
+				</a>
+				<pre><code class="language-javascript"><span class="hljs-comment">// A collection of documents for our examples</span>
+<span class="hljs-keyword">const</span> documents = [
   {
-    id: 1,
-    title: 'Moby Dick',
-    text: 'Call me Ishmael. Some years ago...',
-    category: 'fiction'
+    <span class="hljs-attr">id</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Moby Dick&#x27;</span>,
+    <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;Call me Ishmael. Some years ago...&#x27;</span>,
+    <span class="hljs-attr">category</span>: <span class="hljs-string">&#x27;fiction&#x27;</span>
   },
   {
-    id: 2,
-    title: 'Zen and the Art of Motorcycle Maintenance',
-    text: 'I can see by my watch...',
-    category: 'fiction'
+    <span class="hljs-attr">id</span>: <span class="hljs-number">2</span>,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Zen and the Art of Motorcycle Maintenance&#x27;</span>,
+    <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;I can see by my watch...&#x27;</span>,
+    <span class="hljs-attr">category</span>: <span class="hljs-string">&#x27;fiction&#x27;</span>
   },
   {
-    id: 3,
-    title: 'Neuromancer',
-    text: 'The sky above the port was...',
-    category: 'fiction'
+    <span class="hljs-attr">id</span>: <span class="hljs-number">3</span>,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Neuromancer&#x27;</span>,
+    <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;The sky above the port was...&#x27;</span>,
+    <span class="hljs-attr">category</span>: <span class="hljs-string">&#x27;fiction&#x27;</span>
   },
   {
-    id: 4,
-    title: 'Zen and the Art of Archery',
-    text: 'At first sight it must seem...',
-    category: 'non-fiction'
+    <span class="hljs-attr">id</span>: <span class="hljs-number">4</span>,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Zen and the Art of Archery&#x27;</span>,
+    <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;At first sight it must seem...&#x27;</span>,
+    <span class="hljs-attr">category</span>: <span class="hljs-string">&#x27;non-fiction&#x27;</span>
   },
-  // ...and more
+  <span class="hljs-comment">// ...and more</span>
 ]
 
-let miniSearch = new MiniSearch({
-  fields: ['title', 'text'], // fields to index for full-text search
-  storeFields: ['title', 'category'] // fields to return with search results
+<span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
+  <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>], <span class="hljs-comment">// fields to index for full-text search</span>
+  <span class="hljs-attr">storeFields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;category&#x27;</span>] <span class="hljs-comment">// fields to return with search results</span>
 })
 
-// Index all documents
+<span class="hljs-comment">// Index all documents</span>
 miniSearch.addAll(documents)
 
-// Search with default options
-let results = miniSearch.search('zen art motorcycle')
-// => [
-//   { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', category: 'fiction', score: 2.77258, match: { ... } },
-//   { id: 4, title: 'Zen and the Art of Archery', category: 'non-fiction', score: 1.38629, match: { ... } }
-// ]
-</code></pre>
-<h3>Search options</h3>
-<p><code>MiniSearch</code> supports several options for more advanced search behavior:</p>
-<pre class="prettyprint source lang-javascript"><code>// Search only specific fields
-miniSearch.search('zen', { fields: ['title'] })
+<span class="hljs-comment">// Search with default options</span>
+<span class="hljs-keyword">let</span> results = miniSearch.search(<span class="hljs-string">&#x27;zen art motorcycle&#x27;</span>)
+<span class="hljs-comment">// =&gt; [</span>
+<span class="hljs-comment">//   { id: 2, title: &#x27;Zen and the Art of Motorcycle Maintenance&#x27;, category: &#x27;fiction&#x27;, score: 2.77258, match: { ... } },</span>
+<span class="hljs-comment">//   { id: 4, title: &#x27;Zen and the Art of Archery&#x27;, category: &#x27;non-fiction&#x27;, score: 1.38629, match: { ... } }</span>
+<span class="hljs-comment">// ]</span></code></pre>
+				<a href="#search-options" id="search-options" style="color: inherit; text-decoration: none;">
+					<h3>Search options</h3>
+				</a>
+				<p><code>MiniSearch</code> supports several options for more advanced search behavior:</p>
+				<pre><code class="language-javascript"><span class="hljs-comment">// Search only specific fields</span>
+miniSearch.search(<span class="hljs-string">&#x27;zen&#x27;</span>, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>] })
 
-// Boost some fields (here &quot;title&quot;)
-miniSearch.search('zen', { boost: { title: 2 } })
+<span class="hljs-comment">// Boost some fields (here &quot;title&quot;)</span>
+miniSearch.search(<span class="hljs-string">&#x27;zen&#x27;</span>, { <span class="hljs-attr">boost</span>: { <span class="hljs-attr">title</span>: <span class="hljs-number">2</span> } })
 
-// Prefix search (so that 'moto' will match 'motorcycle')
-miniSearch.search('moto', { prefix: true })
+<span class="hljs-comment">// Prefix search (so that &#x27;moto&#x27; will match &#x27;motorcycle&#x27;)</span>
+miniSearch.search(<span class="hljs-string">&#x27;moto&#x27;</span>, { <span class="hljs-attr">prefix</span>: <span class="hljs-literal">true</span> })
 
-// Search within a specific category
-miniSearch.search('zen', {
-  filter: (result) => result.category === 'fiction'
+<span class="hljs-comment">// Search within a specific category</span>
+miniSearch.search(<span class="hljs-string">&#x27;zen&#x27;</span>, {
+  <span class="hljs-attr">filter</span>: <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> result.category === <span class="hljs-string">&#x27;fiction&#x27;</span>
 })
 
-// Fuzzy search, in this example, with a max edit distance of 0.2 * term length,
-// rounded to nearest integer. The mispelled 'ismael' will match 'ishmael'.
-miniSearch.search('ismael', { fuzzy: 0.2 })
+<span class="hljs-comment">// Fuzzy search, in this example, with a max edit distance of 0.2 * term length,</span>
+<span class="hljs-comment">// rounded to nearest integer. The mispelled &#x27;ismael&#x27; will match &#x27;ishmael&#x27;.</span>
+miniSearch.search(<span class="hljs-string">&#x27;ismael&#x27;</span>, { <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span> })
 
-// You can set the default search options upon initialization
-miniSearch = new MiniSearch({
-  fields: ['title', 'text'],
-  searchOptions: {
-    boost: { title: 2 },
-    fuzzy: 0.2
+<span class="hljs-comment">// You can set the default search options upon initialization</span>
+miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
+  <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>],
+  <span class="hljs-attr">searchOptions</span>: {
+    <span class="hljs-attr">boost</span>: { <span class="hljs-attr">title</span>: <span class="hljs-number">2</span> },
+    <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span>
   }
 })
 miniSearch.addAll(documents)
 
-// It will now by default perform fuzzy search and boost &quot;title&quot;:
-miniSearch.search('zen and motorcycles')
-</code></pre>
-<h3>Auto suggestions</h3>
-<p><code>MiniSearch</code> can suggest search queries given an incomplete query:</p>
-<pre class="prettyprint source lang-javascript"><code>miniSearch.autoSuggest('zen ar')
-// => [ { suggestion: 'zen archery art', terms: [ 'zen', 'archery', 'art' ], score: 1.73332 },
-//      { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 } ]
-</code></pre>
-<p>The <code>autoSuggest</code> method takes the same options as the <code>search</code> method, so you
-can get suggestions for misspelled words using fuzzy search:</p>
-<pre class="prettyprint source lang-javascript"><code>miniSearch.autoSuggest('neromancer', { fuzzy: 0.2 })
-// => [ { suggestion: 'neuromancer', terms: [ 'neuromancer' ], score: 1.03998 } ]
-</code></pre>
-<p>Suggestions are ranked by the relevance of the documents that would be returned
-by that search.</p>
-<p>Sometimes, you might need to filter auto suggestions to, say, only a specific
-category. You can do so by providing a <code>filter</code> option:</p>
-<pre class="prettyprint source lang-javascript"><code>miniSearch.autoSuggest('zen ar', {
-  filter: (result) => result.category === 'fiction'
+<span class="hljs-comment">// It will now by default perform fuzzy search and boost &quot;title&quot;:</span>
+miniSearch.search(<span class="hljs-string">&#x27;zen and motorcycles&#x27;</span>)</code></pre>
+				<a href="#auto-suggestions" id="auto-suggestions" style="color: inherit; text-decoration: none;">
+					<h3>Auto suggestions</h3>
+				</a>
+				<p><code>MiniSearch</code> can suggest search queries given an incomplete query:</p>
+				<pre><code class="language-javascript">miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>)
+<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;zen archery art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;archery&#x27;, &#x27;art&#x27; ], score: 1.73332 },</span>
+<span class="hljs-comment">//      { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 } ]</span></code></pre>
+				<p>The <code>autoSuggest</code> method takes the same options as the <code>search</code> method, so you
+				can get suggestions for misspelled words using fuzzy search:</p>
+				<pre><code class="language-javascript">miniSearch.autoSuggest(<span class="hljs-string">&#x27;neromancer&#x27;</span>, { <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span> })
+<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;neuromancer&#x27;, terms: [ &#x27;neuromancer&#x27; ], score: 1.03998 } ]</span></code></pre>
+				<p>Suggestions are ranked by the relevance of the documents that would be returned
+				by that search.</p>
+				<p>Sometimes, you might need to filter auto suggestions to, say, only a specific
+				category. You can do so by providing a <code>filter</code> option:</p>
+				<pre><code class="language-javascript">miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
+  <span class="hljs-attr">filter</span>: <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> result.category === <span class="hljs-string">&#x27;fiction&#x27;</span>
 })
-// => [ { suggestion: 'zen art', terms: [ 'zen', 'art' ], score: 1.21313 } ]
-</code></pre>
-<h3>Field extraction</h3>
-<p>By default, documents are assumed to be plain key-value objects with field names
-as keys and field values as simple values. In order to support custom field
-extraction logic (for example for nested fields, or non-string field values that
-need processing before tokenization), a custom field extractor function can be
-passed as the <code>extractField</code> option:</p>
-<pre class="prettyprint source lang-javascript"><code>// Assuming that our documents look like:
-const documents = [
-  { id: 1, title: 'Moby Dick', author: { name: 'Herman Melville' }, pubDate: new Date(1851, 9, 18) },
-  { id: 2, title: 'Zen and the Art of Motorcycle Maintenance', author: { name: 'Robert Pirsig' }, pubDate: new Date(1974, 3, 1) },
-  { id: 3, title: 'Neuromancer', author: { name: 'William Gibson' }, pubDate: new Date(1984, 6, 1) },
-  { id: 4, title: 'Zen in the Art of Archery', author: { name: 'Eugen Herrigel' }, pubDate: new Date(1948, 0, 1) },
-  // ...and more
+<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 } ]</span></code></pre>
+				<a href="#field-extraction" id="field-extraction" style="color: inherit; text-decoration: none;">
+					<h3>Field extraction</h3>
+				</a>
+				<p>By default, documents are assumed to be plain key-value objects with field names
+					as keys and field values as simple values. In order to support custom field
+					extraction logic (for example for nested fields, or non-string field values that
+					need processing before tokenization), a custom field extractor function can be
+				passed as the <code>extractField</code> option:</p>
+				<pre><code class="language-javascript"><span class="hljs-comment">// Assuming that our documents look like:</span>
+<span class="hljs-keyword">const</span> documents = [
+  { <span class="hljs-attr">id</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Moby Dick&#x27;</span>, <span class="hljs-attr">author</span>: { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Herman Melville&#x27;</span> }, <span class="hljs-attr">pubDate</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1851</span>, <span class="hljs-number">9</span>, <span class="hljs-number">18</span>) },
+  { <span class="hljs-attr">id</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Zen and the Art of Motorcycle Maintenance&#x27;</span>, <span class="hljs-attr">author</span>: { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Robert Pirsig&#x27;</span> }, <span class="hljs-attr">pubDate</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1974</span>, <span class="hljs-number">3</span>, <span class="hljs-number">1</span>) },
+  { <span class="hljs-attr">id</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Neuromancer&#x27;</span>, <span class="hljs-attr">author</span>: { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;William Gibson&#x27;</span> }, <span class="hljs-attr">pubDate</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1984</span>, <span class="hljs-number">6</span>, <span class="hljs-number">1</span>) },
+  { <span class="hljs-attr">id</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Zen in the Art of Archery&#x27;</span>, <span class="hljs-attr">author</span>: { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Eugen Herrigel&#x27;</span> }, <span class="hljs-attr">pubDate</span>: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-number">1948</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>) },
+  <span class="hljs-comment">// ...and more</span>
 ]
 
-// We can support nested fields (author.name) and date fields (pubDate) with a
-// custom `extractField` function:
+<span class="hljs-comment">// We can support nested fields (author.name) and date fields (pubDate) with a</span>
+<span class="hljs-comment">// custom `extractField` function:</span>
 
-let miniSearch = new MiniSearch({
-  fields: ['title', 'author.name', 'pubYear'],
-  extractField: (document, fieldName) => {
-    // If field name is 'pubYear', extract just the year from 'pubDate'
-    if (fieldName === 'pubYear') {
-      const pubDate = document['pubDate']
-      return pubDate && pubDate.getFullYear().toString()
+<span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
+  <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;author.name&#x27;</span>, <span class="hljs-string">&#x27;pubYear&#x27;</span>],
+  <span class="hljs-attr">extractField</span>: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-built_in">document</span>, fieldName</span>) =&gt;</span> {
+    <span class="hljs-comment">// If field name is &#x27;pubYear&#x27;, extract just the year from &#x27;pubDate&#x27;</span>
+    <span class="hljs-keyword">if</span> (fieldName === <span class="hljs-string">&#x27;pubYear&#x27;</span>) {
+      <span class="hljs-keyword">const</span> pubDate = <span class="hljs-built_in">document</span>[<span class="hljs-string">&#x27;pubDate&#x27;</span>]
+      <span class="hljs-keyword">return</span> pubDate &amp;&amp; pubDate.getFullYear().toString()
     }
 
-    // Access nested fields
-    return fieldName.split('.').reduce((doc, key) => doc && doc[key], document)
+    <span class="hljs-comment">// Access nested fields</span>
+    <span class="hljs-keyword">return</span> fieldName.split(<span class="hljs-string">&#x27;.&#x27;</span>).reduce(<span class="hljs-function">(<span class="hljs-params">doc, key</span>) =&gt;</span> doc &amp;&amp; doc[key], <span class="hljs-built_in">document</span>)
   }
-})
-</code></pre>
-<p>The default field extractor can be obtained by calling
-<code>MiniSearch.getDefault('extractField')</code>.</p>
-<h3>Tokenization</h3>
-<p>By default, documents are tokenized by splitting on Unicode space or punctuation
-characters. The tokenization logic can be easily changed by passing a custom
-tokenizer function as the <code>tokenize</code> option:</p>
-<pre class="prettyprint source lang-javascript"><code>// Tokenize splitting by hyphen
-let miniSearch = new MiniSearch({
-  fields: ['title', 'text'],
-  tokenize: (string, _fieldName) => string.split('-')
-})
-</code></pre>
-<p>Upon search, the same tokenization is used by default, but it is possible to
-pass a <code>tokenize</code> search option in case a different search-time tokenization is
-necessary:</p>
-<pre class="prettyprint source lang-javascript"><code>// Tokenize splitting by hyphen
-let miniSearch = new MiniSearch({
-  fields: ['title', 'text'],
-  tokenize: (string) => string.split('-'), // indexing tokenizer
-  searchOptions: {
-    tokenize: (string) => string.split(/[\s-]+/) // search query tokenizer
+})</code></pre>
+				<p>The default field extractor can be obtained by calling
+				<code>MiniSearch.getDefault(&#39;extractField&#39;)</code>.</p>
+				<a href="#tokenization" id="tokenization" style="color: inherit; text-decoration: none;">
+					<h3>Tokenization</h3>
+				</a>
+				<p>By default, documents are tokenized by splitting on Unicode space or punctuation
+					characters. The tokenization logic can be easily changed by passing a custom
+				tokenizer function as the <code>tokenize</code> option:</p>
+				<pre><code class="language-javascript"><span class="hljs-comment">// Tokenize splitting by hyphen</span>
+<span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
+  <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>],
+  <span class="hljs-attr">tokenize</span>: <span class="hljs-function">(<span class="hljs-params">string, _fieldName</span>) =&gt;</span> string.split(<span class="hljs-string">&#x27;-&#x27;</span>)
+})</code></pre>
+				<p>Upon search, the same tokenization is used by default, but it is possible to
+					pass a <code>tokenize</code> search option in case a different search-time tokenization is
+				necessary:</p>
+				<pre><code class="language-javascript"><span class="hljs-comment">// Tokenize splitting by hyphen</span>
+<span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
+  <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>],
+  <span class="hljs-attr">tokenize</span>: <span class="hljs-function">(<span class="hljs-params">string</span>) =&gt;</span> string.split(<span class="hljs-string">&#x27;-&#x27;</span>), <span class="hljs-comment">// indexing tokenizer</span>
+  <span class="hljs-attr">searchOptions</span>: {
+    <span class="hljs-attr">tokenize</span>: <span class="hljs-function">(<span class="hljs-params">string</span>) =&gt;</span> string.split(<span class="hljs-regexp">/[\s-]+/</span>) <span class="hljs-comment">// search query tokenizer</span>
   }
-})
-</code></pre>
-<p>The default tokenizer can be obtained by calling
-<code>MiniSearch.getDefault('tokenize')</code>.</p>
-<h3>Term processing</h3>
-<p>Terms are downcased by default. No stemming is performed, and no stop-word list
-is applied. To customize how the terms are processed upon indexing, for example
-to normalize them, filter them, or to apply stemming, the <code>processTerm</code> option
-can be used. The <code>processTerm</code> function should return the processed term as a
-string, or a falsy value if the term should be discarded:</p>
-<pre class="prettyprint source lang-javascript"><code>let stopWords = new Set(['and', 'or', 'to', 'in', 'a', 'the', /* ...and more */ ])
+})</code></pre>
+				<p>The default tokenizer can be obtained by calling
+				<code>MiniSearch.getDefault(&#39;tokenize&#39;)</code>.</p>
+				<a href="#term-processing" id="term-processing" style="color: inherit; text-decoration: none;">
+					<h3>Term processing</h3>
+				</a>
+				<p>Terms are downcased by default. No stemming is performed, and no stop-word list
+					is applied. To customize how the terms are processed upon indexing, for example
+					to normalize them, filter them, or to apply stemming, the <code>processTerm</code> option
+					can be used. The <code>processTerm</code> function should return the processed term as a
+				string, or a falsy value if the term should be discarded:</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> stopWords = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>([<span class="hljs-string">&#x27;and&#x27;</span>, <span class="hljs-string">&#x27;or&#x27;</span>, <span class="hljs-string">&#x27;to&#x27;</span>, <span class="hljs-string">&#x27;in&#x27;</span>, <span class="hljs-string">&#x27;a&#x27;</span>, <span class="hljs-string">&#x27;the&#x27;</span>, <span class="hljs-comment">/* ...and more */</span> ])
 
-// Perform custom term processing (here discarding stop words and downcasing)
-let miniSearch = new MiniSearch({
-  fields: ['title', 'text'],
-  processTerm: (term, _fieldName) =>
-    stopWords.has(term) ? null : term.toLowerCase()
-})
-</code></pre>
-<p>By default, the same processing is applied to search queries. In order to apply
-a different processing to search queries, supply a <code>processTerm</code> search option:</p>
-<pre class="prettyprint source lang-javascript"><code>let miniSearch = new MiniSearch({
-  fields: ['title', 'text'],
-  processTerm: (term) =>
-    stopWords.has(term) ? null : term.toLowerCase(), // index term processing
-  searchOptions: {
-    processTerm: (term) => term.toLowerCase() // search query processing
+<span class="hljs-comment">// Perform custom term processing (here discarding stop words and downcasing)</span>
+<span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
+  <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>],
+  <span class="hljs-attr">processTerm</span>: <span class="hljs-function">(<span class="hljs-params">term, _fieldName</span>) =&gt;</span>
+    stopWords.has(term) ? <span class="hljs-literal">null</span> : term.toLowerCase()
+})</code></pre>
+				<p>By default, the same processing is applied to search queries. In order to apply
+				a different processing to search queries, supply a <code>processTerm</code> search option:</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
+  <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>],
+  <span class="hljs-attr">processTerm</span>: <span class="hljs-function">(<span class="hljs-params">term</span>) =&gt;</span>
+    stopWords.has(term) ? <span class="hljs-literal">null</span> : term.toLowerCase(), <span class="hljs-comment">// index term processing</span>
+  <span class="hljs-attr">searchOptions</span>: {
+    <span class="hljs-attr">processTerm</span>: <span class="hljs-function">(<span class="hljs-params">term</span>) =&gt;</span> term.toLowerCase() <span class="hljs-comment">// search query processing</span>
   }
-})
-</code></pre>
-<p>The default term processor can be obtained by calling
-<code>MiniSearch.getDefault('processTerm')</code>.</p>
-<h3>API Documentation</h3>
-<p>Refer to the <a href="https://lucaong.github.io/minisearch/">API documentation</a>
-for details about configuration options and methods.</p>
-<h2>Browser compatibility</h2>
-<p><code>MiniSearch</code> natively supports all modern browsers implementing JavaScript
-standards, but requires a polyfill when used in Internet Explorer, as it makes
-use functions like <code>Object.entries</code>, <code>Array.includes</code>, and <code>Array.from</code>, which
-are standard but not available on older browsers. The package
-<a href="https://github.com/zloirock/core-js"><code>core-js</code></a> is one such polyfill that can
-be used to provide those functions.</p>
-<h2>Contributing</h2>
-<p>Contributions to <code>MiniSearch</code> are welcome! Please read the <a href="https://github.com/lucaong/minisearch/blob/master/CONTRIBUTING.md">contributions
-guidelines</a>.
-Reading the <a href="https://github.com/lucaong/minisearch/blob/master/DESIGN_DOCUMENT.md">design
-document</a> is
-also useful to understand the project goals and the technical implementation.</p></article>
-    </section>
-
-
-
-
-
-
-    
-    
+})</code></pre>
+				<p>The default term processor can be obtained by calling
+				<code>MiniSearch.getDefault(&#39;processTerm&#39;)</code>.</p>
+				<a href="#api-documentation" id="api-documentation" style="color: inherit; text-decoration: none;">
+					<h3>API Documentation</h3>
+				</a>
+				<p>Refer to the <a href="https://lucaong.github.io/minisearch/">API documentation</a>
+				for details about configuration options and methods.</p>
+				<a href="#browser-compatibility" id="browser-compatibility" style="color: inherit; text-decoration: none;">
+					<h2>Browser compatibility</h2>
+				</a>
+				<p><code>MiniSearch</code> natively supports all modern browsers implementing JavaScript
+					standards, but requires a polyfill when used in Internet Explorer, as it makes
+					use functions like <code>Object.entries</code>, <code>Array.includes</code>, and <code>Array.from</code>, which
+					are standard but not available on older browsers. The package
+					<a href="https://github.com/zloirock/core-js"><code>core-js</code></a> is one such polyfill that can
+				be used to provide those functions.</p>
+				<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
+					<h2>Contributing</h2>
+				</a>
+				<p>Contributions to <code>MiniSearch</code> are welcome! Please read the <a href="https://github.com/lucaong/minisearch/blob/master/CONTRIBUTING.md">contributions
+					guidelines</a>.
+					Reading the <a href="https://github.com/lucaong/minisearch/blob/master/DESIGN_DOCUMENT.md">design
+					document</a> is
+				also useful to understand the project goals and the technical implementation.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_minisearch_.html">&quot;<wbr>Mini<wbr>Search&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_searchablemap_searchablemap_.html">&quot;<wbr>Searchable<wbr>Map/<wbr>Searchable<wbr>Map&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
 </div>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a> on Fri Sep 18 2020 21:19:24 GMT+0200 (Central European Summer Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+		</div>
+	</div>
 </footer>
-
-<script>prettyPrint();</script>
-<script src="scripts/polyfill.js"></script>
-<script src="scripts/linenumber.js"></script>
-
-<script src="scripts/search.js" defer></script>
-
-
-
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
 </body>
 </html>

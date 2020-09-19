@@ -62,7 +62,15 @@ With `yarn`:
 yarn add minisearch
 ```
 
-Then `require` or `import` it in your project.
+Then `require` or `import` it in your project:
+
+```javascript
+// If you are using import:
+import MiniSearch from 'minisearch'
+
+// If you are using require:
+const MiniSearch = require('minisearch')
+```
 
 Alternatively, if you prefer to use a `<script>` tag, you can require MiniSearch
 from a CDN:
@@ -70,6 +78,8 @@ from a CDN:
 ```html
 <script src="https://cdn.jsdelivr.net/npm/minisearch@2.6.0/dist/umd/index.min.js"></script>
 ```
+
+In this case, `MiniSearch` will appear as a global variable in your project.
 
 Finally, if you want to manually build the library, clone the repository and run
 `yarn build` (or `yarn build-minified` for a minified version + source maps).
