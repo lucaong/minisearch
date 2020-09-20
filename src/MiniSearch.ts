@@ -331,7 +331,7 @@ type RawResult = {
  * // ]
  * ```
  */
-export class MiniSearch<T = any> {
+class MiniSearch<T = any> {
   protected _options: OptionsWithDefaults<T>
   protected _index: SearchableMap
   protected _documentCount: number
