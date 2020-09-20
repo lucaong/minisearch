@@ -48,9 +48,7 @@
     "typescript": "^4.0.2"
   },
   "files": [
-    "/dist/umd/index.js",
-    "/dist/es/index.js",
-    "/dist/es5m/index.js",
+    "/dist/**/*",
     "/src/**/*"
   ],
   "jest": {
