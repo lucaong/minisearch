@@ -40,6 +40,7 @@
     "jest": "^26.3.0",
     "regenerator-runtime": "^0.13.1",
     "rollup": "^2.2.0",
+    "rollup-plugin-dts": "^1.4.13",
     "rollup-plugin-terser": "^7.0.0",
     "snazzy": "^8.0.0",
     "ts-jest": "^26.3.0",
@@ -70,16 +71,14 @@
     "test-watch": "jest --watch",
     "coverage": "jest --coverage",
     "benchmark": "yarn build-benchmark && NODE_ENV=production node --expose-gc benchmarks/dist/index.js",
-    "build-benchmark": "BENCHMARKS=true yarn build-source",
-    "build": "yarn build-typedef && yarn build-source",
-    "build-source": "NODE_ENV=production rollup -c",
+    "build-benchmark": "BENCHMARKS=true yarn build",
+    "build": "NODE_ENV=production rollup -c",
     "build-minified": "MINIFY=true yarn build",
     "build-docs": "typedoc --options typedoc.json",
-    "build-typedef": "tsc --outDir dist --declaration --emitDeclarationOnly",
     "lint": "eslint 'src/**/*.{js,ts}'",
     "lintfix": "eslint --fix 'src/**/*.{js,ts}'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "sideEffects": false,
-  "types": "./dist/index.d.ts"
+  "types": "./dist/types/index.d.ts"
 }

@@ -1,14 +1,15 @@
 import typescript from '@rollup/plugin-typescript'
+import dts from 'rollup-plugin-dts'
 import { terser } from 'rollup-plugin-terser'
 
 const config = ({ format, output, name, dir }) => ({
   input: 'src/index.ts',
   output: {
-    sourcemap: true,
+    sourcemap: output !== 'dts',
     dir: `dist/${dir || format}`,
     format,
     name,
-    entryFileNames: process.env.MINIFY === 'true' ? '[name].min.js' : '[name].js',
+    entryFileNames: output === 'dts' ? '[name].d.ts' : (process.env.MINIFY === 'true' ? '[name].min.js' : '[name].js'),
     plugins: process.env.MINIFY === 'true'
       ? [terser({
         mangle: {
@@ -19,7 +20,7 @@ const config = ({ format, output, name, dir }) => ({
       })]
       : []
   },
-  plugins: [typescript()]
+  plugins: [output === 'dts' ? dts() : typescript()]
 })
 
 const benchmarks = {
@@ -37,5 +38,6 @@ const benchmarks = {
 export default process.env.BENCHMARKS === 'true' ? [benchmarks] : [
   config({ format: 'es', output: 'es6' }),
   config({ format: 'es', output: 'es5m', dir: 'es5m' }),
-  config({ format: 'umd', output: 'es5m', name: 'MiniSearch' }),
+  config({ format: 'umd', output: 'umd', name: 'MiniSearch' }),
+  config({ format: 'es', output: 'dts', dir: 'types' }),
 ]
