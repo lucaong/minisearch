@@ -2,26 +2,30 @@ import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
 import { terser } from 'rollup-plugin-terser'
 
-const config = ({ format, output, name, dir }) => ({
-  input: 'src/index.ts',
-  output: {
-    sourcemap: output !== 'dts',
-    dir: `dist/${dir || format}`,
-    format,
-    name,
-    entryFileNames: output === 'dts' ? '[name].d.ts' : (process.env.MINIFY === 'true' ? '[name].min.js' : '[name].js'),
-    plugins: process.env.MINIFY === 'true'
-      ? [terser({
-        mangle: {
-          properties: {
-            regex: /^_/
+const config = ({ format, input, output, name, dir, extension = 'js' }) => {
+  const shouldMinify = process.env.MINIFY === 'true' && output !== 'dts'
+
+  return {
+    input,
+    output: {
+      sourcemap: output !== 'dts',
+      dir: `dist/${dir || format}`,
+      format,
+      name,
+      entryFileNames: shouldMinify ? `[name].min.${extension}` : `[name].${extension}`,
+      plugins: shouldMinify
+        ? [terser({
+          mangle: {
+            properties: {
+              regex: /^_/
+            }
           }
-        }
-      })]
-      : []
-  },
-  plugins: [output === 'dts' ? dts() : typescript()]
-})
+        })]
+        : []
+    },
+    plugins: [output === 'dts' ? dts() : typescript()]
+  }
+}
 
 const benchmarks = {
   input: 'benchmarks/index.js',
@@ -36,8 +40,16 @@ const benchmarks = {
 }
 
 export default process.env.BENCHMARKS === 'true' ? [benchmarks] : [
-  config({ format: 'es', output: 'es6' }),
-  config({ format: 'es', output: 'es5m', dir: 'es5m' }),
-  config({ format: 'umd', output: 'umd', name: 'MiniSearch' }),
-  config({ format: 'es', output: 'dts', dir: 'types' }),
+  // Main (MiniSearch)
+  config({ format: 'es', input: 'src/index.ts', output: 'es6' }),
+  config({ format: 'es', input: 'src/index.ts', output: 'es5m', dir: 'es5m' }),
+  config({ format: 'umd', input: 'src/index.ts', output: 'umd', name: 'MiniSearch' }),
+
+  // Type declarations
+  config({ format: 'es', input: 'src/index.ts', output: 'dts', dir: 'types', extension: 'd.ts' }),
+
+  // SearchableMap
+  config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'es6' }),
+  config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'es5m', dir: 'es5m' }),
+  config({ format: 'umd', input: 'src/SearchableMap/SearchableMap.ts', output: 'umd', name: 'MiniSearch' })
 ]

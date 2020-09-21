@@ -68,17 +68,16 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A class implementing the same interface as a standard JavaScript <code>Map</code> with
-							string keys, but adding support for efficiently searching entries with prefix
-							or fuzzy search. This is the class internally used by <code>MiniSearch</code> as the
-							inverted index data structure. The implementation is a radix tree (compressed
-						prefix tree).</p>
+						<p>A class implementing the same interface as a standard JavaScript
+							<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"><code>Map</code></a>
+							with string keys, but adding support for efficiently searching entries with
+							prefix or fuzzy search. This class is used internally by <a href="_minisearch_.minisearch.html">MiniSearch</a> as
+							the inverted index data structure. The implementation is a radix tree
+						(compressed prefix tree).</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>implements</dt>
-						<dd><p>Map</p>
-						</dd>
-					</dl>
+					<p>Since this class can be of general utility beyond <em>MiniSearch</em>, it is
+						exported by the <code>minisearch</code> package and can be imported (or required) as
+					<code>minisearch/SearchableMap</code>.</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-type-parameters">
@@ -100,12 +99,6 @@
 					<li>
 						<span class="target">SearchableMap</span>
 					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implements</h3>
-				<ul class="tsd-hierarchy">
-					<li><span class="tsd-signature-symbol">{ </span>_prefix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>_tree<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RadixTree</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -159,15 +152,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L26">SearchableMap/SearchableMap.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L30">SearchableMap/SearchableMap.ts:30</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Normally, the constructor is called without arguments, creating an empty
-										map. The constructor arguments are for internal use, when creating derived
-									mutable views of a map at a prefix.</p>
+									<p>The constructor is normally called without arguments, creating an empty
+										map. In order to create a <a href="_searchablemap_searchablemap_.searchablemap.html">SearchableMap</a> from an iterable or from an
+									object, check <a href="_searchablemap_searchablemap_.searchablemap.html#from">SearchableMap.from</a> and <a href="_searchablemap_searchablemap_.searchablemap.html#fromobject">SearchableMap.fromObject</a>.</p>
 								</div>
+								<p>The constructor arguments are for internal use, when creating derived
+								mutable views of a map at a prefix.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -197,7 +192,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L196">SearchableMap/SearchableMap.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L203">SearchableMap/SearchableMap.ts:203</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -224,7 +219,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L239">SearchableMap/SearchableMap.ts:239</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L246">SearchableMap/SearchableMap.ts:246</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -248,7 +243,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L66">SearchableMap/SearchableMap.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L73">SearchableMap/SearchableMap.ts:73</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -300,7 +295,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L86">SearchableMap/SearchableMap.ts:86</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L93">SearchableMap/SearchableMap.ts:93</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -324,7 +319,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L95">SearchableMap/SearchableMap.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L102">SearchableMap/SearchableMap.ts:102</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -357,7 +352,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L104">SearchableMap/SearchableMap.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L111">SearchableMap/SearchableMap.ts:111</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -382,7 +377,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L112">SearchableMap/SearchableMap.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L119">SearchableMap/SearchableMap.ts:119</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -439,7 +434,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L146">SearchableMap/SearchableMap.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L153">SearchableMap/SearchableMap.ts:153</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -496,7 +491,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L156">SearchableMap/SearchableMap.ts:156</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L163">SearchableMap/SearchableMap.ts:163</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -531,7 +526,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L166">SearchableMap/SearchableMap.ts:166</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L173">SearchableMap/SearchableMap.ts:173</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -565,7 +560,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L175">SearchableMap/SearchableMap.ts:175</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L182">SearchableMap/SearchableMap.ts:182</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -590,7 +585,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L185">SearchableMap/SearchableMap.ts:185</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L192">SearchableMap/SearchableMap.ts:192</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -630,7 +625,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L220">SearchableMap/SearchableMap.ts:220</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L227">SearchableMap/SearchableMap.ts:227</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -693,7 +688,7 @@ searchableMap.update(<span class="hljs-string">&#x27;somekey&#x27;</span>, <span
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L232">SearchableMap/SearchableMap.ts:232</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L239">SearchableMap/SearchableMap.ts:239</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -718,7 +713,7 @@ searchableMap.update(<span class="hljs-string">&#x27;somekey&#x27;</span>, <span
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L249">SearchableMap/SearchableMap.ts:249</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L256">SearchableMap/SearchableMap.ts:256</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -756,7 +751,7 @@ searchableMap.update(<span class="hljs-string">&#x27;somekey&#x27;</span>, <span
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/8759d7a/src/SearchableMap/SearchableMap.ts#L263">SearchableMap/SearchableMap.ts:263</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/SearchableMap/SearchableMap.ts#L270">SearchableMap/SearchableMap.ts:270</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

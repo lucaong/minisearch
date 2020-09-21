@@ -1,18 +1,22 @@
-import { TreeIterator, ENTRIES, KEYS, VALUES, LEAF, IterableSet } from './TreeIterator'
+import { TreeIterator, ENTRIES, KEYS, VALUES, LEAF } from './TreeIterator'
 import fuzzySearch, { FuzzyResults } from './fuzzySearch'
 import { RadixTree, Entry, Path } from './types'
 
 /**
- * A class implementing the same interface as a standard JavaScript `Map` with
- * string keys, but adding support for efficiently searching entries with prefix
- * or fuzzy search. This is the class internally used by `MiniSearch` as the
- * inverted index data structure. The implementation is a radix tree (compressed
- * prefix tree).
+ * A class implementing the same interface as a standard JavaScript
+ * [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
+ * with string keys, but adding support for efficiently searching entries with
+ * prefix or fuzzy search. This class is used internally by [[MiniSearch]] as
+ * the inverted index data structure. The implementation is a radix tree
+ * (compressed prefix tree).
  *
- * @implements Map
+ * Since this class can be of general utility beyond _MiniSearch_, it is
+ * exported by the `minisearch` package and can be imported (or required) as
+ * `minisearch/SearchableMap`.
+ *
  * @typeParam T  The type of the values stored in the map.
  */
-export class SearchableMap<T = any> implements IterableSet<T> {
+export default class SearchableMap<T = any> {
   /**
    * @internal
    */
@@ -26,8 +30,11 @@ export class SearchableMap<T = any> implements IterableSet<T> {
   private _size?: number
 
   /**
-   * Normally, the constructor is called without arguments, creating an empty
-   * map. The constructor arguments are for internal use, when creating derived
+   * The constructor is normally called without arguments, creating an empty
+   * map. In order to create a [[SearchableMap]] from an iterable or from an
+   * object, check [[SearchableMap.from]] and [[SearchableMap.fromObject]].
+   *
+   * The constructor arguments are for internal use, when creating derived
    * mutable views of a map at a prefix.
    */
   constructor (tree = {}, prefix = '') {
@@ -346,5 +353,3 @@ const merge = <T = any>(path: Path<T>, key: string, value: T): void => {
 const last = <T = any>(array: T[]): T => {
   return array[array.length - 1]
 }
-
-export default SearchableMap
