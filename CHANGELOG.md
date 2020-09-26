@@ -2,6 +2,22 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v3.0.0
+
+  This major version ports the source code to TypeScript. That made it possible
+  to improve types and documentation, making sure that both are in sync with the
+  actual code. It is mostly backward compatible: JavaScript users should
+  experience no breaking change, while TypeScript users _might_ have toadapt
+  some types.
+
+  - Port source to [TypeScript](https://www.typescriptlang.org), adding type
+    safety
+  - Improved types and documentation (now generated with [TypeDoc](http://typedoc.org))
+  - [breaking change, fix] TypeScript `SearchOptions` type is not generic
+    anymore
+  - [breaking change] `SearchableMap` is not a static field of `MiniSearch`
+    anymore: it can instead be imported separately as `minisearch/SearchableMap`
+
 # v2.6.2
 
   - [fix] Improve TypeScript types: default generic document type is `any`, not `object`

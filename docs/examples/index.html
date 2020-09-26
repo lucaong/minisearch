@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MiniSearch Example</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+    <style type='text/css'>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        color: #555;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        color: #0099cc;
+      }
+      h1, h2, h3, h4 {
+        margin: 1em 0 0.5em 0;
+        color: #333;
+      }
+      dl {
+        margin: 0;
+      }
+      dt, dd {
+        display: inline;
+        margin: 0;
+      }
+      dt {
+        font-weight: bold;
+        color: #333;
+      }
+      dd:after {
+        content: '';
+        display: block;
+      }
+      details, summary {
+        outline: none;
+      }
+      .App .main {
+        padding: 1em;
+        display: flex;
+        flex-flow: column;
+        max-height: 100vh;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .Header h1 {
+        font-size: 2em;
+        margin-top: 0;
+      }
+      .SearchBox {
+        position: relative;
+      }
+      .Search {
+        position: relative;
+      }
+      .Search button.clear {
+        position: absolute;
+        top: 0;
+        bottom: 0.2em;
+        right: 0.5em;
+        font-size: 1.5em;
+        line-height: 1;
+        z-index: 20;
+        border: none;
+        background: none;
+        outline: none;
+        margin: 0;
+        padding: 0;
+      }
+      .Search input {
+        width: 100%;
+        padding: 0.5em;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        outline: none;
+        color: #555;
+        box-shadow: none;
+      }
+      .AdvancedOptions {
+        font-size: 0.9em;
+      }
+      .AdvancedOptions summary {
+        text-decoration: underline;
+      }
+      .AdvancedOptions .options {
+        margin-top: 1em;
+        font-size: 0.85em;
+      }
+      .AdvancedOptions .options label {
+        display: inline;
+        margin-left: 0.7em;
+      }
+      .SongList {
+        margin: 1em 0 0 0;
+        padding: 0;
+        list-style: none;
+        flex-grow: 1;
+        position: relative;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+      }
+      .SongList:before {
+        content: '';
+        display: block;
+        position: sticky;
+        z-index: 10;
+        left: 0;
+        right: 0;
+        top: -1px;
+        width: 100%;
+        height: 0.7em;
+        margin-bottom: -0.7em;
+        background: linear-gradient(white, rgba(255, 255, 255, 0));
+      }
+      .SongList:after {
+        content: '';
+        display: block;
+        position: sticky;
+        z-index: 10;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        width: 100%;
+        height: 0.7em;
+        margin-bottom: -0.7em;
+        background: linear-gradient(rgba(255, 255, 255, 0), white);
+      }
+      .Song {
+        border-bottom: 1px solid #ccc;
+        padding: 0.7em 0 1em 0;
+      }
+      .Song:last-child {
+        border-bottom: none;
+      }
+      .Song h3 {
+        margin-top: 0;
+        margin-bottom: 0.15em;
+      }
+      .SuggestionList {
+        list-style: none;
+        padding: 0;
+        border: 1px solid #ccc;
+        border-top: 0;
+        margin: 0 0 0.2em 0;
+        border-radius: 3px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.93);
+        position: absolute;
+        z-index: 20;
+        left: 0;
+        right: 0;
+      }
+      .Suggestion {
+        padding: 0.5em 1em;
+        border-bottom: 1px solid #eee;
+      }
+      .Suggestion:last-child {
+        border: none;
+      }
+      .Suggestion.selected {
+        background: rgba(240, 240, 240, 0.95);
+      }
+      .Suggestion:hover:not(.selected) {
+        background: rgba(250, 250, 250, 0.95);
+      }
+      .Loader,
+      .Loader:after {
+        border-radius: 50%;
+        width: 10em;
+        height: 10em;
+      }
+      .Loader {
+        margin: 5px auto;
+        font-size: 5px;
+        position: relative;
+        text-indent: -9999em;
+        border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+        border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+        border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+        border-left: 1.1em solid #0099cc;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-animation: load8 1.1s infinite linear;
+        animation: load8 1.1s infinite linear;
+      }
+      @-webkit-keyframes load8 {
+        0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes load8 {
+        0% {
+          -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id='app'></div>
+    <script src='app.js' type='text/javascript'></script>
+  </body>
+</html>
