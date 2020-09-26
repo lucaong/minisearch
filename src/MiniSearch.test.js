@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import MiniSearch from './MiniSearch.js'
+import MiniSearch from './MiniSearch'
 
 describe('MiniSearch', () => {
   describe('constructor', () => {

@@ -1,0 +1,894 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MiniSearch</title>
+	<meta name="description" content="Documentation for MiniSearch">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">MiniSearch</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_minisearch_.html">&quot;MiniSearch&quot;</a>
+				</li>
+				<li>
+					<a href="_minisearch_.minisearch.html">MiniSearch</a>
+				</li>
+			</ul>
+			<h1>Class MiniSearch&lt;T&gt;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p><a href="_minisearch_.minisearch.html">MiniSearch</a> is the main entrypoint class, implementing a full-text search
+						engine in memory.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T = <span class="tsd-signature-type">any</span></h4>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>The type of the documents being indexed.</p>
+								<a href="#basic-example" id="basic-example" style="color: inherit; text-decoration: none;">
+									<h3>Basic example:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-keyword">const</span> documents = [
+  {
+    <span class="hljs-attr">id</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Moby Dick&#x27;</span>,
+    <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;Call me Ishmael. Some years ago...&#x27;</span>,
+    <span class="hljs-attr">category</span>: <span class="hljs-string">&#x27;fiction&#x27;</span>
+  },
+  {
+    <span class="hljs-attr">id</span>: <span class="hljs-number">2</span>,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Zen and the Art of Motorcycle Maintenance&#x27;</span>,
+    <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;I can see by my watch...&#x27;</span>,
+    <span class="hljs-attr">category</span>: <span class="hljs-string">&#x27;fiction&#x27;</span>
+  },
+  {
+    <span class="hljs-attr">id</span>: <span class="hljs-number">3</span>,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Neuromancer&#x27;</span>,
+    <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;The sky above the port was...&#x27;</span>,
+    <span class="hljs-attr">category</span>: <span class="hljs-string">&#x27;fiction&#x27;</span>
+  },
+  {
+    <span class="hljs-attr">id</span>: <span class="hljs-number">4</span>,
+    <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Zen and the Art of Archery&#x27;</span>,
+    <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;At first sight it must seem...&#x27;</span>,
+    <span class="hljs-attr">category</span>: <span class="hljs-string">&#x27;non-fiction&#x27;</span>
+  },
+  <span class="hljs-comment">// ...and more</span>
+]
+
+<span class="hljs-comment">// Create a search engine that indexes the &#x27;title&#x27; and &#x27;text&#x27; fields for</span>
+<span class="hljs-comment">// full-text search. Search results will include &#x27;title&#x27; and &#x27;category&#x27; (plus the</span>
+<span class="hljs-comment">// id field, that is always stored and returned)</span>
+<span class="hljs-keyword">const</span> miniSearch = MiniSearch.new({
+  <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>],
+  <span class="hljs-attr">storeFields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;category&#x27;</span>]
+})
+
+<span class="hljs-comment">// Add documents to the index</span>
+miniSearch.addAll(documents)
+
+<span class="hljs-comment">// Search for documents:</span>
+<span class="hljs-keyword">let</span> results = miniSearch.search(<span class="hljs-string">&#x27;zen art motorcycle&#x27;</span>)
+<span class="hljs-comment">// =&gt; [</span>
+<span class="hljs-comment">//   { id: 2, title: &#x27;Zen and the Art of Motorcycle Maintenance&#x27;, category: &#x27;fiction&#x27;, score: 2.77258 },</span>
+<span class="hljs-comment">//   { id: 4, title: &#x27;Zen and the Art of Archery&#x27;, category: &#x27;non-fiction&#x27;, score: 1.38629 }</span>
+<span class="hljs-comment">// ]</span></code></pre>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">MiniSearch</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#documentcount" class="tsd-kind-icon">document<wbr>Count</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#add" class="tsd-kind-icon">add</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#addall" class="tsd-kind-icon">add<wbr>All</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#addallasync" class="tsd-kind-icon">add<wbr>All<wbr>Async</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#autosuggest" class="tsd-kind-icon">auto<wbr>Suggest</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#remove" class="tsd-kind-icon">remove</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#removeall" class="tsd-kind-icon">remove<wbr>All</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#search" class="tsd-kind-icon">search</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#tojson" class="tsd-kind-icon">toJSON</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_minisearch_.minisearch.html#getdefault" class="tsd-kind-icon">get<wbr>Default</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static"><a href="_minisearch_.minisearch.html#loadjson" class="tsd-kind-icon">loadJSON</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Mini<wbr>Search<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../modules/_minisearch_.html#options" class="tsd-signature-type">Options</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_minisearch_.minisearch.html" class="tsd-signature-type">MiniSearch</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L343">MiniSearch.ts:343</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="../modules/_minisearch_.html#options" class="tsd-signature-type">Options</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>Configuration options</p>
+											<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
+												<h3>Examples:</h3>
+											</a>
+											<pre><code class="language-javascript"><span class="hljs-comment">// Create a search engine that indexes the &#x27;title&#x27; and &#x27;text&#x27; fields of your</span>
+<span class="hljs-comment">// documents:</span>
+<span class="hljs-keyword">const</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({ <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })</code></pre>
+											<a href="#id-field" id="id-field" style="color: inherit; text-decoration: none;">
+												<h3>ID Field:</h3>
+											</a>
+											<pre><code class="language-javascript"><span class="hljs-comment">// Your documents are assumed to include a unique &#x27;id&#x27; field, but if you want</span>
+<span class="hljs-comment">// to use a different field for document identification, you can set the</span>
+<span class="hljs-comment">// &#x27;idField&#x27; option:</span>
+<span class="hljs-keyword">const</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({ <span class="hljs-attr">idField</span>: <span class="hljs-string">&#x27;key&#x27;</span>, <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })</code></pre>
+											<a href="#options-and-defaults" id="options-and-defaults" style="color: inherit; text-decoration: none;">
+												<h3>Options and defaults:</h3>
+											</a>
+											<pre><code class="language-javascript"><span class="hljs-comment">// The full set of options (here with their default value) is:</span>
+<span class="hljs-keyword">const</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
+  <span class="hljs-comment">// idField: field that uniquely identifies a document</span>
+  <span class="hljs-attr">idField</span>: <span class="hljs-string">&#x27;id&#x27;</span>,
+
+  <span class="hljs-comment">// extractField: function used to get the value of a field in a document.</span>
+  <span class="hljs-comment">// By default, it assumes the document is a flat object with field names as</span>
+  <span class="hljs-comment">// property keys and field values as string property values, but custom logic</span>
+  <span class="hljs-comment">// can be implemented by setting this option to a custom extractor function.</span>
+  <span class="hljs-attr">extractField</span>: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-built_in">document</span>, fieldName</span>) =&gt;</span> <span class="hljs-built_in">document</span>[fieldName],
+
+  <span class="hljs-comment">// tokenize: function used to split fields into individual terms. By</span>
+  <span class="hljs-comment">// default, it is also used to tokenize search queries, unless a specific</span>
+  <span class="hljs-comment">// `tokenize` search option is supplied. When tokenizing an indexed field,</span>
+  <span class="hljs-comment">// the field name is passed as the second argument.</span>
+  <span class="hljs-attr">tokenize</span>: <span class="hljs-function">(<span class="hljs-params">string, _fieldName</span>) =&gt;</span> string.split(SPACE_OR_PUNCTUATION),
+
+  <span class="hljs-comment">// processTerm: function used to process each tokenized term before</span>
+  <span class="hljs-comment">// indexing. It can be used for stemming and normalization. Return a falsy</span>
+  <span class="hljs-comment">// value in order to discard a term. By default, it is also used to process</span>
+  <span class="hljs-comment">// search queries, unless a specific `processTerm` option is supplied as a</span>
+  <span class="hljs-comment">// search option. When processing a term from a indexed field, the field</span>
+  <span class="hljs-comment">// name is passed as the second argument.</span>
+  <span class="hljs-attr">processTerm</span>: <span class="hljs-function">(<span class="hljs-params">term, _fieldName</span>) =&gt;</span> term.toLowerCase(),
+
+  <span class="hljs-comment">// searchOptions: default search options, see the `search` method for</span>
+  <span class="hljs-comment">// details</span>
+  <span class="hljs-attr">searchOptions</span>: <span class="hljs-literal">undefined</span>,
+
+  <span class="hljs-comment">// fields: document fields to be indexed. Mandatory, but not set by default</span>
+  <span class="hljs-attr">fields</span>: <span class="hljs-literal">undefined</span>
+
+  <span class="hljs-comment">// storeFields: document fields to be stored and returned as part of the</span>
+  <span class="hljs-comment">// search results.</span>
+  <span class="hljs-attr">storeFields</span>: []
+})</code></pre>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_minisearch_.minisearch.html" class="tsd-signature-type">MiniSearch</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="documentcount" class="tsd-anchor"></a>
+					<h3>document<wbr>Count</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> documentCount<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L766">MiniSearch.ts:766</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Number of documents in the index</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="add" class="tsd-anchor"></a>
+					<h3>add</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<span class="tsd-signature-symbol">(</span>document<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L441">MiniSearch.ts:441</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds a document to the index</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>document: <span class="tsd-signature-type">T</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The document to be indexed</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addall" class="tsd-anchor"></a>
+					<h3>add<wbr>All</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>All<span class="tsd-signature-symbol">(</span>documents<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L472">MiniSearch.ts:472</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds all the given documents to the index</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>documents: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>An array of documents to be indexed</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addallasync" class="tsd-anchor"></a>
+					<h3>add<wbr>All<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>All<wbr>Async<span class="tsd-signature-symbol">(</span>documents<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>chunkSize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L487">MiniSearch.ts:487</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds all the given documents to the index asynchronously.</p>
+								</div>
+								<p>Returns a promise that resolves (to <code>undefined</code>) when the indexing is done.
+									This method is useful when index many documents, to avoid blocking the main
+								thread. The indexing is performed asynchronously and in chunks.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>documents: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>An array of documents to be indexed</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-symbol">{ </span>chunkSize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Configuration options</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> chunk<wbr>Size<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>A promise resolving to <code>undefined</code> when the indexing is done</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="autosuggest" class="tsd-anchor"></a>
+					<h3>auto<wbr>Suggest</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">auto<wbr>Suggest<span class="tsd-signature-symbol">(</span>queryString<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="../modules/_minisearch_.html#searchoptions-1" class="tsd-signature-type">SearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_minisearch_.html#suggestion" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L743">MiniSearch.ts:743</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Provide suggestions for the given search query</p>
+								</div>
+								<p>The result is a list of suggested modified search queries, derived from the
+								given search query, each with a relevance score, sorted by descending score.</p>
+								<a href="#basic-usage" id="basic-usage" style="color: inherit; text-decoration: none;">
+									<h3>Basic usage:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Get suggestions for &#x27;neuro&#x27;:</span>
+miniSearch.autoSuggest(<span class="hljs-string">&#x27;neuro&#x27;</span>)
+<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;neuromancer&#x27;, terms: [ &#x27;neuromancer&#x27; ], score: 0.46240 } ]</span></code></pre>
+								<a href="#multiple-words" id="multiple-words" style="color: inherit; text-decoration: none;">
+									<h3>Multiple words:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Get suggestions for &#x27;zen ar&#x27;:</span>
+miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>)
+<span class="hljs-comment">// =&gt; [</span>
+<span class="hljs-comment">//  { suggestion: &#x27;zen archery art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;archery&#x27;, &#x27;art&#x27; ], score: 1.73332 },</span>
+<span class="hljs-comment">//  { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 }</span>
+<span class="hljs-comment">// ]</span></code></pre>
+								<a href="#fuzzy-suggestions" id="fuzzy-suggestions" style="color: inherit; text-decoration: none;">
+									<h3>Fuzzy suggestions:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Correct spelling mistakes using fuzzy search:</span>
+miniSearch.autoSuggest(<span class="hljs-string">&#x27;neromancer&#x27;</span>, { <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span> })
+<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;neuromancer&#x27;, terms: [ &#x27;neuromancer&#x27; ], score: 1.03998 } ]</span></code></pre>
+								<a href="#filtering" id="filtering" style="color: inherit; text-decoration: none;">
+									<h3>Filtering:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Get suggestions for &#x27;zen ar&#x27;, but only within the &#x27;fiction&#x27; category</span>
+<span class="hljs-comment">// (assuming that &#x27;category&#x27; is a stored field):</span>
+miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
+  <span class="hljs-attr">filter</span>: <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> result.category === <span class="hljs-string">&#x27;fiction&#x27;</span>
+})
+<span class="hljs-comment">// =&gt; [</span>
+<span class="hljs-comment">//  { suggestion: &#x27;zen archery art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;archery&#x27;, &#x27;art&#x27; ], score: 1.73332 },</span>
+<span class="hljs-comment">//  { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 }</span>
+<span class="hljs-comment">// ]</span></code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>queryString: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Query string to be expanded into suggestions</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <a href="../modules/_minisearch_.html#searchoptions-1" class="tsd-signature-type">SearchOptions</a><span class="tsd-signature-symbol"> = {}</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Search options. The supported options and default values
+											are the same as for the <code>search</code> method, except that by default prefix
+										search is performed on the last term in the query.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_minisearch_.html#suggestion" class="tsd-signature-type">Suggestion</a><span class="tsd-signature-symbol">[]</span></h4>
+							<p>A sorted array of suggestions sorted by relevance score.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="remove" class="tsd-anchor"></a>
+					<h3>remove</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">remove<span class="tsd-signature-symbol">(</span>document<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L516">MiniSearch.ts:516</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Removes the given document from the index.</p>
+								</div>
+								<p>The document to delete must NOT have changed between indexing and deletion,
+									otherwise the index will be corrupted. Therefore, when reindexing a document
+								after a change, the correct order of operations is:</p>
+								<ol>
+									<li>remove old version</li>
+									<li>apply changes</li>
+									<li>index new version</li>
+								</ol>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>document: <span class="tsd-signature-type">T</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The document to be removed</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="removeall" class="tsd-anchor"></a>
+					<h3>remove<wbr>All</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>All<span class="tsd-signature-symbol">(</span>documents<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L559">MiniSearch.ts:559</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Removes all the given documents from the index. If called with no arguments,
+									it removes <em>all</em> documents from the index.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>documents: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The documents to be removed. If this argument is omitted,
+											all documents are removed. Note that, for removing all documents, it is
+											more efficient to call this method with no arguments than to pass all
+										documents.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="search" class="tsd-anchor"></a>
+					<h3>search</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">search<span class="tsd-signature-symbol">(</span>queryString<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, searchOptions<span class="tsd-signature-symbol">?: </span><a href="../modules/_minisearch_.html#searchoptions-1" class="tsd-signature-type">SearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/_minisearch_.html#searchresult" class="tsd-signature-type">SearchResult</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L662">MiniSearch.ts:662</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Search for documents matching the given search query.</p>
+								</div>
+								<p>The result is a list of scored document IDs matching the query, sorted by
+									descending score, and each including data about which terms were matched and
+								in which fields.</p>
+								<a href="#basic-usage" id="basic-usage" style="color: inherit; text-decoration: none;">
+									<h3>Basic usage:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Search for &quot;zen art motorcycle&quot; with default options: terms have to match</span>
+<span class="hljs-comment">// exactly, and individual terms are joined with OR</span>
+miniSearch.search(<span class="hljs-string">&#x27;zen art motorcycle&#x27;</span>)
+<span class="hljs-comment">// =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]</span></code></pre>
+								<a href="#restrict-search-to-specific-fields" id="restrict-search-to-specific-fields" style="color: inherit; text-decoration: none;">
+									<h3>Restrict search to specific fields:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Search only in the &#x27;title&#x27; field</span>
+miniSearch.search(<span class="hljs-string">&#x27;zen&#x27;</span>, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>] })</code></pre>
+								<a href="#field-boosting" id="field-boosting" style="color: inherit; text-decoration: none;">
+									<h3>Field boosting:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Boost a field</span>
+miniSearch.search(<span class="hljs-string">&#x27;zen&#x27;</span>, { <span class="hljs-attr">boost</span>: { <span class="hljs-attr">title</span>: <span class="hljs-number">2</span> } })</code></pre>
+								<a href="#prefix-search" id="prefix-search" style="color: inherit; text-decoration: none;">
+									<h3>Prefix search:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Search for &quot;moto&quot; with prefix search (it will match documents</span>
+<span class="hljs-comment">// containing terms that start with &quot;moto&quot; or &quot;neuro&quot;)</span>
+miniSearch.search(<span class="hljs-string">&#x27;moto neuro&#x27;</span>, { <span class="hljs-attr">prefix</span>: <span class="hljs-literal">true</span> })</code></pre>
+								<a href="#fuzzy-search" id="fuzzy-search" style="color: inherit; text-decoration: none;">
+									<h3>Fuzzy search:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Search for &quot;ismael&quot; with fuzzy search (it will match documents containing</span>
+<span class="hljs-comment">// terms similar to &quot;ismael&quot;, with a maximum edit distance of 0.2 term.length</span>
+<span class="hljs-comment">// (rounded to nearest integer)</span>
+miniSearch.search(<span class="hljs-string">&#x27;ismael&#x27;</span>, { <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span> })</code></pre>
+								<a href="#combining-strategies" id="combining-strategies" style="color: inherit; text-decoration: none;">
+									<h3>Combining strategies:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Mix of exact match, prefix search, and fuzzy search</span>
+miniSearch.search(<span class="hljs-string">&#x27;ismael mob&#x27;</span>, {
+ <span class="hljs-attr">prefix</span>: <span class="hljs-literal">true</span>,
+ <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span>
+})</code></pre>
+								<a href="#advanced-prefix-and-fuzzy-search" id="advanced-prefix-and-fuzzy-search" style="color: inherit; text-decoration: none;">
+									<h3>Advanced prefix and fuzzy search:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Perform fuzzy and prefix search depending on the search term. Here</span>
+<span class="hljs-comment">// performing prefix and fuzzy search only on terms longer than 3 characters</span>
+miniSearch.search(<span class="hljs-string">&#x27;ismael mob&#x27;</span>, {
+ <span class="hljs-attr">prefix</span>: <span class="hljs-function"><span class="hljs-params">term</span> =&gt;</span> term.length &gt; <span class="hljs-number">3</span>
+ <span class="hljs-attr">fuzzy</span>: <span class="hljs-function"><span class="hljs-params">term</span> =&gt;</span> term.length &gt; <span class="hljs-number">3</span> ? <span class="hljs-number">0.2</span> : <span class="hljs-literal">null</span>
+})</code></pre>
+								<a href="#combine-with-and" id="combine-with-and" style="color: inherit; text-decoration: none;">
+									<h3>Combine with AND:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Combine search terms with AND (to match only documents that contain both</span>
+<span class="hljs-comment">// &quot;motorcycle&quot; and &quot;art&quot;)</span>
+miniSearch.search(<span class="hljs-string">&#x27;motorcycle art&#x27;</span>, { <span class="hljs-attr">combineWith</span>: <span class="hljs-string">&#x27;AND&#x27;</span> })</code></pre>
+								<a href="#filtering-results" id="filtering-results" style="color: inherit; text-decoration: none;">
+									<h3>Filtering results:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Filter only results in the &#x27;fiction&#x27; category (assuming that &#x27;category&#x27;</span>
+<span class="hljs-comment">// is a stored field)</span>
+miniSearch.search(<span class="hljs-string">&#x27;motorcycle art&#x27;</span>, {
+  <span class="hljs-attr">filter</span>: <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> result.category === <span class="hljs-string">&#x27;fiction&#x27;</span>
+})</code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>queryString: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Query string to search for</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> searchOptions: <a href="../modules/_minisearch_.html#searchoptions-1" class="tsd-signature-type">SearchOptions</a><span class="tsd-signature-symbol"> = {}</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/_minisearch_.html#searchresult" class="tsd-signature-type">SearchResult</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="tojson" class="tsd-anchor"></a>
+					<h3>toJSON</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">toJSON<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AsPlainObject</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L931">MiniSearch.ts:931</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Allows serialization of the index to JSON, to possibly store it and later
+									deserialize it with <code>MiniSearch.loadJSON</code>.</p>
+								</div>
+								<p>Normally one does not directly call this method, but rather call the
+									standard JavaScript <code>JSON.stringify()</code> passing the <code>MiniSearch</code> instance,
+									and JavaScript will internally call this method. Upon deserialization, one
+									must pass to <code>loadJSON</code> the same options used to create the original
+								instance that was serialized.</p>
+								<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+									<h3>Usage:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// Serialize the index:</span>
+<span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({ <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })
+miniSearch.addAll(documents)
+<span class="hljs-keyword">const</span> json = <span class="hljs-built_in">JSON</span>.stringify(miniSearch)
+
+<span class="hljs-comment">// Later, to deserialize it:</span>
+miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })</code></pre>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsPlainObject</span></h4>
+							<p>A plain-object serializeable representation of the search index.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="getdefault" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Default</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Default<span class="tsd-signature-symbol">(</span>optionName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L819">MiniSearch.ts:819</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the default value of an option. It will throw an error if no option
+									with the given name exists.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>optionName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Name of the option</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<p>The default value of the given option</p>
+							<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+								<h3>Usage:</h3>
+							</a>
+							<pre><code class="language-javascript"><span class="hljs-comment">// Get default tokenizer</span>
+MiniSearch.getDefault(<span class="hljs-string">&#x27;tokenize&#x27;</span>)
+
+<span class="hljs-comment">// Get default term processor</span>
+MiniSearch.getDefault(<span class="hljs-string">&#x27;processTerm&#x27;</span>)
+
+<span class="hljs-comment">// Unknown options will throw an error</span>
+MiniSearch.getDefault(<span class="hljs-string">&#x27;notExisting&#x27;</span>)
+<span class="hljs-comment">// =&gt; throws &#x27;MiniSearch: unknown option &quot;notExisting&quot;&#x27;</span></code></pre>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
+					<a name="loadjson" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> loadJSON</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">loadJSON&lt;T&gt;<span class="tsd-signature-symbol">(</span>json<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">: </span><a href="../modules/_minisearch_.html#options" class="tsd-signature-type">Options</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_minisearch_.minisearch.html" class="tsd-signature-type">MiniSearch</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/d4a9b72/src/MiniSearch.ts#L791">MiniSearch.ts:791</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Deserializes a JSON index (serialized with <code>miniSearch.toJSON()</code>) and
+										instantiates a MiniSearch instance. It should be given the same options
+									originally used when serializing the index.</p>
+								</div>
+								<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+									<h3>Usage:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-comment">// If the index was serialized with:</span>
+<span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({ <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })
+miniSearch.addAll(documents)
+
+<span class="hljs-keyword">const</span> json = <span class="hljs-built_in">JSON</span>.stringify(miniSearch)
+<span class="hljs-comment">// It can later be deserialized like this:</span>
+miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })</code></pre>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T = <span class="tsd-signature-type">any</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>json: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>JSON-serialized index</p>
+									</div>
+								</li>
+								<li>
+									<h5>options: <a href="../modules/_minisearch_.html#options" class="tsd-signature-type">Options</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>configuration options, same as the constructor</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_minisearch_.minisearch.html" class="tsd-signature-type">MiniSearch</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>An instance of MiniSearch deserialized from the given JSON.</p>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/_minisearch_.html">&quot;<wbr>Mini<wbr>Search&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_searchablemap_searchablemap_.html">&quot;<wbr>Searchable<wbr>Map/<wbr>Searchable<wbr>Map&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_minisearch_.minisearch.html" class="tsd-kind-icon">Mini<wbr>Search</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#documentcount" class="tsd-kind-icon">document<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#add" class="tsd-kind-icon">add</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#addall" class="tsd-kind-icon">add<wbr>All</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#addallasync" class="tsd-kind-icon">add<wbr>All<wbr>Async</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#autosuggest" class="tsd-kind-icon">auto<wbr>Suggest</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#remove" class="tsd-kind-icon">remove</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#removeall" class="tsd-kind-icon">remove<wbr>All</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#search" class="tsd-kind-icon">search</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#tojson" class="tsd-kind-icon">toJSON</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="_minisearch_.minisearch.html#getdefault" class="tsd-kind-icon">get<wbr>Default</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
+								<a href="_minisearch_.minisearch.html#loadjson" class="tsd-kind-icon">loadJSON</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_minisearch_.html#matchinfo" class="tsd-kind-icon">Match<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="../modules/_minisearch_.html#options" class="tsd-kind-icon">Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_minisearch_.html#searchoptions-1" class="tsd-kind-icon">Search<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_minisearch_.html#searchresult" class="tsd-kind-icon">Search<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_minisearch_.html#suggestion" class="tsd-kind-icon">Suggestion</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

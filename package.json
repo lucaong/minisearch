@@ -24,17 +24,12 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.1",
-    "@babel/node": "^7.5.5",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "babel-core": "^7.0.0-0",
-    "babel-jest": "^26.3.0",
+    "@rollup/plugin-typescript": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
     "benchmark": "^2.1.4",
     "core-js": "^3.1.4",
     "coveralls": "^3.0.2",
-    "docdash": "^1.2.0",
     "eslint": "^7.6.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.2",
@@ -43,22 +38,30 @@
     "eslint-plugin-standard": "^4.0.1",
     "fast-check": "^2.1.0",
     "jest": "^26.3.0",
-    "jsdoc": "^3.6.4",
     "regenerator-runtime": "^0.13.1",
     "rollup": "^2.2.0",
-    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-dts": "^1.4.13",
     "rollup-plugin-terser": "^7.0.0",
     "snazzy": "^8.0.0",
+    "ts-jest": "^26.3.0",
+    "tslib": "^2.0.1",
+    "typedoc": "^0.19.1",
     "typescript": "^4.0.2"
   },
   "files": [
-    "/dist/umd/index.js",
-    "/dist/es/index.js",
-    "/dist/es5m/index.js",
+    "/dist/**/*",
     "/src/**/*"
   ],
   "jest": {
     "testURL": "http://localhost:3000/",
+    "transform": {
+      "\\.(js|ts)$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testRegex": "\\.test\\.(ts|js)$",
     "setupFilesAfterEnv": [
       "<rootDir>/src/testSetup/jest.js"
     ]
@@ -67,14 +70,16 @@
     "test": "jest",
     "test-watch": "jest --watch",
     "coverage": "jest --coverage",
-    "benchmark": "NODE_ENV=production BABEL_OUTPUT=commonjs babel-node --expose-gc benchmarks/index.js",
-    "build": "NODE_ENV=production rollup -c",
+    "benchmark": "yarn build-benchmark && NODE_ENV=production node --expose-gc benchmarks/dist/index.js",
+    "build-benchmark": "BENCHMARKS=true yarn build",
+    "build": "yarn clean-build && NODE_ENV=production rollup -c",
+    "clean-build": "rm -rf dist",
     "build-minified": "MINIFY=true yarn build",
-    "build-docs": "jsdoc --configure jsdoc.json",
-    "lint": "eslint 'src/**/*.js'",
-    "lintfix": "eslint --fix 'src/**/*.js'",
+    "build-docs": "typedoc --options typedoc.json",
+    "lint": "eslint 'src/**/*.{js,ts}'",
+    "lintfix": "eslint --fix 'src/**/*.{js,ts}'",
     "prepublishOnly": "yarn test && yarn build"
   },
   "sideEffects": false,
-  "types": "./src/index.d.ts"
+  "types": "./dist/types/index.d.ts"
 }

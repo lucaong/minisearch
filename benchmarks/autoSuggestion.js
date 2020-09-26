@@ -1,4 +1,4 @@
-import Benchmark from 'benchmark'
+const Benchmark = require('benchmark')
 import { miniSearch as ms } from './divinaCommedia.js'
 
 const suite = new Benchmark.Suite('Auto suggestion')
