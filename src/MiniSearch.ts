@@ -315,7 +315,7 @@ type RawResult = {
  * // Create a search engine that indexes the 'title' and 'text' fields for
  * // full-text search. Search results will include 'title' and 'category' (plus the
  * // id field, that is always stored and returned)
- * const miniSearch = MiniSearch.new({
+ * const miniSearch = new MiniSearch({
  *   fields: ['title', 'text'],
  *   storeFields: ['title', 'category']
  * })

@@ -115,7 +115,7 @@
 <span class="hljs-comment">// Create a search engine that indexes the &#x27;title&#x27; and &#x27;text&#x27; fields for</span>
 <span class="hljs-comment">// full-text search. Search results will include &#x27;title&#x27; and &#x27;category&#x27; (plus the</span>
 <span class="hljs-comment">// id field, that is always stored and returned)</span>
-<span class="hljs-keyword">const</span> miniSearch = MiniSearch.new({
+<span class="hljs-keyword">const</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
   <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>],
   <span class="hljs-attr">storeFields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;category&#x27;</span>]
 })
@@ -188,7 +188,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L343">MiniSearch.ts:343</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L343">MiniSearch.ts:343</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -273,7 +273,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L766">MiniSearch.ts:766</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L766">MiniSearch.ts:766</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -298,7 +298,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L441">MiniSearch.ts:441</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L441">MiniSearch.ts:441</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -329,7 +329,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L472">MiniSearch.ts:472</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L472">MiniSearch.ts:472</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -360,7 +360,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L487">MiniSearch.ts:487</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L487">MiniSearch.ts:487</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -406,7 +406,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L743">MiniSearch.ts:743</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L743">MiniSearch.ts:743</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -481,7 +481,7 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L516">MiniSearch.ts:516</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L516">MiniSearch.ts:516</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -520,7 +520,7 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L559">MiniSearch.ts:559</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L559">MiniSearch.ts:559</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -555,7 +555,7 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L662">MiniSearch.ts:662</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L662">MiniSearch.ts:662</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -653,7 +653,7 @@ miniSearch.search(<span class="hljs-string">&#x27;motorcycle art&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L931">MiniSearch.ts:931</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L931">MiniSearch.ts:931</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -692,7 +692,7 @@ miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L819">MiniSearch.ts:819</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L819">MiniSearch.ts:819</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -737,7 +737,7 @@ MiniSearch.getDefault(<span class="hljs-string">&#x27;notExisting&#x27;</span>)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/1c14135/src/MiniSearch.ts#L791">MiniSearch.ts:791</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/479639b/src/MiniSearch.ts#L791">MiniSearch.ts:791</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
