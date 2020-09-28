@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.com/lucaong/minisearch.svg?branch=master)](https://travis-ci.com/lucaong/minisearch)
 [![Coverage Status](https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master)](https://coveralls.io/github/lucaong/minisearch?branch=master)
 [![Minzipped Size](https://badgen.net/bundlephobia/minzip/minisearch)](https://bundlephobia.com/result?p=minisearch)
-[![](https://data.jsdelivr.com/v1/package/npm/minisearch/badge?style=rounded)](https://www.jsdelivr.com/package/npm/minisearch)
+[![CDN hits per month](https://data.jsdelivr.com/v1/package/npm/minisearch/badge?style=rounded)](https://www.jsdelivr.com/package/npm/minisearch)
+![npm type definitions](https://img.shields.io/npm/types/minisearch)
 
 `MiniSearch` is a tiny but powerful in-memory fulltext search engine written in
 JavaScript. It is respectful of resources, and it can comfortably run both in
