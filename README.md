@@ -3,8 +3,9 @@
 [![Build Status](https://travis-ci.com/lucaong/minisearch.svg?branch=master)](https://travis-ci.com/lucaong/minisearch)
 [![Coverage Status](https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master)](https://coveralls.io/github/lucaong/minisearch?branch=master)
 [![Minzipped Size](https://badgen.net/bundlephobia/minzip/minisearch)](https://bundlephobia.com/result?p=minisearch)
-[![CDN hits per month](https://data.jsdelivr.com/v1/package/npm/minisearch/badge?style=rounded)](https://www.jsdelivr.com/package/npm/minisearch)
-![npm type definitions](https://img.shields.io/npm/types/minisearch)
+[![npm package](https://img.shields.io/npm/v/minisearch)](https://www.npmjs.com/package/minisearch)
+[![npm downloads](https://img.shields.io/npm/dw/minisearch)](https://www.npmjs.com/package/minisearch)
+[![types](https://img.shields.io/npm/types/minisearch)](https://lucaong.github.io/minisearch/classes/_minisearch_.minisearch.html)
 
 `MiniSearch` is a tiny but powerful in-memory fulltext search engine written in
 JavaScript. It is respectful of resources, and it can comfortably run both in
@@ -75,10 +76,10 @@ const MiniSearch = require('minisearch')
 ```
 
 Alternatively, if you prefer to use a `<script>` tag, you can require MiniSearch
-from a CDN:
+[from a CDN](https://www.jsdelivr.com/package/npm/minisearch):
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/minisearch@2.6.0/dist/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@3.0.0/dist/umd/index.min.js"></script>
 ```
 
 In this case, `MiniSearch` will appear as a global variable in your project.
