@@ -75,7 +75,8 @@
     "build": "yarn clean-build && NODE_ENV=production rollup -c",
     "clean-build": "rm -rf dist",
     "build-minified": "MINIFY=true yarn build",
-    "build-docs": "typedoc --options typedoc.json && touch docs/.nojekyll",
+    "build-docs": "typedoc --options typedoc.json && touch docs/.nojekyll && yarn build-examples",
+    "build-examples": "cd examples && yarn build && cd ../",
     "lint": "eslint 'src/**/*.{js,ts}'",
     "lintfix": "eslint --fix 'src/**/*.{js,ts}'",
     "prepublishOnly": "yarn test && yarn build"
