@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/lucaong/minisearch.svg?branch=master)](https://travis-ci.com/lucaong/minisearch)
 [![Coverage Status](https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master)](https://coveralls.io/github/lucaong/minisearch?branch=master)
 [![Minzipped Size](https://badgen.net/bundlephobia/minzip/minisearch)](https://bundlephobia.com/result?p=minisearch)
-[![npm package](https://img.shields.io/npm/v/minisearch)](https://www.npmjs.com/package/minisearch)
+[![npm](https://img.shields.io/npm/v/minisearch?color=%23ff00dd)](https://www.npmjs.com/package/minisearch)
 [![npm downloads](https://img.shields.io/npm/dw/minisearch)](https://www.npmjs.com/package/minisearch)
 [![types](https://img.shields.io/npm/types/minisearch)](https://lucaong.github.io/minisearch/classes/_minisearch_.minisearch.html)
 
