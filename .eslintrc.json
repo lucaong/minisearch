@@ -12,10 +12,6 @@
     "standard",
     "plugin:@typescript-eslint/eslint-recommended"
   ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
   "rules": {
     "quotes": ["error", "single", { "avoidEscape": true }],
     "no-prototype-builtins": 0,
