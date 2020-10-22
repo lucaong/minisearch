@@ -559,6 +559,8 @@ export default class MiniSearch<T = any> {
   removeAll (documents?: T[]): void {
     if (documents) {
       documents.forEach(document => this.remove(document))
+    } else if (arguments.length > 0) {
+      throw new Error('Expected documents to be present. Omit the argument to remove all documents.')
     } else {
       this._index = new SearchableMap()
       this._documentCount = 0
