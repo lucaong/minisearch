@@ -370,6 +370,13 @@ describe('MiniSearch', () => {
       expect(ms.search('vita').length).toEqual(0)
       expect(ms.search('lago').length).toEqual(1)
     })
+
+    it('raises an error if called with a falsey argument', () => {
+      expect(() => { ms.removeAll(null) }).toThrowError()
+      expect(() => { ms.removeAll(undefined) }).toThrowError()
+      expect(() => { ms.removeAll(false) }).toThrowError()
+      expect(() => { ms.removeAll([]) }).not.toThrowError()
+    })
   })
 
   describe('addAll', () => {
