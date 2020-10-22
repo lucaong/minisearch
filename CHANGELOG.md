@@ -2,6 +2,12 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v3.0.1
+
+  - [fix] Fix type signature of `removeAll` to allow calling it with no
+    arguments. Also, throw a more informative error if called with a falsey
+    value. Thanks to [https://github.com/nilclass](@nilclass).
+
 # v3.0.0
 
   This major version ports the source code to TypeScript. That made it possible
