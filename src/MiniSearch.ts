@@ -556,8 +556,10 @@ export default class MiniSearch<T = any> {
    * more efficient to call this method with no arguments than to pass all
    * documents.
    */
-  removeAll (documents: T[]): void {
-    if (arguments.length === 0) {
+  removeAll (documents?: T[]): void {
+    if (documents) {
+      documents.forEach(document => this.remove(document))
+    } else {
       this._index = new SearchableMap()
       this._documentCount = 0
       this._documentIds = {}
@@ -565,8 +567,6 @@ export default class MiniSearch<T = any> {
       this._averageFieldLength = {}
       this._storedFields = {}
       this._nextId = 0
-    } else {
-      documents.forEach(document => this.remove(document))
     }
   }
 
