@@ -6,7 +6,7 @@ const heapSize = () => {
 }
 
 const bytesToMb = (bytes) => {
-  return (bytes / (1000 * 1000)).toFixed(2)
+  return (bytes / (1024 * 1024)).toFixed(2)
 }
 
 const memory = (docs) => {
