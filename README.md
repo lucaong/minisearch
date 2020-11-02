@@ -1,6 +1,6 @@
 # MiniSearch
 
-[![Build Status](https://github.com/lucaong/minisearch/workflows/CI/badge.svg)](https://github.com/lucaong/minisearch/actions)
+[![CI Build](https://github.com/lucaong/minisearch/workflows/CI%20Build/badge.svg)](https://github.com/lucaong/minisearch/actions)
 [![Coverage Status](https://coveralls.io/repos/github/lucaong/minisearch/badge.svg?branch=master)](https://coveralls.io/github/lucaong/minisearch?branch=master)
 [![Minzipped Size](https://badgen.net/bundlephobia/minzip/minisearch)](https://bundlephobia.com/result?p=minisearch)
 [![npm](https://img.shields.io/npm/v/minisearch?color=%23ff00dd)](https://www.npmjs.com/package/minisearch)
