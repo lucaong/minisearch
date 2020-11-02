@@ -35,4 +35,4 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: "${{ secrets.COVERALLS_REPO_TOKEN }}"
           COVERALLS_GIT_BRANCH: "${{ github.ref }}"
-        run: jest --coverage --coverageReporters=text-lcov | coveralls
+        run: yarn run jest --coverage --coverageReporters=text-lcov | yarn run coveralls
