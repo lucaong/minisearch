@@ -36,4 +36,4 @@ jobs:
           COVERALLS_REPO_TOKEN: "${{ secrets.COVERALLS_REPO_TOKEN }}"
           COVERALLS_GIT_BRANCH: "${{ github.ref }}"
           COVERALLS_SERVICE_NAME: GitHub Actions
-        run: yarn run jest --coverage && yarn run coveralls < coverage/lcov.info
+        run: yarn run jest --coverage && yarn run coveralls --verbose < coverage/lcov.info
