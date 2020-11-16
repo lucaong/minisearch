@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v3.0.2
+
+  - [fix] `addAllAsync` now allows events to be processed between chunks, avoid
+    blocking the UI (by [@grimmen](https://github.com/grimmen))
+
 # v3.0.1
 
   - [fix] Fix type signature of `removeAll` to allow calling it with no

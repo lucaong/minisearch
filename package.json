@@ -76,7 +76,7 @@
     "clean-build": "rm -rf dist",
     "build-minified": "MINIFY=true yarn build",
     "build-docs": "typedoc --options typedoc.json && touch docs/.nojekyll && yarn build-examples",
-    "build-examples": "cd examples && yarn build && cd ../",
+    "build-examples": "yarn build && cd examples && yarn install && yarn build && cd ../",
     "lint": "eslint 'src/**/*.{js,ts}'",
     "lintfix": "eslint --fix 'src/**/*.{js,ts}'",
     "prepublishOnly": "yarn test && yarn build"
