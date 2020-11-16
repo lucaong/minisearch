@@ -491,7 +491,9 @@ export default class MiniSearch<T = any> {
     const { chunk, promise } = documents.reduce(({ chunk, promise }, document: T, i: number) => {
       chunk.push(document)
       if ((i + 1) % chunkSize === 0) {
-        return { chunk: [], promise: promise.then(() => this.addAll(chunk)) }
+        return { chunk: [], promise: promise
+          .then(()=>new Promise(resolve => setTimeout(resolve, 0)))
+          .then(() => this.addAll(chunk)) }
       } else {
         return { chunk, promise }
       }
