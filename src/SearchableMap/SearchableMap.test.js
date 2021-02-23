@@ -14,11 +14,13 @@ describe('SearchableMap', () => {
     mem[a.length] = mem[a.length] || [a.length]
     if (mem[a.length][b.length] !== undefined) { return mem[a.length][b.length] }
     const d = (a[a.length - 1] === b[b.length - 1]) ? 0 : 1
-    const distance = (a.length === 1 && b.length === 1) ? d : Math.min(
-      ((a.length > 0) ? editDistance(a.slice(0, -1), b, mem) + 1 : Infinity),
-      ((b.length > 0) ? editDistance(a, b.slice(0, -1), mem) + 1 : Infinity),
-      ((a.length > 0 && b.length > 0) ? editDistance(a.slice(0, -1), b.slice(0, -1), mem) + d : Infinity)
-    )
+    const distance = (a.length === 1 && b.length === 1)
+      ? d
+      : Math.min(
+        ((a.length > 0) ? editDistance(a.slice(0, -1), b, mem) + 1 : Infinity),
+        ((b.length > 0) ? editDistance(a, b.slice(0, -1), mem) + 1 : Infinity),
+        ((a.length > 0 && b.length > 0) ? editDistance(a.slice(0, -1), b.slice(0, -1), mem) + d : Infinity)
+      )
     mem[a.length][b.length] = distance
     return distance
   }
