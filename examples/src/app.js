@@ -46,7 +46,7 @@ class App extends React.PureComponent {
         }, {})
         this.setState({ songsById })
         const { miniSearch } = this.state
-        return miniSearch.addAllAsync(allSongs)
+        return miniSearch.addAll(allSongs)
       }).then(() => {
         this.setState({ ready: true })
       })
