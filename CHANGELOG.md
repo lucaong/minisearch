@@ -2,6 +2,10 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v3.0.3
+
+  - [fix] Adjust data about field lengths upon document removal
+
 # v3.0.2
 
   - [fix] `addAllAsync` now allows events to be processed between chunks, avoid
