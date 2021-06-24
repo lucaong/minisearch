@@ -545,10 +545,13 @@ export default class MiniSearch<T = any> {
           this.removeTerm(this._fieldIds[field], shortDocumentId, processedTerm)
         }
       })
+
+      this.removeFieldLength(shortDocumentId, this._fieldIds[field], this.documentCount, tokens.length)
     })
 
     delete this._storedFields[shortDocumentId]
     delete this._documentIds[shortDocumentId]
+    delete this._fieldLength[shortDocumentId]
     this._documentCount -= 1
   }
 
@@ -1064,6 +1067,14 @@ export default class MiniSearch<T = any> {
     this._fieldLength[documentId] = this._fieldLength[documentId] || {}
     this._fieldLength[documentId][fieldId] = length
     this._averageFieldLength[fieldId] = totalLength / (count + 1)
+  }
+
+  /**
+   * @ignore
+   */
+  private removeFieldLength (documentId: string, fieldId: number, count: number, length: number): void {
+    const totalLength = (this._averageFieldLength[fieldId] * count) - length
+    this._averageFieldLength[fieldId] = totalLength / (count - 1)
   }
 
   /**
