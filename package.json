@@ -35,7 +35,6 @@
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-standard": "^5.0.0",
     "fast-check": "^2.1.0",
     "jest": "^26.3.0",
     "regenerator-runtime": "^0.13.1",
