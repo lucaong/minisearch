@@ -160,6 +160,19 @@ describe('MiniSearch', () => {
       expect(console.warn).not.toHaveBeenCalled()
     })
 
+    it('cleans up all data of the deleted document', () => {
+      const otherDocument = { id: 4, title: 'Decameron', text: 'Umana cosa è aver compassione degli afflitti' }
+      const originalFieldLength = JSON.parse(JSON.stringify(ms._fieldLength))
+      const originalAverageFieldLength = JSON.parse(JSON.stringify(ms._averageFieldLength))
+
+      ms.add(otherDocument)
+      ms.remove(otherDocument)
+
+      expect(ms.documentCount).toEqual(3)
+      expect(ms._fieldLength).toEqual(originalFieldLength)
+      expect(ms._averageFieldLength).toEqual(originalAverageFieldLength)
+    })
+
     it('does not remove terms from other documents', () => {
       ms.remove(documents[0])
       expect(ms.search('cammin').length).toEqual(1)
