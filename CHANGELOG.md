@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v3.0.4
+
+  - [fix] Keep radix tree property (no node with a single child) after removal
+    of an entry
+
 # v3.0.3
 
   - [fix] Adjust data about field lengths upon document removal
