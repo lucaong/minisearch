@@ -112,18 +112,22 @@
 					<h2>Installation</h2>
 				</a>
 				<p>With <code>npm</code>:</p>
-				<pre><code>npm <span class="hljs-keyword">install</span> <span class="hljs-comment">--save minisearch</span></code></pre>
+				<pre><code>npm install <span class="hljs-comment">--save minisearch</span>
+</code></pre>
 				<p>With <code>yarn</code>:</p>
-				<pre><code>yarn <span class="hljs-keyword">add</span><span class="bash"> minisearch</span></code></pre>
+				<pre><code>yarn <span class="hljs-builtin-name">add</span> minisearch
+</code></pre>
 				<p>Then <code>require</code> or <code>import</code> it in your project:</p>
 				<pre><code class="language-javascript"><span class="hljs-comment">// If you are using import:</span>
 <span class="hljs-keyword">import</span> MiniSearch <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;minisearch&#x27;</span>
 
 <span class="hljs-comment">// If you are using require:</span>
-<span class="hljs-keyword">const</span> MiniSearch = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;minisearch&#x27;</span>)</code></pre>
+<span class="hljs-keyword">const</span> MiniSearch = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;minisearch&#x27;</span>)
+</code></pre>
 				<p>Alternatively, if you prefer to use a <code>&lt;script&gt;</code> tag, you can require MiniSearch
 				<a href="https://www.jsdelivr.com/package/npm/minisearch">from a CDN</a>:</p>
-				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://cdn.jsdelivr.net/npm/minisearch@3.0.2/dist/umd/index.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://cdn.jsdelivr.net/npm/minisearch@3.0.4/dist/umd/index.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
 				<p>In this case, <code>MiniSearch</code> will appear as a global variable in your project.</p>
 				<p>Finally, if you want to manually build the library, clone the repository and run
 					<code>yarn build</code> (or <code>yarn build-minified</code> for a minified version + source maps).
@@ -177,7 +181,8 @@ miniSearch.addAll(documents)
 <span class="hljs-comment">// =&gt; [</span>
 <span class="hljs-comment">//   { id: 2, title: &#x27;Zen and the Art of Motorcycle Maintenance&#x27;, category: &#x27;fiction&#x27;, score: 2.77258, match: { ... } },</span>
 <span class="hljs-comment">//   { id: 4, title: &#x27;Zen and the Art of Archery&#x27;, category: &#x27;non-fiction&#x27;, score: 1.38629, match: { ... } }</span>
-<span class="hljs-comment">// ]</span></code></pre>
+<span class="hljs-comment">// ]</span>
+</code></pre>
 				<a href="#search-options" id="search-options" style="color: inherit; text-decoration: none;">
 					<h3>Search options</h3>
 				</a>
@@ -211,18 +216,21 @@ miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
 miniSearch.addAll(documents)
 
 <span class="hljs-comment">// It will now by default perform fuzzy search and boost &quot;title&quot;:</span>
-miniSearch.search(<span class="hljs-string">&#x27;zen and motorcycles&#x27;</span>)</code></pre>
+miniSearch.search(<span class="hljs-string">&#x27;zen and motorcycles&#x27;</span>)
+</code></pre>
 				<a href="#auto-suggestions" id="auto-suggestions" style="color: inherit; text-decoration: none;">
 					<h3>Auto suggestions</h3>
 				</a>
 				<p><code>MiniSearch</code> can suggest search queries given an incomplete query:</p>
 				<pre><code class="language-javascript">miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>)
 <span class="hljs-comment">// =&gt; [ { suggestion: &#x27;zen archery art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;archery&#x27;, &#x27;art&#x27; ], score: 1.73332 },</span>
-<span class="hljs-comment">//      { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 } ]</span></code></pre>
+<span class="hljs-comment">//      { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 } ]</span>
+</code></pre>
 				<p>The <code>autoSuggest</code> method takes the same options as the <code>search</code> method, so you
 				can get suggestions for misspelled words using fuzzy search:</p>
 				<pre><code class="language-javascript">miniSearch.autoSuggest(<span class="hljs-string">&#x27;neromancer&#x27;</span>, { <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span> })
-<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;neuromancer&#x27;, terms: [ &#x27;neuromancer&#x27; ], score: 1.03998 } ]</span></code></pre>
+<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;neuromancer&#x27;, terms: [ &#x27;neuromancer&#x27; ], score: 1.03998 } ]</span>
+</code></pre>
 				<p>Suggestions are ranked by the relevance of the documents that would be returned
 				by that search.</p>
 				<p>Sometimes, you might need to filter auto suggestions to, say, only a specific
@@ -230,7 +238,8 @@ miniSearch.search(<span class="hljs-string">&#x27;zen and motorcycles&#x27;</spa
 				<pre><code class="language-javascript">miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
   <span class="hljs-attr">filter</span>: <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> result.category === <span class="hljs-string">&#x27;fiction&#x27;</span>
 })
-<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 } ]</span></code></pre>
+<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 } ]</span>
+</code></pre>
 				<a href="#field-extraction" id="field-extraction" style="color: inherit; text-decoration: none;">
 					<h3>Field extraction</h3>
 				</a>
@@ -263,7 +272,8 @@ miniSearch.search(<span class="hljs-string">&#x27;zen and motorcycles&#x27;</spa
     <span class="hljs-comment">// Access nested fields</span>
     <span class="hljs-keyword">return</span> fieldName.split(<span class="hljs-string">&#x27;.&#x27;</span>).reduce(<span class="hljs-function">(<span class="hljs-params">doc, key</span>) =&gt;</span> doc &amp;&amp; doc[key], <span class="hljs-built_in">document</span>)
   }
-})</code></pre>
+})
+</code></pre>
 				<p>The default field extractor can be obtained by calling
 				<code>MiniSearch.getDefault(&#39;extractField&#39;)</code>.</p>
 				<a href="#tokenization" id="tokenization" style="color: inherit; text-decoration: none;">
@@ -276,7 +286,8 @@ miniSearch.search(<span class="hljs-string">&#x27;zen and motorcycles&#x27;</spa
 <span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
   <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>],
   <span class="hljs-attr">tokenize</span>: <span class="hljs-function">(<span class="hljs-params">string, _fieldName</span>) =&gt;</span> string.split(<span class="hljs-string">&#x27;-&#x27;</span>)
-})</code></pre>
+})
+</code></pre>
 				<p>Upon search, the same tokenization is used by default, but it is possible to
 					pass a <code>tokenize</code> search option in case a different search-time tokenization is
 				necessary:</p>
@@ -287,7 +298,8 @@ miniSearch.search(<span class="hljs-string">&#x27;zen and motorcycles&#x27;</spa
   <span class="hljs-attr">searchOptions</span>: {
     <span class="hljs-attr">tokenize</span>: <span class="hljs-function">(<span class="hljs-params">string</span>) =&gt;</span> string.split(<span class="hljs-regexp">/[\s-]+/</span>) <span class="hljs-comment">// search query tokenizer</span>
   }
-})</code></pre>
+})
+</code></pre>
 				<p>The default tokenizer can be obtained by calling
 				<code>MiniSearch.getDefault(&#39;tokenize&#39;)</code>.</p>
 				<a href="#term-processing" id="term-processing" style="color: inherit; text-decoration: none;">
@@ -305,7 +317,8 @@ miniSearch.search(<span class="hljs-string">&#x27;zen and motorcycles&#x27;</spa
   <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>],
   <span class="hljs-attr">processTerm</span>: <span class="hljs-function">(<span class="hljs-params">term, _fieldName</span>) =&gt;</span>
     stopWords.has(term) ? <span class="hljs-literal">null</span> : term.toLowerCase()
-})</code></pre>
+})
+</code></pre>
 				<p>By default, the same processing is applied to search queries. In order to apply
 				a different processing to search queries, supply a <code>processTerm</code> search option:</p>
 				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({
@@ -315,7 +328,8 @@ miniSearch.search(<span class="hljs-string">&#x27;zen and motorcycles&#x27;</spa
   <span class="hljs-attr">searchOptions</span>: {
     <span class="hljs-attr">processTerm</span>: <span class="hljs-function">(<span class="hljs-params">term</span>) =&gt;</span> term.toLowerCase() <span class="hljs-comment">// search query processing</span>
   }
-})</code></pre>
+})
+</code></pre>
 				<p>The default term processor can be obtained by calling
 				<code>MiniSearch.getDefault(&#39;processTerm&#39;)</code>.</p>
 				<a href="#api-documentation" id="api-documentation" style="color: inherit; text-decoration: none;">

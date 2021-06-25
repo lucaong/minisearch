@@ -128,7 +128,8 @@ miniSearch.addAll(documents)
 <span class="hljs-comment">// =&gt; [</span>
 <span class="hljs-comment">//   { id: 2, title: &#x27;Zen and the Art of Motorcycle Maintenance&#x27;, category: &#x27;fiction&#x27;, score: 2.77258 },</span>
 <span class="hljs-comment">//   { id: 4, title: &#x27;Zen and the Art of Archery&#x27;, category: &#x27;non-fiction&#x27;, score: 1.38629 }</span>
-<span class="hljs-comment">// ]</span></code></pre>
+<span class="hljs-comment">// ]</span>
+</code></pre>
 							</div>
 						</div>
 					</li>
@@ -188,7 +189,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L343">MiniSearch.ts:343</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L343">MiniSearch.ts:343</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -205,14 +206,16 @@ miniSearch.addAll(documents)
 											</a>
 											<pre><code class="language-javascript"><span class="hljs-comment">// Create a search engine that indexes the &#x27;title&#x27; and &#x27;text&#x27; fields of your</span>
 <span class="hljs-comment">// documents:</span>
-<span class="hljs-keyword">const</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({ <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })</code></pre>
+<span class="hljs-keyword">const</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({ <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })
+</code></pre>
 											<a href="#id-field" id="id-field" style="color: inherit; text-decoration: none;">
 												<h3>ID Field:</h3>
 											</a>
 											<pre><code class="language-javascript"><span class="hljs-comment">// Your documents are assumed to include a unique &#x27;id&#x27; field, but if you want</span>
 <span class="hljs-comment">// to use a different field for document identification, you can set the</span>
 <span class="hljs-comment">// &#x27;idField&#x27; option:</span>
-<span class="hljs-keyword">const</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({ <span class="hljs-attr">idField</span>: <span class="hljs-string">&#x27;key&#x27;</span>, <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })</code></pre>
+<span class="hljs-keyword">const</span> miniSearch = <span class="hljs-keyword">new</span> MiniSearch({ <span class="hljs-attr">idField</span>: <span class="hljs-string">&#x27;key&#x27;</span>, <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })
+</code></pre>
 											<a href="#options-and-defaults" id="options-and-defaults" style="color: inherit; text-decoration: none;">
 												<h3>Options and defaults:</h3>
 											</a>
@@ -251,7 +254,8 @@ miniSearch.addAll(documents)
   <span class="hljs-comment">// storeFields: document fields to be stored and returned as part of the</span>
   <span class="hljs-comment">// search results.</span>
   <span class="hljs-attr">storeFields</span>: []
-})</code></pre>
+})
+</code></pre>
 										</div>
 									</div>
 								</li>
@@ -273,7 +277,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L773">MiniSearch.ts:773</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L776">MiniSearch.ts:776</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -298,7 +302,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L441">MiniSearch.ts:441</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L441">MiniSearch.ts:441</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -329,7 +333,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L472">MiniSearch.ts:472</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L472">MiniSearch.ts:472</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -360,7 +364,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L487">MiniSearch.ts:487</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L487">MiniSearch.ts:487</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -406,7 +410,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L750">MiniSearch.ts:750</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L753">MiniSearch.ts:753</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -420,7 +424,8 @@ miniSearch.addAll(documents)
 								</a>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Get suggestions for &#x27;neuro&#x27;:</span>
 miniSearch.autoSuggest(<span class="hljs-string">&#x27;neuro&#x27;</span>)
-<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;neuromancer&#x27;, terms: [ &#x27;neuromancer&#x27; ], score: 0.46240 } ]</span></code></pre>
+<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;neuromancer&#x27;, terms: [ &#x27;neuromancer&#x27; ], score: 0.46240 } ]</span>
+</code></pre>
 								<a href="#multiple-words" id="multiple-words" style="color: inherit; text-decoration: none;">
 									<h3>Multiple words:</h3>
 								</a>
@@ -429,13 +434,15 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>)
 <span class="hljs-comment">// =&gt; [</span>
 <span class="hljs-comment">//  { suggestion: &#x27;zen archery art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;archery&#x27;, &#x27;art&#x27; ], score: 1.73332 },</span>
 <span class="hljs-comment">//  { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 }</span>
-<span class="hljs-comment">// ]</span></code></pre>
+<span class="hljs-comment">// ]</span>
+</code></pre>
 								<a href="#fuzzy-suggestions" id="fuzzy-suggestions" style="color: inherit; text-decoration: none;">
 									<h3>Fuzzy suggestions:</h3>
 								</a>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Correct spelling mistakes using fuzzy search:</span>
 miniSearch.autoSuggest(<span class="hljs-string">&#x27;neromancer&#x27;</span>, { <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span> })
-<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;neuromancer&#x27;, terms: [ &#x27;neuromancer&#x27; ], score: 1.03998 } ]</span></code></pre>
+<span class="hljs-comment">// =&gt; [ { suggestion: &#x27;neuromancer&#x27;, terms: [ &#x27;neuromancer&#x27; ], score: 1.03998 } ]</span>
+</code></pre>
 								<a href="#filtering" id="filtering" style="color: inherit; text-decoration: none;">
 									<h3>Filtering:</h3>
 								</a>
@@ -447,7 +454,8 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 <span class="hljs-comment">// =&gt; [</span>
 <span class="hljs-comment">//  { suggestion: &#x27;zen archery art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;archery&#x27;, &#x27;art&#x27; ], score: 1.73332 },</span>
 <span class="hljs-comment">//  { suggestion: &#x27;zen art&#x27;, terms: [ &#x27;zen&#x27;, &#x27;art&#x27; ], score: 1.21313 }</span>
-<span class="hljs-comment">// ]</span></code></pre>
+<span class="hljs-comment">// ]</span>
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -481,7 +489,7 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L521">MiniSearch.ts:521</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L521">MiniSearch.ts:521</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -520,7 +528,7 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L564">MiniSearch.ts:564</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L567">MiniSearch.ts:567</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -555,7 +563,7 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L669">MiniSearch.ts:669</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L672">MiniSearch.ts:672</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -571,30 +579,35 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 								<pre><code class="language-javascript"><span class="hljs-comment">// Search for &quot;zen art motorcycle&quot; with default options: terms have to match</span>
 <span class="hljs-comment">// exactly, and individual terms are joined with OR</span>
 miniSearch.search(<span class="hljs-string">&#x27;zen art motorcycle&#x27;</span>)
-<span class="hljs-comment">// =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]</span></code></pre>
+<span class="hljs-comment">// =&gt; [ { id: 2, score: 2.77258, match: { ... } }, { id: 4, score: 1.38629, match: { ... } } ]</span>
+</code></pre>
 								<a href="#restrict-search-to-specific-fields" id="restrict-search-to-specific-fields" style="color: inherit; text-decoration: none;">
 									<h3>Restrict search to specific fields:</h3>
 								</a>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Search only in the &#x27;title&#x27; field</span>
-miniSearch.search(<span class="hljs-string">&#x27;zen&#x27;</span>, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>] })</code></pre>
+miniSearch.search(<span class="hljs-string">&#x27;zen&#x27;</span>, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>] })
+</code></pre>
 								<a href="#field-boosting" id="field-boosting" style="color: inherit; text-decoration: none;">
 									<h3>Field boosting:</h3>
 								</a>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Boost a field</span>
-miniSearch.search(<span class="hljs-string">&#x27;zen&#x27;</span>, { <span class="hljs-attr">boost</span>: { <span class="hljs-attr">title</span>: <span class="hljs-number">2</span> } })</code></pre>
+miniSearch.search(<span class="hljs-string">&#x27;zen&#x27;</span>, { <span class="hljs-attr">boost</span>: { <span class="hljs-attr">title</span>: <span class="hljs-number">2</span> } })
+</code></pre>
 								<a href="#prefix-search" id="prefix-search" style="color: inherit; text-decoration: none;">
 									<h3>Prefix search:</h3>
 								</a>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Search for &quot;moto&quot; with prefix search (it will match documents</span>
 <span class="hljs-comment">// containing terms that start with &quot;moto&quot; or &quot;neuro&quot;)</span>
-miniSearch.search(<span class="hljs-string">&#x27;moto neuro&#x27;</span>, { <span class="hljs-attr">prefix</span>: <span class="hljs-literal">true</span> })</code></pre>
+miniSearch.search(<span class="hljs-string">&#x27;moto neuro&#x27;</span>, { <span class="hljs-attr">prefix</span>: <span class="hljs-literal">true</span> })
+</code></pre>
 								<a href="#fuzzy-search" id="fuzzy-search" style="color: inherit; text-decoration: none;">
 									<h3>Fuzzy search:</h3>
 								</a>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Search for &quot;ismael&quot; with fuzzy search (it will match documents containing</span>
 <span class="hljs-comment">// terms similar to &quot;ismael&quot;, with a maximum edit distance of 0.2 term.length</span>
 <span class="hljs-comment">// (rounded to nearest integer)</span>
-miniSearch.search(<span class="hljs-string">&#x27;ismael&#x27;</span>, { <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span> })</code></pre>
+miniSearch.search(<span class="hljs-string">&#x27;ismael&#x27;</span>, { <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span> })
+</code></pre>
 								<a href="#combining-strategies" id="combining-strategies" style="color: inherit; text-decoration: none;">
 									<h3>Combining strategies:</h3>
 								</a>
@@ -602,7 +615,8 @@ miniSearch.search(<span class="hljs-string">&#x27;ismael&#x27;</span>, { <span c
 miniSearch.search(<span class="hljs-string">&#x27;ismael mob&#x27;</span>, {
  <span class="hljs-attr">prefix</span>: <span class="hljs-literal">true</span>,
  <span class="hljs-attr">fuzzy</span>: <span class="hljs-number">0.2</span>
-})</code></pre>
+})
+</code></pre>
 								<a href="#advanced-prefix-and-fuzzy-search" id="advanced-prefix-and-fuzzy-search" style="color: inherit; text-decoration: none;">
 									<h3>Advanced prefix and fuzzy search:</h3>
 								</a>
@@ -611,13 +625,15 @@ miniSearch.search(<span class="hljs-string">&#x27;ismael mob&#x27;</span>, {
 miniSearch.search(<span class="hljs-string">&#x27;ismael mob&#x27;</span>, {
  <span class="hljs-attr">prefix</span>: <span class="hljs-function"><span class="hljs-params">term</span> =&gt;</span> term.length &gt; <span class="hljs-number">3</span>
  <span class="hljs-attr">fuzzy</span>: <span class="hljs-function"><span class="hljs-params">term</span> =&gt;</span> term.length &gt; <span class="hljs-number">3</span> ? <span class="hljs-number">0.2</span> : <span class="hljs-literal">null</span>
-})</code></pre>
+})
+</code></pre>
 								<a href="#combine-with-and" id="combine-with-and" style="color: inherit; text-decoration: none;">
 									<h3>Combine with AND:</h3>
 								</a>
 								<pre><code class="language-javascript"><span class="hljs-comment">// Combine search terms with AND (to match only documents that contain both</span>
 <span class="hljs-comment">// &quot;motorcycle&quot; and &quot;art&quot;)</span>
-miniSearch.search(<span class="hljs-string">&#x27;motorcycle art&#x27;</span>, { <span class="hljs-attr">combineWith</span>: <span class="hljs-string">&#x27;AND&#x27;</span> })</code></pre>
+miniSearch.search(<span class="hljs-string">&#x27;motorcycle art&#x27;</span>, { <span class="hljs-attr">combineWith</span>: <span class="hljs-string">&#x27;AND&#x27;</span> })
+</code></pre>
 								<a href="#filtering-results" id="filtering-results" style="color: inherit; text-decoration: none;">
 									<h3>Filtering results:</h3>
 								</a>
@@ -625,7 +641,8 @@ miniSearch.search(<span class="hljs-string">&#x27;motorcycle art&#x27;</span>, {
 <span class="hljs-comment">// is a stored field)</span>
 miniSearch.search(<span class="hljs-string">&#x27;motorcycle art&#x27;</span>, {
   <span class="hljs-attr">filter</span>: <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> result.category === <span class="hljs-string">&#x27;fiction&#x27;</span>
-})</code></pre>
+})
+</code></pre>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -653,7 +670,7 @@ miniSearch.search(<span class="hljs-string">&#x27;motorcycle art&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L938">MiniSearch.ts:938</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L941">MiniSearch.ts:941</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -675,7 +692,8 @@ miniSearch.addAll(documents)
 <span class="hljs-keyword">const</span> json = <span class="hljs-built_in">JSON</span>.stringify(miniSearch)
 
 <span class="hljs-comment">// Later, to deserialize it:</span>
-miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })</code></pre>
+miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })
+</code></pre>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsPlainObject</span></h4>
 							<p>A plain-object serializeable representation of the search index.</p>
@@ -692,7 +710,7 @@ miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L826">MiniSearch.ts:826</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L829">MiniSearch.ts:829</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -723,7 +741,8 @@ MiniSearch.getDefault(<span class="hljs-string">&#x27;processTerm&#x27;</span>)
 
 <span class="hljs-comment">// Unknown options will throw an error</span>
 MiniSearch.getDefault(<span class="hljs-string">&#x27;notExisting&#x27;</span>)
-<span class="hljs-comment">// =&gt; throws &#x27;MiniSearch: unknown option &quot;notExisting&quot;&#x27;</span></code></pre>
+<span class="hljs-comment">// =&gt; throws &#x27;MiniSearch: unknown option &quot;notExisting&quot;&#x27;</span>
+</code></pre>
 						</li>
 					</ul>
 				</section>
@@ -737,7 +756,7 @@ MiniSearch.getDefault(<span class="hljs-string">&#x27;notExisting&#x27;</span>)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/a24d97c/src/MiniSearch.ts#L798">MiniSearch.ts:798</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L801">MiniSearch.ts:801</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -755,7 +774,8 @@ miniSearch.addAll(documents)
 
 <span class="hljs-keyword">const</span> json = <span class="hljs-built_in">JSON</span>.stringify(miniSearch)
 <span class="hljs-comment">// It can later be deserialized like this:</span>
-miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })</code></pre>
+miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: [<span class="hljs-string">&#x27;title&#x27;</span>, <span class="hljs-string">&#x27;text&#x27;</span>] })
+</code></pre>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
