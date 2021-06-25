@@ -337,9 +337,9 @@ const cleanup = <T = any>(path: Path<T>): void => {
   const [node, key] = last(path)
   delete node![key]
 
-  if (Object.keys(node!).length === 0) {
-    cleanup(path.slice(0, -1))
-  }
+  const keys = Object.keys(node!)
+  if (keys.length === 0) { cleanup(path.slice(0, -1)) }
+  if (keys.length === 1 && keys[0] !== LEAF) { merge(path.slice(0, -1), keys[0], node![keys[0]]) }
 }
 
 const merge = <T = any>(path: Path<T>, key: string, value: T): void => {

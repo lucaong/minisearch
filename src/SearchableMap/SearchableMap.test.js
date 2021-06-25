@@ -54,6 +54,18 @@ describe('SearchableMap', () => {
       const map = new SearchableMap()
       expect(() => map.delete('something')).not.toThrow()
     })
+
+    it('leaves the radix tree in the same state as before the entry was added', () => {
+      const map = new SearchableMap()
+
+      map.set('hello', 1)
+      const before = JSON.parse(JSON.stringify(map))
+
+      map.set('help', 2)
+      map.delete('help')
+
+      expect(map).toEqual(before)
+    })
   })
 
   describe('entries', () => {
