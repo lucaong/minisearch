@@ -1,4 +1,4 @@
-import QueryParser, { Expression } from './QueryParser'
+import { Expression } from './Expression'
 import SearchableMap from './SearchableMap/SearchableMap'
 
 const OR = 'or'
@@ -8,11 +8,6 @@ const AND = 'and'
  * Search options to customize the search behavior.
  */
 export type SearchOptions = {
-  /**
-   * Enable "AND" and "OR" operators within search queries.
-   */
-  enableAdvancedQueries?: boolean,
-
   /**
    * Names of the fields to search in. If omitted, all fields are searched.
    */
@@ -347,7 +342,6 @@ export default class MiniSearch<T = any> {
   protected _averageFieldLength: { [fieldId: string]: number }
   protected _nextId: number
   protected _storedFields: { [shortId: string]: any }
-  protected _parser: QueryParser
 
   /**
    * @param options  Configuration options
@@ -436,8 +430,6 @@ export default class MiniSearch<T = any> {
     this._nextId = 0
 
     this._storedFields = {}
-
-    this._parser = new QueryParser()
 
     this.addFields(this._options.fields)
   }
@@ -614,8 +606,7 @@ export default class MiniSearch<T = any> {
 
         return [this.combineResults(results, expression.type.toUpperCase()), index]
       }
-      case 'word':
-      case 'exact':
+      case 'term':
         return [
           this.executeQuery(termToQuery(options)(expression.text, index, terms), options),
           index + 1
@@ -712,25 +703,13 @@ export default class MiniSearch<T = any> {
    * @param queryString  Query string to search for
    * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
-  search (queryString: string, searchOptions: SearchOptions = {}): SearchResult[] {
+  search (queryString: string | Expression, searchOptions: SearchOptions = {}): SearchResult[] {
     const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
     const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
 
     let combinedResults: RawResult
 
-    if (options.enableAdvancedQueries) {
-      const expression = this._parser.parse(queryString, {
-        implicitAnd: options.combineWith === 'AND',
-        processTerm: options.processTerm
-      })
-
-      if (!expression) return []
-
-      const terms = Expression.terms(expression, options.processTerm)
-      const [results] = this.executeExpression(expression, terms, options)
-
-      combinedResults = results
-    } else {
+    if (typeof queryString === 'string') {
       const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
       const terms = searchTokenize(queryString)
         .map((term: string) => searchProcessTerm(term))
@@ -739,6 +718,11 @@ export default class MiniSearch<T = any> {
       const results = queries.map(query => this.executeQuery(query, options))
 
       combinedResults = this.combineResults(results, options.combineWith)
+    } else {
+      const terms = Expression.terms(queryString, options.processTerm)
+      const [results] = this.executeExpression(queryString, terms, options)
+
+      combinedResults = results
     }
 
     return Object.entries(combinedResults)

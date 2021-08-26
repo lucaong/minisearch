@@ -182,20 +182,16 @@ miniSearch.search('zen and motorcycles')
 `MiniSearch` supports basic logical operators and expression nesting:
 
 ```javascript
+import { and, or } from 'minisearch/query'
+
 // Search with AND-ed terms
-miniSearch.search('zen AND moto', {
-  enableAdvancedQueries: true
-})
+miniSearch.search(and('zen', 'moto'))
 
 // Search with OR-ed terms
-miniSearch.search('zen OR moto', {
-  enableAdvancedQueries: true
-})
+miniSearch.search(or('zen', 'moto'))
 
 // Search with nested logical expressions
-miniSearch.search('zen AND (moto OR ismael)', {
-  enableAdvancedQueries: true
-})
+miniSearch.search(and('zem', or('moto', 'ismael')))
 ```
 
 ### Auto suggestions

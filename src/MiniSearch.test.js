@@ -1,6 +1,7 @@
 /* eslint-env jest */
 
 import MiniSearch from './MiniSearch'
+import { and, or } from './query'
 
 describe('MiniSearch', () => {
   describe('constructor', () => {
@@ -469,7 +470,7 @@ describe('MiniSearch', () => {
     })
 
     it('returns and-ed result', () => {
-      const results = ms.search('del AND lago', {
+      const results = ms.search(and('del', 'lago'), {
         enableAdvancedQueries: true
       })
       expect(results.length).toBeGreaterThan(0)
@@ -477,7 +478,7 @@ describe('MiniSearch', () => {
     })
 
     it('returns or-ed result', () => {
-      const results = ms.search('libro OR lago', {
+      const results = ms.search(or('libro', 'lago'), {
         enableAdvancedQueries: true
       })
       expect(results.length).toBeGreaterThan(0)
@@ -485,7 +486,7 @@ describe('MiniSearch', () => {
     })
 
     it('returns and-ed and or-ed result', () => {
-      const results = ms.search('(del OR lago) AND memoria', {
+      const results = ms.search(and(or('del', 'lago'), 'memoria'), {
         enableAdvancedQueries: true
       })
       expect(results.length).toBeGreaterThan(0)

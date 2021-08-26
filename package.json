@@ -22,9 +22,7 @@
     "index"
   ],
   "license": "MIT",
-  "dependencies": {
-    "ebnf": "^1.9.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.0",
     "@typescript-eslint/eslint-plugin": "^4.1.1",

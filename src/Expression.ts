@@ -1,28 +1,23 @@
-interface OrExpression {
+export interface OrExpression {
   type: 'or';
   children: Expression[];
 }
 
-interface AndExpression {
+export interface AndExpression {
   type: 'and';
   children: Expression[];
 }
 
-interface ExactExpression {
-  type: 'exact';
+export interface TermExpression {
+  type: 'term';
   text: string;
 }
 
-interface WordExpression {
-  type: 'word';
-  text: string;
-}
-
-export type Expression = OrExpression | AndExpression | ExactExpression | WordExpression
+export type Expression = OrExpression | AndExpression | TermExpression
 
 export const Expression = {
-  check (expression: Expression | null): expression is Expression {
-    return !!expression
+  check (expression: Expression | string | null): expression is Expression {
+    return typeof expression !== 'string' && !!expression
   },
   terms (expression: Expression, processTerm?: (term: string) => string | false | null | undefined): string[] {
     switch (expression.type) {
@@ -30,8 +25,7 @@ export const Expression = {
       case 'and':
         return expression.children.reduce(
           (terms, child) => terms.concat(Expression.terms(child)), [] as string[])
-      case 'word':
-      case 'exact':
+      case 'term':
       {
         const term = processTerm
           ? processTerm(expression.text)
