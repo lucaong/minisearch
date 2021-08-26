@@ -470,27 +470,29 @@ describe('MiniSearch', () => {
     })
 
     it('returns and-ed result', () => {
-      const results = ms.search(and('del', 'lago'), {
-        enableAdvancedQueries: true
-      })
+      const results = ms.search(and('del', 'lago'))
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ id }) => id).sort()).toEqual([2])
     })
 
     it('returns or-ed result', () => {
-      const results = ms.search(or('libro', 'lago'), {
-        enableAdvancedQueries: true
-      })
+      const results = ms.search(or('libro', 'lago'))
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ id }) => id).sort()).toEqual([2, 3])
     })
 
     it('returns and-ed and or-ed result', () => {
-      const results = ms.search(and(or('del', 'lago'), 'memoria'), {
-        enableAdvancedQueries: true
-      })
+      const results = ms.search(and(or('del', 'lago'), 'memoria'))
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ id }) => id).sort()).toEqual([3])
+    })
+
+    it('applies term processing to expression query terms', () => {
+      const results = ms.search(and('xdel', 'xlago'), {
+        processTerm: (term) => term.substr(1)
+      })
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([2])
     })
 
     it('returns stored fields in the results', () => {
