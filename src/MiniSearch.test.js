@@ -628,24 +628,24 @@ describe('MiniSearch', () => {
         expect(results.map(({ id }) => id)).toEqual([1, 2])
       })
 
-      it('uses the given options for each subquery', () => {
+      it('uses the given options for each subquery, cascading them properly', () => {
         const results = ms.search({
           combineWith: 'OR',
           fuzzy: true,
           queries: [
             {
-              combineWith: 'AND',
               prefix: true,
-              queries: ['vit', 'camm']
+              fields: ['title'],
+              queries: ['vit']
             },
             {
               combineWith: 'AND',
-              queries: ['libro', 'memria']
+              queries: ['bago', 'coomo']
             }
           ]
         })
         expect(results.length).toEqual(2)
-        expect(results.map(({ id }) => id)).toEqual([1, 3])
+        expect(results.map(({ id }) => id)).toEqual([3, 2])
       })
     })
 
