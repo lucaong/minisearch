@@ -1,0 +1,27 @@
+name: Code Coverage
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Report coverage
+        env:
+          COVERALLS_REPO_TOKEN: "${{ secrets.COVERALLS_REPO_TOKEN }}"
+          COVERALLS_GIT_BRANCH: "${{ github.ref }}"
+          COVERALLS_SERVICE_NAME: GitHub Actions
+        run: yarn run jest --coverage && yarn run coveralls --verbose < coverage/lcov.info
+
