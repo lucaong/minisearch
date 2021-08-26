@@ -608,6 +608,27 @@ describe('MiniSearch', () => {
       expect(results.every(({ category }) => category === 'poetry')).toBe(true)
     })
 
+    describe('when passing an Expression', () => {
+      it('searches according to the expression tree', () => {
+        const results = ms.search({
+          combineWith: 'OR',
+          queries: [
+            {
+              combineWith: 'AND',
+              queries: ['vita', 'cammin sottomarino'] 
+            },
+            'como',
+            {
+              combineWith: 'AND',
+              queries: ['nova', 'pappagallo']
+            }
+          ]
+        })
+        expect(results.length).toEqual(2)
+        expect(results.map(({ id }) => id)).toEqual([1, 2])
+      })
+    })
+
     describe('match data', () => {
       const documents = [
         { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },

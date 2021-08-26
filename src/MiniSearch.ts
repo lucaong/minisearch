@@ -261,6 +261,15 @@ export type AsPlainObject = {
   storedFields: { [shortId: string]: any }
 }
 
+export type AndExpression = { combineWith: 'AND', queries: QueryExpression[] }
+export type OrExpression = { combineWith: 'OR', queries: QueryExpression[] }
+
+/**
+ * Search query expression, either a query string or an expression tree
+ * combining several queries with a combination of AND or OR.
+ */
+export type QueryExpression = AndExpression | OrExpression | string
+
 type Query = {
   prefix: boolean,
   fuzzy: number | boolean,
@@ -666,19 +675,11 @@ export default class MiniSearch<T = any> {
    * })
    * ```
    *
-   * @param queryString  Query string to search for
+   * @param query  Search query
    * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
-  search (queryString: string, searchOptions: SearchOptions = {}): SearchResult[] {
-    const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
-    const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
-    const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
-    const terms = searchTokenize(queryString)
-      .map((term: string) => searchProcessTerm(term))
-      .filter((term) => !!term) as string[]
-    const queries: Query[] = terms.map(termToQuery(options))
-    const results = queries.map(query => this.executeQuery(query, options))
-    const combinedResults: RawResult = this.combineResults(results, options.combineWith)
+  search (query: QueryExpression, searchOptions: SearchOptions = {}): SearchResult[] {
+    const combinedResults = this.executeExpression(query, searchOptions)
 
     return Object.entries(combinedResults)
       .reduce((results: SearchResult[], [docId, { score, match, terms }]) => {
@@ -689,7 +690,7 @@ export default class MiniSearch<T = any> {
           match
         }
         Object.assign(result, this._storedFields[docId])
-        if (options.filter == null || options.filter(result)) {
+        if (searchOptions.filter == null || searchOptions.filter(result)) {
           results.push(result)
         }
         return results
@@ -861,6 +862,33 @@ export default class MiniSearch<T = any> {
     miniSearch._storedFields = storedFields || {}
 
     return miniSearch
+  }
+
+  /**
+   * @ignore
+   */
+  private executeSearch (queryString: string, searchOptions: SearchOptions = {}): RawResult {
+    const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
+    const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
+    const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
+    const terms = searchTokenize(queryString)
+      .map((term: string) => searchProcessTerm(term))
+      .filter((term) => !!term) as string[]
+    const queries: Query[] = terms.map(termToQuery(options))
+    const results = queries.map(query => this.executeQuery(query, options))
+    return this.combineResults(results, options.combineWith)
+  }
+
+  /**
+   * @ignore
+   */
+  private executeExpression (expression: QueryExpression, searchOptions: SearchOptions = {}): RawResult {
+    if (typeof expression === 'string') {
+      return this.executeSearch(expression, searchOptions)
+    } else {
+      const results = expression.queries.map((childExpression) => this.executeExpression(childExpression, searchOptions))
+      return this.combineResults(results, expression.combineWith)
+    }
   }
 
   /**
