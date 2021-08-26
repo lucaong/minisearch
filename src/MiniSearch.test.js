@@ -608,16 +608,16 @@ describe('MiniSearch', () => {
       expect(results.every(({ category }) => category === 'poetry')).toBe(true)
     })
 
-    describe('when passing an expression tree', () => {
+    describe('when passing a query tree', () => {
       it('searches according to the given combination of AND and OR', () => {
         const results = ms.search({
           combineWith: 'OR',
           queries: [
             {
               combineWith: 'AND',
-              queries: ['vita', 'cammin sottomarino']
+              queries: ['vita', 'cammin']
             },
-            'como',
+            'como sottomarino',
             {
               combineWith: 'AND',
               queries: ['nova', 'pappagallo']
@@ -626,6 +626,26 @@ describe('MiniSearch', () => {
         })
         expect(results.length).toEqual(2)
         expect(results.map(({ id }) => id)).toEqual([1, 2])
+      })
+
+      it('uses the given options for each subquery', () => {
+        const results = ms.search({
+          combineWith: 'OR',
+          fuzzy: true,
+          queries: [
+            {
+              combineWith: 'AND',
+              prefix: true,
+              queries: ['vit', 'camm']
+            },
+            {
+              combineWith: 'AND',
+              queries: ['libro', 'memria']
+            }
+          ]
+        })
+        expect(results.length).toEqual(2)
+        expect(results.map(({ id }) => id)).toEqual([1, 3])
       })
     })
 

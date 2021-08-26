@@ -261,14 +261,13 @@ export type AsPlainObject = {
   storedFields: { [shortId: string]: any }
 }
 
-export type AndExpression = { combineWith: 'AND', queries: Query[] }
-export type OrExpression = { combineWith: 'OR', queries: Query[] }
+export type QueryCombination = SearchOptions & { queries: Query[] }
 
 /**
  * Search query expression, either a query string or an expression tree
  * combining several queries with a combination of AND or OR.
  */
-export type Query = AndExpression | OrExpression | string
+export type Query = QueryCombination | string
 
 type QuerySpec = {
   prefix: boolean,
@@ -867,12 +866,15 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private executeQuery (expression: Query, searchOptions: SearchOptions = {}): RawResult {
-    if (typeof expression === 'string') {
-      return this.executeSearch(expression, searchOptions)
+  private executeQuery (query: Query, searchOptions: SearchOptions = {}): RawResult {
+    if (typeof query === 'string') {
+      return this.executeSearch(query, searchOptions)
     } else {
-      const results = expression.queries.map((childExpression) => this.executeQuery(childExpression, searchOptions))
-      return this.combineResults(results, expression.combineWith)
+      const results = query.queries.map((subquery) => {
+        const options = { ...searchOptions, ...query, queries: undefined }
+        return this.executeQuery(subquery, options)
+      })
+      return this.combineResults(results, query.combineWith)
     }
   }
 
