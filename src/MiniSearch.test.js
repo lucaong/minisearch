@@ -615,7 +615,7 @@ describe('MiniSearch', () => {
           queries: [
             {
               combineWith: 'AND',
-              queries: ['vita', 'cammin sottomarino'] 
+              queries: ['vita', 'cammin sottomarino']
             },
             'como',
             {
