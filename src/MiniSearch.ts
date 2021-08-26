@@ -261,16 +261,16 @@ export type AsPlainObject = {
   storedFields: { [shortId: string]: any }
 }
 
-export type AndExpression = { combineWith: 'AND', queries: QueryExpression[] }
-export type OrExpression = { combineWith: 'OR', queries: QueryExpression[] }
+export type AndExpression = { combineWith: 'AND', queries: Query[] }
+export type OrExpression = { combineWith: 'OR', queries: Query[] }
 
 /**
  * Search query expression, either a query string or an expression tree
  * combining several queries with a combination of AND or OR.
  */
-export type QueryExpression = AndExpression | OrExpression | string
+export type Query = AndExpression | OrExpression | string
 
-type Query = {
+type QuerySpec = {
   prefix: boolean,
   fuzzy: number | boolean,
   term: string
@@ -678,8 +678,8 @@ export default class MiniSearch<T = any> {
    * @param query  Search query
    * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
-  search (query: QueryExpression, searchOptions: SearchOptions = {}): SearchResult[] {
-    const combinedResults = this.executeExpression(query, searchOptions)
+  search (query: Query, searchOptions: SearchOptions = {}): SearchResult[] {
+    const combinedResults = this.executeQuery(query, searchOptions)
 
     return Object.entries(combinedResults)
       .reduce((results: SearchResult[], [docId, { score, match, terms }]) => {
@@ -867,26 +867,11 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private executeSearch (queryString: string, searchOptions: SearchOptions = {}): RawResult {
-    const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
-    const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
-    const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
-    const terms = searchTokenize(queryString)
-      .map((term: string) => searchProcessTerm(term))
-      .filter((term) => !!term) as string[]
-    const queries: Query[] = terms.map(termToQuery(options))
-    const results = queries.map(query => this.executeQuery(query, options))
-    return this.combineResults(results, options.combineWith)
-  }
-
-  /**
-   * @ignore
-   */
-  private executeExpression (expression: QueryExpression, searchOptions: SearchOptions = {}): RawResult {
+  private executeQuery (expression: Query, searchOptions: SearchOptions = {}): RawResult {
     if (typeof expression === 'string') {
       return this.executeSearch(expression, searchOptions)
     } else {
-      const results = expression.queries.map((childExpression) => this.executeExpression(childExpression, searchOptions))
+      const results = expression.queries.map((childExpression) => this.executeQuery(childExpression, searchOptions))
       return this.combineResults(results, expression.combineWith)
     }
   }
@@ -894,7 +879,23 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private executeQuery (query: Query, searchOptions: SearchOptions): RawResult {
+  private executeSearch (queryString: string, searchOptions: SearchOptions = {}): RawResult {
+    const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
+    const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
+    const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
+    const terms = searchTokenize(queryString)
+      .map((term: string) => searchProcessTerm(term))
+      .filter((term) => !!term) as string[]
+    const queries: QuerySpec[] = terms.map(termToQuerySpec(options))
+    const results = queries.map(query => this.executeQuerySpec(query, options))
+
+    return this.combineResults(results, options.combineWith)
+  }
+
+  /**
+   * @ignore
+   */
+  private executeQuerySpec (query: QuerySpec, searchOptions: SearchOptions): RawResult {
     const options: SearchOptionsWithDefaults = { ...this._options.searchOptions, ...searchOptions }
 
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
@@ -1167,7 +1168,7 @@ const score = (
   return weight * tfIdf(termFrequency, documentFrequency, documentCount) / normalizedLength
 }
 
-const termToQuery = (options: SearchOptions) => (term: string, i: number, terms: string[]): Query => {
+const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, terms: string[]): QuerySpec => {
   const fuzzy = (typeof options.fuzzy === 'function')
     ? options.fuzzy(term, i, terms)
     : (options.fuzzy || false)

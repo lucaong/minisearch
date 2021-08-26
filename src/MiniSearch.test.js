@@ -608,8 +608,8 @@ describe('MiniSearch', () => {
       expect(results.every(({ category }) => category === 'poetry')).toBe(true)
     })
 
-    describe('when passing an Expression', () => {
-      it('searches according to the expression tree', () => {
+    describe('when passing an expression tree', () => {
+      it('searches according to the given combination of AND and OR', () => {
         const results = ms.search({
           combineWith: 'OR',
           queries: [
