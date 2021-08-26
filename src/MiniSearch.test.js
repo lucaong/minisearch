@@ -469,19 +469,25 @@ describe('MiniSearch', () => {
     })
 
     it('returns and-ed result', () => {
-      const results = ms.search('del AND lago')
+      const results = ms.search('del AND lago', {
+        enableAdvancedQueries: true
+      })
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ id }) => id).sort()).toEqual([2])
     })
 
     it('returns or-ed result', () => {
-      const results = ms.search('libro OR lago')
+      const results = ms.search('libro OR lago', {
+        enableAdvancedQueries: true
+      })
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ id }) => id).sort()).toEqual([2, 3])
     })
 
     it('returns and-ed and or-ed result', () => {
-      const results = ms.search('(del OR lago) AND memoria')
+      const results = ms.search('(del OR lago) AND memoria', {
+        enableAdvancedQueries: true
+      })
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ id }) => id).sort()).toEqual([3])
     })

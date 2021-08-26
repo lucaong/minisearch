@@ -9,6 +9,11 @@ const AND = 'and'
  */
 export type SearchOptions = {
   /**
+   * Enable "AND" and "OR" operators within search queries.
+   */
+  enableAdvancedQueries?: boolean,
+
+  /**
    * Names of the fields to search in. If omitted, all fields are searched.
    */
   fields?: string[],
@@ -710,15 +715,31 @@ export default class MiniSearch<T = any> {
   search (queryString: string, searchOptions: SearchOptions = {}): SearchResult[] {
     const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
     const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
-    const expression = this._parser.parse(queryString, {
-      implicitAnd: options.combineWith === 'AND',
-      processTerm: options.processTerm
-    })
 
-    if (!expression) return []
+    let combinedResults: RawResult
 
-    const terms = Expression.terms(expression, options.processTerm)
-    const [combinedResults] = this.executeExpression(expression, terms, options)
+    if (options.enableAdvancedQueries) {
+      const expression = this._parser.parse(queryString, {
+        implicitAnd: options.combineWith === 'AND',
+        processTerm: options.processTerm
+      })
+
+      if (!expression) return []
+
+      const terms = Expression.terms(expression, options.processTerm)
+      const [results] = this.executeExpression(expression, terms, options)
+
+      combinedResults = results
+    } else {
+      const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
+      const terms = searchTokenize(queryString)
+        .map((term: string) => searchProcessTerm(term))
+        .filter((term) => !!term) as string[]
+      const queries: Query[] = terms.map(termToQuery(options))
+      const results = queries.map(query => this.executeQuery(query, options))
+
+      combinedResults = this.combineResults(results, options.combineWith)
+    }
 
     return Object.entries(combinedResults)
       .reduce((results: SearchResult[], [docId, { score, match, terms }]) => {
