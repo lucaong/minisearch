@@ -594,6 +594,14 @@ describe('MiniSearch', () => {
       expect(results[0].score).toEqual(resultsWithoutBoost[0].score * boostFactor)
     })
 
+    it('uses a specific search-time tokenizer if specified', () => {
+      const tokenize = (string) => string.split('X')
+      const results = ms.search('divinaXcommedia', { tokenize })
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([1])
+    })
+
+
     it('skips document if boostDocument returns a falsy value', () => {
       const query = 'vita'
       const boostDocument = jest.fn((id, term) => id === 3 ? null : 1)
@@ -655,6 +663,14 @@ describe('MiniSearch', () => {
         expect(results.map(({ terms }) => terms)).toEqual([
           ['vita', 'nova']
         ])
+      })
+
+      it('passes only the query to tokenize', () => {
+        const tokenize = jest.fn(string => string.split(/\W+/))
+        const ms = new MiniSearch({ fields: ['text', 'title'], searchOptions: { tokenize } })
+        const query = 'some search query'
+        ms.search(query)
+        expect(tokenize).toHaveBeenCalledWith(query)
       })
 
       it('reports correct info for fuzzy and prefix queries', () => {
