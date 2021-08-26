@@ -1,5 +1,4 @@
-import QueryParser from './QueryParser/QueryParser'
-import { Expression } from './QueryParser/types'
+import QueryParser, { Expression } from './QueryParser'
 import SearchableMap from './SearchableMap/SearchableMap'
 
 const OR = 'or'
@@ -585,6 +584,16 @@ export default class MiniSearch<T = any> {
     }
   }
 
+  /**
+   * Searches the index based on a given expression tree.
+   *
+   * @param expression Expression to execute.
+   * @param terms Terms list extracted from expression.
+   * @param options Search options.
+   * @param index Index of expression within query.
+   *
+   * @returns A raw result set.
+   */
   executeExpression (expression: Expression, terms: string[], options: SearchOptions, index = 0): [RawResult, number] {
     switch (expression.type) {
       case 'and':
