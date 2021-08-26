@@ -607,10 +607,16 @@ export default class MiniSearch<T = any> {
         return [this.combineResults(results, expression.type.toUpperCase()), index]
       }
       case 'term':
+      {
+        const term = options.processTerm ? options.processTerm(expression.text) : expression.text
+
+        if (!term) return [{}, index]
+
         return [
-          this.executeQuery(termToQuery(options)(expression.text, index, terms), options),
+          this.executeQuery(termToQuery(options)(term, index, terms), options),
           index + 1
         ]
+      }
     }
   }
 
