@@ -487,6 +487,12 @@ describe('MiniSearch', () => {
       expect(results.map(({ id }) => id).sort()).toEqual([3])
     })
 
+    it('ignores empty terms in expression queries', () => {
+      const results = ms.search(or('libro', 'lago', '', and('', '')))
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([2, 3])
+    })
+
     it('applies term processing to expression query terms', () => {
       const results = ms.search(and('xdel', 'xlago'), {
         processTerm: (term) => term.substr(1)

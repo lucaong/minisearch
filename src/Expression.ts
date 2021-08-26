@@ -24,12 +24,10 @@ export const Expression = {
       case 'or':
       case 'and':
         return expression.children.reduce(
-          (terms, child) => terms.concat(Expression.terms(child)), [] as string[])
+          (terms, child) => terms.concat(Expression.terms(child, processTerm)), [] as string[])
       case 'term':
       {
-        const term = processTerm
-          ? processTerm(expression.text)
-          : expression.text
+        const term = processTerm ? processTerm(expression.text) : expression.text
 
         if (!term) return []
 
