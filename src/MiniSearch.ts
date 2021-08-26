@@ -1,3 +1,5 @@
+import QueryParser from './QueryParser/QueryParser'
+import { Expression } from './QueryParser/types'
 import SearchableMap from './SearchableMap/SearchableMap'
 
 const OR = 'or'
@@ -341,6 +343,7 @@ export default class MiniSearch<T = any> {
   protected _averageFieldLength: { [fieldId: string]: number }
   protected _nextId: number
   protected _storedFields: { [shortId: string]: any }
+  protected _parser: QueryParser
 
   /**
    * @param options  Configuration options
@@ -429,6 +432,8 @@ export default class MiniSearch<T = any> {
     this._nextId = 0
 
     this._storedFields = {}
+
+    this._parser = new QueryParser()
 
     this.addFields(this._options.fields)
   }
@@ -580,6 +585,30 @@ export default class MiniSearch<T = any> {
     }
   }
 
+  executeExpression (expression: Expression, terms: string[], options: SearchOptions, index = 0): [RawResult, number] {
+    switch (expression.type) {
+      case 'and':
+      case 'or':
+      {
+        const results: RawResult[] = []
+
+        expression.children.forEach(child => {
+          const [result, newIndex] = this.executeExpression(child, terms, options, index)
+          index = newIndex
+          results.push(result)
+        })
+
+        return [this.combineResults(results, expression.type.toUpperCase()), index]
+      }
+      case 'word':
+      case 'exact':
+        return [
+          this.executeQuery(termToQuery(options)(expression.text, index, terms), options),
+          index + 1
+        ]
+    }
+  }
+
   /**
    * Search for documents matching the given search query.
    *
@@ -672,13 +701,15 @@ export default class MiniSearch<T = any> {
   search (queryString: string, searchOptions: SearchOptions = {}): SearchResult[] {
     const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
     const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
-    const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
-    const terms = searchTokenize(queryString)
-      .map((term: string) => searchProcessTerm(term))
-      .filter((term) => !!term) as string[]
-    const queries: Query[] = terms.map(termToQuery(options))
-    const results = queries.map(query => this.executeQuery(query, options))
-    const combinedResults: RawResult = this.combineResults(results, options.combineWith)
+    const expression = this._parser.parse(queryString, {
+      implicitAnd: options.combineWith === 'AND',
+      processTerm: options.processTerm
+    })
+
+    if (!expression) return []
+
+    const terms = Expression.terms(expression, options.processTerm)
+    const [combinedResults] = this.executeExpression(expression, terms, options)
 
     return Object.entries(combinedResults)
       .reduce((results: SearchResult[], [docId, { score, match, terms }]) => {

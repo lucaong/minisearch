@@ -323,14 +323,14 @@ describe('MiniSearch', () => {
         expect(() => ms.remove({ id: 1, title: 'Divina Commedia cammin', text: 'something has changed' }))
           .not.toThrow()
         expect(console.warn).toHaveBeenCalledTimes(4)
-        ;[
-          ['cammin', 'title'],
-          ['something', 'text'],
-          ['has', 'text'],
-          ['changed', 'text']
-        ].forEach(([term, field], i) => {
-          expect(console.warn).toHaveBeenNthCalledWith(i + 1, `MiniSearch: document with ID 1 has changed before removal: term "${term}" was not present in field "${field}". Removing a document after it has changed can corrupt the index!`)
-        })
+          ;[
+            ['cammin', 'title'],
+            ['something', 'text'],
+            ['has', 'text'],
+            ['changed', 'text']
+          ].forEach(([term, field], i) => {
+            expect(console.warn).toHaveBeenNthCalledWith(i + 1, `MiniSearch: document with ID 1 has changed before removal: term "${term}" was not present in field "${field}". Removing a document after it has changed can corrupt the index!`)
+          })
       })
 
       it('does not throw error if console.warn is undefined', () => {
@@ -468,6 +468,24 @@ describe('MiniSearch', () => {
       expect(results[0].score).toBeGreaterThanOrEqual(results[1].score)
     })
 
+    it('returns and-ed result', () => {
+      const results = ms.search('del AND lago')
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([2])
+    })
+
+    it('returns or-ed result', () => {
+      const results = ms.search('libro OR lago')
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([2, 3])
+    })
+
+    it('returns and-ed and or-ed result', () => {
+      const results = ms.search('(del OR lago) AND memoria')
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([3])
+    })
+
     it('returns stored fields in the results', () => {
       const results = ms.search('del')
       expect(results.length).toBeGreaterThan(0)
@@ -579,13 +597,6 @@ describe('MiniSearch', () => {
       expect(results.map(({ id }) => id)).not.toContain(3)
     })
 
-    it('uses a specific search-time tokenizer if specified', () => {
-      const tokenize = (string) => string.split('X')
-      const results = ms.search('divinaXcommedia', { tokenize })
-      expect(results.length).toBeGreaterThan(0)
-      expect(results.map(({ id }) => id).sort()).toEqual([1])
-    })
-
     it('uses a specific search-time term processing function if specified', () => {
       const processTerm = (string) => string.replace(/1/g, 'i').replace(/4/g, 'a').toLowerCase()
       const results = ms.search('d1v1n4', { processTerm })
@@ -652,14 +663,6 @@ describe('MiniSearch', () => {
         ])
       })
 
-      it('passes only the query to tokenize', () => {
-        const tokenize = jest.fn(string => string.split(/\W+/))
-        const ms = new MiniSearch({ fields: ['text', 'title'], searchOptions: { tokenize } })
-        const query = 'some search query'
-        ms.search(query)
-        expect(tokenize).toHaveBeenCalledWith(query)
-      })
-
       it('passes only the term to processTerm', () => {
         const processTerm = jest.fn(term => term.toLowerCase())
         const ms = new MiniSearch({ fields: ['text', 'title'], searchOptions: { processTerm } })
@@ -694,7 +697,7 @@ describe('MiniSearch', () => {
         {
           id: 1,
           text:
-          `Se la vita è sventura,
+            `Se la vita è sventura,
 perché da noi si dura?
 Intatta luna, tale
 è lo stato mortale.

@@ -177,6 +177,21 @@ miniSearch.addAll(documents)
 miniSearch.search('zen and motorcycles')
 ```
 
+### Search query language
+
+`MiniSearch` supports basic logical operators and expression nesting:
+
+```javascript
+// Search with AND-ed terms
+miniSearch.search('zen AND moto')
+
+// Search with OR-ed terms
+miniSearch.search('zen OR moto')
+
+// Search with nested logical expressions
+miniSearch.search('zen AND (moto OR ismael)')
+```
+
 ### Auto suggestions
 
 `MiniSearch` can suggest search queries given an incomplete query:
@@ -258,21 +273,6 @@ tokenizer function as the `tokenize` option:
 let miniSearch = new MiniSearch({
   fields: ['title', 'text'],
   tokenize: (string, _fieldName) => string.split('-')
-})
-```
-
-Upon search, the same tokenization is used by default, but it is possible to
-pass a `tokenize` search option in case a different search-time tokenization is
-necessary:
-
-```javascript
-// Tokenize splitting by hyphen
-let miniSearch = new MiniSearch({
-  fields: ['title', 'text'],
-  tokenize: (string) => string.split('-'), // indexing tokenizer
-  searchOptions: {
-    tokenize: (string) => string.split(/[\s-]+/) // search query tokenizer
-  }
 })
 ```
 
