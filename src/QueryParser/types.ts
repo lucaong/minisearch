@@ -20,10 +20,6 @@ interface WordExpression {
 
 export type Expression = OrExpression | AndExpression | ExactExpression | WordExpression
 
-export function isExpression (expression: Expression | null): expression is Expression {
-  return !!expression
-}
-
 export const Expression = {
   check (expression: Expression | null): expression is Expression {
     return !!expression

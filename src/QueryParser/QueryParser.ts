@@ -1,6 +1,6 @@
 import { Grammars, IToken } from 'ebnf'
 import * as grammar from './grammar'
-import { Expression, isExpression, ParseOptions } from './types'
+import { Expression, ParseOptions } from './types'
 
 const andParser = new Grammars.W3C.Parser(grammar.implicitAnd)
 const orParser = new Grammars.W3C.Parser(grammar.implicitOr)
@@ -14,7 +14,7 @@ function convertTokenToExpression (token: IToken, options: ParseOptions): Expres
     case 'And':
       children = token.children
         .map((child) => convertTokenToExpression(child, options))
-        .filter(isExpression)
+        .filter(Expression.check)
 
       return children.length === 1
         ? children[0]
@@ -25,7 +25,7 @@ function convertTokenToExpression (token: IToken, options: ParseOptions): Expres
     case 'Or':
       children = token.children
         .map((child) => convertTokenToExpression(child, options))
-        .filter(isExpression)
+        .filter(Expression.check)
 
       return children.length === 1
         ? children[0]
@@ -36,7 +36,7 @@ function convertTokenToExpression (token: IToken, options: ParseOptions): Expres
     case 'term':
       children = token.children
         .map((child) => convertTokenToExpression(child, options))
-        .filter(isExpression)
+        .filter(Expression.check)
 
       if (children.length > 1) throw new Error('Invalid term')
 
@@ -70,21 +70,16 @@ function convertTokenToExpression (token: IToken, options: ParseOptions): Expres
       if (token.children.length !== 1) throw new Error('Invalid nested expression')
 
       return convertTokenToExpression(token.children[0], options)
-    default:
-      console.error(token)
-      throw new Error('Failed to parse token')
   }
+
+  return null
 }
 
 export default class QueryParser {
   parse (text: string, options: ParseOptions = ParseOptions.default): Expression | null {
-    try {
-      const parser = options.implicitAnd ? andParser : orParser
-      const token = parser.getAST(text)
+    const parser = options.implicitAnd ? andParser : orParser
+    const token = parser.getAST(text)
 
-      return convertTokenToExpression(token, options)
-    } catch (e) {
-      return null
-    }
+    return convertTokenToExpression(token, options)
   }
 }

@@ -141,4 +141,15 @@ describe('A QueryParser', () => {
       }]
     })
   })
+
+  it('returns parsable portion of query on failed parsing', () => {
+    const expression = parser.parse('Hello (', {
+      implicitAnd: true
+    })
+
+    expect(expression).toEqual({
+      type: 'word',
+      text: 'Hello'
+    })
+  })
 })
