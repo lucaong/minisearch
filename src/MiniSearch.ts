@@ -261,7 +261,15 @@ export type AsPlainObject = {
   storedFields: { [shortId: string]: any }
 }
 
-type Query = {
+export type QueryCombination = SearchOptions & { queries: Query[] }
+
+/**
+ * Search query expression, either a query string or an expression tree
+ * combining several queries with a combination of AND or OR.
+ */
+export type Query = QueryCombination | string
+
+type QuerySpec = {
   prefix: boolean,
   fuzzy: number | boolean,
   term: string
@@ -666,19 +674,39 @@ export default class MiniSearch<T = any> {
    * })
    * ```
    *
-   * @param queryString  Query string to search for
+   * ### Advanced combination of queries:
+   *
+   * It is possible to combine different subqueries with OR and AND, and even
+   * with different search options, by passing a query expression tree object as
+   * the first argument, instead of a string.
+   *
+   * ```javascript
+   * // Search for documents that contain "zen" AND ("motorcycle" OR "archery")
+   * miniSearch.search({
+   *   combineWith: 'AND',
+   *   queries: [
+   *     'zen',
+   *     {
+   *       combineWith: 'OR',
+   *       queries: ['motorcycle', 'archery']
+   *     }
+   *   ]
+   * })
+   * ```
+   *
+   * Each node in the expression tree can be either a string, or an object that
+   * supports all `SearchOptions` fields, plus a `queries` array field for
+   * subqueries.
+   *
+   * Note that, while this can become complicated to do by hand for complex or
+   * deeply nested queries, it provides a formalized expression tree API for
+   * external libraries that implement a parser for custom query languages.
+   *
+   * @param query  Search query
    * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
-  search (queryString: string, searchOptions: SearchOptions = {}): SearchResult[] {
-    const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
-    const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
-    const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
-    const terms = searchTokenize(queryString)
-      .map((term: string) => searchProcessTerm(term))
-      .filter((term) => !!term) as string[]
-    const queries: Query[] = terms.map(termToQuery(options))
-    const results = queries.map(query => this.executeQuery(query, options))
-    const combinedResults: RawResult = this.combineResults(results, options.combineWith)
+  search (query: Query, searchOptions: SearchOptions = {}): SearchResult[] {
+    const combinedResults = this.executeQuery(query, searchOptions)
 
     return Object.entries(combinedResults)
       .reduce((results: SearchResult[], [docId, { score, match, terms }]) => {
@@ -689,7 +717,7 @@ export default class MiniSearch<T = any> {
           match
         }
         Object.assign(result, this._storedFields[docId])
-        if (options.filter == null || options.filter(result)) {
+        if (searchOptions.filter == null || searchOptions.filter(result)) {
           results.push(result)
         }
         return results
@@ -866,7 +894,38 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private executeQuery (query: Query, searchOptions: SearchOptions): RawResult {
+  private executeQuery (query: Query, searchOptions: SearchOptions = {}): RawResult {
+    if (typeof query === 'string') {
+      return this.executeSearch(query, searchOptions)
+    } else {
+      const results = query.queries.map((subquery) => {
+        const options = { ...searchOptions, ...query, queries: undefined }
+        return this.executeQuery(subquery, options)
+      })
+      return this.combineResults(results, query.combineWith)
+    }
+  }
+
+  /**
+   * @ignore
+   */
+  private executeSearch (queryString: string, searchOptions: SearchOptions = {}): RawResult {
+    const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
+    const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
+    const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
+    const terms = searchTokenize(queryString)
+      .map((term: string) => searchProcessTerm(term))
+      .filter((term) => !!term) as string[]
+    const queries: QuerySpec[] = terms.map(termToQuerySpec(options))
+    const results = queries.map(query => this.executeQuerySpec(query, options))
+
+    return this.combineResults(results, options.combineWith)
+  }
+
+  /**
+   * @ignore
+   */
+  private executeQuerySpec (query: QuerySpec, searchOptions: SearchOptions): RawResult {
     const options: SearchOptionsWithDefaults = { ...this._options.searchOptions, ...searchOptions }
 
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
@@ -1139,7 +1198,7 @@ const score = (
   return weight * tfIdf(termFrequency, documentFrequency, documentCount) / normalizedLength
 }
 
-const termToQuery = (options: SearchOptions) => (term: string, i: number, terms: string[]): Query => {
+const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, terms: string[]): QuerySpec => {
   const fuzzy = (typeof options.fuzzy === 'function')
     ? options.fuzzy(term, i, terms)
     : (options.fuzzy || false)
