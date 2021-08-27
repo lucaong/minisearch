@@ -674,6 +674,34 @@ export default class MiniSearch<T = any> {
    * })
    * ```
    *
+   * ### Advanced combination of queries:
+   *
+   * It is possible to combine different subqueries with OR and AND, and even
+   * with different search options, by passing a query expression tree object as
+   * the first argument, instead of a string.
+   *
+   * ```javascript
+   * // Search for documents that contain "zen" AND ("motorcycle" OR "archery")
+   * miniSearch.search({
+   *   combineWith: 'AND',
+   *   queries: [
+   *     'zen',
+   *     {
+   *       combineWith: 'OR',
+   *       queries: ['motorcycle', 'archery']
+   *     }
+   *   ]
+   * })
+   * ```
+   *
+   * Each node in the expression tree can be either a string, or an object that
+   * supports all `SearchOptions` fields, plus a `queries` array field for
+   * subqueries.
+   *
+   * Note that, while this can become complicated for complex queries, it
+   * provides a formalized expression tree API for external libraries that
+   * implement a parser for custom query languages.
+   *
    * @param query  Search query
    * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
