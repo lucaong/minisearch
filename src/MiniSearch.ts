@@ -698,9 +698,9 @@ export default class MiniSearch<T = any> {
    * supports all `SearchOptions` fields, plus a `queries` array field for
    * subqueries.
    *
-   * Note that, while this can become complicated for complex queries, it
-   * provides a formalized expression tree API for external libraries that
-   * implement a parser for custom query languages.
+   * Note that, while this can become complicated to do by hand for complex or
+   * deeply nested queries, it provides a formalized expression tree API for
+   * external libraries that implement a parser for custom query languages.
    *
    * @param query  Search query
    * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
