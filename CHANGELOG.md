@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v3.1.0
+
+  - Add possibility for advanced combination of subqueries as query expression
+    trees
+
 # v3.0.4
 
   - [fix] Keep radix tree property (no node with a single child) after removal

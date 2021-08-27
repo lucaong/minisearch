@@ -77,6 +77,8 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_minisearch_.html#matchinfo" class="tsd-kind-icon">Match<wbr>Info</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="_minisearch_.html#options" class="tsd-kind-icon">Options</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_minisearch_.html#query" class="tsd-kind-icon">Query</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_minisearch_.html#querycombination" class="tsd-kind-icon">Query<wbr>Combination</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_minisearch_.html#searchoptions-1" class="tsd-kind-icon">Search<wbr>Options</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_minisearch_.html#searchresult" class="tsd-kind-icon">Search<wbr>Result</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="_minisearch_.html#suggestion" class="tsd-kind-icon">Suggestion</a></li>
@@ -93,7 +95,7 @@
 					<div class="tsd-signature tsd-kind-icon">Match<wbr>Info<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{}</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L214">MiniSearch.ts:214</a></li>
+							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/9bc09b5/src/MiniSearch.ts#L214">MiniSearch.ts:214</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -118,7 +120,7 @@
 					<div class="tsd-signature tsd-kind-icon">Options&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>extractField<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>document<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, fieldName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>fields<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>idField<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>processTerm<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>term<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fieldName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>searchOptions<span class="tsd-signature-symbol">?: </span><a href="_minisearch_.html#searchoptions-1" class="tsd-signature-type">SearchOptions</a><span class="tsd-signature-symbol">; </span>storeFields<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>tokenize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>text<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, fieldName<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L117">MiniSearch.ts:117</a></li>
+							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/9bc09b5/src/MiniSearch.ts#L117">MiniSearch.ts:117</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -207,12 +209,38 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="query" class="tsd-anchor"></a>
+					<h3>Query</h3>
+					<div class="tsd-signature tsd-kind-icon">Query<span class="tsd-signature-symbol">:</span> <a href="_minisearch_.html#querycombination" class="tsd-signature-type">QueryCombination</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/9bc09b5/src/MiniSearch.ts#L270">MiniSearch.ts:270</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Search query expression, either a query string or an expression tree
+							combining several queries with a combination of AND or OR.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="querycombination" class="tsd-anchor"></a>
+					<h3>Query<wbr>Combination</h3>
+					<div class="tsd-signature tsd-kind-icon">Query<wbr>Combination<span class="tsd-signature-symbol">:</span> <a href="_minisearch_.html#searchoptions-1" class="tsd-signature-type">SearchOptions</a><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-symbol">{ </span>queries<span class="tsd-signature-symbol">: </span><a href="_minisearch_.html#query" class="tsd-signature-type">Query</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/9bc09b5/src/MiniSearch.ts#L264">MiniSearch.ts:264</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
 					<a name="searchoptions-1" class="tsd-anchor"></a>
 					<h3>Search<wbr>Options</h3>
 					<div class="tsd-signature tsd-kind-icon">Search<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>boost<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">; </span>boostDocument<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>documentId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, term<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>combineWith<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>fields<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>filter<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><a href="_minisearch_.html#searchresult" class="tsd-signature-type">SearchResult</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>fuzzy<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>term<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, terms<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>prefix<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>term<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, terms<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>processTerm<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>term<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>tokenize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>text<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>weights<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>fuzzy<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>prefix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L9">MiniSearch.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/9bc09b5/src/MiniSearch.ts#L9">MiniSearch.ts:9</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -345,7 +373,7 @@
 					<div class="tsd-signature tsd-kind-icon">Search<wbr>Result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>match<span class="tsd-signature-symbol">: </span><a href="_minisearch_.html#matchinfo" class="tsd-signature-type">MatchInfo</a><span class="tsd-signature-symbol">; </span>score<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>terms<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L223">MiniSearch.ts:223</a></li>
+							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/9bc09b5/src/MiniSearch.ts#L223">MiniSearch.ts:223</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -407,7 +435,7 @@
 					<div class="tsd-signature tsd-kind-icon">Suggestion<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>score<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>suggestion<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>terms<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/0f0d056/src/MiniSearch.ts#L192">MiniSearch.ts:192</a></li>
+							<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/9bc09b5/src/MiniSearch.ts#L192">MiniSearch.ts:192</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -471,6 +499,12 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="_minisearch_.html#options" class="tsd-kind-icon">Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_minisearch_.html#query" class="tsd-kind-icon">Query</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="_minisearch_.html#querycombination" class="tsd-kind-icon">Query<wbr>Combination</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="_minisearch_.html#searchoptions-1" class="tsd-kind-icon">Search<wbr>Options</a>
