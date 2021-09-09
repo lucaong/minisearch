@@ -39,7 +39,7 @@
     "jest": "^26.3.0",
     "regenerator-runtime": "^0.13.1",
     "rollup": "^2.2.0",
-    "rollup-plugin-dts": "^3.0.1",
+    "rollup-plugin-dts": "^4.0.0",
     "rollup-plugin-terser": "^7.0.0",
     "snazzy": "^9.0.0",
     "ts-jest": "^26.3.0",
