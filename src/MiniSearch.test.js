@@ -529,6 +529,21 @@ describe('MiniSearch', () => {
       expect(ms.search('sottomarino vita', { combineWith: 'AND' }).length).toEqual(0)
     })
 
+    it('combines results with AND_NOT if combineWith is AND_NOT', () => {
+      const results = ms.search('vita cammin', { combineWith: 'AND_NOT' })
+      expect(results.length).toEqual(1)
+      expect(results.map(({ id }) => id)).toEqual([3])
+      expect(ms.search('vita sottomarino', { combineWith: 'AND_NOT' }).length).toEqual(2)
+      expect(ms.search('sottomarino vita', { combineWith: 'AND_NOT' }).length).toEqual(0)
+    })
+
+    it('returns empty results for empty search', () => {
+      expect(ms.search('')).toEqual([])
+      expect(ms.search('', { combineWith: 'OR' })).toEqual([])
+      expect(ms.search('', { combineWith: 'AND' })).toEqual([])
+      expect(ms.search('', { combineWith: 'AND_NOT' })).toEqual([])
+    })
+
     it('executes fuzzy search', () => {
       const results = ms.search('camin memory', { fuzzy: 2 })
       expect(results.length).toEqual(2)
@@ -609,7 +624,7 @@ describe('MiniSearch', () => {
     })
 
     describe('when passing a query tree', () => {
-      it('searches according to the given combination of AND and OR', () => {
+      it('searches according to the given combination', () => {
         const results = ms.search({
           combineWith: 'OR',
           queries: [

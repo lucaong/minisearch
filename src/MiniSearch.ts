@@ -2,6 +2,7 @@ import SearchableMap from './SearchableMap/SearchableMap'
 
 const OR = 'or'
 const AND = 'and'
+const AND_NOT = 'and_not'
 
 /**
  * Search options to customize the search behavior.
@@ -664,6 +665,13 @@ export default class MiniSearch<T = any> {
    * miniSearch.search('motorcycle art', { combineWith: 'AND' })
    * ```
    *
+   * ### Combine with AND_NOT:
+   *
+   * There is also an AND_NOT combinator, that finds documents that match the
+   * first term, but do not match any of the other terms. This combinator is
+   * rarely useful with simple queries, and is meant to be used with advanced
+   * query combinations (see later for more details).
+   *
    * ### Filtering results:
    *
    * ```javascript
@@ -676,12 +684,12 @@ export default class MiniSearch<T = any> {
    *
    * ### Advanced combination of queries:
    *
-   * It is possible to combine different subqueries with OR and AND, and even
-   * with different search options, by passing a query expression tree object as
-   * the first argument, instead of a string.
+   * It is possible to combine different subqueries with OR, AND, and AND_NOT,
+   * and even with different search options, by passing a query expression
+   * tree object as the first argument, instead of a string.
    *
    * ```javascript
-   * // Search for documents that contain "zen" AND ("motorcycle" OR "archery")
+   * // Search for documents that contain "zen" and ("motorcycle" or "archery")
    * miniSearch.search({
    *   combineWith: 'AND',
    *   queries: [
@@ -690,6 +698,20 @@ export default class MiniSearch<T = any> {
    *       combineWith: 'OR',
    *       queries: ['motorcycle', 'archery']
    *     }
+   *   ]
+   * })
+   *
+   * // Search for documents that contain ("apple" or "pear") but not "juice" and
+   * // not "tree"
+   * miniSearch.search({
+   *   combineWith: 'AND_NOT',
+   *   queries: [
+   *     {
+   *       combineWith: 'OR',
+   *       queries: ['apple', 'pear']
+   *     },
+   *     'juice',
+   *     'tree'
    *   ]
    * })
    * ```
@@ -961,7 +983,7 @@ export default class MiniSearch<T = any> {
       })
     }
 
-    return results.reduce(combinators[OR], {})
+    return results.reduce(combinators[OR])
   }
 
   /**
@@ -970,7 +992,7 @@ export default class MiniSearch<T = any> {
   private combineResults (results: RawResult[], combineWith = OR): RawResult {
     if (results.length === 0) { return {} }
     const operator = combineWith.toLowerCase()
-    return results.reduce(combinators[operator], null) || {}
+    return results.reduce(combinators[operator]) || {}
   }
 
   /**
@@ -1155,10 +1177,10 @@ export default class MiniSearch<T = any> {
 const getOwnProperty = (object: any, property: string) =>
   Object.prototype.hasOwnProperty.call(object, property) ? object[property] : undefined
 
-type CombinatorFunction = (a: RawResult | null, b: RawResult) => RawResult
+type CombinatorFunction = (a: RawResult, b: RawResult) => RawResult
 
 const combinators: { [kind: string]: CombinatorFunction } = {
-  [OR]: (a: RawResult | null, b: RawResult) => {
+  [OR]: (a: RawResult, b: RawResult) => {
     return Object.entries(b).reduce((combined: RawResult, [documentId, { score, match, terms }]) => {
       if (combined[documentId] == null) {
         combined[documentId] = { score, match, terms }
@@ -1171,8 +1193,7 @@ const combinators: { [kind: string]: CombinatorFunction } = {
       return combined
     }, a || {})
   },
-  [AND]: (a: RawResult | null, b: RawResult) => {
-    if (a == null) { return b }
+  [AND]: (a: RawResult, b: RawResult) => {
     return Object.entries(b).reduce((combined: RawResult, [documentId, { score, match, terms }]) => {
       if (a[documentId] === undefined) { return combined }
       combined[documentId] = combined[documentId] || {}
@@ -1181,6 +1202,12 @@ const combinators: { [kind: string]: CombinatorFunction } = {
       combined[documentId].terms = [...a[documentId].terms, ...terms]
       return combined
     }, {})
+  },
+  [AND_NOT]: (a: RawResult, b: RawResult) => {
+    return Object.entries(b).reduce((combined: RawResult, [documentId, { score, match, terms }]) => {
+      delete combined[documentId]
+      return combined
+    }, a || {})
   }
 }
 
