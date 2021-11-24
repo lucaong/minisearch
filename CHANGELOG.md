@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v3.2.0
+
+  - Add AND_NOT combinator to subtract results of a subquery from another (for
+    example to find documents that match one term and not another)
+
 # v3.1.0
 
   - Add possibility for advanced combination of subqueries as query expression
