@@ -38,19 +38,19 @@ export const fuzzySearch = <T = any>(node: RadixTree<T>, query: string, maxDista
   while (stack.length > 0) {
     const { node, distance, key, i, edit } = stack.pop()!
 
-    Object.keys(node).forEach((k) => {
+    for (const k of node.keys()) {
       if (k === LEAF) {
         const totDistance = distance + (query.length - i)
         const [, d] = results[key] || [null, Infinity]
         if (totDistance <= maxDistance && totDistance < d) {
-          results[key] = [node[k] as T, totDistance]
+          results[key] = [node.get(k) as T, totDistance]
         }
       } else {
         withinDistance(query, k, maxDistance - distance, i, edit, innerStack).forEach(({ distance: d, i, edit }) => {
-          stack.push({ node: node[k] as RadixTree<T>, distance: distance + d, key: key + k, i, edit })
+          stack.push({ node: node.get(k) as RadixTree<T>, distance: distance + d, key: key + k, i, edit })
         })
       }
-    })
+    }
   }
   return results
 }

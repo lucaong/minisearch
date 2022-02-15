@@ -1,4 +1,6 @@
 import SearchableMap from './SearchableMap/SearchableMap'
+import { LEAF } from './SearchableMap/TreeIterator'
+import { RadixTree } from './SearchableMap/types'
 
 const OR = 'or'
 const AND = 'and'
@@ -257,8 +259,8 @@ export type AsPlainObject = {
   nextId: number,
   documentIds: { [shortId: string]: any }
   fieldIds: { [fieldName: string]: number }
-  fieldLength: { [shortId: string]: { [fieldId: string]: number } },
-  averageFieldLength: { [fieldId: string]: number },
+  fieldLength: { [shortId: string]: number[] },
+  averageFieldLength: number[],
   storedFields: { [shortId: string]: any }
 }
 
@@ -276,13 +278,11 @@ type QuerySpec = {
   term: string
 }
 
-type IndexData = {
-  [fieldId: string]: { df: number, ds: { [shortId: string]: number } }
-}
+type IndexEntry = { df: number, ds: Map<number, number> }
+type IndexData = Map<number, IndexEntry>
 
-type RawResult = {
-  [shortId: string]: { score: number, match: MatchInfo, terms: string[] }
-}
+type RawResultValue = { score: number, match: MatchInfo, terms: string[] }
+type RawResult = Map<number, RawResultValue>
 
 /**
  * [[MiniSearch]] is the main entrypoint class, implementing a full-text search
@@ -344,12 +344,12 @@ export default class MiniSearch<T = any> {
   protected _options: OptionsWithDefaults<T>
   protected _index: SearchableMap
   protected _documentCount: number
-  protected _documentIds: { [shortId: string]: any }
-  protected _fieldIds: { [fieldName: string]: number }
-  protected _fieldLength: { [shortId: string]: { [fieldId: string]: number } }
-  protected _averageFieldLength: { [fieldId: string]: number }
+  protected _documentIds: Map<number, any>
+  protected _fieldIds: Map<string, number>
+  protected _fieldLength: Map<number, number[]>
+  protected _averageFieldLength: number[]
   protected _nextId: number
-  protected _storedFields: { [shortId: string]: any }
+  protected _storedFields: Map<number, Record<string, unknown>>
 
   /**
    * @param options  Configuration options
@@ -427,17 +427,17 @@ export default class MiniSearch<T = any> {
 
     this._documentCount = 0
 
-    this._documentIds = {}
+    this._documentIds = new Map()
 
-    this._fieldIds = {}
+    this._fieldIds = new Map()
 
-    this._fieldLength = {}
+    this._fieldLength = new Map()
 
-    this._averageFieldLength = {}
+    this._averageFieldLength = []
 
     this._nextId = 0
 
-    this._storedFields = {}
+    this._storedFields = new Map()
 
     this.addFields(this._options.fields)
   }
@@ -456,21 +456,22 @@ export default class MiniSearch<T = any> {
     const shortDocumentId = this.addDocumentId(id)
     this.saveStoredFields(shortDocumentId, document)
 
-    fields.forEach(field => {
+    for (const field of fields) {
       const fieldValue = extractField(document, field)
-      if (fieldValue == null) { return }
+      if (fieldValue == null) continue
 
       const tokens = tokenize(fieldValue.toString(), field)
+      const fieldId = this._fieldIds.get(field)!
 
-      this.addFieldLength(shortDocumentId, this._fieldIds[field], this.documentCount - 1, tokens.length)
+      this.addFieldLength(shortDocumentId, fieldId, this.documentCount - 1, tokens.length)
 
-      tokens.forEach(term => {
+      for (const term of tokens) {
         const processedTerm = processTerm(term, field)
         if (processedTerm) {
-          this.addTerm(this._fieldIds[field], shortDocumentId, processedTerm)
+          this.addTerm(fieldId, shortDocumentId, processedTerm)
         }
-      })
-    })
+      }
+    }
   }
 
   /**
@@ -479,7 +480,7 @@ export default class MiniSearch<T = any> {
    * @param documents  An array of documents to be indexed
    */
   addAll (documents: T[]): void {
-    documents.forEach(document => this.add(document))
+    for (const document of documents) this.add(document)
   }
 
   /**
@@ -535,33 +536,34 @@ export default class MiniSearch<T = any> {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
 
-    const [shortDocumentId] = Object.entries(this._documentIds)
-      .find(([_, longId]) => id === longId) || []
+    for (const [shortId, longId] of this._documentIds) {
+      if (id === longId) {
+        for (const field of fields) {
+          const fieldValue = extractField(document, field)
+          if (fieldValue == null) continue
 
-    if (shortDocumentId == null) {
-      throw new Error(`MiniSearch: cannot remove document with ID ${id}: it is not in the index`)
+          const tokens = tokenize(fieldValue.toString(), field)
+          const fieldId = this._fieldIds.get(field)!
+
+          for (const term of tokens) {
+            const processedTerm = processTerm(term, field)
+            if (processedTerm) {
+              this.removeTerm(fieldId, shortId, processedTerm)
+            }
+          }
+
+          this.removeFieldLength(shortId, fieldId, this.documentCount, tokens.length)
+        }
+
+        this._storedFields.delete(shortId)
+        this._documentIds.delete(shortId)
+        this._fieldLength.delete(shortId)
+        this._documentCount -= 1
+        return
+      }
     }
 
-    fields.forEach(field => {
-      const fieldValue = extractField(document, field)
-      if (fieldValue == null) { return }
-
-      const tokens = tokenize(fieldValue.toString(), field)
-
-      tokens.forEach(term => {
-        const processedTerm = processTerm(term, field)
-        if (processedTerm) {
-          this.removeTerm(this._fieldIds[field], shortDocumentId, processedTerm)
-        }
-      })
-
-      this.removeFieldLength(shortDocumentId, this._fieldIds[field], this.documentCount, tokens.length)
-    })
-
-    delete this._storedFields[shortDocumentId]
-    delete this._documentIds[shortDocumentId]
-    delete this._fieldLength[shortDocumentId]
-    this._documentCount -= 1
+    throw new Error(`MiniSearch: cannot remove document with ID ${id}: it is not in the index`)
   }
 
   /**
@@ -575,16 +577,16 @@ export default class MiniSearch<T = any> {
    */
   removeAll (documents?: T[]): void {
     if (documents) {
-      documents.forEach(document => this.remove(document))
+      for (const document of documents) this.remove(document)
     } else if (arguments.length > 0) {
       throw new Error('Expected documents to be present. Omit the argument to remove all documents.')
     } else {
       this._index = new SearchableMap()
       this._documentCount = 0
-      this._documentIds = {}
-      this._fieldLength = {}
-      this._averageFieldLength = {}
-      this._storedFields = {}
+      this._documentIds = new Map()
+      this._fieldLength = new Map()
+      this._averageFieldLength = []
+      this._storedFields = new Map()
       this._nextId = 0
     }
   }
@@ -730,21 +732,24 @@ export default class MiniSearch<T = any> {
   search (query: Query, searchOptions: SearchOptions = {}): SearchResult[] {
     const combinedResults = this.executeQuery(query, searchOptions)
 
-    return Object.entries(combinedResults)
-      .reduce((results: SearchResult[], [docId, { score, match, terms }]) => {
-        const result = {
-          id: this._documentIds[docId],
-          terms: uniq(terms),
-          score,
-          match
-        }
-        Object.assign(result, this._storedFields[docId])
-        if (searchOptions.filter == null || searchOptions.filter(result)) {
-          results.push(result)
-        }
-        return results
-      }, [])
-      .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
+    const results = []
+
+    for (const [docId, { score, match, terms }] of combinedResults) {
+      const result = {
+        id: this._documentIds.get(docId),
+        terms: uniq(terms),
+        score,
+        match
+      }
+
+      Object.assign(result, this._storedFields.get(docId))
+      if (searchOptions.filter == null || searchOptions.filter(result)) {
+        results.push(result)
+      }
+    }
+
+    results.sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
+    return results
   }
 
   /**
@@ -802,22 +807,27 @@ export default class MiniSearch<T = any> {
    */
   autoSuggest (queryString: string, options: SearchOptions = {}): Suggestion[] {
     options = { ...defaultAutoSuggestOptions, ...options }
-    const suggestions = this.search(queryString, options).reduce((
-      suggestions: { [phrase: string]: Omit<Suggestion, 'suggestion'> & { count: number } },
-      { score, terms }
-    ) => {
+
+    const suggestions: Map<string, Omit<Suggestion, 'suggestion'> & { count: number }> = new Map()
+
+    for (const { score, terms } of this.search(queryString, options)) {
       const phrase = terms.join(' ')
-      if (suggestions[phrase] == null) {
-        suggestions[phrase] = { score, terms, count: 1 }
+      const suggestion = suggestions.get(phrase)
+      if (suggestion != null) {
+        suggestion.score += score
+        suggestion.count += 1
       } else {
-        suggestions[phrase].score += score
-        suggestions[phrase].count += 1
+        suggestions.set(phrase, { score, terms, count: 1 })
       }
-      return suggestions
-    }, {})
-    return Object.entries(suggestions)
-      .map(([suggestion, { score, terms, count }]) => ({ suggestion, terms, score: score / count }))
-      .sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
+    }
+
+    const results = []
+    for (const [suggestion, { score, terms, count }] of suggestions) {
+      results.push({ suggestion, terms, score: score / count })
+    }
+
+    results.sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
+    return results
   }
 
   /**
@@ -900,15 +910,14 @@ export default class MiniSearch<T = any> {
     } = js
     const miniSearch = new MiniSearch(options)
 
-    miniSearch._index = new SearchableMap(index._tree, index._prefix)
+    miniSearch._index = new SearchableMap(objectToTree(index._tree), index._prefix)
     miniSearch._documentCount = documentCount
     miniSearch._nextId = nextId
-    miniSearch._documentIds = documentIds
-    miniSearch._fieldIds = fieldIds
-    miniSearch._fieldLength = fieldLength
+    miniSearch._documentIds = objectToNumericMap(documentIds)
+    miniSearch._fieldIds = objectToMap(fieldIds)
+    miniSearch._fieldLength = objectToNumericMap(fieldLength)
     miniSearch._averageFieldLength = averageFieldLength
-    miniSearch._fieldIds = fieldIds
-    miniSearch._storedFields = storedFields || {}
+    miniSearch._storedFields = objectToNumericMap(storedFields)
 
     return miniSearch
   }
@@ -967,20 +976,22 @@ export default class MiniSearch<T = any> {
     const results: RawResult[] = [exactMatch]
 
     if (query.prefix) {
-      this._index.atPrefix(query.term).forEach((term: string, data: {}) => {
+      for (const [term, data] of this._index.atPrefix(query.term)) {
         const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
         results.push(this.termResults(term, boosts, boostDocument, data, prefixWeight, weightedDistance))
-      })
+      }
     }
 
     if (query.fuzzy) {
       const fuzzy = (query.fuzzy === true) ? 0.2 : query.fuzzy
       const maxDistance = fuzzy < 1 ? Math.round(query.term.length * fuzzy) : fuzzy
 
-      Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
+      const fuzzyResults = this._index.fuzzyGet(query.term, maxDistance)
+      for (const term of Object.keys(fuzzyResults)) {
+        const [data, distance] = fuzzyResults[term]
         const weightedDistance = distance / term.length
         results.push(this.termResults(term, boosts, boostDocument, data, fuzzyWeight, weightedDistance))
-      })
+      }
     }
 
     return results.reduce(combinators[OR])
@@ -990,9 +1001,9 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private combineResults (results: RawResult[], combineWith = OR): RawResult {
-    if (results.length === 0) { return {} }
+    if (results.length === 0) { return new Map() }
     const operator = combineWith.toLowerCase()
-    return results.reduce(combinators[operator]) || {}
+    return results.reduce(combinators[operator]) || new Map()
   }
 
   /**
@@ -1021,14 +1032,14 @@ export default class MiniSearch<T = any> {
    */
   toJSON (): AsPlainObject {
     return {
-      index: this._index,
+      index: { _tree: treeToObject(this._index._tree), _prefix: this._index._prefix },
       documentCount: this._documentCount,
       nextId: this._nextId,
-      documentIds: this._documentIds,
-      fieldIds: this._fieldIds,
-      fieldLength: this._fieldLength,
+      documentIds: Object.fromEntries(this._documentIds),
+      fieldIds: Object.fromEntries(this._fieldIds),
+      fieldLength: Object.fromEntries(this._fieldLength),
       averageFieldLength: this._averageFieldLength,
-      storedFields: this._storedFields
+      storedFields: Object.fromEntries(this._storedFields)
     }
   }
 
@@ -1043,71 +1054,85 @@ export default class MiniSearch<T = any> {
     weight: number = 1,
     editDistance: number = 0
   ): RawResult {
-    if (indexData == null) { return {} }
+    if (indexData == null) { return new Map() }
 
-    return Object.entries(boosts).reduce((
-      results: { [shortId: string]: { score: number, match: MatchInfo, terms: string[] } },
-      [field, boost]
-    ) => {
-      const fieldId = this._fieldIds[field]
-      const { df, ds } = indexData[fieldId] || { ds: {} }
+    const results: RawResult = new Map()
 
-      Object.entries(ds).forEach(([documentId, tf]) => {
-        const docBoost = boostDocument ? boostDocument(this._documentIds[documentId], term) : 1
-        if (!docBoost) { return }
-        const normalizedLength = this._fieldLength[documentId][fieldId] / this._averageFieldLength[fieldId]
-        results[documentId] = results[documentId] || { score: 0, match: {}, terms: [] }
-        results[documentId].terms.push(term)
-        results[documentId].match[term] = getOwnProperty(results[documentId].match, term) || []
-        results[documentId].score += docBoost * score(tf, df, this._documentCount, normalizedLength, boost, editDistance)
-        results[documentId].match[term].push(field)
-      })
-      return results
-    }, {})
+    for (const field of Object.keys(boosts)) {
+      const boost = boosts[field]
+      const fieldId = this._fieldIds.get(field)!
+      const entry = indexData.get(fieldId)
+      if (entry == null) continue
+
+      for (const [documentId, tf] of entry.ds) {
+        const docBoost = boostDocument ? boostDocument(this._documentIds.get(documentId), term) : 1
+        if (!docBoost) continue
+        const normalizedLength = this._fieldLength.get(documentId)![fieldId] / this._averageFieldLength[fieldId]
+        let result = results.get(documentId)
+
+        if (!result) {
+          result = { score: 0, match: {}, terms: [] }
+          results.set(documentId, result)
+        }
+
+        result.terms.push(term)
+        result.match[term] = getOwnProperty(results.get(documentId)!.match, term) || []
+        result.score += docBoost * score(tf, entry.df, this._documentCount, normalizedLength, boost, editDistance)
+        result.match[term].push(field)
+      }
+    }
+
+    return results
   }
 
   /**
    * @ignore
    */
-  private addTerm (fieldId: number, documentId: string, term: string): void {
-    this._index.update(term, (indexData: IndexData) => {
-      indexData = indexData || {}
-      const fieldIndex = indexData[fieldId] || { df: 0, ds: {} }
-      if (fieldIndex.ds[documentId] == null) { fieldIndex.df += 1 }
-      fieldIndex.ds[documentId] = (fieldIndex.ds[documentId] || 0) + 1
-      return { ...indexData, [fieldId]: fieldIndex }
-    })
+  private addTerm (fieldId: number, documentId: number, term: string): void {
+    const indexData = this._index.fetch(term, createMap)
+
+    let fieldIndex = indexData.get(fieldId)
+    if (fieldIndex == null) {
+      fieldIndex = { df: 1, ds: new Map() } as IndexEntry
+      fieldIndex.ds.set(documentId, 1)
+      indexData.set(fieldId, fieldIndex)
+    } else {
+      const docs = fieldIndex.ds.get(documentId)
+      if (docs == null) { fieldIndex.df += 1 }
+      fieldIndex.ds.set(documentId, (docs || 0) + 1)
+    }
   }
 
   /**
    * @ignore
    */
-  private removeTerm (fieldId: number, documentId: string, term: string): void {
+  private removeTerm (fieldId: number, documentId: number, term: string): void {
     if (!this._index.has(term)) {
       this.warnDocumentChanged(documentId, fieldId, term)
       return
     }
     this._index.update(term, (indexData: IndexData) => {
-      const fieldIndex = indexData[fieldId]
-      if (fieldIndex == null || fieldIndex.ds[documentId] == null) {
+      const fieldIndex = indexData.get(fieldId)
+      if (fieldIndex == null || fieldIndex.ds.get(documentId) == null) {
         this.warnDocumentChanged(documentId, fieldId, term)
         return indexData
       }
-      if (fieldIndex.ds[documentId] <= 1) {
+      if (fieldIndex.ds.get(documentId)! <= 1) {
         if (fieldIndex.df <= 1) {
-          delete indexData[fieldId]
+          indexData.delete(fieldId)
           return indexData
         }
         fieldIndex.df -= 1
       }
-      if (fieldIndex.ds[documentId] <= 1) {
-        delete fieldIndex.ds[documentId]
+      if (fieldIndex.ds.get(documentId)! <= 1) {
+        fieldIndex.ds.delete(documentId)
         return indexData
       }
-      fieldIndex.ds[documentId] -= 1
-      return { ...indexData, [fieldId]: fieldIndex }
+      fieldIndex.ds.set(documentId, fieldIndex.ds.get(documentId)! - 1)
+      indexData.set(fieldId, fieldIndex)
+      return indexData
     })
-    if (Object.keys(this._index.get(term)).length === 0) {
+    if (this._index.get(term).size === 0) {
       this._index.delete(term)
     }
   }
@@ -1115,18 +1140,22 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private warnDocumentChanged (shortDocumentId: string, fieldId: number, term: string): void {
+  private warnDocumentChanged (shortDocumentId: number, fieldId: number, term: string): void {
     if (console == null || console.warn == null) { return }
-    const fieldName = Object.entries(this._fieldIds).find(([name, id]) => id === fieldId)![0]
-    console.warn(`MiniSearch: document with ID ${this._documentIds[shortDocumentId]} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`)
+    for (const [fieldName, id] of this._fieldIds) {
+      if (id === fieldId) {
+        console.warn(`MiniSearch: document with ID ${this._documentIds.get(shortDocumentId)} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`)
+        return
+      }
+    }
   }
 
   /**
    * @ignore
    */
-  private addDocumentId (documentId: any): string {
-    const shortDocumentId = this._nextId.toString(36)
-    this._documentIds[shortDocumentId] = documentId
+  private addDocumentId (documentId: any): number {
+    const shortDocumentId = this._nextId
+    this._documentIds.set(shortDocumentId, documentId)
     this._documentCount += 1
     this._nextId += 1
     return shortDocumentId
@@ -1136,24 +1165,28 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private addFields (fields: string[]): void {
-    fields.forEach((field, i) => { this._fieldIds[field] = i })
+    for (let i = 0; i < fields.length; i++) {
+      this._fieldIds.set(fields[i], i)
+    }
   }
 
   /**
    * @ignore
    */
-  private addFieldLength (documentId: string, fieldId: number, count: number, length: number): void {
-    this._averageFieldLength[fieldId] = this._averageFieldLength[fieldId] || 0
-    const totalLength = (this._averageFieldLength[fieldId] * count) + length
-    this._fieldLength[documentId] = this._fieldLength[documentId] || {}
-    this._fieldLength[documentId][fieldId] = length
+  private addFieldLength (documentId: number, fieldId: number, count: number, length: number): void {
+    let fieldLengths = this._fieldLength.get(documentId)
+    if (fieldLengths == null) this._fieldLength.set(documentId, fieldLengths = [])
+    fieldLengths[fieldId] = length
+
+    const averageFieldLength = this._averageFieldLength[fieldId] || 0
+    const totalLength = (averageFieldLength * count) + length
     this._averageFieldLength[fieldId] = totalLength / (count + 1)
   }
 
   /**
    * @ignore
    */
-  private removeFieldLength (documentId: string, fieldId: number, count: number, length: number): void {
+  private removeFieldLength (documentId: number, fieldId: number, count: number, length: number): void {
     const totalLength = (this._averageFieldLength[fieldId] * count) - length
     this._averageFieldLength[fieldId] = totalLength / (count - 1)
   }
@@ -1161,16 +1194,18 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private saveStoredFields (documentId: string, doc: T): void {
+  private saveStoredFields (documentId: number, doc: T): void {
     const { storeFields, extractField } = this._options
     if (storeFields == null || storeFields.length === 0) { return }
-    this._storedFields[documentId] = this._storedFields[documentId] || {}
 
-    storeFields.forEach((fieldName) => {
+    let documentFields = this._storedFields.get(documentId)
+    if (documentFields == null) this._storedFields.set(documentId, documentFields = {})
+
+    for (const fieldName of storeFields) {
       const fieldValue = extractField(doc, fieldName)
       if (fieldValue === undefined) { return }
-      this._storedFields[documentId][fieldName] = fieldValue
-    })
+      documentFields[fieldName] = fieldValue
+    }
   }
 }
 
@@ -1181,33 +1216,37 @@ type CombinatorFunction = (a: RawResult, b: RawResult) => RawResult
 
 const combinators: { [kind: string]: CombinatorFunction } = {
   [OR]: (a: RawResult, b: RawResult) => {
-    return Object.entries(b).reduce((combined: RawResult, [documentId, { score, match, terms }]) => {
-      if (combined[documentId] == null) {
-        combined[documentId] = { score, match, terms }
+    for (const [documentId, { score, match, terms }] of b) {
+      const existing = a.get(documentId)
+      if (existing == null) {
+        a.set(documentId, { score, match, terms })
       } else {
-        combined[documentId].score += score
-        combined[documentId].score *= 1.5
-        combined[documentId].terms.push(...terms)
-        Object.assign(combined[documentId].match, match)
+        existing.score = (existing.score + score) * 1.5
+        existing.match = Object.assign(existing.match, match)
+        existing.terms.push(...terms)
       }
-      return combined
-    }, a || {})
+    }
+
+    return a
   },
   [AND]: (a: RawResult, b: RawResult) => {
-    return Object.entries(b).reduce((combined: RawResult, [documentId, { score, match, terms }]) => {
-      if (a[documentId] === undefined) { return combined }
-      combined[documentId] = combined[documentId] || {}
-      combined[documentId].score = a[documentId].score + score
-      combined[documentId].match = { ...a[documentId].match, ...match }
-      combined[documentId].terms = [...a[documentId].terms, ...terms]
-      return combined
-    }, {})
+    const combined = new Map()
+
+    for (const [documentId, { score, match, terms }] of b) {
+      const doc = a.get(documentId)
+      if (doc == null) continue
+      combined.set(documentId, {
+        score: doc.score + score,
+        match: Object.assign(doc.match, match),
+        terms: [...doc.terms, ...terms]
+      })
+    }
+
+    return combined
   },
   [AND_NOT]: (a: RawResult, b: RawResult) => {
-    return Object.entries(b).reduce((combined: RawResult, [documentId, { score, match, terms }]) => {
-      delete combined[documentId]
-      return combined
-    }, a || {})
+    for (const documentId of b.keys()) a.delete(documentId)
+    return a
   }
 }
 
@@ -1259,6 +1298,78 @@ const defaultSearchOptions = {
 const defaultAutoSuggestOptions = {
   prefix: (term: string, i: number, terms: string[]): boolean =>
     i === terms.length - 1
+}
+
+const createMap = () => new Map()
+
+const objectToMap = <T>(object: { [key: string]: T }): Map<string, T> => {
+  const map = new Map()
+
+  for (const key of Object.keys(object)) {
+    map.set(key, object[key])
+  }
+
+  return map
+}
+
+type TreeLikeObject<T = any> = { [key: string]: TreeLikeObject | T }
+type SerializedIndexEntry = { df: number, ds: { [key: string]: number } }
+
+const objectToTree = (object: TreeLikeObject): RadixTree<IndexData> => {
+  const map = new Map()
+
+  for (const key of Object.keys(object)) {
+    const value = object[key]
+    if (key === LEAF) {
+      const data = new Map() as IndexData
+      for (const key of Object.keys(value)) {
+        const { df, ds } = value[key]
+        data.set(parseInt(key, 10), {
+          df,
+          ds: objectToNumericMap(ds) as IndexEntry['ds']
+        })
+      }
+
+      map.set(key, data)
+    } else {
+      map.set(key, objectToTree(value))
+    }
+  }
+
+  return map
+}
+
+const objectToNumericMap = <T>(object: { [key: string]: T }): Map<number, T> => {
+  const map = new Map()
+
+  for (const key of Object.keys(object)) {
+    map.set(parseInt(key, 10), object[key])
+  }
+
+  return map
+}
+
+const treeToObject = (tree: RadixTree<IndexData>): TreeLikeObject => {
+  const obj: TreeLikeObject = {}
+
+  for (const [key, value] of tree) {
+    if (key === LEAF) {
+      const data = {} as { [key: string]: SerializedIndexEntry }
+
+      for (const [key, { df, ds }] of (value as IndexData).entries()) {
+        data[key] = {
+          df,
+          ds: Object.fromEntries(ds)
+        }
+      }
+
+      obj[key] = data
+    } else {
+      obj[key] = treeToObject(value as RadixTree<IndexData>)
+    }
+  }
+
+  return obj
 }
 
 // This regular expression matches any Unicode space or punctuation character
