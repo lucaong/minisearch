@@ -345,7 +345,7 @@ export default class MiniSearch<T = any> {
   protected _index: SearchableMap
   protected _documentCount: number
   protected _documentIds: Map<number, any>
-  protected _fieldIds: Map<string, number>
+  protected _fieldIds: { [key: string]: number }
   protected _fieldLength: Map<number, number[]>
   protected _averageFieldLength: number[]
   protected _nextId: number
@@ -429,7 +429,11 @@ export default class MiniSearch<T = any> {
 
     this._documentIds = new Map()
 
-    this._fieldIds = new Map()
+    // Fields are defined during initialization, don't change, are few in
+    // number, rarely need iterating over, and have string keys. Therefore in
+    // this case an object is a better candidate than a Map to store the mapping
+    // from field key to ID.
+    this._fieldIds = {}
 
     this._fieldLength = new Map()
 
@@ -461,7 +465,7 @@ export default class MiniSearch<T = any> {
       if (fieldValue == null) continue
 
       const tokens = tokenize(fieldValue.toString(), field)
-      const fieldId = this._fieldIds.get(field)!
+      const fieldId = this._fieldIds[field]
 
       this.addFieldLength(shortDocumentId, fieldId, this.documentCount - 1, tokens.length)
 
@@ -543,7 +547,7 @@ export default class MiniSearch<T = any> {
           if (fieldValue == null) continue
 
           const tokens = tokenize(fieldValue.toString(), field)
-          const fieldId = this._fieldIds.get(field)!
+          const fieldId = this._fieldIds[field]
 
           for (const term of tokens) {
             const processedTerm = processTerm(term, field)
@@ -914,7 +918,7 @@ export default class MiniSearch<T = any> {
     miniSearch._documentCount = documentCount
     miniSearch._nextId = nextId
     miniSearch._documentIds = objectToNumericMap(documentIds)
-    miniSearch._fieldIds = objectToMap(fieldIds)
+    miniSearch._fieldIds = fieldIds
     miniSearch._fieldLength = objectToNumericMap(fieldLength)
     miniSearch._averageFieldLength = averageFieldLength
     miniSearch._storedFields = objectToNumericMap(storedFields)
@@ -1036,7 +1040,7 @@ export default class MiniSearch<T = any> {
       documentCount: this._documentCount,
       nextId: this._nextId,
       documentIds: Object.fromEntries(this._documentIds),
-      fieldIds: Object.fromEntries(this._fieldIds),
+      fieldIds: this._fieldIds,
       fieldLength: Object.fromEntries(this._fieldLength),
       averageFieldLength: this._averageFieldLength,
       storedFields: Object.fromEntries(this._storedFields)
@@ -1060,7 +1064,7 @@ export default class MiniSearch<T = any> {
 
     for (const field of Object.keys(boosts)) {
       const boost = boosts[field]
-      const fieldId = this._fieldIds.get(field)!
+      const fieldId = this._fieldIds[field]
       const entry = indexData.get(fieldId)
       if (entry == null) continue
 
@@ -1142,8 +1146,8 @@ export default class MiniSearch<T = any> {
    */
   private warnDocumentChanged (shortDocumentId: number, fieldId: number, term: string): void {
     if (console == null || console.warn == null) { return }
-    for (const [fieldName, id] of this._fieldIds) {
-      if (id === fieldId) {
+    for (const fieldName of Object.keys(this._fieldIds)) {
+      if (this._fieldIds[fieldName] === fieldId) {
         console.warn(`MiniSearch: document with ID ${this._documentIds.get(shortDocumentId)} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`)
         return
       }
@@ -1166,7 +1170,7 @@ export default class MiniSearch<T = any> {
    */
   private addFields (fields: string[]): void {
     for (let i = 0; i < fields.length; i++) {
-      this._fieldIds.set(fields[i], i)
+      this._fieldIds[fields[i]] = i
     }
   }
 
@@ -1301,16 +1305,6 @@ const defaultAutoSuggestOptions = {
 }
 
 const createMap = () => new Map()
-
-const objectToMap = <T>(object: { [key: string]: T }): Map<string, T> => {
-  const map = new Map()
-
-  for (const key of Object.keys(object)) {
-    map.set(key, object[key])
-  }
-
-  return map
-}
 
 type TreeLikeObject<T = any> = { [key: string]: TreeLikeObject | T }
 type SerializedIndexEntry = { df: number, ds: { [key: string]: number } }
