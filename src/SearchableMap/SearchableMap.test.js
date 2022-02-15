@@ -59,7 +59,7 @@ describe('SearchableMap', () => {
       const map = new SearchableMap()
 
       map.set('hello', 1)
-      const before = JSON.parse(JSON.stringify(map))
+      const before = new SearchableMap(new Map(map._tree))
 
       map.set('help', 2)
       map.delete('help')

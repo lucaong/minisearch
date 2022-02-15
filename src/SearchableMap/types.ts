@@ -1,6 +1,4 @@
-export type RadixTree<T> = {
-  [key: string]: RadixTree<T> | T
-}
+export type RadixTree<T> = Map<string, T | RadixTree<T>>;
 
 export type Entry<T> = [string, T]
 
