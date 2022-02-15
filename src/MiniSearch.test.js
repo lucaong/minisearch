@@ -550,6 +550,12 @@ describe('MiniSearch', () => {
       expect(results.map(({ id }) => id)).toEqual([1, 3])
     })
 
+    it('executes fuzzy search with maximum fuzziness', () => {
+      const results = ms.search('comedia', { fuzzy: 0.6, maxFuzziness: 3 })
+      expect(results.length).toEqual(1)
+      expect(results.map(({ id }) => id)).toEqual([1])
+    })
+
     it('executes prefix search', () => {
       const results = ms.search('que', { prefix: true })
       expect(results.length).toEqual(2)
