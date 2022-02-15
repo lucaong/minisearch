@@ -12,7 +12,7 @@ describe('MiniSearch', () => {
       const options = { fields: ['title', 'text'] }
       const ms = new MiniSearch(options)
       expect(ms._documentCount).toEqual(0)
-      expect(ms._fieldIds).toEqual(new Map(Object.entries({ title: 0, text: 1 })))
+      expect(ms._fieldIds).toEqual({ title: 0, text: 1 })
       expect(ms._documentIds.size).toEqual(0)
       expect(ms._fieldLength.size).toEqual(0)
       expect(ms._averageFieldLength.length).toEqual(0)
@@ -206,7 +206,7 @@ describe('MiniSearch', () => {
       ms.remove(documents[0])
       expect(ms._index.has('commedia')).toEqual(false)
       expect(ms._documentIds.size).toEqual(originalIdsSize - 1)
-      expect(Array.from(ms._index.get('vita').keys())).toEqual([ms._fieldIds.get('title')])
+      expect(Array.from(ms._index.get('vita').keys())).toEqual([ms._fieldIds.title])
     })
 
     it('throws error if the document does not have the ID field', () => {
