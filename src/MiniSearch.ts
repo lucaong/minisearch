@@ -84,7 +84,7 @@ export type SearchOptions = {
    * set to 6 by default. Very high edit distances usually don't produce
    * meaningful results, but can excessively impact search performance.
    */
-  maxFuzziness?: number,
+  maxFuzzy?: number,
 
   /**
    * The operand to combine partial results for each term. By default it is
@@ -116,7 +116,7 @@ type SearchOptionsWithDefaults = SearchOptions & {
 
   fuzzy: boolean | number | ((term: string, index: number, terms: string[]) => boolean | number),
 
-  maxFuzziness: number,
+  maxFuzzy: number,
 
   combineWith: string
 }
@@ -967,7 +967,7 @@ export default class MiniSearch<T = any> {
     const {
       boostDocument,
       weights,
-      maxFuzziness
+      maxFuzzy
     } = options
 
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
@@ -987,7 +987,7 @@ export default class MiniSearch<T = any> {
 
     if (query.fuzzy) {
       const fuzzy = (query.fuzzy === true) ? 0.2 : query.fuzzy
-      const maxDistance = fuzzy < 1 ? Math.min(maxFuzziness, Math.round(query.term.length * fuzzy)) : fuzzy
+      const maxDistance = fuzzy < 1 ? Math.min(maxFuzzy, Math.round(query.term.length * fuzzy)) : fuzzy
 
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
         const weightedDistance = distance / term.length
@@ -1264,7 +1264,7 @@ const defaultSearchOptions = {
   combineWith: OR,
   prefix: false,
   fuzzy: false,
-  maxFuzziness: 6,
+  maxFuzzy: 6,
   boost: {},
   weights: { fuzzy: 0.9, prefix: 0.75 }
 }

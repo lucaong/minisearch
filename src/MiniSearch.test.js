@@ -551,7 +551,7 @@ describe('MiniSearch', () => {
     })
 
     it('executes fuzzy search with maximum fuzziness', () => {
-      const results = ms.search('comedia', { fuzzy: 0.6, maxFuzziness: 3 })
+      const results = ms.search('comedia', { fuzzy: 0.6, maxFuzzy: 3 })
       expect(results.length).toEqual(1)
       expect(results.map(({ id }) => id)).toEqual([1])
     })
