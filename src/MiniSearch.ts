@@ -1058,9 +1058,9 @@ export default class MiniSearch<T = any> {
     weight: number = 1,
     editDistance: number = 0
   ): RawResult {
-    if (indexData == null) { return new Map() }
-
     const results: RawResult = new Map()
+
+    if (indexData == null) { return results }
 
     for (const field of Object.keys(boosts)) {
       const boost = boosts[field]
@@ -1071,7 +1071,7 @@ export default class MiniSearch<T = any> {
       for (const [documentId, tf] of entry.ds) {
         const docBoost = boostDocument ? boostDocument(this._documentIds.get(documentId), term) : 1
         if (!docBoost) continue
-        const normalizedLength = this._fieldLength.get(documentId)![fieldId] / this._averageFieldLength[fieldId]
+
         let result = results.get(documentId)
 
         if (!result) {
@@ -1080,9 +1080,12 @@ export default class MiniSearch<T = any> {
         }
 
         result.terms.push(term)
-        result.match[term] = getOwnProperty(results.get(documentId)!.match, term) || []
+
+        const match = result.match[term] = getOwnProperty(result.match, term) || []
+        match.push(field)
+
+        const normalizedLength = this._fieldLength.get(documentId)![fieldId] / this._averageFieldLength[fieldId]
         result.score += docBoost * score(tf, entry.df, this._documentCount, normalizedLength, boost, editDistance)
-        result.match[term].push(field)
       }
     }
 
@@ -1115,27 +1118,23 @@ export default class MiniSearch<T = any> {
       this.warnDocumentChanged(documentId, fieldId, term)
       return
     }
-    this._index.update(term, (indexData: IndexData) => {
-      const fieldIndex = indexData.get(fieldId)
-      if (fieldIndex == null || fieldIndex.ds.get(documentId) == null) {
-        this.warnDocumentChanged(documentId, fieldId, term)
-        return indexData
-      }
-      if (fieldIndex.ds.get(documentId)! <= 1) {
-        if (fieldIndex.df <= 1) {
-          indexData.delete(fieldId)
-          return indexData
-        }
+
+    const indexData = this._index.fetch(term, createMap)
+
+    const fieldIndex = indexData.get(fieldId)
+    if (fieldIndex == null || fieldIndex.ds.get(documentId) == null) {
+      this.warnDocumentChanged(documentId, fieldId, term)
+    } else if (fieldIndex.ds.get(documentId)! <= 1) {
+      if (fieldIndex.df <= 1) {
+        indexData.delete(fieldId)
+      } else {
         fieldIndex.df -= 1
-      }
-      if (fieldIndex.ds.get(documentId)! <= 1) {
         fieldIndex.ds.delete(documentId)
-        return indexData
       }
+    } else {
       fieldIndex.ds.set(documentId, fieldIndex.ds.get(documentId)! - 1)
-      indexData.set(fieldId, fieldIndex)
-      return indexData
-    })
+    }
+
     if (this._index.get(term).size === 0) {
       this._index.delete(term)
     }
