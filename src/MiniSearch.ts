@@ -1,6 +1,4 @@
 import SearchableMap from './SearchableMap/SearchableMap'
-import { LEAF } from './SearchableMap/TreeIterator'
-import { RadixTree } from './SearchableMap/types'
 
 const OR = 'or'
 const AND = 'and'
@@ -269,10 +267,10 @@ export type AsPlainObject = {
   nextId: number,
   documentIds: { [shortId: string]: any }
   fieldIds: { [fieldName: string]: number }
-  fieldLength: { [shortId: string]: number[] },
+  fieldLength: { [shortId: string]: number[] }
   averageFieldLength: number[],
   storedFields: { [shortId: string]: any }
-  index: [string, IndexData][]
+  index: [string, { [fieldId: string]: SerializedIndexEntry }][]
 }
 
 export type QueryCombination = SearchOptions & { queries: Query[] }
@@ -935,7 +933,15 @@ export default class MiniSearch<T = any> {
     miniSearch._index = new SearchableMap()
 
     for (const [term, data] of index) {
-      miniSearch._index.set(term, data)
+      const dataMap = new Map() as IndexData
+
+      for (const fieldId of Object.keys(data)) {
+        const { df, ds } = data[fieldId]
+
+        dataMap.set(parseInt(fieldId, 10), { df, ds: objectToNumericMap(ds) as IndexEntry['ds'] })
+      }
+
+      miniSearch._index.set(term, dataMap)
     }
 
     return miniSearch
@@ -1051,6 +1057,18 @@ export default class MiniSearch<T = any> {
    * @return A plain-object serializeable representation of the search index.
    */
   toJSON (): AsPlainObject {
+    const index: [string, { [key: string]: SerializedIndexEntry }][] = []
+
+    for (const [term, fieldIndex] of this._index) {
+      const data: { [key: string]: SerializedIndexEntry } = {}
+
+      for (const [fieldId, { df, ds }] of fieldIndex) {
+        data[fieldId] = { df, ds: Object.fromEntries(ds) }
+      }
+
+      index.push([term, data])
+    }
+
     return {
       documentCount: this._documentCount,
       nextId: this._nextId,
@@ -1058,8 +1076,8 @@ export default class MiniSearch<T = any> {
       fieldIds: this._fieldIds,
       fieldLength: Object.fromEntries(this._fieldLength),
       averageFieldLength: this._averageFieldLength,
-      storedFields: Object.fromEntries(this._storedFields)
-      index: Array.from(this._index.entries())
+      storedFields: Object.fromEntries(this._storedFields),
+      index
     }
   }
 
@@ -1323,32 +1341,7 @@ const defaultAutoSuggestOptions = {
 
 const createMap = () => new Map()
 
-type TreeLikeObject<T = any> = { [key: string]: TreeLikeObject | T }
 type SerializedIndexEntry = { df: number, ds: { [key: string]: number } }
-
-const objectToTree = (object: TreeLikeObject): RadixTree<IndexData> => {
-  const map = new Map()
-
-  for (const key of Object.keys(object)) {
-    const value = object[key]
-    if (key === LEAF) {
-      const data = new Map() as IndexData
-      for (const key of Object.keys(value)) {
-        const { df, ds } = value[key]
-        data.set(parseInt(key, 10), {
-          df,
-          ds: objectToNumericMap(ds) as IndexEntry['ds']
-        })
-      }
-
-      map.set(key, data)
-    } else {
-      map.set(key, objectToTree(value))
-    }
-  }
-
-  return map
-}
 
 const objectToNumericMap = <T>(object: { [key: string]: T }): Map<number, T> => {
   const map = new Map()
@@ -1358,29 +1351,6 @@ const objectToNumericMap = <T>(object: { [key: string]: T }): Map<number, T> => 
   }
 
   return map
-}
-
-const treeToObject = (tree: RadixTree<IndexData>): TreeLikeObject => {
-  const obj: TreeLikeObject = {}
-
-  for (const [key, value] of tree) {
-    if (key === LEAF) {
-      const data = {} as { [key: string]: SerializedIndexEntry }
-
-      for (const [key, { df, ds }] of (value as IndexData).entries()) {
-        data[key] = {
-          df,
-          ds: Object.fromEntries(ds)
-        }
-      }
-
-      obj[key] = data
-    } else {
-      obj[key] = treeToObject(value as RadixTree<IndexData>)
-    }
-  }
-
-  return obj
 }
 
 // This regular expression matches any Unicode space or punctuation character
