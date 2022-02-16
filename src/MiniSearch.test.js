@@ -888,10 +888,19 @@ e forse del mio dir poco ti cale`
       const options = { fields: ['title', 'text'], storeFields: ['category'] }
       const ms = new MiniSearch(options)
       ms.addAll(documents)
+
       const json = JSON.stringify(ms)
       const deserialized = MiniSearch.loadJSON(json, options)
       expect(ms.search('vita')).toEqual(deserialized.search('vita'))
-      expect(ms.toJSON()).toEqual(deserialized.toJSON())
+
+      const original = ms.toJSON()
+      const final = deserialized.toJSON()
+
+      // Normalize order of data in the serialized index
+      original.index.sort()
+      final.index.sort()
+
+      expect(original).toEqual(final)
     })
 
     it('raises an error if called without options', () => {
@@ -902,6 +911,15 @@ e forse del mio dir poco ti cale`
       expect(() => {
         MiniSearch.loadJSON(json)
       }).toThrowError('MiniSearch: loadJSON should be given the same options used when serializing the index')
+    })
+
+    it('raises an error if given an incompatible serialized version', () => {
+      const options = { fields: ['title', 'text'] }
+      const json = "{}"
+
+      expect(() => {
+        MiniSearch.loadJSON(json, options)
+      }).toThrowError('MiniSearch: cannot deserialize an index created with an incompatible version')
     })
   })
 
