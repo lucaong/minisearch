@@ -253,7 +253,7 @@ describe('SearchableMap', () => {
     const map = SearchableMap.from(keyValues)
 
     it('returns all entries having the given maximum edit distance from the given key', () => {
-      [1, 2, 3].forEach(distance => {
+      [0, 1, 2, 3].forEach(distance => {
         const results = map.fuzzyGet('acqua', distance)
         const entries = Object.entries(results)
         expect(entries.map(([key, [value, dist]]) => [key, dist]).sort())
