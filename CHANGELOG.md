@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v3.3.0
+
+  - Add `maxFuzzy` search option, to limit the maximum edit distance for fuzzy
+    search when using fractional fuzziness
+
 # v3.2.0
 
   - Add AND_NOT combinator to subtract results of a subquery from another (for
