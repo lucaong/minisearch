@@ -227,6 +227,10 @@ export default class SearchableMap<T = any> {
    * searchableMap.update('somekey', (currentValue) => currentValue == null ? 0 : currentValue + 1)
    * ```
    *
+   * If the value at the given key is or will be an object, it might not require
+   * re-assignment. In that case it is better to use `fetch()`, because it is
+   * faster.
+   *
    * @param key  The key to update
    * @param fn  The function used to compute the new value from the current one
    * @return The [[SearchableMap]] itself, to allow chaining
