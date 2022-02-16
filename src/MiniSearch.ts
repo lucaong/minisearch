@@ -63,12 +63,14 @@ export type SearchOptions = {
    * performed if true.
    *
    * If a number higher or equal to 1 is given, fuzzy search is performed, with
-   * a mazimum edit distance (Levenshtein) equal to the number.
+   * a maximum edit distance (Levenshtein) equal to the number.
    *
    * If a number between 0 and 1 is given, fuzzy search is performed within a
    * maximum edit distance corresponding to that fraction of the term length,
    * approximated to the nearest integer. For example, 0.2 would mean an edit
    * distance of 20% of the term length, so 1 character in a 5-characters term.
+   * The calculated fuzziness value is limited by the `maxFuzzy` option, to
+   * prevent slowdown for very long queries.
    *
    * If a function is passed, the function is called upon search with a search
    * term, a positional index of that term in the tokenized search query, and
@@ -76,6 +78,13 @@ export type SearchOptions = {
    * the meaning documented above.
    */
   fuzzy?: boolean | number | ((term: string, index: number, terms: string[]) => boolean | number),
+
+  /**
+   * Controls the maximum fuzziness when using a fractional fuzzy value. This is
+   * set to 6 by default. Very high edit distances usually don't produce
+   * meaningful results, but can excessively impact search performance.
+   */
+  maxFuzzy?: number,
 
   /**
    * The operand to combine partial results for each term. By default it is
@@ -106,6 +115,8 @@ type SearchOptionsWithDefaults = SearchOptions & {
   prefix: boolean | ((term: string, index: number, terms: string[]) => boolean),
 
   fuzzy: boolean | number | ((term: string, index: number, terms: string[]) => boolean | number),
+
+  maxFuzzy: number,
 
   combineWith: string
 }
@@ -955,7 +966,8 @@ export default class MiniSearch<T = any> {
 
     const {
       boostDocument,
-      weights
+      weights,
+      maxFuzzy
     } = options
 
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
@@ -975,7 +987,7 @@ export default class MiniSearch<T = any> {
 
     if (query.fuzzy) {
       const fuzzy = (query.fuzzy === true) ? 0.2 : query.fuzzy
-      const maxDistance = fuzzy < 1 ? Math.round(query.term.length * fuzzy) : fuzzy
+      const maxDistance = fuzzy < 1 ? Math.min(maxFuzzy, Math.round(query.term.length * fuzzy)) : fuzzy
 
       Object.entries(this._index.fuzzyGet(query.term, maxDistance)).forEach(([term, [data, distance]]) => {
         const weightedDistance = distance / term.length
@@ -1252,6 +1264,7 @@ const defaultSearchOptions = {
   combineWith: OR,
   prefix: false,
   fuzzy: false,
+  maxFuzzy: 6,
   boost: {},
   weights: { fuzzy: 0.9, prefix: 0.75 }
 }
