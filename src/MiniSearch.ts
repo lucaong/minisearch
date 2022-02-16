@@ -263,14 +263,14 @@ export type SearchResult = {
  * @ignore
  */
 export type AsPlainObject = {
-  index: { _tree: {}, _prefix: string },
   documentCount: number,
   nextId: number,
   documentIds: { [shortId: string]: any }
   fieldIds: { [fieldName: string]: number }
   fieldLength: { [shortId: string]: { [fieldId: string]: number } },
   averageFieldLength: { [fieldId: string]: number },
-  storedFields: { [shortId: string]: any }
+  storedFields: { [shortId: string]: any },
+  index: [string, IndexData][]
 }
 
 export type QueryCombination = SearchOptions & { queries: Query[] }
@@ -911,7 +911,6 @@ export default class MiniSearch<T = any> {
     } = js
     const miniSearch = new MiniSearch(options)
 
-    miniSearch._index = new SearchableMap(index._tree, index._prefix)
     miniSearch._documentCount = documentCount
     miniSearch._nextId = nextId
     miniSearch._documentIds = documentIds
@@ -920,6 +919,11 @@ export default class MiniSearch<T = any> {
     miniSearch._averageFieldLength = averageFieldLength
     miniSearch._fieldIds = fieldIds
     miniSearch._storedFields = storedFields || {}
+    miniSearch._index = new SearchableMap()
+
+    for (const [term, data] of index) {
+      miniSearch._index.set(term, data)
+    }
 
     return miniSearch
   }
@@ -1033,14 +1037,14 @@ export default class MiniSearch<T = any> {
    */
   toJSON (): AsPlainObject {
     return {
-      index: this._index,
       documentCount: this._documentCount,
       nextId: this._nextId,
       documentIds: this._documentIds,
       fieldIds: this._fieldIds,
       fieldLength: this._fieldLength,
       averageFieldLength: this._averageFieldLength,
-      storedFields: this._storedFields
+      storedFields: this._storedFields,
+      index: Array.from(this._index.entries())
     }
   }
 

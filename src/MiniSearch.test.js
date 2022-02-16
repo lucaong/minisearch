@@ -875,10 +875,19 @@ e forse del mio dir poco ti cale`
       const options = { fields: ['title', 'text'], storeFields: ['category'] }
       const ms = new MiniSearch(options)
       ms.addAll(documents)
+
       const json = JSON.stringify(ms)
       const deserialized = MiniSearch.loadJSON(json, options)
       expect(ms.search('vita')).toEqual(deserialized.search('vita'))
-      expect(ms.toJSON()).toEqual(deserialized.toJSON())
+
+      const original = ms.toJSON()
+      const final = deserialized.toJSON()
+
+      // Normalize order of data in the serialized index
+      original.index.sort()
+      final.index.sort()
+
+      expect(original).toEqual(final)
     })
 
     it('raises an error if called without options', () => {
