@@ -2,6 +2,14 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v4.0.1
+
+  - [fix] Fix an issue with scoring, causing a result matching both fuzzy and
+    prefix search to be scored higher than an exact match.
+
+  - [breaking change] `SearchableMap` method `fuzzyGet` now returns a `Map`
+    instead of an object.
+
 # v4.0.0
 
   - [breaking change] The serialization format was changed, to abstract away the
