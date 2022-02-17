@@ -1139,9 +1139,8 @@ export default class MiniSearch<T = any> {
             match.push(field)
           } else {
             result.match[term] = [field]
+            result.terms.push(term)
           }
-
-          result.terms.push(term)
         } else {
           results.set(documentId, {
             score,
