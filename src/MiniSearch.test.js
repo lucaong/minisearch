@@ -591,9 +591,10 @@ describe('MiniSearch', () => {
       expect(ms.documentCount).toEqual(documents.length)
 
       const exact = ms.search('gente')
-      const combined = ms.search('gente', { fuzzy: true, prefix: true })
+      const combined = ms.search('gente', { fuzzy: 0.2, prefix: true })
       expect(combined.map(({ id }) => id)).toEqual([1, 2])
       expect(combined[0].score).toEqual(exact[0].score)
+      expect(combined[1].match.gentes).toEqual(['text'])
     })
 
     it('accepts a function to compute fuzzy and prefix options from term', () => {
@@ -691,8 +692,13 @@ describe('MiniSearch', () => {
               combineWith: 'AND',
               queries: ['bago', 'coomo']
             }
-          ]
+          ],
+          weights: {
+            fuzzy: 0.2,
+            prefix: 0.75
+          }
         })
+
         expect(results.length).toEqual(2)
         expect(results.map(({ id }) => id)).toEqual([3, 2])
       })

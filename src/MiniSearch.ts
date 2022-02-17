@@ -1001,35 +1001,46 @@ export default class MiniSearch<T = any> {
 
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
 
-    const exactMatch = this.termResults(query.term, boosts, boostDocument, this._index.get(query.term))
+    const output = this.termResults(query.term, boosts, boostDocument, this._index.get(query.term))
 
-    if (!query.fuzzy && !query.prefix) { return exactMatch }
-
-    const results: RawResult[] = [exactMatch]
+    let prefixResults
+    let fuzzyResults
 
     if (query.prefix) {
-      for (const [term, data] of this._index.atPrefix(query.term)) {
-        const distance = term.length - query.term.length
-        if (!distance) { continue } // Skip exact match.
-        const weightedDistance = (0.3 * distance) / term.length
-        results.push(this.termResults(term, boosts, boostDocument, data, prefixWeight, weightedDistance))
-      }
+      prefixResults = this._index.atPrefix(query.term)
     }
 
     if (query.fuzzy) {
       const fuzzy = (query.fuzzy === true) ? 0.2 : query.fuzzy
       const maxDistance = fuzzy < 1 ? Math.min(maxFuzzy, Math.round(query.term.length * fuzzy)) : fuzzy
+      fuzzyResults = this._index.fuzzyGet(query.term, maxDistance)
+    }
 
-      const fuzzyResults = this._index.fuzzyGet(query.term, maxDistance)
-      for (const term of Object.keys(fuzzyResults)) {
-        const [data, distance] = fuzzyResults[term]
+    if (prefixResults) {
+      for (const [term, data] of prefixResults) {
+        const distance = term.length - query.term.length
         if (!distance) { continue } // Skip exact match.
-        const weightedDistance = distance / term.length
-        results.push(this.termResults(term, boosts, boostDocument, data, fuzzyWeight, weightedDistance))
+
+        // Delete the term from fuzzy results (if present) if it is also a
+        // prefix result. This entry will always be scored as a prefix result.
+        fuzzyResults?.delete(term)
+
+        const weightedDistance = (0.3 * distance) / term.length
+        this.termResults(term, boosts, boostDocument, data, output, prefixWeight, weightedDistance)
       }
     }
 
-    return results.reduce(combinators[OR])
+    if (fuzzyResults) {
+      for (const term of fuzzyResults.keys()) {
+        const [data, distance] = fuzzyResults.get(term)!
+        if (!distance) { continue } // Skip exact match.
+
+        const weightedDistance = distance / term.length
+        this.termResults(term, boosts, boostDocument, data, output, fuzzyWeight, weightedDistance)
+      }
+    }
+
+    return output
   }
 
   /**
@@ -1099,15 +1110,14 @@ export default class MiniSearch<T = any> {
     boosts: { [field: string]: number },
     boostDocument: ((id: any, term: string) => number) | undefined,
     indexData: IndexData,
+    results: RawResult = new Map(),
     weight: number = 1,
     editDistance: number = 0
   ): RawResult {
-    const results: RawResult = new Map()
-
-    if (indexData == null) { return results }
+    if (indexData == null) return results
 
     for (const field of Object.keys(boosts)) {
-      const boost = boosts[field]
+      const fieldBoost = boosts[field]
       const fieldId = this._fieldIds[field]
       const entry = indexData.get(fieldId)
       if (entry == null) continue
@@ -1116,20 +1126,21 @@ export default class MiniSearch<T = any> {
         const docBoost = boostDocument ? boostDocument(this._documentIds.get(documentId), term) : 1
         if (!docBoost) continue
 
-        let result = results.get(documentId)
-
-        if (!result) {
-          result = { score: 0, match: {}, terms: [] }
-          results.set(documentId, result)
-        }
-
-        result.terms.push(term)
-
-        const match = result.match[term] = getOwnProperty(result.match, term) || []
-        match.push(field)
-
         const normalizedLength = this._fieldLength.get(documentId)![fieldId] / this._averageFieldLength[fieldId]
-        result.score += weight * docBoost * score(tf, entry.df, this._documentCount, normalizedLength, boost, editDistance)
+        const score = weight * docBoost * calculateScore(tf, entry.df, this._documentCount, normalizedLength, fieldBoost, editDistance)
+
+        const result = results.get(documentId)
+        if (result) {
+          const match = getOwnProperty(result.match, term)
+          if (match) match.push(field)
+          result.score += score
+        } else {
+          results.set(documentId, {
+            score,
+            match: { [term]: [field] },
+            terms: [term]
+          })
+        }
       }
     }
 
@@ -1302,7 +1313,7 @@ const combinators: { [kind: string]: CombinatorFunction } = {
 
 const tfIdf = (tf: number, df: number, n: number): number => tf * Math.log(n / df)
 
-const score = (
+const calculateScore = (
   termFrequency: number,
   documentFrequency: number,
   documentCount: number,
