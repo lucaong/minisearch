@@ -568,6 +568,19 @@ describe('MiniSearch', () => {
       expect(results.map(({ id }) => id)).toEqual([2, 1, 3])
     })
 
+    it('assigns weights to prefix matches and fuzzy matches', () => {
+      const exact = ms.search('cammino quel')
+      expect(exact.map(({ id }) => id)).toEqual([2])
+
+      const prefixLast = ms.search('cammino quel', { fuzzy: true, prefix: true, weights: { prefix: 0.1 } })
+      expect(prefixLast.map(({ id }) => id)).toEqual([2, 1, 3])
+      expect(prefixLast[0].score).toEqual(exact[0].score)
+
+      const fuzzyLast = ms.search('cammino quel', { fuzzy: true, prefix: true, weights: { fuzzy: 0.1 } })
+      expect(fuzzyLast.map(({ id }) => id)).toEqual([2, 3, 1])
+      expect(fuzzyLast[0].score).toEqual(exact[0].score)
+    })
+
     it('accepts a function to compute fuzzy and prefix options from term', () => {
       const fuzzy = jest.fn(term => term.length > 4 ? 2 : false)
       const prefix = jest.fn(term => term.length > 4)

@@ -993,7 +993,9 @@ export default class MiniSearch<T = any> {
 
     if (query.prefix) {
       for (const [term, data] of this._index.atPrefix(query.term)) {
-        const weightedDistance = (0.3 * (term.length - query.term.length)) / term.length
+        const distance = term.length - query.term.length
+        if (!distance) { continue } // Skip exact match.
+        const weightedDistance = (0.3 * distance) / term.length
         results.push(this.termResults(term, boosts, boostDocument, data, prefixWeight, weightedDistance))
       }
     }
@@ -1005,6 +1007,7 @@ export default class MiniSearch<T = any> {
       const fuzzyResults = this._index.fuzzyGet(query.term, maxDistance)
       for (const term of Object.keys(fuzzyResults)) {
         const [data, distance] = fuzzyResults[term]
+        if (!distance) { continue } // Skip exact match.
         const weightedDistance = distance / term.length
         results.push(this.termResults(term, boosts, boostDocument, data, fuzzyWeight, weightedDistance))
       }
@@ -1097,7 +1100,7 @@ export default class MiniSearch<T = any> {
         match.push(field)
 
         const normalizedLength = this._fieldLength.get(documentId)![fieldId] / this._averageFieldLength[fieldId]
-        result.score += docBoost * score(tf, entry.df, this._documentCount, normalizedLength, boost, editDistance)
+        result.score += weight * docBoost * score(tf, entry.df, this._documentCount, normalizedLength, boost, editDistance)
       }
     }
 
@@ -1311,7 +1314,7 @@ const defaultSearchOptions = {
   fuzzy: false,
   maxFuzzy: 6,
   boost: {},
-  weights: { fuzzy: 0.9, prefix: 0.75 }
+  weights: { fuzzy: 0.45, prefix: 0.375 }
 }
 
 const defaultAutoSuggestOptions = {
