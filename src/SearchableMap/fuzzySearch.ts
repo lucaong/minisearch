@@ -1,27 +1,6 @@
+/* eslint-disable no-labels */
 import { LEAF } from './TreeIterator'
 import { RadixTree } from './types'
-
-const NONE = 0
-const CHANGE = 1
-const ADD = 2
-const DELETE = 3
-
-type Edit = 0 | 1 | 2 | 3 | undefined
-
-type StackElement<T> = {
-  distance: number,
-  i: number,
-  key: string,
-  node: RadixTree<T>,
-  edit?: Edit
-}
-
-type InnerStackElement = {
-  distance: number,
-  ia: number,
-  ib: number,
-  edit: Edit
-}
 
 export type FuzzyResult<T> = [T, number]
 
@@ -31,67 +10,115 @@ export type FuzzyResults<T> = { [key: string]: FuzzyResult<T> }
  * @ignore
  */
 export const fuzzySearch = <T = any>(node: RadixTree<T>, query: string, maxDistance: number): FuzzyResults<T> => {
-  const stack: StackElement<T>[] = [{ distance: 0, i: 0, key: '', node }]
+  if (query === undefined) return {}
+
   const results: FuzzyResults<T> = {}
-  const innerStack: InnerStackElement[] = []
 
-  while (stack.length > 0) {
-    const { node, distance, key, i, edit } = stack.pop()!
+  // Number of columns in the Levenshtein matrix.
+  const n = query.length + 1
 
-    for (const k of node.keys()) {
-      if (k === LEAF) {
-        const totDistance = distance + (query.length - i)
-        const [, d] = results[key] || [null, Infinity]
-        if (totDistance <= maxDistance && totDistance < d) {
-          results[key] = [node.get(k) as T, totDistance]
-        }
-      } else {
-        withinDistance(query, k, maxDistance - distance, i, edit, innerStack).forEach(({ distance: d, i, edit }) => {
-          stack.push({ node: node.get(k) as RadixTree<T>, distance: distance + d, key: key + k, i, edit })
-        })
-      }
-    }
-  }
+  // Matching terms can never be longer than N + maxDistance.
+  const maxLength = n + maxDistance
+
+  // Fill first matrix row with consecutive numbers 0 1 2 3 ... (n - 1)
+  const matrix = new Uint8Array(maxLength * n)
+  for (let i = 0; i < n; i++) matrix[i] = i
+
+  recurse(
+    node,
+    query,
+    maxDistance,
+    results,
+    matrix,
+    n,
+    n,
+    ''
+  )
+
   return results
 }
 
-/**
- * @ignore
- */
-export const withinDistance = (a: string, b: string, maxDistance: number, i: number, edit: Edit, stack: InnerStackElement[]) => {
-  stack.push({ distance: 0, ia: i, ib: 0, edit })
-  const results: { distance: number, i: number, edit: Edit }[] = []
+// Modified version of http://stevehanov.ca/blog/?id=114
 
-  while (stack.length > 0) {
-    const { distance, ia, ib, edit } = stack.pop()!
+// This builds a Levenshtein matrix for a given query and continuously updates
+// it for nodes in the radix tree that fall within the given maximum edit
+// distance. Keeping the same matrix around is beneficial especially for larger
+// edit distances.
+//
+//           k   a   t   e   <-- query
+//       0   1   2   3   4
+//   c   1   1   2   3   4
+//   a   2   2   1   2   3
+//   t   3   3   2   1  [2]  <-- edit distance
+//   ^
+//   ^ term in radix tree, rows are added and removed as needed
 
-    if (ib === b.length) {
-      results.push({ distance, i: ia, edit })
-      continue
-    }
-
-    if (a[ia] === b[ib]) {
-      stack.push({ distance, ia: ia + 1, ib: ib + 1, edit: NONE })
+const recurse = <T = any>(
+  node: RadixTree<T>,
+  query: string,
+  maxDistance: number,
+  results: FuzzyResults<T>,
+  matrix: Uint8Array,
+  offset: number,
+  n: number,
+  prefix: string
+): void => {
+  key: for (const key of node.keys()) {
+    if (key === LEAF) {
+      // We've reached a leaf node. Check if the edit distance acceptable and
+      // store the result if it is.
+      const distance = matrix[offset - 1]
+      if (distance <= maxDistance) {
+        results[prefix] = [node.get(key) as T, distance]
+      }
     } else {
-      if (distance >= maxDistance) { continue }
+      // Iterate over all characters in the key. Update the Levenshtein matrix
+      // and check if the minimum distance in the last row is still within the
+      // maximum edit distance. If it is, we can recurse over all child nodes.
+      for (let i = 0; i < key.length; i++) {
+        const char = key[i]
+        const thisRowOffset = offset + n * i
+        const prevRowOffset = thisRowOffset - n
 
-      if (edit !== ADD) {
-        stack.push({ distance: distance + 1, ia, ib: ib + 1, edit: DELETE })
-      }
+        // Set the first column based on the previous row, and initialize the
+        // minimum distance in the current row.
+        let minDistance = matrix[thisRowOffset] = matrix[prevRowOffset] + 1
 
-      if (ia < a.length) {
-        if (edit !== DELETE) {
-          stack.push({ distance: distance + 1, ia: ia + 1, ib, edit: ADD })
+        // Iterate over remaining columns (characters in the query).
+        for (let j = 0; j < n - 1; j++) {
+          const different = char !== query[j]
+
+          // It might make sense to only read the matrix positions used for
+          // deletion/insertion if the characters are different. But we want to
+          // avoid conditional reads for performance reasons.
+          const rpl = matrix[prevRowOffset + j] + +different
+          const del = matrix[prevRowOffset + j + 1] + 1
+          const ins = matrix[thisRowOffset + j] + 1
+
+          const dist = matrix[thisRowOffset + j + 1] = Math.min(rpl, del, ins)
+
+          if (dist < minDistance) minDistance = dist
         }
 
-        if (edit !== DELETE && edit !== ADD) {
-          stack.push({ distance: distance + 1, ia: ia + 1, ib: ib + 1, edit: CHANGE })
+        // Because distance will never decrease, we can stop. There will be no
+        // matching child nodes.
+        if (minDistance > maxDistance) {
+          continue key
         }
       }
+
+      recurse(
+        node.get(key) as RadixTree<T>,
+        query,
+        maxDistance,
+        results,
+        matrix,
+        offset + n * key.length,
+        n,
+        prefix + key
+      )
     }
   }
-
-  return results
 }
 
 export default fuzzySearch
