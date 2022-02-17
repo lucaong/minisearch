@@ -1001,46 +1001,46 @@ export default class MiniSearch<T = any> {
 
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
 
-    const output = this.termResults(query.term, boosts, boostDocument, this._index.get(query.term))
+    const results = this.termResults(query.term, boosts, boostDocument, this._index.get(query.term))
 
-    let prefixResults
-    let fuzzyResults
+    let prefixMatches
+    let fuzzyMatches
 
     if (query.prefix) {
-      prefixResults = this._index.atPrefix(query.term)
+      prefixMatches = this._index.atPrefix(query.term)
     }
 
     if (query.fuzzy) {
       const fuzzy = (query.fuzzy === true) ? 0.2 : query.fuzzy
       const maxDistance = fuzzy < 1 ? Math.min(maxFuzzy, Math.round(query.term.length * fuzzy)) : fuzzy
-      fuzzyResults = this._index.fuzzyGet(query.term, maxDistance)
+      fuzzyMatches = this._index.fuzzyGet(query.term, maxDistance)
     }
 
-    if (prefixResults) {
-      for (const [term, data] of prefixResults) {
+    if (prefixMatches) {
+      for (const [term, data] of prefixMatches) {
         const distance = term.length - query.term.length
         if (!distance) { continue } // Skip exact match.
 
         // Delete the term from fuzzy results (if present) if it is also a
         // prefix result. This entry will always be scored as a prefix result.
-        fuzzyResults?.delete(term)
+        fuzzyMatches?.delete(term)
 
         const weightedDistance = (0.3 * distance) / term.length
-        this.termResults(term, boosts, boostDocument, data, output, prefixWeight, weightedDistance)
+        this.termResults(term, boosts, boostDocument, data, results, prefixWeight, weightedDistance)
       }
     }
 
-    if (fuzzyResults) {
-      for (const term of fuzzyResults.keys()) {
-        const [data, distance] = fuzzyResults.get(term)!
+    if (fuzzyMatches) {
+      for (const term of fuzzyMatches.keys()) {
+        const [data, distance] = fuzzyMatches.get(term)!
         if (!distance) { continue } // Skip exact match.
 
         const weightedDistance = distance / term.length
-        this.termResults(term, boosts, boostDocument, data, output, fuzzyWeight, weightedDistance)
+        this.termResults(term, boosts, boostDocument, data, results, fuzzyWeight, weightedDistance)
       }
     }
 
-    return output
+    return results
   }
 
   /**
