@@ -852,8 +852,8 @@ export default class MiniSearch<T = any> {
   }
 
   /**
-   * Deserializes a JSON index (serialized with `miniSearch.toJSON()`) and
-   * instantiates a MiniSearch instance. It should be given the same options
+   * Deserializes a JSON index (serialized with `JSON.stringify(miniSearch)`)
+   * and instantiates a MiniSearch instance. It should be given the same options
    * originally used when serializing the index.
    *
    * ### Usage:

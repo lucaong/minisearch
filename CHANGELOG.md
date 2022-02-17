@@ -2,6 +2,48 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v4.0.0
+
+  - [breaking change] The serialization format was changed, to abstract away the
+    internal implementation details of the index data structure. This allows for
+    present and future optimizations without breaking backward compatibility
+    again. Moreover, the new format is simpler, facilitating the job of tools
+    that create a serialized MiniSearch index in other languages.
+
+  - [performance] Large performance improvements on indexing (at least 4 time
+    faster in the official benchmark) and search, due to changes to the internal
+    data structures and the code.
+
+  - [peformance] The fuzzy search algorythm has been updated to work like
+    outlined in [this blog post by Steve
+    Hanov](http://stevehanov.ca/blog/?id=114), improving its performance by
+    several times, especially on large maximum edit distances.
+
+  - [fix] The `weights` search option did not have an effect due to a bug. Now
+    it works as documented. Note that, due to this, the relative scoring of
+    fuzzy vs. prefix search matches might change compared to previous versions.
+    This change also brings a further performance improvement of both fuzzy and
+    prefix search.
+
+**Migration notes:**
+
+If you have an index serialized with a previous version of MiniSearch, you will
+need to re-create it when you upgrade to MiniSearch `v4`.
+
+Also note that loading a pre-serialized index is _slower_ in `v4` than in
+previous versions, but there are much larger performance gains on indexing and
+search speed. If you serialized an index on the server-side, it is worth
+checking if it is now fast enough for your use case to index on the client side:
+it would save you from having to re-serialize the index every time something
+changes.
+
+**Acknowledgements:**
+
+Many thanks to [rolftimmermans](https://github.com/rolftimmermans) for
+contributing the fixes and outstanding performance improvements that are part of
+this release.
+
+
 # v3.3.0
 
   - Add `maxFuzzy` search option, to limit the maximum edit distance for fuzzy

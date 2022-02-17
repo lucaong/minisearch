@@ -125,6 +125,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_searchablemap_searchablemap_.searchablemap.html#clear" class="tsd-kind-icon">clear</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_searchablemap_searchablemap_.searchablemap.html#delete" class="tsd-kind-icon">delete</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_searchablemap_searchablemap_.searchablemap.html#entries" class="tsd-kind-icon">entries</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_searchablemap_searchablemap_.searchablemap.html#fetch" class="tsd-kind-icon">fetch</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_searchablemap_searchablemap_.searchablemap.html#foreach" class="tsd-kind-icon">for<wbr>Each</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_searchablemap_searchablemap_.searchablemap.html#fuzzyget" class="tsd-kind-icon">fuzzy<wbr>Get</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_searchablemap_searchablemap_.searchablemap.html#get" class="tsd-kind-icon">get</a></li>
@@ -146,13 +147,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Searchable<wbr>Map<span class="tsd-signature-symbol">(</span>tree<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{}</span>, prefix<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_searchablemap_searchablemap_.searchablemap.html" class="tsd-signature-type">SearchableMap</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Searchable<wbr>Map<span class="tsd-signature-symbol">(</span>tree<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">RadixTree</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, prefix<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_searchablemap_searchablemap_.searchablemap.html" class="tsd-signature-type">SearchableMap</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L30">SearchableMap/SearchableMap.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L30">SearchableMap/SearchableMap.ts:30</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -167,9 +168,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> tree: <span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol"> = {}</span></h5>
-									<ul class="tsd-parameters">
-									</ul>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> tree: <span class="tsd-signature-type">RadixTree</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = new Map()</span></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> prefix: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;&quot;</span></h5>
@@ -192,7 +191,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L203">SearchableMap/SearchableMap.ts:203</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L206">SearchableMap/SearchableMap.ts:206</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -219,7 +218,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L246">SearchableMap/SearchableMap.ts:246</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L285">SearchableMap/SearchableMap.ts:285</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -243,7 +242,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L73">SearchableMap/SearchableMap.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L73">SearchableMap/SearchableMap.ts:73</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -296,7 +295,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L93">SearchableMap/SearchableMap.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L96">SearchableMap/SearchableMap.ts:96</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -320,7 +319,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L102">SearchableMap/SearchableMap.ts:102</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L105">SearchableMap/SearchableMap.ts:105</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -353,7 +352,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L111">SearchableMap/SearchableMap.ts:111</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L114">SearchableMap/SearchableMap.ts:114</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -369,6 +368,61 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="fetch" class="tsd-anchor"></a>
+					<h3>fetch</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">fetch<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, initial<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L261">SearchableMap/SearchableMap.ts:261</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Fetches the value of the given key. If the value does not exist, calls the
+										given function to create a new value, which is inserted at the given key
+									and subsequently returned.</p>
+								</div>
+								<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+									<h3>Example:</h3>
+								</a>
+								<pre><code class="language-javascript"><span class="hljs-keyword">const</span> map = searchableMap.fetch(<span class="hljs-string">&#x27;somekey&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>())
+map.set(<span class="hljs-string">&#x27;foo&#x27;</span>, <span class="hljs-string">&#x27;bar&#x27;</span>)
+</code></pre>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The key to update</p>
+									</div>
+								</li>
+								<li>
+									<h5>initial: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">T</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span></h4>
+							<p>The existing or new value at the given key</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="foreach" class="tsd-anchor"></a>
 					<h3>for<wbr>Each</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -378,7 +432,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L119">SearchableMap/SearchableMap.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L122">SearchableMap/SearchableMap.ts:122</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -435,7 +489,7 @@ univer.get(<span class="hljs-string">&quot;university&quot;</span>) <span class=
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L153">SearchableMap/SearchableMap.ts:153</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L156">SearchableMap/SearchableMap.ts:156</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -493,7 +547,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L163">SearchableMap/SearchableMap.ts:163</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L166">SearchableMap/SearchableMap.ts:166</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -528,7 +582,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L173">SearchableMap/SearchableMap.ts:173</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L176">SearchableMap/SearchableMap.ts:176</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -562,7 +616,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L182">SearchableMap/SearchableMap.ts:182</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L185">SearchableMap/SearchableMap.ts:185</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -587,7 +641,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L192">SearchableMap/SearchableMap.ts:192</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L195">SearchableMap/SearchableMap.ts:195</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -627,7 +681,7 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L227">SearchableMap/SearchableMap.ts:227</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L237">SearchableMap/SearchableMap.ts:237</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -642,6 +696,9 @@ map.fuzzyGet(<span class="hljs-string">&#x27;hallo&#x27;</span>, <span class="hl
 								<pre><code class="language-javascript"><span class="hljs-comment">// Increment the current value by one</span>
 searchableMap.update(<span class="hljs-string">&#x27;somekey&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">currentValue</span>) =&gt;</span> currentValue == <span class="hljs-literal">null</span> ? <span class="hljs-number">0</span> : currentValue + <span class="hljs-number">1</span>)
 </code></pre>
+								<p>If the value at the given key is or will be an object, it might not require
+									re-assignment. In that case it is better to use <code>fetch()</code>, because it is
+								faster.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -691,7 +748,7 @@ searchableMap.update(<span class="hljs-string">&#x27;somekey&#x27;</span>, <span
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L239">SearchableMap/SearchableMap.ts:239</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L278">SearchableMap/SearchableMap.ts:278</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -716,7 +773,7 @@ searchableMap.update(<span class="hljs-string">&#x27;somekey&#x27;</span>, <span
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L256">SearchableMap/SearchableMap.ts:256</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L295">SearchableMap/SearchableMap.ts:295</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -754,7 +811,7 @@ searchableMap.update(<span class="hljs-string">&#x27;somekey&#x27;</span>, <span
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/ae9a1c5/src/SearchableMap/SearchableMap.ts#L270">SearchableMap/SearchableMap.ts:270</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/cadd70d/src/SearchableMap/SearchableMap.ts#L309">SearchableMap/SearchableMap.ts:309</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -830,6 +887,9 @@ searchableMap.update(<span class="hljs-string">&#x27;somekey&#x27;</span>, <span
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_searchablemap_searchablemap_.searchablemap.html#entries" class="tsd-kind-icon">entries</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_searchablemap_searchablemap_.searchablemap.html#fetch" class="tsd-kind-icon">fetch</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_searchablemap_searchablemap_.searchablemap.html#foreach" class="tsd-kind-icon">for<wbr>Each</a>
