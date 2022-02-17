@@ -1219,11 +1219,12 @@ type CombinatorFunction = (a: RawResult, b: RawResult) => RawResult
 
 const combinators: { [kind: string]: CombinatorFunction } = {
   [OR]: (a: RawResult, b: RawResult) => {
-    for (const [documentId, { score, match, terms }] of b) {
+    for (const documentId of b.keys()) {
       const existing = a.get(documentId)
       if (existing == null) {
-        a.set(documentId, { score, match, terms })
+        a.set(documentId, b.get(documentId)!)
       } else {
+        const { score, match, terms } = b.get(documentId)!
         existing.score = (existing.score + score) * 1.5
         existing.match = Object.assign(existing.match, match)
         existing.terms.push(...terms)
@@ -1235,13 +1236,15 @@ const combinators: { [kind: string]: CombinatorFunction } = {
   [AND]: (a: RawResult, b: RawResult) => {
     const combined = new Map()
 
-    for (const [documentId, { score, match, terms }] of b) {
-      const doc = a.get(documentId)
-      if (doc == null) continue
+    for (const documentId of b.keys()) {
+      const existing = a.get(documentId)
+      if (existing == null) continue
+
+      const { score, match, terms } = b.get(documentId)!
       combined.set(documentId, {
-        score: doc.score + score,
-        match: Object.assign(doc.match, match),
-        terms: [...doc.terms, ...terms]
+        score: existing.score + score,
+        match: Object.assign(existing.match, match),
+        terms: [...existing.terms, ...terms]
       })
     }
 
