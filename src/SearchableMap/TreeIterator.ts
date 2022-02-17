@@ -34,7 +34,7 @@ class TreeIterator<T, V> implements Iterator<V> {
 
   constructor (set: IterableSet<T>, type: IteratorType) {
     const node = set._tree
-    const keys = Object.keys(node)
+    const keys = Array.from(node.keys())
     this.set = set
     this._type = type
     this._path = keys.length > 0 ? [{ node, keys }] : []
@@ -50,7 +50,7 @@ class TreeIterator<T, V> implements Iterator<V> {
     if (this._path.length === 0) { return { done: true, value: undefined } }
     const { node, keys } = last(this._path)!
     if (last(keys) === LEAF) { return { done: false, value: this.result() as V } }
-    this._path.push({ node: node[last(keys)!] as RadixTree<T>, keys: Object.keys(node[last(keys)!]) })
+    this._path.push({ node: node.get(last(keys)!) as RadixTree<T>, keys: Array.from((node.get(last(keys)!) as RadixTree<T>).keys()) })
     return this.dive()
   }
 
@@ -70,7 +70,7 @@ class TreeIterator<T, V> implements Iterator<V> {
   }
 
   value (): T {
-    return last(this._path)!.node[LEAF] as T
+    return last(this._path)!.node.get(LEAF) as T
   }
 
   result (): unknown {

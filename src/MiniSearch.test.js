@@ -13,9 +13,9 @@ describe('MiniSearch', () => {
       const ms = new MiniSearch(options)
       expect(ms._documentCount).toEqual(0)
       expect(ms._fieldIds).toEqual({ title: 0, text: 1 })
-      expect(ms._documentIds).toEqual({})
-      expect(ms._fieldLength).toEqual({})
-      expect(ms._averageFieldLength).toEqual({})
+      expect(ms._documentIds.size).toEqual(0)
+      expect(ms._fieldLength.size).toEqual(0)
+      expect(ms._averageFieldLength.length).toEqual(0)
       expect(ms._options).toMatchObject(options)
     })
   })
@@ -162,8 +162,8 @@ describe('MiniSearch', () => {
 
     it('cleans up all data of the deleted document', () => {
       const otherDocument = { id: 4, title: 'Decameron', text: 'Umana cosa è aver compassione degli afflitti' }
-      const originalFieldLength = JSON.parse(JSON.stringify(ms._fieldLength))
-      const originalAverageFieldLength = JSON.parse(JSON.stringify(ms._averageFieldLength))
+      const originalFieldLength = new Map(ms._fieldLength)
+      const originalAverageFieldLength = ms._averageFieldLength.slice()
 
       ms.add(otherDocument)
       ms.remove(otherDocument)
@@ -202,11 +202,11 @@ describe('MiniSearch', () => {
     })
 
     it('cleans up the index', () => {
-      const originalIdsLength = Object.keys(ms._documentIds).length
+      const originalIdsSize = ms._documentIds.size
       ms.remove(documents[0])
       expect(ms._index.has('commedia')).toEqual(false)
-      expect(Object.keys(ms._documentIds).length).toEqual(originalIdsLength - 1)
-      expect(Object.keys(ms._index.get('vita'))).toEqual([ms._fieldIds.title.toString()])
+      expect(ms._documentIds.size).toEqual(originalIdsSize - 1)
+      expect(Array.from(ms._index.get('vita').keys())).toEqual([ms._fieldIds.title])
     })
 
     it('throws error if the document does not have the ID field', () => {
