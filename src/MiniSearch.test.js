@@ -915,7 +915,7 @@ e forse del mio dir poco ti cale`
 
     it('raises an error if given an incompatible serialized version', () => {
       const options = { fields: ['title', 'text'] }
-      const json = "{}"
+      const json = '{}'
 
       expect(() => {
         MiniSearch.loadJSON(json, options)
