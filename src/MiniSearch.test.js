@@ -748,6 +748,20 @@ describe('MiniSearch', () => {
         ])
       })
 
+      it('reports correct info for many fuzzy and prefix queries', () => {
+        const results = ms.search('vi nuova m de', { fuzzy: 0.2, prefix: true })
+        expect(results.map(({ match }) => match)).toEqual([
+          { del: ['text'], della: ['text'], memoria: ['text'], mia: ['text'], vita: ['title', 'text'], nova: ['title'] },
+          { del: ['text'], mezzo: ['text'], vita: ['text'] },
+          { del: ['text'] }
+        ])
+        expect(results.map(({ terms }) => terms)).toEqual([
+          ['vita', 'nova', 'memoria', 'mia', 'della', 'del'],
+          ['vita', 'mezzo', 'del'],
+          ['del']
+        ])
+      })
+
       it('passes only the query to tokenize', () => {
         const tokenize = jest.fn(string => string.split(/\W+/))
         const ms = new MiniSearch({ fields: ['text', 'title'], searchOptions: { tokenize } })

@@ -1130,10 +1130,17 @@ export default class MiniSearch<T = any> {
         const score = weight * docBoost * calculateScore(tf, entry.df, this._documentCount, normalizedLength, fieldBoost, editDistance)
 
         const result = results.get(documentId)
+
         if (result) {
-          const match = getOwnProperty(result.match, term)
-          if (match) match.push(field)
           result.score += score
+
+          const match = getOwnProperty(result.match, term)
+          if (match) {
+            match.push(field)
+          } else {
+            result.match[term] = [field]
+            result.terms.push(term)
+          }
         } else {
           results.set(documentId, {
             score,
