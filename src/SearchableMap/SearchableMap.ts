@@ -118,7 +118,6 @@ export default class SearchableMap<T = any> {
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/forEach
    * @param fn  Iteration function
-   * @deprecated Use a `for (... of ...)` loop instead.
    */
   forEach (fn: (key: string, value: T, map: SearchableMap) => void): void {
     for (const [key, value] of this) {
