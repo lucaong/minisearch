@@ -126,11 +126,11 @@ export default class SearchableMap<T = any> {
   }
 
   /**
-   * Returns a key-value object of all the entries that have a key within the
-   * given edit distance from the search key. The keys of the returned object are
-   * the matching keys, while the values are two-elements arrays where the first
-   * element is the value associated to the key, and the second is the edit
-   * distance of the key to the search key.
+   * Returns a Map of all the entries that have a key within the given edit
+   * distance from the search key. The keys of the returned Map are the matching
+   * keys, while the values are two-element arrays where the first element is
+   * the value associated to the key, and the second is the edit distance of the
+   * key to the search key.
    *
    * ### Usage:
    *
@@ -142,7 +142,7 @@ export default class SearchableMap<T = any> {
    *
    * // Get all entries that match the key 'hallo' with a maximum edit distance of 2
    * map.fuzzyGet('hallo', 2)
-   * // => { "hello": ["world", 1], "hell": ["yeah", 2] }
+   * // => Map(2) { 'hello' => ['world', 1], 'hell' => ['yeah', 2] }
    *
    * // In the example, the "hello" key has value "world" and edit distance of 1
    * // (change "e" to "a"), the key "hell" has value "yeah" and edit distance of 2
@@ -151,7 +151,7 @@ export default class SearchableMap<T = any> {
    *
    * @param key  The search key
    * @param maxEditDistance  The maximum edit distance (Levenshtein)
-   * @return A key-value object of the matching keys to their value and edit distance
+   * @return A Map of the matching keys to their value and edit distance
    */
   fuzzyGet (key: string, maxEditDistance: number): FuzzyResults<T> {
     return fuzzySearch<T>(this._tree, key, maxEditDistance)
