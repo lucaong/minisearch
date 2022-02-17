@@ -255,7 +255,7 @@ describe('SearchableMap', () => {
     it('returns all entries having the given maximum edit distance from the given key', () => {
       [0, 1, 2, 3].forEach(distance => {
         const results = map.fuzzyGet('acqua', distance)
-        const entries = Object.entries(results)
+        const entries = Array.from(results)
         expect(entries.map(([key, [value, dist]]) => [key, dist]).sort())
           .toEqual(terms.map(term => [term, editDistance('acqua', term)]).filter(([, d]) => d <= distance).sort())
         expect(entries.every(([key, [value]]) => map.get(key) === value)).toBe(true)
@@ -263,7 +263,7 @@ describe('SearchableMap', () => {
     })
 
     it('returns an empty object if no matching entries are found', () => {
-      expect(map.fuzzyGet('winter', 1)).toEqual({})
+      expect(map.fuzzyGet('winter', 1)).toEqual(new Map())
     })
   })
 
@@ -292,7 +292,7 @@ describe('SearchableMap', () => {
           .toEqual(Array.from(new Set(terms)).filter(t => t.startsWith(prefix)).sort())
 
         const fuzzy = map.fuzzyGet(terms[0], maxDist)
-        expect(Object.entries(fuzzy).map(([key, [value, dist]]) => [key, dist]).sort())
+        expect(Array.from(fuzzy, ([key, [value, dist]]) => [key, dist]).sort())
           .toEqual(uniqueTerms.map(term => [term, editDistance(terms[0], term)])
             .filter(([, dist]) => dist <= maxDist).sort())
 

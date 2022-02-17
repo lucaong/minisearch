@@ -4,15 +4,14 @@ import { RadixTree } from './types'
 
 export type FuzzyResult<T> = [T, number]
 
-export type FuzzyResults<T> = { [key: string]: FuzzyResult<T> }
+export type FuzzyResults<T> = Map<string, FuzzyResult<T>>
 
 /**
  * @ignore
  */
 export const fuzzySearch = <T = any>(node: RadixTree<T>, query: string, maxDistance: number): FuzzyResults<T> => {
-  if (query === undefined) return {}
-
-  const results: FuzzyResults<T> = {}
+  const results: FuzzyResults<T> = new Map()
+  if (query === undefined) return results
 
   // Number of columns in the Levenshtein matrix.
   const n = query.length + 1
@@ -69,7 +68,7 @@ const recurse = <T = any>(
       // store the result if it is.
       const distance = matrix[offset - 1]
       if (distance <= maxDistance) {
-        results[prefix] = [node.get(key) as T, distance]
+        results.set(prefix, [node.get(key) as T, distance])
       }
     } else {
       // Iterate over all characters in the key. Update the Levenshtein matrix
