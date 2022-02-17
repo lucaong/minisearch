@@ -2,6 +2,10 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v4.0.2
+
+  - [fix] Fix match data on mixed prefix and fuzzy search
+
 # v4.0.1
 
   - [fix] Fix an issue with scoring, causing a result matching both fuzzy and
