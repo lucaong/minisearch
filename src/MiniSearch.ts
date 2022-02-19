@@ -288,7 +288,7 @@ type QuerySpec = {
   term: string
 }
 
-type IndexEntry = { df: number, ds: Map<number, number> }
+type IndexEntry = Map<number, number>
 type IndexData = Map<number, IndexEntry>
 
 type RawResultValue = { score: number, match: MatchInfo }
@@ -945,9 +945,8 @@ export default class MiniSearch<T = any> {
       const dataMap = new Map() as IndexData
 
       for (const fieldId of Object.keys(data)) {
-        const { df, ds } = data[fieldId]
-
-        dataMap.set(parseInt(fieldId, 10), { df, ds: objectToNumericMap(ds) as IndexEntry['ds'] })
+        const { ds } = data[fieldId]
+        dataMap.set(parseInt(fieldId, 10), objectToNumericMap(ds) as IndexEntry)
       }
 
       miniSearch._index.set(term, dataMap)
@@ -1084,8 +1083,8 @@ export default class MiniSearch<T = any> {
     for (const [term, fieldIndex] of this._index) {
       const data: { [key: string]: SerializedIndexEntry } = {}
 
-      for (const [fieldId, { df, ds }] of fieldIndex) {
-        data[fieldId] = { df, ds: Object.fromEntries(ds) }
+      for (const [fieldId, ds] of fieldIndex) {
+        data[fieldId] = { df: ds.size, ds: Object.fromEntries(ds) }
       }
 
       index.push([term, data])
@@ -1123,13 +1122,13 @@ export default class MiniSearch<T = any> {
       const entry = indexData.get(fieldId)
       if (entry == null) continue
 
-      for (const [documentId, tf] of entry.ds) {
+      for (const [documentId, tf] of entry) {
         const docBoost = boostDocument ? boostDocument(this._documentIds.get(documentId), term) : 1
         if (!docBoost) continue
 
         const fieldLength = this._fieldLength.get(documentId)![fieldId]
         const avgLength = this._averageFieldLength[fieldId]
-        const score = calcBM25Score(weight * fieldBoost * docBoost, tf, entry.df, this._documentCount, fieldLength, avgLength)
+        const score = calcBM25Score(weight * fieldBoost * docBoost, tf, entry.size, this._documentCount, fieldLength, avgLength)
 
         const result = results.get(documentId)
 
@@ -1162,13 +1161,12 @@ export default class MiniSearch<T = any> {
 
     let fieldIndex = indexData.get(fieldId)
     if (fieldIndex == null) {
-      fieldIndex = { df: 1, ds: new Map() } as IndexEntry
-      fieldIndex.ds.set(documentId, 1)
+      fieldIndex = new Map()
+      fieldIndex.set(documentId, 1)
       indexData.set(fieldId, fieldIndex)
     } else {
-      const docs = fieldIndex.ds.get(documentId)
-      if (docs == null) { fieldIndex.df += 1 }
-      fieldIndex.ds.set(documentId, (docs || 0) + 1)
+      const docs = fieldIndex.get(documentId)
+      fieldIndex.set(documentId, (docs || 0) + 1)
     }
   }
 
@@ -1184,17 +1182,16 @@ export default class MiniSearch<T = any> {
     const indexData = this._index.fetch(term, createMap)
 
     const fieldIndex = indexData.get(fieldId)
-    if (fieldIndex == null || fieldIndex.ds.get(documentId) == null) {
+    if (fieldIndex == null || fieldIndex.get(documentId) == null) {
       this.warnDocumentChanged(documentId, fieldId, term)
-    } else if (fieldIndex.ds.get(documentId)! <= 1) {
-      if (fieldIndex.df <= 1) {
+    } else if (fieldIndex.get(documentId)! <= 1) {
+      if (fieldIndex.size <= 1) {
         indexData.delete(fieldId)
       } else {
-        fieldIndex.df -= 1
-        fieldIndex.ds.delete(documentId)
+        fieldIndex.delete(documentId)
       }
     } else {
-      fieldIndex.ds.set(documentId, fieldIndex.ds.get(documentId)! - 1)
+      fieldIndex.set(documentId, fieldIndex.get(documentId)! - 1)
     }
 
     if (this._index.get(term).size === 0) {
