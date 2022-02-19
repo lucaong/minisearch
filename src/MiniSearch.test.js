@@ -858,29 +858,12 @@ describe('MiniSearch', () => {
         description: 'Follow the adventures of a bold lamb (Judah) and his stable friends as they try to avoid the sacrificial alter the week preceding the crucifixion of Christ. It is a heart-warming account of the Easter story as seen through the eyes of a lovable pig (Horace), a faint-hearted horse (Monty), a pedantic rat (Slink), a rambling rooster (Drake), a motherly cow (Esmay) and a downtrodden donkey (Jack). This magnificent period piece with its epic sets is a roller coaster ride of emotions. Enveloped in humor, this quest follows the animals from the stable in Bethlehem to the great temple in Jerusalem and onto the hillside of Calvary as these unlikely heroes try to save their friend. The journey weaves seamlessly through the biblical accounts of Palm Sunday, Jesus turning the tables in the temple, Peter\'s denial and with a tense, heart-wrenching climax, depicts the crucifixion and resurrection with gentleness and breathtaking beauty. For Judah, the lamb with the heart of a lion, it is a story of courage and faith. For Jack, the disappointed donkey, it becomes a pivotal voyage of hope. For Horace, the, well the dirty pig, and Drake the ignorant rooster, it is an opportunity to do something inappropriate and get into trouble.'
       })
 
-      it('returns best results for sheep', () => {
-        const exact = ms.search('sheep', { fuzzy: 1, prefix: true })
-        expect(exact.map(({ title }) => title)).toEqual([
-          // Has 'sheep' in title and once in a description of average length.
-          'Shaun the Sheep',
-
-          // Has 'sheep' in a short description.
-          'Rams',
-
-          // Has most occurrences of 'sheep'.
-          'Ringing Bell',
-
-          // Contains 'sheep' just once, in the title.
-          'Shaun the Sheep: The Farmer\'s Llamas',
-
-          // Contains 'sheep' just once, in a long description.
-          'Lamb'
-        ])
-      })
-
       it('returns best results for lamb', () => {
-        const exact = ms.search('lamb', { fuzzy: 1, prefix: true })
-        expect(exact.map(({ title }) => title)).toEqual([
+        // This should be fairly easy. We test that exact matches come before
+        // prefix matches, and that hits in shorter fields (title) come before
+        // hits in longer fields (description)
+        const hits = ms.search('lamb', { fuzzy: 1, prefix: true })
+        expect(hits.map(({ title }) => title)).toEqual([
           // Exact title match.
           'Lamb',
 
@@ -898,15 +881,41 @@ describe('MiniSearch', () => {
         ])
       })
 
+      it('returns best results for sheep', () => {
+        // This tests more complex interaction between scoring. We want hits in
+        // the title to be automatically considered most relevant, because they
+        // are very short, and the search term occurs less frequently in the
+        // title than it does in the description. One result, 'Rams', has a very
+        // short description with an exact match, but it should never outrank
+        // the result with an exact match in the title AND description.
+        const hits = ms.search('sheep', { fuzzy: 1, prefix: true })
+        expect(hits.map(({ title }) => title)).toEqual([
+          // Has 'sheep' in title and once in a description of average length.
+          'Shaun the Sheep',
+
+          // Has 'sheep' in a short description.
+          'Rams',
+
+          // Has most occurrences of 'sheep'.
+          'Ringing Bell',
+
+          // Contains 'sheep' just once, in the title.
+          'Shaun the Sheep: The Farmer\'s Llamas',
+
+          // Contains 'sheep' just once, in a long description.
+          'Lamb'
+        ])
+      })
+
       it('returns best results for shaun', () => {
-        // Two movies contain the query in the title. Pick the shorter one.
+        // Two movies contain the query in the title. Pick the shorter title.
         expect(ms.search('shaun the sheep')[0].title).toEqual('Shaun the Sheep')
         expect(ms.search('shaun the sheep', { fuzzy: 1, prefix: true })[0].title).toEqual('Shaun the Sheep')
       })
 
       it('returns best results for chirin', () => {
         // The title contains neither 'sheep' nor the character name. Movies
-        // that have 'sheep' in the title should not outrank this.
+        // that have 'sheep' or 'the' in the title should not outrank this.
         expect(ms.search('chirin the sheep')[0].title).toEqual('Ringing Bell')
         expect(ms.search('chirin the sheep', { fuzzy: 1, prefix: true })[0].title).toEqual('Ringing Bell')
       })
@@ -921,7 +930,8 @@ describe('MiniSearch', () => {
       it('returns best results for bounding', () => {
         // The expected hit has an exact match in the description and not in the
         // title, but the term is highly specific. Does not contain 'sheep' at
-        // all, but 'sheep' is a more common term in the dataset.
+        // all. Because 'sheep' is a more common term in the dataset, that
+        // should not cause other results to outrank this.
         expect(ms.search('bounding sheep', { fuzzy: 1 })[0].title).toEqual('Boundin\'')
       })
     })
