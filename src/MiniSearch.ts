@@ -291,7 +291,7 @@ type QuerySpec = {
 type IndexEntry = { df: number, ds: Map<number, number> }
 type IndexData = Map<number, IndexEntry>
 
-type RawResultValue = { score: number, match: MatchInfo, terms: string[] }
+type RawResultValue = { score: number, match: MatchInfo }
 type RawResult = Map<number, RawResultValue>
 
 /**
@@ -467,6 +467,7 @@ export default class MiniSearch<T = any> {
     if (id == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
+
     const shortDocumentId = this.addDocumentId(id)
     this.saveStoredFields(shortDocumentId, document)
 
@@ -477,7 +478,8 @@ export default class MiniSearch<T = any> {
       const tokens = tokenize(fieldValue.toString(), field)
       const fieldId = this._fieldIds[field]
 
-      this.addFieldLength(shortDocumentId, fieldId, this.documentCount - 1, tokens.length)
+      const uniqueTerms = new Set(tokens).size
+      this.addFieldLength(shortDocumentId, fieldId, this._documentCount - 1, uniqueTerms)
 
       for (const term of tokens) {
         const processedTerm = processTerm(term, field)
@@ -559,14 +561,15 @@ export default class MiniSearch<T = any> {
           const tokens = tokenize(fieldValue.toString(), field)
           const fieldId = this._fieldIds[field]
 
+          const uniqueTerms = new Set(tokens).size
+          this.removeFieldLength(shortId, fieldId, this.documentCount, uniqueTerms)
+
           for (const term of tokens) {
             const processedTerm = processTerm(term, field)
             if (processedTerm) {
               this.removeTerm(fieldId, shortId, processedTerm)
             }
           }
-
-          this.removeFieldLength(shortId, fieldId, this.documentCount, tokens.length)
         }
 
         this._storedFields.delete(shortId)
@@ -748,10 +751,10 @@ export default class MiniSearch<T = any> {
 
     const results = []
 
-    for (const [docId, { score, match, terms }] of combinedResults) {
+    for (const [docId, { score, match }] of combinedResults) {
       const result = {
         id: this._documentIds.get(docId),
-        terms: uniq(terms),
+        terms: Object.keys(match),
         score,
         match
       }
@@ -762,7 +765,7 @@ export default class MiniSearch<T = any> {
       }
     }
 
-    results.sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
+    results.sort(({ score: a }, { score: b }) => b - a)
     return results
   }
 
@@ -840,7 +843,7 @@ export default class MiniSearch<T = any> {
       results.push({ suggestion, terms, score: score / count })
     }
 
-    results.sort(({ score: a }, { score: b }) => a < b ? 1 : -1)
+    results.sort(({ score: a }, { score: b }) => b - a)
     return results
   }
 
@@ -957,25 +960,16 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private executeQuery (query: Query, searchOptions: SearchOptions = {}): RawResult {
-    if (typeof query === 'string') {
-      return this.executeSearch(query, searchOptions)
-    } else {
-      const results = query.queries.map((subquery) => {
-        const options = { ...searchOptions, ...query, queries: undefined }
-        return this.executeQuery(subquery, options)
-      })
+    if (typeof query !== 'string') {
+      const options = { ...searchOptions, ...query, queries: undefined }
+      const results = query.queries.map((subquery) => this.executeQuery(subquery, options))
       return this.combineResults(results, query.combineWith)
     }
-  }
 
-  /**
-   * @ignore
-   */
-  private executeSearch (queryString: string, searchOptions: SearchOptions = {}): RawResult {
     const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
     const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
     const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
-    const terms = searchTokenize(queryString)
+    const terms = searchTokenize(query)
       .map((term: string) => searchProcessTerm(term))
       .filter((term) => !!term) as string[]
     const queries: QuerySpec[] = terms.map(termToQuerySpec(options))
@@ -1001,7 +995,8 @@ export default class MiniSearch<T = any> {
 
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
 
-    const results = this.termResults(query.term, boosts, boostDocument, this._index.get(query.term))
+    const data = this._index.get(query.term)
+    const results = this.termResults(query.term, boosts, boostDocument, data, 1)
 
     let prefixMatches
     let fuzzyMatches
@@ -1025,8 +1020,13 @@ export default class MiniSearch<T = any> {
         // prefix result. This entry will always be scored as a prefix result.
         fuzzyMatches?.delete(term)
 
-        const weightedDistance = (0.3 * distance) / term.length
-        this.termResults(term, boosts, boostDocument, data, results, prefixWeight, weightedDistance)
+        // Weight gradually approaches 0 as distance goes to infinity, with the
+        // weight for the hypothetical distance 0 being equal to prefixWeight.
+        // The rate of change is much lower than that of fuzzy matches to
+        // account for the fact that prefix matches stay more relevant than
+        // fuzzy matches for longer distances.
+        const weight = prefixWeight * term.length / (term.length + 0.3 * distance)
+        this.termResults(term, boosts, boostDocument, data, weight, results)
       }
     }
 
@@ -1035,8 +1035,10 @@ export default class MiniSearch<T = any> {
         const [data, distance] = fuzzyMatches.get(term)!
         if (!distance) { continue } // Skip exact match.
 
-        const weightedDistance = distance / term.length
-        this.termResults(term, boosts, boostDocument, data, results, fuzzyWeight, weightedDistance)
+        // Weight gradually approaches 0 as distance goes to infinity, with the
+        // weight for the hypothetical distance 0 being equal to fuzzyWeight.
+        const weight = fuzzyWeight * term.length / (term.length + distance)
+        this.termResults(term, boosts, boostDocument, data, weight, results)
       }
     }
 
@@ -1110,9 +1112,8 @@ export default class MiniSearch<T = any> {
     boosts: { [field: string]: number },
     boostDocument: ((id: any, term: string) => number) | undefined,
     indexData: IndexData,
-    results: RawResult = new Map(),
-    weight: number = 1,
-    editDistance: number = 0
+    weight: number,
+    results: RawResult = new Map()
   ): RawResult {
     if (indexData == null) return results
 
@@ -1126,8 +1127,9 @@ export default class MiniSearch<T = any> {
         const docBoost = boostDocument ? boostDocument(this._documentIds.get(documentId), term) : 1
         if (!docBoost) continue
 
-        const normalizedLength = this._fieldLength.get(documentId)![fieldId] / this._averageFieldLength[fieldId]
-        const score = weight * docBoost * calculateScore(tf, entry.df, this._documentCount, normalizedLength, fieldBoost, editDistance)
+        const fieldLength = this._fieldLength.get(documentId)![fieldId]
+        const avgLength = this._averageFieldLength[fieldId]
+        const score = calcBM25Score(weight * fieldBoost * docBoost, tf, entry.df, this._documentCount, fieldLength, avgLength)
 
         const result = results.get(documentId)
 
@@ -1139,13 +1141,11 @@ export default class MiniSearch<T = any> {
             match.push(field)
           } else {
             result.match[term] = [field]
-            result.terms.push(term)
           }
         } else {
           results.set(documentId, {
             score,
-            match: { [term]: [field] },
-            terms: [term]
+            match: { [term]: [field] }
           })
         }
       }
@@ -1285,10 +1285,9 @@ const combinators: { [kind: string]: CombinatorFunction } = {
       if (existing == null) {
         a.set(documentId, b.get(documentId)!)
       } else {
-        const { score, match, terms } = b.get(documentId)!
-        existing.score = (existing.score + score) * 1.5
+        const { score, match } = b.get(documentId)!
+        existing.score += score
         existing.match = Object.assign(existing.match, match)
-        existing.terms.push(...terms)
       }
     }
 
@@ -1301,11 +1300,10 @@ const combinators: { [kind: string]: CombinatorFunction } = {
       const existing = a.get(documentId)
       if (existing == null) continue
 
-      const { score, match, terms } = b.get(documentId)!
+      const { score, match } = b.get(documentId)!
       combined.set(documentId, {
         score: existing.score + score,
-        match: Object.assign(existing.match, match),
-        terms: [...existing.terms, ...terms]
+        match: Object.assign(existing.match, match)
       })
     }
 
@@ -1317,18 +1315,20 @@ const combinators: { [kind: string]: CombinatorFunction } = {
   }
 }
 
-const tfIdf = (tf: number, df: number, n: number): number => tf * Math.log(n / df)
-
-const calculateScore = (
-  termFrequency: number,
-  documentFrequency: number,
-  documentCount: number,
-  normalizedLength: number,
-  boost: number,
-  editDistance: number
+// https://en.wikipedia.org/wiki/Okapi_BM25
+// https://opensourceconnections.com/blog/2015/10/16/bm25-the-next-generation-of-lucene-relevation/
+const k = 1.2 // Term frequency saturation point.
+const b = 0.7 // Length normalization impact.
+const calcBM25Score = (
+  weight: number,
+  termFreq: number,
+  docFreq: number,
+  docCount: number,
+  fieldLength: number,
+  avgLength: number
 ): number => {
-  const weight = boost / (1 + (0.333 * boost * editDistance))
-  return weight * tfIdf(termFrequency, documentFrequency, documentCount) / normalizedLength
+  const invDocFreq = Math.log(1 + (docCount - docFreq + 0.5) / (docFreq + 0.5))
+  return weight * invDocFreq * termFreq * (k + 1) / (termFreq + k * (1 - b + b * fieldLength / avgLength))
 }
 
 const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, terms: string[]): QuerySpec => {
@@ -1340,9 +1340,6 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
     : (options.prefix === true)
   return { term, fuzzy, prefix }
 }
-
-const uniq = <T>(array: T[]): T[] =>
-  array.filter((element: T, i: number, array: T[]) => array.indexOf(element) === i)
 
 const defaultOptions = {
   idField: 'id',
