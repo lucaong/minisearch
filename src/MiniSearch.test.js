@@ -798,7 +798,7 @@ describe('MiniSearch', () => {
       })
     })
 
-    describe('ranking', () => {
+    describe('movie ranking set', () => {
       const ms = new MiniSearch({
         fields: ['title', 'description'],
         storeFields: ['title']
@@ -893,14 +893,15 @@ describe('MiniSearch', () => {
           // Has 'sheep' in title and once in a description of average length.
           'Shaun the Sheep',
 
+          // Contains 'sheep' just once, but in the title. The term 'sheep' in
+          // the title is less common than in the description.
+          'Shaun the Sheep: The Farmer\'s Llamas',
+
           // Has 'sheep' in a short description.
           'Rams',
 
           // Has most occurrences of 'sheep'.
           'Ringing Bell',
-
-          // Contains 'sheep' just once, in the title.
-          'Shaun the Sheep: The Farmer\'s Llamas',
 
           // Contains 'sheep' just once, in a long description.
           'Lamb'
@@ -933,6 +934,96 @@ describe('MiniSearch', () => {
         // all. Because 'sheep' is a more common term in the dataset, that
         // should not cause other results to outrank this.
         expect(ms.search('bounding sheep', { fuzzy: 1 })[0].title).toEqual('Boundin\'')
+      })
+    })
+
+    describe('song ranking set', () => {
+      const ms = new MiniSearch({
+        fields: ['song', 'artist'],
+        storeFields: ['song']
+      })
+
+      ms.add({
+        id: '1',
+        song: 'Killer Queen',
+        artist: 'Queen'
+      })
+
+      ms.add({
+        id: '2',
+        song: 'The Witch Queen Of New Orleans',
+        artist: 'Redbone'
+      })
+
+      ms.add({
+        id: '3',
+        song: 'Bohemian Rhapsody',
+        artist: 'Queen'
+      })
+
+      ms.add({
+        id: '4',
+        song: 'Dancing Queen',
+        artits: 'Abba'
+      })
+
+      ms.add({
+        id: '5',
+        song: 'Waterloo',
+        artist: 'Abba'
+      })
+
+      ms.add({
+        id: '6',
+        song: 'Take A Chance On Me',
+        artist: 'Abba'
+      })
+
+      ms.add({
+        id: '7',
+        song: 'Help',
+        artist: 'The Beatles'
+      })
+
+      ms.add({
+        id: '8',
+        song: 'Yellow Submarine',
+        artist: 'The Beatles'
+      })
+
+      ms.add({
+        id: '9',
+        song: 'We Will Rock You',
+        artist: 'Queen'
+      })
+
+      ms.add({
+        id: '10',
+        song: 'Another One Bites The Dust',
+        artist: 'Queen'
+      })
+
+      it('returns best results for witch queen', () => {
+        const hits = ms.search('witch queen', { fuzzy: 1, prefix: true })
+        expect(hits.map(({ song }) => song)).toEqual([
+          // The only result that has both terms. This should not be outranked
+          // by hits that match only one term.
+          'The Witch Queen Of New Orleans',
+
+          // Contains just one term, but matches both song and artist.
+          'Killer Queen',
+
+          // Match on song. This is scored higher than a match on the artist,
+          // even though the artist is an exact match. This is because the
+          // artist 'Queen' is more common than a song containing 'Queen'.
+          'Dancing Queen',
+
+          // Match on artist only. The order of these should be in insertion
+          // order, because the matching field, artist, is identical.
+          'Bohemian Rhapsody',
+          'We Will Rock You',
+          'Another One Bites The Dust'
+        ])
       })
     })
   })
