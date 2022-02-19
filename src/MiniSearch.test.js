@@ -797,6 +797,134 @@ describe('MiniSearch', () => {
         })
       })
     })
+
+    describe('ranking', () => {
+      const ms = new MiniSearch({
+        fields: ['title', 'description'],
+        storeFields: ['title']
+      })
+
+      ms.add({
+        id: 'tt1487931',
+        title: 'Khumba',
+        description: 'When half-striped zebra Khumba is blamed for the lack of rain by the rest of his insular, superstitious herd, he embarks on a daring quest to earn his stripes. In his search for the legendary waterhole in which the first zebras got their stripes, Khumba meets a quirky range of characters and teams up with an unlikely duo: overprotective wildebeest Mama V and Bradley, a self-obsessed, flamboyant ostrich. But before he can reunite with his herd, Khumba must confront Phango, a sadistic leopard who controls the waterholes and terrorizes all the animals in the Great Karoo. It\'s not all black-and-white in this colorful adventure with a difference.'
+      })
+
+      ms.add({
+        id: 'tt8737608',
+        title: 'Rams',
+        description: 'A feud between two sheep farmers.'
+      })
+
+      ms.add({
+        id: 'tt0983983',
+        title: 'Shaun the Sheep',
+        description: 'Shaun is a cheeky and mischievous sheep at Mossy Bottom farm who\'s the leader of the flock and always plays slapstick jokes, pranks and causes trouble especially on Farmer X and his grumpy guide dog, Bitzer.'
+      })
+
+      ms.add({
+        id: 'tt5174284',
+        title: 'Shaun the Sheep: The Farmer\'s Llamas',
+        description: 'At the annual County Fair, three peculiar llamas catch the eye of Shaun, who tricks the unsuspecting Farmer into buying them. At first, it\'s all fun and games at Mossy Bottom Farm until the trio of unruly animals shows their true colours, wreaking havoc before everyone\'s eyes. Now, it\'s up to Bitzer and Shaun to come up with a winning strategy, if they want to reclaim the farm. Can they rid the once-peaceful ranch of the troublemakers?'
+      })
+
+      ms.add({
+        id: 'tt0102926',
+        title: 'The Silence of the Lambs',
+        description: 'F.B.I. trainee Clarice Starling (Jodie Foster) works hard to advance her career, while trying to hide or put behind her West Virginia roots, of which if some knew, would automatically classify her as being backward or white trash. After graduation, she aspires to work in the agency\'s Behavioral Science Unit under the leadership of Jack Crawford (Scott Glenn). While she is still a trainee, Crawford asks her to question Dr. Hannibal Lecter (Sir Anthony Hopkins), a psychiatrist imprisoned, thus far, for eight years in maximum security isolation for being a serial killer who cannibalized his victims. Clarice is able to figure out the assignment is to pick Lecter\'s brains to help them solve another serial murder case, that of someone coined by the media as "Buffalo Bill" (Ted Levine), who has so far killed five victims, all located in the eastern U.S., all young women, who are slightly overweight (especially around the hips), all who were drowned in natural bodies of water, and all who were stripped of large swaths of skin. She also figures that Crawford chose her, as a woman, to be able to trigger some emotional response from Lecter. After speaking to Lecter for the first time, she realizes that everything with him will be a psychological game, with her often having to read between the very cryptic lines he provides. She has to decide how much she will play along, as his request in return for talking to him is to expose herself emotionally to him. The case takes a more dire turn when a sixth victim is discovered, this one from who they are able to retrieve a key piece of evidence, if Lecter is being forthright as to its meaning. A potential seventh victim is high profile Catherine Martin (Brooke Smith), the daughter of Senator Ruth Martin (Diane Baker), which places greater scrutiny on the case as they search for a hopefully still alive Catherine. Who may factor into what happens is Dr. Frederick Chilton (Anthony Heald), the warden at the prison, an opportunist who sees the higher profile with Catherine, meaning a higher profile for himself if he can insert himself successfully into the proceedings.'
+      })
+
+      ms.add({
+        id: 'tt0395479',
+        title: 'Boundin\'',
+        description: 'In the not too distant past, a lamb lives in the desert plateau just below the snow line. He is proud of how bright and shiny his coat of wool is, so much so that it makes him want to dance, which in turn makes all the other creatures around him also want to dance. His life changes when one spring day he is captured, his wool shorn, and thrown back out onto the plateau all naked and pink. But a bounding jackalope who wanders by makes the lamb look at life a little differently in seeing that there is always something exciting in life to bound about.'
+      })
+
+      ms.add({
+        id: 'tt9812474',
+        title: 'Lamb',
+        description: 'Haunted by the indelible mark of loss and silent grief, sad-eyed María and her taciturn husband, Ingvar, seek solace in back-breaking work and the demanding schedule at their sheep farm in the remote, harsh, wind-swept landscapes of mountainous Iceland. Then, with their relationship hanging on by a thread, something unexplainable happens, and just like that, happiness blesses the couple\'s grim household once more. Now, as a painful ending gives birth to a new beginning, Ingvar\'s troubled brother, Pétur, arrives at the farmhouse, threatening María and Ingvar\'s delicate, newfound bliss. But, nature\'s gifts demand sacrifice. How far are ecstatic María and Ingvar willing to go in the name of love?'
+      })
+
+      ms.add({
+        id: 'tt0306646',
+        title: 'Ringing Bell',
+        description: 'A baby lamb named Chirin is living an idyllic life on a farm with many other sheep. Chirin is very adventurous and tends to get lost, so he wears a bell around his neck so that his mother can always find him. His mother warns Chirin that he must never venture beyond the fence surrounding the farm, because a huge black wolf lives in the mountains and loves to eat sheep. Chirin is too young and naive to take the advice to heart, until one night the wolf enters the barn and is prepared to kill Chirin, but at the last moment the lamb\'s mother throws herself in the way and is killed instead. The wolf leaves, and Chirin is horrified to see his mother\'s body. Unable to understand why his mother was killed, he becomes very angry and swears that he will go into the mountains and kill the wolf.'
+      })
+
+      ms.add({
+        id: 'tt1212022',
+        title: 'The Lion of Judah',
+        description: 'Follow the adventures of a bold lamb (Judah) and his stable friends as they try to avoid the sacrificial alter the week preceding the crucifixion of Christ. It is a heart-warming account of the Easter story as seen through the eyes of a lovable pig (Horace), a faint-hearted horse (Monty), a pedantic rat (Slink), a rambling rooster (Drake), a motherly cow (Esmay) and a downtrodden donkey (Jack). This magnificent period piece with its epic sets is a roller coaster ride of emotions. Enveloped in humor, this quest follows the animals from the stable in Bethlehem to the great temple in Jerusalem and onto the hillside of Calvary as these unlikely heroes try to save their friend. The journey weaves seamlessly through the biblical accounts of Palm Sunday, Jesus turning the tables in the temple, Peter\'s denial and with a tense, heart-wrenching climax, depicts the crucifixion and resurrection with gentleness and breathtaking beauty. For Judah, the lamb with the heart of a lion, it is a story of courage and faith. For Jack, the disappointed donkey, it becomes a pivotal voyage of hope. For Horace, the, well the dirty pig, and Drake the ignorant rooster, it is an opportunity to do something inappropriate and get into trouble.'
+      })
+
+      it('returns best results for sheep', () => {
+        const exact = ms.search('sheep', { fuzzy: 1, prefix: true })
+        expect(exact.map(({ title }) => title)).toEqual([
+          // Has 'sheep' in title and once in a description of average length.
+          'Shaun the Sheep',
+
+          // Has 'sheep' in a short description.
+          'Rams',
+
+          // Has most occurrences of 'sheep'.
+          'Ringing Bell',
+
+          // Contains 'sheep' just once, in the title.
+          'Shaun the Sheep: The Farmer\'s Llamas',
+
+          // Contains 'sheep' just once, in a long description.
+          'Lamb'
+        ])
+      })
+
+      it('returns best results for lamb', () => {
+        const exact = ms.search('lamb', { fuzzy: 1, prefix: true })
+        expect(exact.map(({ title }) => title)).toEqual([
+          // Exact title match.
+          'Lamb',
+
+          // Contains term twice, shortest description.
+          'Boundin\'',
+
+          // Contains term twice.
+          'Ringing Bell',
+
+          // Contains term twice, longest description.
+          'The Lion of Judah',
+
+          // Prefix match in title.
+          'The Silence of the Lambs'
+        ])
+      })
+
+      it('returns best results for shaun', () => {
+        // Two movies contain the query in the title. Pick the shorter one.
+        expect(ms.search('shaun the sheep')[0].title).toEqual('Shaun the Sheep')
+        expect(ms.search('shaun the sheep', { fuzzy: 1, prefix: true })[0].title).toEqual('Shaun the Sheep')
+      })
+
+      it('returns best results for chirin', () => {
+        // The title contains neither 'sheep' nor the character name. Movies
+        // that have 'sheep' in the title should not outrank this.
+        expect(ms.search('chirin the sheep')[0].title).toEqual('Ringing Bell')
+        expect(ms.search('chirin the sheep', { fuzzy: 1, prefix: true })[0].title).toEqual('Ringing Bell')
+      })
+
+      it('returns best results for judah', () => {
+        // Title contains the character's name, but the word 'sheep' never
+        // occurs. Other movies that do contain 'sheep' should not outrank this.
+        expect(ms.search('judah the sheep')[0].title).toEqual('The Lion of Judah')
+        expect(ms.search('judah the sheep', { fuzzy: 1, prefix: true })[0].title).toEqual('The Lion of Judah')
+      })
+
+      it('returns best results for bounding', () => {
+        // The expected hit has an exact match in the description and not in the
+        // title, but the term is highly specific. Does not contain 'sheep' at
+        // all, but 'sheep' is a more common term in the dataset.
+        expect(ms.search('bounding sheep', { fuzzy: 1 })[0].title).toEqual('Boundin\'')
+      })
+    })
   })
 
   describe('default tokenization', () => {
