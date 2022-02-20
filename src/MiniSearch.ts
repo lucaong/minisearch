@@ -1161,12 +1161,7 @@ export default class MiniSearch<T = any> {
         const result = results.get(docId)
         if (result) {
           result.score += weightedScore
-
-          if (!result.terms.includes(sourceTerm)) {
-            // Avoid adding duplicate terms.
-            result.terms.push(sourceTerm)
-          }
-
+          assignUniqueTerm(result.terms, sourceTerm)
           const match = getOwnProperty(result.match, derivedTerm)
           if (match) {
             match.push(field)
@@ -1316,14 +1311,9 @@ const combinators: { [kind: string]: CombinatorFunction } = {
         a.set(docId, b.get(docId)!)
       } else {
         const { score, terms, match } = b.get(docId)!
-
         existing.score = existing.score + score
         existing.match = Object.assign(existing.match, match)
-
-        for (const term of terms) {
-          // Avoid adding duplicate terms.
-          if (!existing.terms.includes(term)) existing.terms.push(term)
-        }
+        assignUniqueTerms(existing.terms, terms)
       }
     }
 
@@ -1337,12 +1327,7 @@ const combinators: { [kind: string]: CombinatorFunction } = {
       if (existing == null) continue
 
       const { score, terms, match } = b.get(docId)!
-
-      for (const term of terms) {
-        // Avoid adding duplicate terms.
-        if (!existing.terms.includes(term)) existing.terms.push(term)
-      }
-
+      assignUniqueTerms(existing.terms, terms)
       combined.set(docId, {
         score: existing.score + score,
         terms: existing.terms,
@@ -1405,6 +1390,18 @@ const defaultSearchOptions = {
 const defaultAutoSuggestOptions = {
   prefix: (term: string, i: number, terms: string[]): boolean =>
     i === terms.length - 1
+}
+
+const assignUniqueTerm = (target: string[], term: string): void => {
+  // Avoid adding duplicate terms.
+  if (!target.includes(term)) target.push(term)
+}
+
+const assignUniqueTerms = (target: string[], source: readonly string[]): void => {
+  for (const term of source) {
+    // Avoid adding duplicate terms.
+    if (!target.includes(term)) target.push(term)
+  }
 }
 
 type Scored = { score: number }
