@@ -38,9 +38,9 @@ fact necessarily go against the primary project goals.
 `MiniSearch` is composed of two layers:
 
   1. A compact and versatile data structure for indexing terms, providing
-     lookup by exact match, prefix match, and fuzzy match
+     lookup by exact match, prefix match, and fuzzy match.
   2. An API layer on top of this data structure, providing the search
-    features
+     features.
 
 Here follows a description of these two layers.
 
@@ -157,17 +157,44 @@ indexed within the same index, to further save space. The index is therefore
 structured as following:
 
 ```
-term -> field -> { document frequency, posting list }
+term -> field -> document -> term frequency
 ```
+
+The fields and documents are referenced in the index with a short numeric ID for
+performance and to save space.
+
+### Search result scoring
 
 When performing a search, the entries corresponding to the search term are
 looked up in the index (optionally searching the index with prefix or fuzzy
-search), then the documents are scored with a variant of
-[Tf-Idf](https://en.wikipedia.org/wiki/Tf–idf), and finally results for
-different search terms are merged with the given combinator function (by default
-`OR`, but `AND` can be specified).
+search). If the combination of term, field and document is found, then this
+indicates that the term was present in this particular document field. But it is
+not helpful to return all matching documents in an arbitrary order. We want to
+return the results in order of _relevance_.
 
-As the document IDs necessarily occur many times in the posting list, as a space
-optimization they are substituted by short generated IDs. An index of short ID
-to original ID is maintained alongside the search index, to reconstruct the
-original IDs. A similar optimization is applied to the field names.
+For every document field matching a term, a relevance score is calculated. It
+indicates the quality of the match, with a higher score indicating a better
+match. The variables that are used to calculate the score are:
+  - The frequency of the term in the document field that is being scored.
+  - The total number of documents with matching fields for this term.
+  - The total number of indexed documents.
+  - The length of this field.
+  - The average length of this field for all indexed documents.
+
+The scoring algorithm is based on
+[BM25](https://en.wikipedia.org/wiki/Okapi_BM25) (and its derivative BM25+),
+which is also used in other popular search engines such as Lucene. BM25 is an
+improvement on [TF-IDF](https://en.wikipedia.org/wiki/Tf–idf) and incorporates
+the following ideas:
+  - If a term is less common, the score should be higher (like TD-IDF).
+  - If a term occurs more frequently, the score should be higher (so far this is
+    the same as TD-IDF). But the relationship is not linear. If a term occurs
+    twice as often, the score is _not_ twice as high.
+  - If a document field is shorter, it requires fewer term occurrences to be
+    achieve the same relevance as a longer document field. This encodes the idea
+    that a term occurring once in, say, a title is more relevant than a word
+    occuring once in a long paragraph.
+
+The scores are calculated for every document field matching a query term. The
+results are added. To reward documents that match the most terms, the final
+score is multiplied by the number of matching terms in the query.
