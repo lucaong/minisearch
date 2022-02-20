@@ -288,8 +288,8 @@ type QuerySpec = {
   term: string
 }
 
-type IndexEntry = Map<number, number>
-type IndexData = Map<number, IndexEntry>
+type DocumentTermFreqs = Map<number, number>
+type FieldTermData = Map<number, DocumentTermFreqs>
 
 type RawResultValue = { score: number, match: MatchInfo }
 type RawResult = Map<number, RawResultValue>
@@ -357,7 +357,7 @@ export default class MiniSearch<T = any> {
   protected _documentIds: Map<number, any>
   protected _fieldIds: { [key: string]: number }
   protected _fieldLength: Map<number, number[]>
-  protected _averageFieldLength: number[]
+  protected _avgFieldLength: number[]
   protected _nextId: number
   protected _storedFields: Map<number, Record<string, unknown>>
 
@@ -447,7 +447,7 @@ export default class MiniSearch<T = any> {
 
     this._fieldLength = new Map()
 
-    this._averageFieldLength = []
+    this._avgFieldLength = []
 
     this._nextId = 0
 
@@ -602,7 +602,7 @@ export default class MiniSearch<T = any> {
       this._documentCount = 0
       this._documentIds = new Map()
       this._fieldLength = new Map()
-      this._averageFieldLength = []
+      this._avgFieldLength = []
       this._storedFields = new Map()
       this._nextId = 0
     }
@@ -752,10 +752,14 @@ export default class MiniSearch<T = any> {
     const results = []
 
     for (const [docId, { score, match }] of combinedResults) {
+      // Final score takes into account the number of matching terms.
+      const terms = Object.keys(match)
+      const quality = 1 + (terms.length - 1) / 2
+
       const result = {
         id: this._documentIds.get(docId),
-        terms: Object.keys(match),
-        score,
+        score: score * quality,
+        terms,
         match
       }
 
@@ -937,16 +941,16 @@ export default class MiniSearch<T = any> {
     miniSearch._documentIds = objectToNumericMap(documentIds)
     miniSearch._fieldIds = fieldIds
     miniSearch._fieldLength = objectToNumericMap(fieldLength)
-    miniSearch._averageFieldLength = averageFieldLength
+    miniSearch._avgFieldLength = averageFieldLength
     miniSearch._storedFields = objectToNumericMap(storedFields)
     miniSearch._index = new SearchableMap()
 
     for (const [term, data] of index) {
-      const dataMap = new Map() as IndexData
+      const dataMap = new Map() as FieldTermData
 
       for (const fieldId of Object.keys(data)) {
         const { ds } = data[fieldId]
-        dataMap.set(parseInt(fieldId, 10), objectToNumericMap(ds) as IndexEntry)
+        dataMap.set(parseInt(fieldId, 10), objectToNumericMap(ds) as DocumentTermFreqs)
       }
 
       miniSearch._index.set(term, dataMap)
@@ -995,7 +999,7 @@ export default class MiniSearch<T = any> {
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
 
     const data = this._index.get(query.term)
-    const results = this.termResults(query.term, boosts, boostDocument, data, 1)
+    const results = this.termResults(query.term, 1, data, boosts, boostDocument)
 
     let prefixMatches
     let fuzzyMatches
@@ -1025,7 +1029,7 @@ export default class MiniSearch<T = any> {
         // account for the fact that prefix matches stay more relevant than
         // fuzzy matches for longer distances.
         const weight = prefixWeight * term.length / (term.length + 0.3 * distance)
-        this.termResults(term, boosts, boostDocument, data, weight, results)
+        this.termResults(term, weight, data, boosts, boostDocument, results)
       }
     }
 
@@ -1037,7 +1041,7 @@ export default class MiniSearch<T = any> {
         // Weight gradually approaches 0 as distance goes to infinity, with the
         // weight for the hypothetical distance 0 being equal to fuzzyWeight.
         const weight = fuzzyWeight * term.length / (term.length + distance)
-        this.termResults(term, boosts, boostDocument, data, weight, results)
+        this.termResults(term, weight, data, boosts, boostDocument, results)
       }
     }
 
@@ -1084,6 +1088,8 @@ export default class MiniSearch<T = any> {
       const data: { [key: string]: SerializedIndexEntry } = {}
 
       for (const [fieldId, ds] of fieldIndex) {
+        // NOTE: Storing df/ds seperately is redundant and currently only done
+        // for serialization format compatibility.
         data[fieldId] = { df: ds.size, ds: Object.fromEntries(ds) }
       }
 
@@ -1096,7 +1102,7 @@ export default class MiniSearch<T = any> {
       documentIds: Object.fromEntries(this._documentIds),
       fieldIds: this._fieldIds,
       fieldLength: Object.fromEntries(this._fieldLength),
-      averageFieldLength: this._averageFieldLength,
+      averageFieldLength: this._avgFieldLength,
       storedFields: Object.fromEntries(this._storedFields),
       index,
       serializationVersion: 1
@@ -1108,33 +1114,36 @@ export default class MiniSearch<T = any> {
    */
   private termResults (
     term: string,
-    boosts: { [field: string]: number },
-    boostDocument: ((id: any, term: string) => number) | undefined,
-    indexData: IndexData,
-    weight: number,
+    termWeight: number,
+    fieldTermData: FieldTermData,
+    fieldBoosts: { [field: string]: number },
+    boostDocumentFn: ((id: any, term: string) => number) | undefined,
     results: RawResult = new Map()
   ): RawResult {
-    if (indexData == null) return results
+    if (fieldTermData == null) return results
 
-    for (const field of Object.keys(boosts)) {
-      const fieldBoost = boosts[field]
+    for (const field of Object.keys(fieldBoosts)) {
+      const fieldBoost = fieldBoosts[field]
       const fieldId = this._fieldIds[field]
-      const entry = indexData.get(fieldId)
-      if (entry == null) continue
 
-      for (const [documentId, tf] of entry) {
-        const docBoost = boostDocument ? boostDocument(this._documentIds.get(documentId), term) : 1
+      const fieldTermFreqs = fieldTermData.get(fieldId)
+      if (fieldTermFreqs == null) continue
+
+      const matchingFields = fieldTermFreqs.size
+      const avgFieldLength = this._avgFieldLength[fieldId]
+
+      for (const docId of fieldTermFreqs.keys()) {
+        const docBoost = boostDocumentFn ? boostDocumentFn(this._documentIds.get(docId), term) : 1
         if (!docBoost) continue
 
-        const fieldLength = this._fieldLength.get(documentId)![fieldId]
-        const avgLength = this._averageFieldLength[fieldId]
-        const score = calcBM25Score(weight * fieldBoost * docBoost, tf, entry.size, this._documentCount, fieldLength, avgLength)
+        const termFreq = fieldTermFreqs.get(docId)!
+        const fieldLength = this._fieldLength.get(docId)![fieldId]
+        const rawScore = calcBM25Score(termFreq, matchingFields, this._documentCount, fieldLength, avgFieldLength)
+        const weightedScore = termWeight * fieldBoost * docBoost * rawScore
 
-        const result = results.get(documentId)
-
+        const result = results.get(docId)
         if (result) {
-          result.score += score
-
+          result.score += weightedScore
           const match = getOwnProperty(result.match, term)
           if (match) {
             match.push(field)
@@ -1142,8 +1151,8 @@ export default class MiniSearch<T = any> {
             result.match[term] = [field]
           }
         } else {
-          results.set(documentId, {
-            score,
+          results.set(docId, {
+            score: weightedScore,
             match: { [term]: [field] }
           })
         }
@@ -1240,17 +1249,17 @@ export default class MiniSearch<T = any> {
     if (fieldLengths == null) this._fieldLength.set(documentId, fieldLengths = [])
     fieldLengths[fieldId] = length
 
-    const averageFieldLength = this._averageFieldLength[fieldId] || 0
-    const totalLength = (averageFieldLength * count) + length
-    this._averageFieldLength[fieldId] = totalLength / (count + 1)
+    const averageFieldLength = this._avgFieldLength[fieldId] || 0
+    const totalFieldLength = (averageFieldLength * count) + length
+    this._avgFieldLength[fieldId] = totalFieldLength / (count + 1)
   }
 
   /**
    * @ignore
    */
   private removeFieldLength (documentId: number, fieldId: number, count: number, length: number): void {
-    const totalLength = (this._averageFieldLength[fieldId] * count) - length
-    this._averageFieldLength[fieldId] = totalLength / (count - 1)
+    const totalFieldLength = (this._avgFieldLength[fieldId] * count) - length
+    this._avgFieldLength[fieldId] = totalFieldLength / (count - 1)
   }
 
   /**
@@ -1277,13 +1286,13 @@ type CombinatorFunction = (a: RawResult, b: RawResult) => RawResult
 
 const combinators: { [kind: string]: CombinatorFunction } = {
   [OR]: (a: RawResult, b: RawResult) => {
-    for (const documentId of b.keys()) {
-      const existing = a.get(documentId)
+    for (const docId of b.keys()) {
+      const existing = a.get(docId)
       if (existing == null) {
-        a.set(documentId, b.get(documentId)!)
+        a.set(docId, b.get(docId)!)
       } else {
-        const { score, match } = b.get(documentId)!
-        existing.score += score
+        const { score, match } = b.get(docId)!
+        existing.score = existing.score + score
         existing.match = Object.assign(existing.match, match)
       }
     }
@@ -1293,12 +1302,12 @@ const combinators: { [kind: string]: CombinatorFunction } = {
   [AND]: (a: RawResult, b: RawResult) => {
     const combined = new Map()
 
-    for (const documentId of b.keys()) {
-      const existing = a.get(documentId)
+    for (const docId of b.keys()) {
+      const existing = a.get(docId)
       if (existing == null) continue
 
-      const { score, match } = b.get(documentId)!
-      combined.set(documentId, {
+      const { score, match } = b.get(docId)!
+      combined.set(docId, {
         score: existing.score + score,
         match: Object.assign(existing.match, match)
       })
@@ -1307,7 +1316,7 @@ const combinators: { [kind: string]: CombinatorFunction } = {
     return combined
   },
   [AND_NOT]: (a: RawResult, b: RawResult) => {
-    for (const documentId of b.keys()) a.delete(documentId)
+    for (const docId of b.keys()) a.delete(docId)
     return a
   }
 }
@@ -1317,15 +1326,14 @@ const combinators: { [kind: string]: CombinatorFunction } = {
 const k = 1.2 // Term frequency saturation point.
 const b = 0.7 // Length normalization impact.
 const calcBM25Score = (
-  weight: number,
   termFreq: number,
-  docFreq: number,
-  docCount: number,
+  matchingCount: number,
+  totalCount: number,
   fieldLength: number,
-  avgLength: number
+  avgFieldLength: number
 ): number => {
-  const invDocFreq = Math.log(1 + (docCount - docFreq + 0.5) / (docFreq + 0.5))
-  return weight * invDocFreq * termFreq * (k + 1) / (termFreq + k * (1 - b + b * fieldLength / avgLength))
+  const invDocFreq = Math.log(1 + (totalCount - matchingCount + 0.5) / (matchingCount + 0.5))
+  return invDocFreq * termFreq * (k + 1) / (termFreq + k * (1 - b + b * fieldLength / avgFieldLength))
 }
 
 const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, terms: string[]): QuerySpec => {

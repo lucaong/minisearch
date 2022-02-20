@@ -15,7 +15,7 @@ describe('MiniSearch', () => {
       expect(ms._fieldIds).toEqual({ title: 0, text: 1 })
       expect(ms._documentIds.size).toEqual(0)
       expect(ms._fieldLength.size).toEqual(0)
-      expect(ms._averageFieldLength.length).toEqual(0)
+      expect(ms._avgFieldLength.length).toEqual(0)
       expect(ms._options).toMatchObject(options)
     })
   })
@@ -163,14 +163,14 @@ describe('MiniSearch', () => {
     it('cleans up all data of the deleted document', () => {
       const otherDocument = { id: 4, title: 'Decameron', text: 'Umana cosa è aver compassione degli afflitti' }
       const originalFieldLength = new Map(ms._fieldLength)
-      const originalAverageFieldLength = ms._averageFieldLength.slice()
+      const originalAverageFieldLength = ms._avgFieldLength.slice()
 
       ms.add(otherDocument)
       ms.remove(otherDocument)
 
       expect(ms.documentCount).toEqual(3)
       expect(ms._fieldLength).toEqual(originalFieldLength)
-      expect(ms._averageFieldLength).toEqual(originalAverageFieldLength)
+      expect(ms._avgFieldLength).toEqual(originalAverageFieldLength)
     })
 
     it('does not remove terms from other documents', () => {
@@ -618,7 +618,7 @@ describe('MiniSearch', () => {
       const results = ms.search(query, { boostDocument })
       expect(boostDocument).toHaveBeenCalledWith(1, 'divina')
       expect(boostDocument).toHaveBeenCalledWith(1, 'commedia')
-      expect(results[0].score).toEqual(resultsWithoutBoost[0].score * boostFactor)
+      expect(results[0].score).toBeCloseTo(resultsWithoutBoost[0].score * boostFactor)
     })
 
     it('skips document if boostDocument returns a falsy value', () => {
@@ -893,15 +893,16 @@ describe('MiniSearch', () => {
           // Has 'sheep' in title and once in a description of average length.
           'Shaun the Sheep',
 
-          // Contains 'sheep' just once, but in the title. The term 'sheep' in
-          // the title is less common than in the description.
-          'Shaun the Sheep: The Farmer\'s Llamas',
-
           // Has 'sheep' in a short description.
           'Rams',
 
           // Has most occurrences of 'sheep'.
           'Ringing Bell',
+
+          // Contains 'sheep' just once, in a long title. The term 'sheep' in
+          // the title is less common than in the description. This result is
+          // arguably not great, but a small title boost is a simple fix.
+          'Shaun the Sheep: The Farmer\'s Llamas',
 
           // Contains 'sheep' just once, in a long description.
           'Lamb'
@@ -911,7 +912,14 @@ describe('MiniSearch', () => {
       it('returns best results for shaun', () => {
         // Two movies contain the query in the title. Pick the shorter title.
         expect(ms.search('shaun the sheep')[0].title).toEqual('Shaun the Sheep')
-        expect(ms.search('shaun the sheep', { fuzzy: 1, prefix: true })[0].title).toEqual('Shaun the Sheep')
+
+        // This result may be somewhat controversial, but the sequel scores
+        // higher because 'the' expands to many other terms that match 'Shaun
+        // the Sheep: The Farmer's Llamas'. In practice this is easily fixed
+        // with a modest title boost (1.5-2). In larger data sets this might be
+        // less of an issue because the matched words are fairly common: 'they',
+        // 'them', 'their'.
+        expect(ms.search('shaun the sheep', { fuzzy: 1, prefix: true })[0].title).toEqual('Shaun the Sheep: The Farmer\'s Llamas')
       })
 
       it('returns best results for chirin', () => {
@@ -929,10 +937,11 @@ describe('MiniSearch', () => {
       })
 
       it('returns best results for bounding', () => {
-        // The expected hit has an exact match in the description and not in the
-        // title, but the term is highly specific. Does not contain 'sheep' at
-        // all. Because 'sheep' is a more common term in the dataset, that
-        // should not cause other results to outrank this.
+        // The expected hit has an exact match in the description and a fuzzy
+        // match in the title, and both variations of the term are highly
+        // specific. Does not contain 'sheep' at all! Because 'sheep' is a
+        // slightly more common term in the dataset, that should not cause other
+        // results to outrank this.
         expect(ms.search('bounding sheep', { fuzzy: 1 })[0].title).toEqual('Boundin\'')
       })
     })
@@ -957,49 +966,37 @@ describe('MiniSearch', () => {
 
       ms.add({
         id: '3',
-        song: 'Bohemian Rhapsody',
-        artist: 'Queen'
-      })
-
-      ms.add({
-        id: '4',
-        song: 'Dancing Queen',
-        artits: 'Abba'
-      })
-
-      ms.add({
-        id: '5',
         song: 'Waterloo',
         artist: 'Abba'
       })
 
       ms.add({
-        id: '6',
+        id: '4',
         song: 'Take A Chance On Me',
         artist: 'Abba'
       })
 
       ms.add({
-        id: '7',
+        id: '5',
         song: 'Help',
         artist: 'The Beatles'
       })
 
       ms.add({
-        id: '8',
+        id: '6',
         song: 'Yellow Submarine',
         artist: 'The Beatles'
       })
 
       ms.add({
-        id: '9',
-        song: 'We Will Rock You',
-        artist: 'Queen'
+        id: '7',
+        song: 'Dancing Queen',
+        artist: 'Abba'
       })
 
       ms.add({
-        id: '10',
-        song: 'Another One Bites The Dust',
+        id: '8',
+        song: 'Bohemian Rhapsody',
         artist: 'Queen'
       })
 
@@ -1013,17 +1010,17 @@ describe('MiniSearch', () => {
           // Contains just one term, but matches both song and artist.
           'Killer Queen',
 
-          // Match on song. This is scored higher than a match on the artist,
-          // even though the artist is an exact match. This is because the
-          // artist 'Queen' is more common than a song containing 'Queen'.
-          'Dancing Queen',
-
-          // Match on artist only. The order of these should be in insertion
-          // order, because the matching field, artist, is identical.
+          // Match on artist only. Artist is an exact match for 'Queen'.
           'Bohemian Rhapsody',
-          'We Will Rock You',
-          'Another One Bites The Dust'
+
+          // Match on song only. Song is a worse match for 'Queen'.
+          'Dancing Queen'
         ])
+      })
+
+      it('returns best results queen', () => {
+        // The only match where both song and artist contain 'queen'.
+        expect(ms.search('queen', { fuzzy: 1, prefix: true })[0].song).toEqual('Killer Queen')
       })
     })
   })
