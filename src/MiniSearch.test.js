@@ -1018,7 +1018,7 @@ describe('MiniSearch', () => {
         ])
       })
 
-      it('returns best results queen', () => {
+      it('returns best results for queen', () => {
         // The only match where both song and artist contain 'queen'.
         expect(ms.search('queen', { fuzzy: 1, prefix: true })[0].song).toEqual('Killer Queen')
       })
