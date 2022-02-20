@@ -297,8 +297,10 @@ interface RawResultValue {
   score: number,
 
   // Set of all query terms that were matched. They may not be present in the
-  // text exactly, in the case of prefix/fuzzy matches.
-  terms: Set<string>,
+  // text exactly in the case of prefix/fuzzy matches. We must check for
+  // uniqueness before adding a new term. This is much fater than using a set,
+  // because the number of elements is relatively small.
+  terms: string[],
 
   // All terms that were found in the content, including the fields in which
   // they were present. This object will be provided as part of the final search
@@ -768,7 +770,7 @@ export default class MiniSearch<T = any> {
     for (const [docId, { score, terms, match }] of combinedResults) {
       // Final score takes into account the number of matching QUERY terms.
       // The end user will only receive the MATCHED terms.
-      const quality = terms.size
+      const quality = terms.length
 
       const result = {
         id: this._documentIds.get(docId),
@@ -1159,7 +1161,12 @@ export default class MiniSearch<T = any> {
         const result = results.get(docId)
         if (result) {
           result.score += weightedScore
-          result.terms.add(sourceTerm)
+
+          if (!result.terms.includes(sourceTerm)) {
+            // Avoid adding duplicate terms.
+            result.terms.push(sourceTerm)
+          }
+
           const match = getOwnProperty(result.match, derivedTerm)
           if (match) {
             match.push(field)
@@ -1167,11 +1174,9 @@ export default class MiniSearch<T = any> {
             result.match[derivedTerm] = [field]
           }
         } else {
-          const terms = new Set<string>()
-          terms.add(sourceTerm)
           results.set(docId, {
             score: weightedScore,
-            terms,
+            terms: [sourceTerm],
             match: { [derivedTerm]: [field] }
           })
         }
@@ -1311,9 +1316,14 @@ const combinators: { [kind: string]: CombinatorFunction } = {
         a.set(docId, b.get(docId)!)
       } else {
         const { score, terms, match } = b.get(docId)!
+
         existing.score = existing.score + score
         existing.match = Object.assign(existing.match, match)
-        for (const term of terms) existing.terms.add(term)
+
+        for (const term of terms) {
+          // Avoid adding duplicate terms.
+          if (!existing.terms.includes(term)) existing.terms.push(term)
+        }
       }
     }
 
@@ -1327,7 +1337,12 @@ const combinators: { [kind: string]: CombinatorFunction } = {
       if (existing == null) continue
 
       const { score, terms, match } = b.get(docId)!
-      for (const term of terms) existing.terms.add(term)
+
+      for (const term of terms) {
+        // Avoid adding duplicate terms.
+        if (!existing.terms.includes(term)) existing.terms.push(term)
+      }
+
       combined.set(docId, {
         score: existing.score + score,
         terms: existing.terms,
