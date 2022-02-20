@@ -578,7 +578,7 @@ export default class MiniSearch<T = any> {
           const fieldId = this._fieldIds[field]
 
           const uniqueTerms = new Set(tokens).size
-          this.removeFieldLength(shortId, fieldId, this.documentCount, uniqueTerms)
+          this.removeFieldLength(shortId, fieldId, this._documentCount, uniqueTerms)
 
           for (const term of tokens) {
             const processedTerm = processTerm(term, field)
@@ -785,7 +785,7 @@ export default class MiniSearch<T = any> {
       }
     }
 
-    results.sort(({ score: a }, { score: b }) => b - a)
+    results.sort(byScore)
     return results
   }
 
@@ -863,7 +863,7 @@ export default class MiniSearch<T = any> {
       results.push({ suggestion, terms, score: score / count })
     }
 
-    results.sort(({ score: a }, { score: b }) => b - a)
+    results.sort(byScore)
     return results
   }
 
@@ -1406,6 +1406,9 @@ const defaultAutoSuggestOptions = {
   prefix: (term: string, i: number, terms: string[]): boolean =>
     i === terms.length - 1
 }
+
+type Scored = { score: number }
+const byScore = ({ score: a }: Scored, { score: b }: Scored) => b - a
 
 const createMap = () => new Map()
 
