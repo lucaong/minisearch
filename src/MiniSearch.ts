@@ -963,7 +963,7 @@ export default class MiniSearch<T = any> {
       const dataMap = new Map() as FieldTermData
 
       for (const fieldId of Object.keys(data)) {
-        const ds = data[fieldId]
+        const { ds } = data[fieldId]
         dataMap.set(parseInt(fieldId, 10), objectToNumericMap(ds) as DocumentTermFreqs)
       }
 
@@ -1104,7 +1104,7 @@ export default class MiniSearch<T = any> {
       for (const [fieldId, ds] of fieldIndex) {
         // NOTE: Storing df/ds seperately is redundant and currently only done
         // for serialization format compatibility.
-        data[fieldId] = Object.fromEntries(ds)
+        data[fieldId] = { df: ds.size, ds: Object.fromEntries(ds) }
       }
 
       index.push([term, data])
@@ -1394,7 +1394,10 @@ const defaultAutoSuggestOptions = {
 
 const createMap = () => new Map()
 
-type SerializedIndexEntry = { [key: string]: number }
+interface SerializedIndexEntry {
+  df: number
+  ds: { [key: string]: number }
+}
 
 const objectToNumericMap = <T>(object: { [key: string]: T }): Map<number, T> => {
   const map = new Map()
