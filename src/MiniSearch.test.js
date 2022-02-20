@@ -912,14 +912,7 @@ describe('MiniSearch', () => {
       it('returns best results for shaun', () => {
         // Two movies contain the query in the title. Pick the shorter title.
         expect(ms.search('shaun the sheep')[0].title).toEqual('Shaun the Sheep')
-
-        // This result may be somewhat controversial, but the sequel scores
-        // higher because 'the' expands to many other terms that match 'Shaun
-        // the Sheep: The Farmer's Llamas'. In practice this is easily fixed
-        // with a modest title boost (1.5-2). In larger data sets this might be
-        // less of an issue because the matched words are fairly common: 'they',
-        // 'them', 'their'.
-        expect(ms.search('shaun the sheep', { fuzzy: 1, prefix: true })[0].title).toEqual('Shaun the Sheep: The Farmer\'s Llamas')
+        expect(ms.search('shaun the sheep', { fuzzy: 1, prefix: true })[0].title).toEqual('Shaun the Sheep')
       })
 
       it('returns best results for chirin', () => {

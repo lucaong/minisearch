@@ -291,7 +291,7 @@ type QuerySpec = {
 type DocumentTermFreqs = Map<number, number>
 type FieldTermData = Map<number, DocumentTermFreqs>
 
-type RawResultValue = { score: number, match: MatchInfo }
+type RawResultValue = { score: number, terms: Set<string>, match: MatchInfo }
 type RawResult = Map<number, RawResultValue>
 
 /**
@@ -751,15 +751,15 @@ export default class MiniSearch<T = any> {
 
     const results = []
 
-    for (const [docId, { score, match }] of combinedResults) {
-      // Final score takes into account the number of matching terms.
-      const terms = Object.keys(match)
-      const quality = 1 + (terms.length - 1) / 2
+    for (const [docId, { score, terms, match }] of combinedResults) {
+      // Final score takes into account the number of matching QUERY terms.
+      // The end user will only receive the MATCHED terms.
+      const quality = 1 + (terms.size - 1) / 2
 
       const result = {
         id: this._documentIds.get(docId),
         score: score * quality,
-        terms,
+        terms: Object.keys(match),
         match
       }
 
@@ -949,7 +949,7 @@ export default class MiniSearch<T = any> {
       const dataMap = new Map() as FieldTermData
 
       for (const fieldId of Object.keys(data)) {
-        const { ds } = data[fieldId]
+        const ds = data[fieldId]
         dataMap.set(parseInt(fieldId, 10), objectToNumericMap(ds) as DocumentTermFreqs)
       }
 
@@ -999,7 +999,7 @@ export default class MiniSearch<T = any> {
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
 
     const data = this._index.get(query.term)
-    const results = this.termResults(query.term, 1, data, boosts, boostDocument)
+    const results = this.termResults(query.term, query.term, 1, data, boosts, boostDocument)
 
     let prefixMatches
     let fuzzyMatches
@@ -1029,7 +1029,7 @@ export default class MiniSearch<T = any> {
         // account for the fact that prefix matches stay more relevant than
         // fuzzy matches for longer distances.
         const weight = prefixWeight * term.length / (term.length + 0.3 * distance)
-        this.termResults(term, weight, data, boosts, boostDocument, results)
+        this.termResults(query.term, term, weight, data, boosts, boostDocument, results)
       }
     }
 
@@ -1041,7 +1041,7 @@ export default class MiniSearch<T = any> {
         // Weight gradually approaches 0 as distance goes to infinity, with the
         // weight for the hypothetical distance 0 being equal to fuzzyWeight.
         const weight = fuzzyWeight * term.length / (term.length + distance)
-        this.termResults(term, weight, data, boosts, boostDocument, results)
+        this.termResults(query.term, term, weight, data, boosts, boostDocument, results)
       }
     }
 
@@ -1090,7 +1090,7 @@ export default class MiniSearch<T = any> {
       for (const [fieldId, ds] of fieldIndex) {
         // NOTE: Storing df/ds seperately is redundant and currently only done
         // for serialization format compatibility.
-        data[fieldId] = { df: ds.size, ds: Object.fromEntries(ds) }
+        data[fieldId] = Object.fromEntries(ds)
       }
 
       index.push([term, data])
@@ -1113,7 +1113,8 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private termResults (
-    term: string,
+    sourceTerm: string,
+    derivedTerm: string,
     termWeight: number,
     fieldTermData: FieldTermData,
     fieldBoosts: { [field: string]: number },
@@ -1133,7 +1134,7 @@ export default class MiniSearch<T = any> {
       const avgFieldLength = this._avgFieldLength[fieldId]
 
       for (const docId of fieldTermFreqs.keys()) {
-        const docBoost = boostDocumentFn ? boostDocumentFn(this._documentIds.get(docId), term) : 1
+        const docBoost = boostDocumentFn ? boostDocumentFn(this._documentIds.get(docId), derivedTerm) : 1
         if (!docBoost) continue
 
         const termFreq = fieldTermFreqs.get(docId)!
@@ -1144,16 +1145,20 @@ export default class MiniSearch<T = any> {
         const result = results.get(docId)
         if (result) {
           result.score += weightedScore
-          const match = getOwnProperty(result.match, term)
+          result.terms.add(sourceTerm)
+          const match = getOwnProperty(result.match, derivedTerm)
           if (match) {
             match.push(field)
           } else {
-            result.match[term] = [field]
+            result.match[derivedTerm] = [field]
           }
         } else {
+          const terms = new Set<string>()
+          terms.add(sourceTerm)
           results.set(docId, {
             score: weightedScore,
-            match: { [term]: [field] }
+            terms,
+            match: { [derivedTerm]: [field] }
           })
         }
       }
@@ -1291,9 +1296,10 @@ const combinators: { [kind: string]: CombinatorFunction } = {
       if (existing == null) {
         a.set(docId, b.get(docId)!)
       } else {
-        const { score, match } = b.get(docId)!
+        const { score, terms, match } = b.get(docId)!
         existing.score = existing.score + score
         existing.match = Object.assign(existing.match, match)
+        for (const term of terms) existing.terms.add(term)
       }
     }
 
@@ -1306,9 +1312,11 @@ const combinators: { [kind: string]: CombinatorFunction } = {
       const existing = a.get(docId)
       if (existing == null) continue
 
-      const { score, match } = b.get(docId)!
+      const { score, terms, match } = b.get(docId)!
+      for (const term of terms) existing.terms.add(term)
       combined.set(docId, {
         score: existing.score + score,
+        terms: existing.terms,
         match: Object.assign(existing.match, match)
       })
     }
@@ -1372,7 +1380,7 @@ const defaultAutoSuggestOptions = {
 
 const createMap = () => new Map()
 
-type SerializedIndexEntry = { df: number, ds: { [key: string]: number } }
+type SerializedIndexEntry = { [key: string]: number }
 
 const objectToNumericMap = <T>(object: { [key: string]: T }): Map<number, T> => {
   const map = new Map()
