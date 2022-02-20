@@ -754,7 +754,7 @@ export default class MiniSearch<T = any> {
     for (const [docId, { score, terms, match }] of combinedResults) {
       // Final score takes into account the number of matching QUERY terms.
       // The end user will only receive the MATCHED terms.
-      const quality = 1 + (terms.size - 1) / 2
+      const quality = terms.size
 
       const result = {
         id: this._documentIds.get(docId),
