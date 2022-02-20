@@ -291,7 +291,21 @@ type QuerySpec = {
 type DocumentTermFreqs = Map<number, number>
 type FieldTermData = Map<number, DocumentTermFreqs>
 
-type RawResultValue = { score: number, terms: Set<string>, match: MatchInfo }
+interface RawResultValue {
+  // Intermediate score, before applying the final score based on number of
+  // matched terms.
+  score: number,
+
+  // Set of all query terms that were matched. They may not be present in the
+  // text exactly, in the case of prefix/fuzzy matches.
+  terms: Set<string>,
+
+  // All terms that were found in the content, including the fields in which
+  // they were present. This object will be provided as part of the final search
+  // results.
+  match: MatchInfo,
+}
+
 type RawResult = Map<number, RawResultValue>
 
 /**
