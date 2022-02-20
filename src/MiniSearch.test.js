@@ -893,16 +893,14 @@ describe('MiniSearch', () => {
           // Has 'sheep' in title and once in a description of average length.
           'Shaun the Sheep',
 
-          // Has 'sheep' in a short description.
+          // Has 'sheep' just once, in a short description.
           'Rams',
+
+          // Contains 'sheep' just once, in a long title.
+          'Shaun the Sheep: The Farmer\'s Llamas',
 
           // Has most occurrences of 'sheep'.
           'Ringing Bell',
-
-          // Contains 'sheep' just once, in a long title. The term 'sheep' in
-          // the title is less common than in the description. This result is
-          // arguably not great, but a small title boost is a simple fix.
-          'Shaun the Sheep: The Farmer\'s Llamas',
 
           // Contains 'sheep' just once, in a long description.
           'Lamb'

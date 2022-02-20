@@ -1345,8 +1345,9 @@ const combinators: { [kind: string]: CombinatorFunction } = {
 
 // https://en.wikipedia.org/wiki/Okapi_BM25
 // https://opensourceconnections.com/blog/2015/10/16/bm25-the-next-generation-of-lucene-relevation/
-const k = 1.2 // Term frequency saturation point.
-const b = 0.7 // Length normalization impact.
+const k = 1.2 // Term frequency saturation point. Recommended values are between 1.2 and 2.
+const b = 0.7 // Length normalization impact. Recommended values are around 0.75.
+const d = 0.5 // BM25+ frequency normalization lower bound. Recommended values are between 0.5 and 1.
 const calcBM25Score = (
   termFreq: number,
   matchingCount: number,
@@ -1355,7 +1356,7 @@ const calcBM25Score = (
   avgFieldLength: number
 ): number => {
   const invDocFreq = Math.log(1 + (totalCount - matchingCount + 0.5) / (matchingCount + 0.5))
-  return invDocFreq * termFreq * (k + 1) / (termFreq + k * (1 - b + b * fieldLength / avgFieldLength))
+  return invDocFreq * (d + termFreq * (k + 1) / (termFreq + k * (1 - b + b * fieldLength / avgFieldLength)))
 }
 
 const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, terms: string[]): QuerySpec => {
