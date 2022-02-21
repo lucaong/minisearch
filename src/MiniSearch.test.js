@@ -455,10 +455,10 @@ describe('MiniSearch', () => {
   describe('search', () => {
     const documents = [
       { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
-      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como', category: 'fiction' },
+      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como', lang: 'it', category: 'fiction' },
       { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria', category: 'poetry' }
     ]
-    const ms = new MiniSearch({ fields: ['title', 'text'], storeFields: ['category'] })
+    const ms = new MiniSearch({ fields: ['title', 'text'], storeFields: ['lang', 'category'] })
     ms.addAll(documents)
 
     it('returns scored results', () => {
@@ -471,6 +471,7 @@ describe('MiniSearch', () => {
     it('returns stored fields in the results', () => {
       const results = ms.search('del')
       expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ lang }) => lang).sort()).toEqual(['it', undefined, undefined])
       expect(results.map(({ category }) => category).sort()).toEqual(['fiction', 'poetry', undefined])
     })
 

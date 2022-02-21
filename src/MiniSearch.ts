@@ -1268,8 +1268,7 @@ export default class MiniSearch<T = any> {
 
     for (const fieldName of storeFields) {
       const fieldValue = extractField(doc, fieldName)
-      if (fieldValue === undefined) { return }
-      documentFields[fieldName] = fieldValue
+      if (fieldValue !== undefined) documentFields[fieldName] = fieldValue
     }
   }
 }
