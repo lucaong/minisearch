@@ -4,7 +4,7 @@ This design document has the aim to explain the details of `MiniSearch`
 design and implementation to library developers that intend to contribute to
 this project, or that are simply curious about the internals.
 
-**Latest update: Oct. 22, 2019**
+**Latest update: Feb. 21, 2022**
 
 ## Goals (and non-goals)
 
@@ -89,52 +89,53 @@ released as a separate library.
 
 ### Fuzzy search algorithm
 
-The algorithm used to provide fuzzy search of keys within a maximum [Levenshtein
-distance](https://en.wikipedia.org/wiki/Levenshtein_distance) from a given term
-is the following:
+Fuzzy search is performed by calculating the [Levenshtein
+distance](https://en.wikipedia.org/wiki/Levenshtein_distance) between the search
+term and the keys in the radix tree. The algorithm used is a variation on the
+[Wagner-Fischer
+algorithm](https://en.wikipedia.org/wiki/Wagner–Fischer_algorithm). This
+algorithm constructs a matrix to calculate the edit distance between two terms.
+Because the search terms are stored in a radix tree, the same matrix can be
+reused for comparisons of child nodes if we do a depth-first traversal of the
+tree.
 
-  - The search starts with a budget of edit distance, initially equal to the
-    given maximum distance.
-  - The radix tree is traversed, starting from the root, visiting each path and
-    propagating the remaining budget along each path, but quitting any search
-    path along which the budget is exhausted.
-  - For each visited node in the radix tree, the string contained in the node is
-    traversed character by character using cursors that are kept on a stack.
-  - Each cursor has: a pointer to a position in the node string; a pointer to a
-    corresponding position in the search string; the type of the last edit,
-    either `deletion`, or `insertion`, or `change`, or `none`; a budget of
-    "available edits". This budget is decremented whenever an edit is required.
-    The budget is passed from parent to children cursors.
-  - The algorithm pulls cursors from the stack, and compares the pointed
-    character in the node string with the pointed character in the search
-    string:
-    * if they are the same, one single child cursor is created, advancing both
-      pointers of 1 position. No edit was necessary, so the last edit type is
-      `none`.
-    * if they are not the same, and the remaining budget is higher than zero, up
-      to three children cursors are created: one corresponding to a character
-      `change`, where both pointers are incremented by 1; one corresponding to a
-      `deletion`, where only the search string pointer is incremented; one
-      corresponding to an `insertion`, where only the node string pointer is
-      incremented. Each of the children cursors have a budget that is one less
-      the parent budget.
-    * Some special cases are considered to avoid creating unnecessary cursors. A
-      sequence of adjacent `deletion`-`insertion`, or `insertion`-`deletion`,
-      would have the same effect of a change, but would consume more budget:
-      therefore, a delete cursor is never created after a insertion cursor, and
-      vice-versa. Similarily, adjacent `change`-`deletion` and
-      `deletion`-`change`, or `change`-`insertion` and `insertion`-`change`, are
-      equivalent. Therefore, only one of these cases is generated, by never
-      producing a change cursor after a deletion or insertion one.
-  - Whenever the algorithm finds a leaf node, it reports it as a result.
+The algorithm to find matching keys within a maximum edit distance from a given
+term is the following:
+
+  - Create a matrix with `query length + 1` columns and `query length + edit
+    distance + 1` rows. The columns `1..n` correspond to the query characters
+    `0..n-1`. The rows `1..m` correspond to the characters `0..m-1` for every
+    key in the radix tree that is visited.
+  - The first row and and first column is filled with consecutive numbers 0, 1,
+    2, 3, ..., up to at least the edit distance. All other entries are set to
+    `max distance + 1`.
+  - The radix tree is traversed, starting from the root, visiting each node in a
+    depth-first traversal and updating the matrix.
+  - The matrix is updated according to the [Wagner-Fischer
+    algorithm](https://en.wikipedia.org/wiki/Wagner–Fischer_algorithm): the keys
+    for every child node are compared with the characters in the query, and the
+    edit distance for the current matrix entry is calculated based on the
+    positions in the previous column and previous row.
+  - Only the diagonal band of `2 * edit distance + 1` needs to be calculated.
+  - When the current row of the matrix only contains entries above the maximum
+    edit distance, it is guaranteed that any child nodes below the current node
+    will not yield any matches and the entire subtree can be skipped.
+  - For every leaf node, if the edit distance in the lower right corner is equal
+    to or below the maximum edit distance, it is recorded as a match.
 
 Note that this algorithm can get complex if the maximum edit distance is large,
 as many paths would be followed. The reason why this algorithm is employed is a
 trade-off:
 
   - For full-text search purposes, the maximum edit distance is small, so the
-    algorithm is performant enough
-  - The alternatives (e.g. trigram indexes), would require much more space
+    algorithm is performant enough.
+  - A [Levenshtein
+    automaton](https://en.wikipedia.org/wiki/Levenshtein_automaton) is a fast
+    alternative for low edit distances (1 or 2), but can get excessively complex
+    and memory hungry for edit distances above 3. It is also a much more complex
+    algorithm.
+  - Trigram indexes require much more space and often yield worse results (a
+    trigram index cannot match `votka` to `vodka`).
   - As `MiniSearch` is optimized for local and possibly memory-constrained
     setup, higher computation complexity is traded in exchange for smaller space
     requirement for the index.

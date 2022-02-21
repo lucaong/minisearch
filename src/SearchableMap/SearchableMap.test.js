@@ -265,6 +265,11 @@ describe('SearchableMap', () => {
     it('returns an empty object if no matching entries are found', () => {
       expect(map.fuzzyGet('winter', 1)).toEqual(new Map())
     })
+
+    it('returns entries if edit distance is longer than key', () => {
+      const map = SearchableMap.from([['x', 1], [' x', 2]])
+      expect(Array.from(map.fuzzyGet('x', 2).values())).toEqual([[1, 0], [2, 1]])
+    })
   })
 
   describe('with generated test data', () => {

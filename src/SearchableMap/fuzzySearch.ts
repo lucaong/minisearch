@@ -17,11 +17,12 @@ export const fuzzySearch = <T = any>(node: RadixTree<T>, query: string, maxDista
   const n = query.length + 1
 
   // Matching terms can never be longer than N + maxDistance.
-  const maxLength = n + maxDistance
+  const m = n + maxDistance
 
-  // Fill first matrix row with consecutive numbers 0 1 2 3 ... (n - 1)
-  const matrix = new Uint8Array(maxLength * n)
-  for (let i = 0; i < n; i++) matrix[i] = i
+  // Fill first matrix row and column with numbers: 0 1 2 3 ...
+  const matrix = new Uint8Array(m * n).fill(maxDistance + 1)
+  for (let j = 0; j < n; ++j) matrix[j] = j
+  for (let i = 1; i < m; ++i) matrix[i * n] = i
 
   recurse(
     node,
@@ -29,7 +30,7 @@ export const fuzzySearch = <T = any>(node: RadixTree<T>, query: string, maxDista
     maxDistance,
     results,
     matrix,
-    n,
+    1,
     n,
     ''
   )
@@ -58,10 +59,12 @@ const recurse = <T = any>(
   maxDistance: number,
   results: FuzzyResults<T>,
   matrix: Uint8Array,
-  offset: number,
+  m: number,
   n: number,
   prefix: string
 ): void => {
+  const offset = m * n
+
   key: for (const key of node.keys()) {
     if (key === LEAF) {
       // We've reached a leaf node. Check if the edit distance acceptable and
@@ -74,17 +77,21 @@ const recurse = <T = any>(
       // Iterate over all characters in the key. Update the Levenshtein matrix
       // and check if the minimum distance in the last row is still within the
       // maximum edit distance. If it is, we can recurse over all child nodes.
-      for (let i = 0; i < key.length; i++) {
-        const char = key[i]
-        const thisRowOffset = offset + n * i
+      let i = m
+      for (let pos = 0; pos < key.length; ++pos, ++i) {
+        const char = key[pos]
+        const thisRowOffset = n * i
         const prevRowOffset = thisRowOffset - n
 
         // Set the first column based on the previous row, and initialize the
         // minimum distance in the current row.
-        let minDistance = matrix[thisRowOffset] = matrix[prevRowOffset] + 1
+        let minDistance = matrix[thisRowOffset]
+
+        const jmin = Math.max(0, i - maxDistance - 1)
+        const jmax = Math.min(n - 1, i + maxDistance)
 
         // Iterate over remaining columns (characters in the query).
-        for (let j = 0; j < n - 1; j++) {
+        for (let j = jmin; j < jmax; ++j) {
           const different = char !== query[j]
 
           // It might make sense to only read the matrix positions used for
@@ -112,7 +119,7 @@ const recurse = <T = any>(
         maxDistance,
         results,
         matrix,
-        offset + n * key.length,
+        i,
         n,
         prefix + key
       )
