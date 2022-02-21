@@ -39,13 +39,15 @@ UIs, removing the need to make requests to a search server.
   * Memory-efficient index, designed to support memory-constrained use cases
     like mobile browsers.
 
-  * Exact match, prefix search, fuzzy match, field boosting
+  * Exact match, prefix search, fuzzy match, field boosting.
 
-  * Auto-suggestion engine, for auto-completion of search queries
+  * Auto-suggestion engine, for auto-completion of search queries.
 
-  * Documents can be added and removed from the index at any time
+  * Modern search result ranking algorithm.
 
-  * Zero external dependencies
+  * Documents can be added and removed from the index at any time.
+
+  * Zero external dependencies.
 
 `MiniSearch` strives to expose a simple API that provides the building blocks to
 build custom solutions, while keeping a small and well tested codebase.
