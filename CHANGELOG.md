@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v4.0.3
+
+  - [fix] Fix regression causing stored fields not being saved in some
+    situations.
+
 # v4.0.2
 
   - [fix] Fix match data on mixed prefix and fuzzy search
@@ -12,7 +17,9 @@
     prefix search to be scored higher than an exact match.
 
   - [breaking change] `SearchableMap` method `fuzzyGet` now returns a `Map`
-    instead of an object.
+    instead of an object. This is a breaking change only if you directly use
+    `SearchableMap`, not if you use `MiniSearch`, and is considered part of
+    version 4.
 
 # v4.0.0
 
