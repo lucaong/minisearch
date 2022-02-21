@@ -1,4 +1,4 @@
-import { RadixTree, Entry } from './types'
+import { RadixTree, Entry, LeafType } from './types'
 
 /** @ignore */
 const ENTRIES = 'ENTRIES'
@@ -10,9 +10,16 @@ const KEYS = 'KEYS'
 const VALUES = 'VALUES'
 
 /** @ignore */
-const LEAF = ''
+const LEAF = '' as LeafType
 
-type IteratorType = 'ENTRIES' | 'KEYS' | 'VALUES'
+interface Iterators<T> {
+  ENTRIES: Entry<T>
+  KEYS: string
+  VALUES: T
+}
+
+type Kind<T> = keyof Iterators<T>
+type Result<T, K extends keyof Iterators<T>> = Iterators<T>[K]
 
 type IteratorPath<T> = {
   node: RadixTree<T>,
@@ -27,12 +34,12 @@ export type IterableSet<T> = {
 /**
  * @private
  */
-class TreeIterator<T, V> implements Iterator<V> {
+class TreeIterator<T, K extends Kind<T>> implements Iterator<Result<T, K>> {
   set: IterableSet<T>
-  _type: IteratorType
+  _type: K
   _path: IteratorPath<T>
 
-  constructor (set: IterableSet<T>, type: IteratorType) {
+  constructor (set: IterableSet<T>, type: K) {
     const node = set._tree
     const keys = Array.from(node.keys())
     this.set = set
@@ -40,24 +47,27 @@ class TreeIterator<T, V> implements Iterator<V> {
     this._path = keys.length > 0 ? [{ node, keys }] : []
   }
 
-  next (): IteratorResult<V> {
+  next (): IteratorResult<Result<T, K>> {
     const value = this.dive()
     this.backtrack()
     return value
   }
 
-  dive (): IteratorResult<V> {
+  dive (): IteratorResult<Result<T, K>> {
     if (this._path.length === 0) { return { done: true, value: undefined } }
     const { node, keys } = last(this._path)!
-    if (last(keys) === LEAF) { return { done: false, value: this.result() as V } }
-    this._path.push({ node: node.get(last(keys)!) as RadixTree<T>, keys: Array.from((node.get(last(keys)!) as RadixTree<T>).keys()) })
+    if (last(keys) === LEAF) { return { done: false, value: this.result() } }
+
+    const child = node.get(last(keys)!)!
+    this._path.push({ node: child, keys: Array.from(child.keys()) })
     return this.dive()
   }
 
   backtrack (): void {
     if (this._path.length === 0) { return }
-    last(this._path)!.keys.pop()
-    if (last(this._path)!.keys.length > 0) { return }
+    const keys = last(this._path)!.keys
+    keys.pop()
+    if (keys.length > 0) { return }
     this._path.pop()
     this.backtrack()
   }
@@ -70,13 +80,15 @@ class TreeIterator<T, V> implements Iterator<V> {
   }
 
   value (): T {
-    return last(this._path)!.node.get(LEAF) as T
+    return last(this._path)!.node.get(LEAF)!
   }
 
-  result (): unknown {
-    if (this._type === VALUES) { return this.value() }
-    if (this._type === KEYS) { return this.key() }
-    return [this.key(), this.value()] as Entry<T>
+  result (): Result<T, K> {
+    switch (this._type) {
+      case VALUES: return this.value() as Result<T, K>
+      case KEYS: return this.key() as Result<T, K>
+      default: return [this.key(), this.value()] as Result<T, K>
+    }
   }
 
   [Symbol.iterator] () {

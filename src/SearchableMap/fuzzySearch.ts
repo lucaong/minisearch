@@ -71,7 +71,7 @@ const recurse = <T = any>(
       // store the result if it is.
       const distance = matrix[offset - 1]
       if (distance <= maxDistance) {
-        results.set(prefix, [node.get(key) as T, distance])
+        results.set(prefix, [node.get(key)!, distance])
       }
     } else {
       // Iterate over all characters in the key. Update the Levenshtein matrix
@@ -114,7 +114,7 @@ const recurse = <T = any>(
       }
 
       recurse(
-        node.get(key) as RadixTree<T>,
+        node.get(key)!,
         query,
         maxDistance,
         results,
