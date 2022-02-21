@@ -1013,7 +1013,7 @@ export default class MiniSearch<T = any> {
     if (query.fuzzy) {
       const fuzzy = (query.fuzzy === true) ? 0.2 : query.fuzzy
       const maxDistance = fuzzy < 1 ? Math.min(maxFuzzy, Math.round(query.term.length * fuzzy)) : fuzzy
-      fuzzyMatches = this._index.fuzzyGet(query.term, maxDistance)
+      if (maxDistance) fuzzyMatches = this._index.fuzzyGet(query.term, maxDistance)
     }
 
     if (prefixMatches) {
