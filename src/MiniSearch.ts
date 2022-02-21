@@ -1155,6 +1155,10 @@ export default class MiniSearch<T = any> {
 
         const termFreq = fieldTermFreqs.get(docId)!
         const fieldLength = this._fieldLength.get(docId)![fieldId]
+
+        // TODO: It might be better to use the number of documents where the
+        // current field is non-blank, rather than `this._documentCount` the
+        // total number of documents.
         const rawScore = calcBM25Score(termFreq, matchingFields, this._documentCount, fieldLength, avgFieldLength)
         const weightedScore = termWeight * fieldBoost * docBoost * rawScore
 
