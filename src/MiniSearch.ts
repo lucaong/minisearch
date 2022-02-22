@@ -368,7 +368,7 @@ type RawResult = Map<number, RawResultValue>
  */
 export default class MiniSearch<T = any> {
   protected _options: OptionsWithDefaults<T>
-  protected _index: SearchableMap
+  protected _index: SearchableMap<FieldTermData>
   protected _documentCount: number
   protected _documentIds: Map<number, any>
   protected _fieldIds: { [key: string]: number }
@@ -946,7 +946,7 @@ export default class MiniSearch<T = any> {
       storedFields,
       serializationVersion
     } = js
-    if (serializationVersion !== 1) {
+    if (serializationVersion !== 2) {
       throw new Error('MiniSearch: cannot deserialize an index created with an incompatible version')
     }
 
@@ -965,8 +965,7 @@ export default class MiniSearch<T = any> {
       const dataMap = new Map() as FieldTermData
 
       for (const fieldId of Object.keys(data)) {
-        const { ds } = data[fieldId]
-        dataMap.set(parseInt(fieldId, 10), objectToNumericMap(ds) as DocumentTermFreqs)
+        dataMap.set(parseInt(fieldId, 10), objectToNumericMap(data[fieldId]) as DocumentTermFreqs)
       }
 
       miniSearch._index.set(term, dataMap)
@@ -1103,10 +1102,8 @@ export default class MiniSearch<T = any> {
     for (const [term, fieldIndex] of this._index) {
       const data: { [key: string]: SerializedIndexEntry } = {}
 
-      for (const [fieldId, ds] of fieldIndex) {
-        // NOTE: Storing df/ds seperately is redundant and currently only done
-        // for serialization format compatibility.
-        data[fieldId] = { df: ds.size, ds: Object.fromEntries(ds) }
+      for (const [fieldId, freqs] of fieldIndex) {
+        data[fieldId] = Object.fromEntries(freqs)
       }
 
       index.push([term, data])
@@ -1121,7 +1118,7 @@ export default class MiniSearch<T = any> {
       averageFieldLength: this._avgFieldLength,
       storedFields: Object.fromEntries(this._storedFields),
       index,
-      serializationVersion: 1
+      serializationVersion: 2
     }
   }
 
@@ -1132,7 +1129,7 @@ export default class MiniSearch<T = any> {
     sourceTerm: string,
     derivedTerm: string,
     termWeight: number,
-    fieldTermData: FieldTermData,
+    fieldTermData: FieldTermData | undefined,
     fieldBoosts: { [field: string]: number },
     boostDocumentFn: ((id: any, term: string) => number) | undefined,
     results: RawResult = new Map()
@@ -1229,7 +1226,7 @@ export default class MiniSearch<T = any> {
       fieldIndex.set(documentId, fieldIndex.get(documentId)! - 1)
     }
 
-    if (this._index.get(term).size === 0) {
+    if (this._index.get(term)!.size === 0) {
       this._index.delete(term)
     }
   }
@@ -1418,8 +1415,7 @@ const byScore = ({ score: a }: Scored, { score: b }: Scored) => b - a
 const createMap = () => new Map()
 
 interface SerializedIndexEntry {
-  df: number
-  ds: { [key: string]: number }
+  [key: string]: number
 }
 
 const objectToNumericMap = <T>(object: { [key: string]: T }): Map<number, T> => {
