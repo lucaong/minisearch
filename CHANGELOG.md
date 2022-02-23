@@ -2,6 +2,18 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v5.0.0-beta1
+
+  - [breaking change] Use the [BM25+
+    algorithm](https://en.wikipedia.org/wiki/Okapi_BM25) to score search
+    results, improving their quality over the previous implementation. Note
+    that, if you were using field boosting, you might need to re-adjust the
+    boosting amounts, since their effect is now different.
+
+  - Remove redundant fields in the index data. This also changes the
+    serialization format, but serialized indexes created with `v4.x.y` are still
+    deserialized correctly.
+
 # v4.0.3
 
   - [fix] Fix regression causing stored fields not being saved in some
@@ -33,7 +45,7 @@
     faster in the official benchmark) and search, due to changes to the internal
     data structures and the code.
 
-  - [peformance] The fuzzy search algorythm has been updated to work like
+  - [peformance] The fuzzy search algorithm has been updated to work like
     outlined in [this blog post by Steve
     Hanov](http://stevehanov.ca/blog/?id=114), improving its performance by
     several times, especially on large maximum edit distances.
