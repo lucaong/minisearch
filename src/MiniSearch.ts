@@ -946,7 +946,7 @@ export default class MiniSearch<T = any> {
       storedFields,
       serializationVersion
     } = js
-    if (serializationVersion !== 2) {
+    if (serializationVersion !== 1 && serializationVersion !== 2) {
       throw new Error('MiniSearch: cannot deserialize an index created with an incompatible version')
     }
 
@@ -965,7 +965,14 @@ export default class MiniSearch<T = any> {
       const dataMap = new Map() as FieldTermData
 
       for (const fieldId of Object.keys(data)) {
-        dataMap.set(parseInt(fieldId, 10), objectToNumericMap(data[fieldId]) as DocumentTermFreqs)
+        let indexEntry = data[fieldId]
+
+        // Version 1 used to nest the index entry inside a field called ds
+        if (serializationVersion === 1) {
+          indexEntry = indexEntry.ds as unknown as SerializedIndexEntry
+        }
+
+        dataMap.set(parseInt(fieldId, 10), objectToNumericMap(indexEntry) as DocumentTermFreqs)
       }
 
       miniSearch._index.set(term, dataMap)
