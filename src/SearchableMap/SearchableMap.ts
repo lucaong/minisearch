@@ -1,3 +1,4 @@
+/* eslint-disable no-labels */
 import { TreeIterator, ENTRIES, KEYS, VALUES, LEAF } from './TreeIterator'
 import fuzzySearch, { FuzzyResults } from './fuzzySearch'
 import { RadixTree, Entry, Path } from './types'
@@ -335,39 +336,48 @@ const lookup = <T = any>(tree: RadixTree<T>, key: string): RadixTree<T> | undefi
   }
 }
 
-const createPath = <T = any>(tree: RadixTree<T>, key: string): RadixTree<T> => {
-  if (key.length === 0 || tree == null) { return tree }
+// Create a path in the radix tree for the given key, and returns the deepest
+// node. This function is in the hot path for indexing. It avoids unnecessary
+// string operations and recursion for performance.
+const createPath = <T = any>(node: RadixTree<T>, key: string): RadixTree<T> => {
+  const keyLength = key.length
 
-  for (const k of tree.keys()) {
-    if (k !== LEAF && key.startsWith(k)) {
-      return createPath(tree.get(k)!, key.slice(k.length))
+  outer: for (let pos = 0; node && pos < keyLength;) {
+    for (const k of node.keys()) {
+      // Check whether this key is a candidate: the first characters must match.
+      if (k !== LEAF && key[pos] === k[0]) {
+        const len = Math.min(keyLength - pos, k.length)
+
+        // Advance offset to the point where key and k no longer match.
+        let offset = 1
+        while (offset < len && key[pos + offset] === k[offset]) ++offset
+
+        const child = node.get(k)!
+        if (offset === k.length) {
+          // The existing key is shorter than the key we need to create.
+          node = child
+        } else {
+          // Partial match: we need to insert an intermediate node to contain
+          // both the existing subtree and the new node.
+          const intermediate = new Map()
+          intermediate.set(k.slice(offset), child)
+          node.set(key.slice(pos, pos + offset), intermediate)
+          node.delete(k)
+          node = intermediate
+        }
+
+        pos += offset
+        continue outer
+      }
     }
+
+    // Create a final child node to contain the final suffix of the key.
+    const child = new Map()
+    node.set(key.slice(pos), child)
+    return child
   }
 
-  for (const k of tree.keys()) {
-    if (k !== LEAF && k.startsWith(key[0])) {
-      const offset = commonPrefixOffset(key, k)
-      const node = new Map()
-      node.set(k.slice(offset), tree.get(k)!)
-      tree.set(key.slice(0, offset), node)
-      tree.delete(k)
-      return createPath(node, key.slice(offset))
-    }
-  }
-
-  const node = new Map()
-  tree.set(key, node)
   return node
-}
-
-const commonPrefixOffset = (a: string, b: string): number => {
-  const length = Math.min(a.length, b.length)
-
-  for (let i = 0; i < length; i++) {
-    if (a[i] !== b[i]) return i
-  }
-
-  return length
 }
 
 const remove = <T = any>(tree: RadixTree<T>, key: string): void => {
