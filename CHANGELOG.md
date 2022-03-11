@@ -4,6 +4,13 @@
 
 # v5.0.0-beta1
 
+This is a beta release of `v5.0.0`. The main change is an improved scoring
+algorithm. The beta is generally stable, but the improvements to the scoring
+algorithm will cause the sorting of search results to be different than in
+previous versions (generally better), and need less aggressive boosting. For
+feedback about this beta release, please use [this
+issue](https://github.com/lucaong/minisearch/issues/142).
+
   - [breaking change] Use the [BM25+
     algorithm](https://en.wikipedia.org/wiki/Okapi_BM25) to score search
     results, improving their quality over the previous implementation. Note
