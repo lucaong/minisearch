@@ -598,6 +598,19 @@ describe('MiniSearch', () => {
       expect(combined[1].match.gentes).toEqual(['text'])
     })
 
+    it('ranks prefix matches higher than fuzzy matches with the same distance, all else being equal', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'unicorns' },
+        { id: 2, text: 'unikorn' }
+      ]
+      ms.addAll(documents)
+      expect(ms.documentCount).toEqual(documents.length)
+
+      const results = ms.search('unicorn', { fuzzy: 0.2, prefix: true })
+      expect(results.map(({ id }) => id)).toEqual([1, 2])
+    })
+
     it('accepts a function to compute fuzzy and prefix options from term', () => {
       const fuzzy = jest.fn(term => term.length > 4 ? 2 : false)
       const prefix = jest.fn(term => term.length > 4)

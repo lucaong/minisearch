@@ -1396,7 +1396,7 @@ const defaultSearchOptions = {
   fuzzy: false,
   maxFuzzy: 6,
   boost: {},
-  weights: { fuzzy: 0.45, prefix: 0.375 }
+  weights: { fuzzy: 0.4, prefix: 0.375 }
 }
 
 const defaultAutoSuggestOptions = {
