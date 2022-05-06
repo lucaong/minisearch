@@ -19,6 +19,10 @@ and more background about `MiniSearch`, including a comparison with other
 similar libraries, in [this blog
 post](https://lucaongaro.eu/blog/2019/01/30/minisearch-client-side-fulltext-search-engine.html).
 
+`MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html),
+and documents releases and changes in the
+[changelog](https://github.com/lucaong/minisearch/blob/master/CHANGELOG.md).
+
 
 ## Use case
 
