@@ -2,7 +2,7 @@ import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
 import { terser } from 'rollup-plugin-terser'
 
-const config = ({ format, input, output, name, dir, extension = 'js' }) => {
+const config = ({ format, input, output, name, dir, extension = 'js', exports = undefined }) => {
   const shouldMinify = process.env.MINIFY === 'true' && output !== 'dts'
 
   return {
@@ -10,6 +10,7 @@ const config = ({ format, input, output, name, dir, extension = 'js' }) => {
     output: {
       sourcemap: output !== 'dts',
       dir: `dist/${dir || format}`,
+      exports,
       format,
       name,
       entryFileNames: shouldMinify ? `[name].min.${extension}` : `[name].${extension}`,
@@ -43,13 +44,16 @@ export default process.env.BENCHMARKS === 'true' ? [benchmarks] : [
   // Main (MiniSearch)
   config({ format: 'es', input: 'src/index.ts', output: 'es6' }),
   config({ format: 'es', input: 'src/index.ts', output: 'es5m', dir: 'es5m' }),
+  config({ format: 'cjs', input: 'src/index.ts', output: 'cjs', dir: 'cjs', extension: 'cjs', exports: 'default' }),
   config({ format: 'umd', input: 'src/index.ts', output: 'umd', name: 'MiniSearch' }),
-
-  // Type declarations
-  config({ format: 'es', input: 'src/index.ts', output: 'dts', dir: 'types', extension: 'd.ts' }),
 
   // SearchableMap
   config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'es6' }),
   config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'es5m', dir: 'es5m' }),
-  config({ format: 'umd', input: 'src/SearchableMap/SearchableMap.ts', output: 'umd', name: 'MiniSearch' })
+  config({ format: 'cjs', input: 'src/SearchableMap/SearchableMap.ts', output: 'cjs', dir: 'cjs', extension: 'cjs', exports: 'default' }),
+  config({ format: 'umd', input: 'src/SearchableMap/SearchableMap.ts', output: 'umd', name: 'MiniSearch' }),
+
+  // Type declarations
+  config({ format: 'es', input: 'src/index.ts', output: 'dts', dir: 'types', extension: 'd.ts' }),
+  config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'dts', dir: 'types', extension: 'd.ts' })
 ]
