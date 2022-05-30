@@ -2,7 +2,7 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-# v5.0.0-beta1
+# v5.0.0-beta2
 
 This is a beta release of `v5.0.0`. The main change is an improved scoring
 algorithm. The beta is generally stable, but the improvements to the scoring
@@ -20,6 +20,9 @@ issue](https://github.com/lucaong/minisearch/issues/142).
   - Remove redundant fields in the index data. This also changes the
     serialization format, but serialized indexes created with `v4.x.y` are still
     deserialized correctly.
+
+  - Define `exports` entry points in `package.json`, to require MiniSearch as a
+    commonjs package or import it as a ES module.
 
 # v4.0.3
 
