@@ -5,6 +5,22 @@
   "main": "dist/umd/index.js",
   "module": "dist/es5m/index.js",
   "es2015": "dist/es/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.cjs",
+      "default": "./dist/es/index.js"
+    },
+    "./SearchableMap": {
+      "types": "./dist/types/SearchableMap.d.ts",
+      "require": "./dist/cjs/SearchableMap.cjs",
+      "default": "./dist/es/SearchableMap.js"
+    }
+  },
+  "unpkg": "./dist/umd/index.js",
+  "jsdelivr": "./dist/umd/index.js",
+  "types": "./dist/types/index.d.ts",
   "author": "Luca Ongaro",
   "homepage": "https://lucaong.github.io/minisearch/",
   "bugs": "https://github.com/lucaong/minisearch/issues",
@@ -83,6 +99,5 @@
     "lintfix": "eslint --fix 'src/**/*.{js,ts}'",
     "prepublishOnly": "yarn test && yarn build"
   },
-  "sideEffects": false,
-  "types": "./dist/types/index.d.ts"
+  "sideEffects": false
 }
