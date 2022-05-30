@@ -274,9 +274,9 @@ describe('SearchableMap', () => {
 
   describe('with generated test data', () => {
     it('adds and removes entries', () => {
-      const arrayOfStrings = fc.array(fc.oneof(fc.unicodeString(), fc.string()), 70)
-      const string = fc.oneof(fc.unicodeString(0, 4), fc.string(0, 4))
-      const int = fc.integer(1, 4)
+      const arrayOfStrings = fc.array(fc.oneof(fc.unicodeString(), fc.string()), { maxLength: 70 })
+      const string = fc.oneof(fc.unicodeString({ minLength: 0, maxLength: 4 }), fc.string({ minLength: 0, maxLength: 4 }))
+      const int = fc.integer({ min: 1, max: 4 })
 
       fc.assert(fc.property(arrayOfStrings, string, int, (terms, prefix, maxDist) => {
         const map = new SearchableMap()
