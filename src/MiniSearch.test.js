@@ -1098,7 +1098,7 @@ e forse del mio dir poco ti cale`
 
     it('respects the order of the terms in the query', () => {
       const results = ms.autoSuggest('nostra vi')
-      expect(results.map(({ suggestion }) => suggestion)).toEqual(['nostra vita', 'vita'])
+      expect(results.map(({ suggestion }) => suggestion)).toEqual(['nostra vita'])
     })
 
     it('returns empty suggestions for terms that are not in the index', () => {
@@ -1127,6 +1127,26 @@ e forse del mio dir poco ti cale`
       })
       expect(results[0].suggestion).toEqual('quella')
       expect(results).toHaveLength(1)
+    })
+
+    it('respects the custom defaults set in the constructor', () => {
+      const ms = new MiniSearch({
+        fields: ['title', 'text'],
+        autoSuggestOptions: { combineWith: 'OR', fuzzy: true }
+      })
+      ms.addAll(documents)
+      const results = ms.autoSuggest('nosta vi')
+      expect(results.map(({ suggestion }) => suggestion)).toEqual(['nostra vita', 'vita'])
+    })
+
+    it('applies the default search options if not overridden by the auto suggest defaults', () => {
+      const ms = new MiniSearch({
+        fields: ['title', 'text'],
+        searchOptions: { combineWith: 'OR', fuzzy: true }
+      })
+      ms.addAll(documents)
+      const results = ms.autoSuggest('nosta vi')
+      expect(results.map(({ suggestion }) => suggestion)).toEqual(['nostra vita'])
     })
   })
 

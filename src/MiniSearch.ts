@@ -181,7 +181,13 @@ export type Options<T = any> = {
     * Default search options (see the [[SearchOptions]] type and the
     * [[MiniSearch.search]] method for details)
     */
-  searchOptions?: SearchOptions
+  searchOptions?: SearchOptions,
+
+   /**
+    * Default auto suggest options (see the [[SearchOptions]] type and the
+    * [[MiniSearch.autoSuggest]] method for details)
+    */
+  autoSuggestOptions?: SearchOptions
 }
 
 type OptionsWithDefaults<T = any> = Options<T> & {
@@ -195,7 +201,9 @@ type OptionsWithDefaults<T = any> = Options<T> & {
 
   processTerm: (term: string, fieldName: string) => string | null | undefined | false,
 
-  searchOptions: SearchOptionsWithDefaults
+  searchOptions: SearchOptionsWithDefaults,
+
+  autoSuggestOptions: SearchOptions
 }
 
 /**
@@ -446,7 +454,8 @@ export default class MiniSearch<T = any> {
     this._options = {
       ...defaultOptions,
       ...options,
-      searchOptions: { ...defaultSearchOptions, ...(options.searchOptions || {}) }
+      searchOptions: { ...defaultSearchOptions, ...(options.searchOptions || {}) },
+      autoSuggestOptions: { ...defaultAutoSuggestOptions, ...(options.autoSuggestOptions || {}) }
     }
 
     this._index = new SearchableMap()
@@ -795,6 +804,13 @@ export default class MiniSearch<T = any> {
    * The result is a list of suggested modified search queries, derived from the
    * given search query, each with a relevance score, sorted by descending score.
    *
+   * By default, it uses the same options used for search, except that by
+   * default it performs prefix search on the last term of the query, and
+   * combine terms with `'AND'` (requiring all query terms to match). Custom
+   * options can be passed as a second argument. Defaults can be changed upon
+   * calling the `MiniSearch` constructor, by passing a `autoSuggestOptions`
+   * option.
+   *
    * ### Basic usage:
    *
    * ```javascript
@@ -839,11 +855,12 @@ export default class MiniSearch<T = any> {
    * @param queryString  Query string to be expanded into suggestions
    * @param options  Search options. The supported options and default values
    * are the same as for the `search` method, except that by default prefix
-   * search is performed on the last term in the query.
+   * search is performed on the last term in the query, and terms are combined
+   * with `'AND'`.
    * @return  A sorted array of suggestions sorted by relevance score.
    */
   autoSuggest (queryString: string, options: SearchOptions = {}): Suggestion[] {
-    options = { ...defaultAutoSuggestOptions, ...options }
+    options = { ...this._options.autoSuggestOptions, ...options }
 
     const suggestions: Map<string, Omit<Suggestion, 'suggestion'> & { count: number }> = new Map()
 
@@ -1400,6 +1417,7 @@ const defaultSearchOptions = {
 }
 
 const defaultAutoSuggestOptions = {
+  combineWith: AND,
   prefix: (term: string, i: number, terms: string[]): boolean =>
     i === terms.length - 1
 }
