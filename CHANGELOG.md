@@ -2,7 +2,7 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-# v5.0.0-beta2
+# v5.0.0-beta3
 
 This is a beta release of `v5.0.0`. The main change is an improved scoring
 algorithm. The beta is generally stable, but the improvements to the scoring
@@ -16,6 +16,13 @@ issue](https://github.com/lucaong/minisearch/issues/142).
     results, improving their quality over the previous implementation. Note
     that, if you were using field boosting, you might need to re-adjust the
     boosting amounts, since their effect is now different.
+
+  - [breaking change] auto suggestions now default to `combineWith: 'AND'`
+    instead of `'OR'`, requiring all the query terms to match. The old defaults
+    can be replicated by passing a new `autoSuggestOptions` option to the
+    constructor, with value `{ autoSuggestOptions: { combineWith: 'OR' } }`.
+
+  - Possibility to set the default auto suggest options in the constructor.
 
   - Remove redundant fields in the index data. This also changes the
     serialization format, but serialized indexes created with `v4.x.y` are still
