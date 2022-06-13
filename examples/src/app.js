@@ -148,9 +148,8 @@ class App extends React.PureComponent {
   }
 
   getSuggestions (query) {
-    const { miniSearch, searchOptions } = this.state
-    const prefix = (term, i, terms) => i === terms.length - 1
-    return miniSearch.autoSuggest(query, { ...searchOptions, prefix, boost: { artist: 5 } })
+    const { miniSearch } = this.state
+    return miniSearch.autoSuggest(query, { boost: { artist: 5 } })
       .filter(({ suggestion, score }, _, [first]) => score > first.score / 4)
       .slice(0, 5)
   }
