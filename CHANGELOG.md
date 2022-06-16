@@ -2,14 +2,12 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-# v5.0.0-beta3
+# v5.0.0
 
-This is a beta release of `v5.0.0`. The main change is an improved scoring
-algorithm. The beta is generally stable, but the improvements to the scoring
-algorithm will cause the sorting of search results to be different than in
-previous versions (generally better), and need less aggressive boosting. For
-feedback about this beta release, please use [this
-issue](https://github.com/lucaong/minisearch/issues/142).
+This is a major release. The main change is an improved scoring algorithm based
+on [BM25+](https://en.wikipedia.org/wiki/Okapi_BM25). The new algorithm will
+cause the scoring and sorting of search results to be different than in previous
+versions (generally better), and need less aggressive boosting.
 
   - [breaking change] Use the [BM25+
     algorithm](https://en.wikipedia.org/wiki/Okapi_BM25) to score search
