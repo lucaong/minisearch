@@ -104,7 +104,7 @@ export type SearchOptions = {
    * Function to process or normalize terms in the search query. By default, the
    * same term processor used for indexing is used also for search.
    */
-  processTerm?: (term: string) => string | null | undefined | false
+  processTerm?: (term: string) => string | string[] | null | undefined | false
 }
 
 type SearchOptionsWithDefaults = SearchOptions & {
@@ -174,8 +174,11 @@ export type Options<T = any> = {
     * The function takes as arguments a term to process, and the name of the
     * field it comes from. It should return the processed term as a string, or a
     * falsy value to reject the term entirely.
+    *
+    * It can also return an array of strings, in which case each string in the
+    * returned array is indexed as a separate term.
     */
-  processTerm?: (term: string, fieldName?: string) => string | null | undefined | false,
+  processTerm?: (term: string, fieldName?: string) => string | string[] | null | undefined | false,
 
    /**
     * Default search options (see the [[SearchOptions]] type and the
@@ -199,7 +202,7 @@ type OptionsWithDefaults<T = any> = Options<T> & {
 
   tokenize: (text: string, fieldName: string) => string[],
 
-  processTerm: (term: string, fieldName: string) => string | null | undefined | false,
+  processTerm: (term: string, fieldName: string) => string | string[] | null | undefined | false,
 
   searchOptions: SearchOptionsWithDefaults,
 
@@ -508,7 +511,11 @@ export default class MiniSearch<T = any> {
 
       for (const term of tokens) {
         const processedTerm = processTerm(term, field)
-        if (processedTerm) {
+        if (Array.isArray(processedTerm)) {
+          for (const t of processedTerm) {
+            this.addTerm(fieldId, shortDocumentId, t)
+          }
+        } else if (processedTerm) {
           this.addTerm(fieldId, shortDocumentId, processedTerm)
         }
       }
@@ -591,7 +598,11 @@ export default class MiniSearch<T = any> {
 
           for (const term of tokens) {
             const processedTerm = processTerm(term, field)
-            if (processedTerm) {
+            if (Array.isArray(processedTerm)) {
+              for (const t of processedTerm) {
+                this.removeTerm(fieldId, shortId, t)
+              }
+            } else if (processedTerm) {
               this.removeTerm(fieldId, shortId, processedTerm)
             }
           }
@@ -1012,7 +1023,7 @@ export default class MiniSearch<T = any> {
     const options = { tokenize, processTerm, ...globalSearchOptions, ...searchOptions }
     const { tokenize: searchTokenize, processTerm: searchProcessTerm } = options
     const terms = searchTokenize(query)
-      .map((term: string) => searchProcessTerm(term))
+      .flatMap((term: string) => searchProcessTerm(term))
       .filter((term) => !!term) as string[]
     const queries: QuerySpec[] = terms.map(termToQuerySpec(options))
     const results = queries.map(query => this.executeQuerySpec(query, options))

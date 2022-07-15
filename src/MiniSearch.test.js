@@ -130,6 +130,16 @@ describe('MiniSearch', () => {
         expect(processTerm).toHaveBeenCalledWith(term, 'title')
       })
     })
+
+    it('allows processTerm to expand a single term into several terms', () => {
+      const processTerm = (string) => string === 'foobar' ? ['foo', 'bar'] : string
+      const ms = new MiniSearch({ fields: ['title', 'text'], processTerm })
+      expect(() => {
+        ms.add({ id: 123, text: 'foobar' })
+      }).not.toThrowError()
+
+      expect(ms.search('bar')).toHaveLength(1)
+    })
   })
 
   describe('remove', () => {
@@ -257,6 +267,18 @@ describe('MiniSearch', () => {
       expect(() => {
         ms.remove(document)
       }).not.toThrowError()
+    })
+
+    it('allows processTerm to expand a single term into several terms', () => {
+      const processTerm = (string) => string === 'foobar' ? ['foo', 'bar'] : string
+      const ms = new MiniSearch({ fields: ['title', 'text'], processTerm })
+      const document = { id: 123, title: 'foobar' }
+      ms.add(document)
+      expect(() => {
+        ms.remove(document)
+      }).not.toThrowError()
+
+      expect(ms.search('bar')).toHaveLength(0)
     })
 
     describe('when using custom per-field extraction/tokenizer/processing', () => {
@@ -647,6 +669,13 @@ describe('MiniSearch', () => {
     it('rejects falsy terms', () => {
       const processTerm = (term) => term === 'quel' ? null : term
       const results = ms.search('quel commedia', { processTerm })
+      expect(results.length).toBeGreaterThan(0)
+      expect(results.map(({ id }) => id).sort()).toEqual([1])
+    })
+
+    it('allows processTerm to expand a single term into several terms', () => {
+      const processTerm = (string) => string === 'divinacommedia' ? ['divina', 'commedia'] : string
+      const results = ms.search('divinacommedia', { processTerm })
       expect(results.length).toBeGreaterThan(0)
       expect(results.map(({ id }) => id).sort()).toEqual([1])
     })
