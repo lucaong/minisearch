@@ -14,5 +14,4 @@ suite.add('MiniSearch#search("virtute conoscienza", { fuzzy: 0.2, prefix: true }
   })
 })
 
-
 export default suite
