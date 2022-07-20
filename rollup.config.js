@@ -34,7 +34,7 @@ const benchmarks = {
     sourcemap: true,
     dir: 'benchmarks/dist',
     format: 'commonjs',
-    entryFileNames: '[name].js',
+    entryFileNames: '[name].cjs',
     plugins: []
   },
   plugins: [typescript()]

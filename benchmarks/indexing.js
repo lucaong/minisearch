@@ -1,4 +1,4 @@
-const Benchmark = require('benchmark')
+import Benchmark from 'benchmark'
 import MiniSearch from '../src/MiniSearch.js'
 import { lines } from './divinaCommedia.js'
 

@@ -1,4 +1,4 @@
-const Benchmark = require('benchmark')
+import Benchmark from 'benchmark'
 import { index } from './divinaCommedia.js'
 
 const suite = new Benchmark.Suite('Fuzzy search')

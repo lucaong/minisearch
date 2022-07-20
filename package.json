@@ -41,6 +41,7 @@
   "dependencies": {},
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.0",
+    "@types/benchmark": "^2.1.1",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
     "benchmark": "^2.1.4",
@@ -88,7 +89,7 @@
     "test": "jest",
     "test-watch": "jest --watch",
     "coverage": "jest --coverage",
-    "benchmark": "yarn build-benchmark && NODE_ENV=production node --expose-gc benchmarks/dist/index.js",
+    "benchmark": "yarn build-benchmark && NODE_ENV=production node --expose-gc benchmarks/dist/index.cjs",
     "build-benchmark": "BENCHMARKS=true yarn build",
     "build": "yarn clean-build && NODE_ENV=production rollup -c",
     "clean-build": "rm -rf dist",
