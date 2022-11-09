@@ -963,6 +963,15 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   static loadJS<T = any> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
+    const miniSearch = new MiniSearch(options)
+    miniSearch.loadJS(js)
+    return miniSearch
+  }
+
+  /**
+   * @ignore
+   */
+  loadJS (js: AsPlainObject) {
     const {
       index,
       documentCount,
@@ -978,16 +987,14 @@ export default class MiniSearch<T = any> {
       throw new Error('MiniSearch: cannot deserialize an index created with an incompatible version')
     }
 
-    const miniSearch = new MiniSearch(options)
-
-    miniSearch._documentCount = documentCount
-    miniSearch._nextId = nextId
-    miniSearch._documentIds = objectToNumericMap(documentIds)
-    miniSearch._fieldIds = fieldIds
-    miniSearch._fieldLength = objectToNumericMap(fieldLength)
-    miniSearch._avgFieldLength = averageFieldLength
-    miniSearch._storedFields = objectToNumericMap(storedFields)
-    miniSearch._index = new SearchableMap()
+    this._documentCount = documentCount
+    this._nextId = nextId
+    this._documentIds = objectToNumericMap(documentIds)
+    this._fieldIds = fieldIds
+    this._fieldLength = objectToNumericMap(fieldLength)
+    this._avgFieldLength = averageFieldLength
+    this._storedFields = objectToNumericMap(storedFields)
+    this._index = new SearchableMap()
 
     for (const [term, data] of index) {
       const dataMap = new Map() as FieldTermData
@@ -1003,10 +1010,8 @@ export default class MiniSearch<T = any> {
         dataMap.set(parseInt(fieldId, 10), objectToNumericMap(indexEntry) as DocumentTermFreqs)
       }
 
-      miniSearch._index.set(term, dataMap)
+      this._index.set(term, dataMap)
     }
-
-    return miniSearch
   }
 
   /**
