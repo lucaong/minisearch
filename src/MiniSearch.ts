@@ -180,6 +180,15 @@ export type Options<T = any> = {
     */
   processTerm?: (term: string, fieldName?: string) => string | string[] | null | undefined | false,
 
+  /**
+   * Function called to log messages. Arguments are a log level ('debug',
+   * 'info', 'warn', or 'error'), a log message, and an optional string code
+   * that identifies the reason for the log.
+   *
+   * The default implementation uses `console`, if defined.
+   */
+  logger?: (level: LogLevel, message: string, code?: string) => void
+
    /**
     * Default search options (see the [[SearchOptions]] type and the
     * [[MiniSearch.search]] method for details)
@@ -204,10 +213,14 @@ type OptionsWithDefaults<T = any> = Options<T> & {
 
   processTerm: (term: string, fieldName: string) => string | string[] | null | undefined | false,
 
+  logger: (level: LogLevel, message: string, code?: string) => void
+
   searchOptions: SearchOptionsWithDefaults,
 
   autoSuggestOptions: SearchOptions
 }
+
+type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
 /**
  * The type of auto-suggestions
@@ -1270,10 +1283,9 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private warnDocumentChanged (shortDocumentId: number, fieldId: number, term: string): void {
-    if (console == null || console.warn == null) { return }
     for (const fieldName of Object.keys(this._fieldIds)) {
       if (this._fieldIds[fieldName] === fieldId) {
-        console.warn(`MiniSearch: document with ID ${this._documentIds.get(shortDocumentId)} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`)
+        this._options.logger('warn', `MiniSearch: document with ID ${this._documentIds.get(shortDocumentId)} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`, 'version_conflict')
         return
       }
     }
@@ -1415,7 +1427,8 @@ const defaultOptions = {
   processTerm: (term: string, fieldName?: string) => term.toLowerCase(),
   fields: undefined,
   searchOptions: undefined,
-  storeFields: []
+  storeFields: [],
+  logger: (level: LogLevel, message: string, code?: string) => console != null && console.warn != null && console[level](message)
 }
 
 const defaultSearchOptions = {
