@@ -360,6 +360,16 @@ describe('MiniSearch', () => {
         expect(() => ms.remove({ id: 1, title: 'Divina Commedia cammin', text: 'something has changed' }))
           .not.toThrow()
       })
+
+      it('calls the custom logger if given', () => {
+        const logger = jest.fn()
+        ms = new MiniSearch({ fields: ['title', 'text'], logger })
+        ms.addAll(documents)
+        ms.remove({ id: 1, title: 'Divina Commedia', text: 'something' })
+
+        expect(logger).toHaveBeenCalledWith('warn', 'MiniSearch: document with ID 1 has changed before removal: term "something" was not present in field "text". Removing a document after it has changed can corrupt the index!', 'version_conflict')
+        expect(console.warn).not.toHaveBeenCalled()
+      })
     })
   })
 

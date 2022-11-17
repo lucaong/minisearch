@@ -6,6 +6,7 @@
 
   - The `processTerm` option can now also expand a single term into several
     terms by returning an array of strings.
+  - Add `logger` option to pass a custom logger function.
 
 # v5.0.0
 
