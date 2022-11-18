@@ -1422,7 +1422,7 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
 
 const defaultOptions = {
   idField: 'id',
-  extractField: (document: { [key: string]: any }, fieldName: string) => document[fieldName],
+  extractField: (document: any, fieldName: string) => document[fieldName],
   tokenize: (text: string, fieldName?: string) => text.split(SPACE_OR_PUNCTUATION),
   processTerm: (term: string, fieldName?: string) => term.toLowerCase(),
   fields: undefined,
