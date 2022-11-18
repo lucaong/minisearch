@@ -2,7 +2,7 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-# v5.1.0 (unreleased)
+# v5.1.0
 
   - The `processTerm` option can now also expand a single term into several
     terms by returning an array of strings.
