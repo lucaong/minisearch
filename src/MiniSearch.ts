@@ -594,6 +594,12 @@ export default class MiniSearch<T = any> {
    *   2. apply changes
    *   3. index new version
    *
+   * This method is the cleanest way to remove a document, as it removes it from
+   * the inverted index. On the other hand, it requires having the full document
+   * to remove at hand. An alternative approach is [[MiniSearch.discard]], which
+   * only needs the ID of the document and has the same visible effect as
+   * remove, but does not immediately free up memory from the inverted index.
+   *
    * @param document  The document to be removed
    */
   remove (document: T): void {
@@ -663,6 +669,54 @@ export default class MiniSearch<T = any> {
       this._storedFields = new Map()
       this._nextId = 0
     }
+  }
+
+  /**
+   * Discards the document with the given ID, so it won't appear in search results
+   *
+   * It has the same visible effect of [[MiniSearch.remove]] (both cause the
+   * document to stop appearing in search results), but a different effect on
+   * the internal data structures:
+   *
+   * [[MiniSearch.remove]] takes the full document as argument, and removes it
+   * from the inverted index, releasing memory immediately.
+   *
+   * [[MiniSearch.discard]] instead only needs the document ID, and marks the
+   * current version of the document as discarded so it is ignored in search
+   * results. The inverted index is not modified though, so memory is not
+   * released. Upon search, whenever a discarded ID is found, it is filtered out
+   * from the results, and the inverted index for the search terms is cleaned up
+   * removing the discarded documents. This partially releases memory, but only
+   * for terms that have been searched at least once after discarding the
+   * document.
+   *
+   * In other words, [[MiniSearch.discard]] is faster and only takes an ID as
+   * argument, but it does not release memory for the discarded document.
+   *
+   * After discarding a document, it is possible to re-add a document with that
+   * same ID, and the newly added version will appear in searches. In other
+   * words, discarding and re-adding a document has the same effect, as visible
+   * to the caller of MiniSearch, as removing and re-adding it.
+   *
+   * @param id  The ID of the document to be discarded
+   */
+  discard (id: any): void {
+    const shortId = this._idToShortId.get(id)
+
+    if (shortId == null) {
+      throw new Error(`MiniSearch: cannot discard document with ID ${id}: it is not in the index`)
+    }
+
+    this._idToShortId.delete(id)
+    this._documentIds.delete(shortId)
+
+    ;(this._fieldLength.get(shortId) || []).forEach((fieldLength, fieldId) => {
+      this.removeFieldLength(shortId, fieldId, this._documentCount, fieldLength)
+    })
+
+    this._fieldLength.delete(shortId)
+
+    this._documentCount -= 1
   }
 
   /**
@@ -1204,10 +1258,16 @@ export default class MiniSearch<T = any> {
       const fieldTermFreqs = fieldTermData.get(fieldId)
       if (fieldTermFreqs == null) continue
 
-      const matchingFields = fieldTermFreqs.size
+      let matchingFields = fieldTermFreqs.size
       const avgFieldLength = this._avgFieldLength[fieldId]
 
       for (const docId of fieldTermFreqs.keys()) {
+        if (!this._documentIds.has(docId)) {
+          this.removeTerm(fieldId, docId, derivedTerm)
+          matchingFields -= 1
+          continue
+        }
+
         const docBoost = boostDocumentFn ? boostDocumentFn(this._documentIds.get(docId), derivedTerm) : 1
         if (!docBoost) continue
 
@@ -1342,6 +1402,10 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private removeFieldLength (documentId: number, fieldId: number, count: number, length: number): void {
+    if (count === 1) {
+      this._avgFieldLength[fieldId] = 0
+      return
+    }
     const totalFieldLength = (this._avgFieldLength[fieldId] * count) - length
     this._avgFieldLength[fieldId] = totalFieldLength / (count - 1)
   }

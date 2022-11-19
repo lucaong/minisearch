@@ -433,6 +433,88 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('discard', () => {
+    it('prevents a document from appearing in search results', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' }
+      ]
+      ms.addAll(documents)
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2])
+
+      ms.discard(1)
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
+    })
+
+    it('adjusts metadata as if the document was removed', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' }
+      ]
+      ms.addAll(documents)
+      const clone = MiniSearch.loadJSON(JSON.stringify(ms), {
+        fields: ['text']
+      })
+
+      ms.discard(1)
+      clone.remove({ id: 1, text: 'Some interesting stuff' })
+
+      expect(ms._idToShortId).toEqual(clone._idToShortId)
+      expect(ms._documentIds).toEqual(clone._documentIds)
+      expect(ms._fieldLength).toEqual(clone._fieldLength)
+      expect(ms._avgFieldLength).toEqual(clone._avgFieldLength)
+      expect(ms._documentCount).toEqual(clone._documentCount)
+    })
+
+    it('allows adding a new version of the document afterwards', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' }
+      ]
+      ms.addAll(documents)
+
+      ms.discard(1)
+      ms.add({ id: 1, text: 'Some new stuff' })
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2])
+      expect(ms.search('new').map((doc) => doc.id)).toEqual([1])
+
+      ms.discard(1)
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
+
+      ms.add({ id: 1, text: 'Some newer stuff' })
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2])
+      expect(ms.search('new').map((doc) => doc.id)).toEqual([])
+      expect(ms.search('newer').map((doc) => doc.id)).toEqual([1])
+    })
+
+    it('leaves the index in the same state as removal when all terms are searched at least once', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const document = { id: 1, text: 'Some stuff' }
+      ms.add(document)
+      const clone = MiniSearch.loadJSON(JSON.stringify(ms), {
+        fields: ['text']
+      })
+
+      ms.discard(1)
+      clone.remove({ id: 1, text: 'Some stuff' })
+
+      expect(ms).not.toEqual(clone)
+
+      const results = ms.search('some stuff')
+
+      expect(ms).toEqual(clone)
+
+      // Results are the same after the first search
+      expect(ms.search('stuff')).toEqual(results)
+    })
+  })
+
   describe('addAll', () => {
     it('adds all the documents to the index', () => {
       const ms = new MiniSearch({ fields: ['text'] })
