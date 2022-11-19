@@ -720,6 +720,15 @@ export default class MiniSearch<T = any> {
   }
 
   /**
+   * Returns true if a document with the given ID was added to the index, false otherwise
+   *
+   * @param id  The document ID
+   */
+  has (id: any) {
+    return this._idToShortId.has(id)
+  }
+
+  /**
    * Search for documents matching the given search query.
    *
    * The result is a list of scored document IDs matching the query, sorted by

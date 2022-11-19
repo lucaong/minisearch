@@ -575,6 +575,46 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('has', () => {
+    it('returns true if a document with the given ID was added to the index, false otherwise', () => {
+      const documents = [
+        { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+        { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+      ]
+      const ms = new MiniSearch({ fields: ['title', 'text'] })
+      ms.addAll(documents)
+
+      expect(ms.has(1)).toEqual(true)
+      expect(ms.has(2)).toEqual(true)
+      expect(ms.has(3)).toEqual(false)
+
+      ms.remove({ id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' })
+      ms.discard(2)
+
+      expect(ms.has(1)).toEqual(false)
+      expect(ms.has(2)).toEqual(false)
+    })
+
+    it('works well with custom ID fields', () => {
+      const documents = [
+        { uid: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+        { uid: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+      ]
+      const ms = new MiniSearch({ fields: ['title', 'text'], idField: 'uid' })
+      ms.addAll(documents)
+
+      expect(ms.has(1)).toEqual(true)
+      expect(ms.has(2)).toEqual(true)
+      expect(ms.has(3)).toEqual(false)
+
+      ms.remove({ uid: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' })
+      ms.discard(2)
+
+      expect(ms.has(1)).toEqual(false)
+      expect(ms.has(2)).toEqual(false)
+    })
+  })
+
   describe('search', () => {
     const documents = [
       { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
