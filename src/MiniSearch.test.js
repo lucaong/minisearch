@@ -40,6 +40,15 @@ describe('MiniSearch', () => {
       }).toThrowError('MiniSearch: document does not have ID field "foo"')
     })
 
+    it('throws error on duplicate ID', () => {
+      const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] })
+      ms.add({ foo: 'abc', text: 'Something' })
+
+      expect(() => {
+        ms.add({ foo: 'abc', text: 'I have a duplicate ID' })
+      }).toThrowError('MiniSearch: duplicate ID abc')
+    })
+
     it('extracts the ID field using extractField', () => {
       const extractField = (document, fieldName) => {
         if (fieldName === 'id') { return document.id.value }
@@ -534,7 +543,7 @@ describe('MiniSearch', () => {
     it('computes a meaningful score when fields are named liked default properties of object', () => {
       const ms = new MiniSearch({ fields: ['constructor'] })
       ms.add({ id: 1, constructor: 'something' })
-      ms.add({ id: 1, constructor: 'something else' })
+      ms.add({ id: 2, constructor: 'something else' })
 
       const results = ms.search('something')
       results.forEach((result) => {

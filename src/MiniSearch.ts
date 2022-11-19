@@ -395,6 +395,7 @@ export default class MiniSearch<T = any> {
   protected _index: SearchableMap<FieldTermData>
   protected _documentCount: number
   protected _documentIds: Map<number, any>
+  protected _idToShortId: Map<any, number>
   protected _fieldIds: { [key: string]: number }
   protected _fieldLength: Map<number, number[]>
   protected _avgFieldLength: number[]
@@ -480,6 +481,8 @@ export default class MiniSearch<T = any> {
 
     this._documentIds = new Map()
 
+    this._idToShortId = new Map()
+
     // Fields are defined during initialization, don't change, are few in
     // number, rarely need iterating over, and have string keys. Therefore in
     // this case an object is a better candidate than a Map to store the mapping
@@ -507,6 +510,10 @@ export default class MiniSearch<T = any> {
     const id = extractField(document, idField)
     if (id == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
+    }
+
+    if (this._idToShortId.has(id)) {
+      throw new Error(`MiniSearch: duplicate ID ${id}`)
     }
 
     const shortDocumentId = this.addDocumentId(id)
@@ -597,39 +604,39 @@ export default class MiniSearch<T = any> {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
 
-    for (const [shortId, longId] of this._documentIds) {
-      if (id === longId) {
-        for (const field of fields) {
-          const fieldValue = extractField(document, field)
-          if (fieldValue == null) continue
+    const shortId = this._idToShortId.get(id)
 
-          const tokens = tokenize(fieldValue.toString(), field)
-          const fieldId = this._fieldIds[field]
+    if (shortId == null) {
+      throw new Error(`MiniSearch: cannot remove document with ID ${id}: it is not in the index`)
+    }
 
-          const uniqueTerms = new Set(tokens).size
-          this.removeFieldLength(shortId, fieldId, this._documentCount, uniqueTerms)
+    for (const field of fields) {
+      const fieldValue = extractField(document, field)
+      if (fieldValue == null) continue
 
-          for (const term of tokens) {
-            const processedTerm = processTerm(term, field)
-            if (Array.isArray(processedTerm)) {
-              for (const t of processedTerm) {
-                this.removeTerm(fieldId, shortId, t)
-              }
-            } else if (processedTerm) {
-              this.removeTerm(fieldId, shortId, processedTerm)
-            }
+      const tokens = tokenize(fieldValue.toString(), field)
+      const fieldId = this._fieldIds[field]
+
+      const uniqueTerms = new Set(tokens).size
+      this.removeFieldLength(shortId, fieldId, this._documentCount, uniqueTerms)
+
+      for (const term of tokens) {
+        const processedTerm = processTerm(term, field)
+        if (Array.isArray(processedTerm)) {
+          for (const t of processedTerm) {
+            this.removeTerm(fieldId, shortId, t)
           }
+        } else if (processedTerm) {
+          this.removeTerm(fieldId, shortId, processedTerm)
         }
-
-        this._storedFields.delete(shortId)
-        this._documentIds.delete(shortId)
-        this._fieldLength.delete(shortId)
-        this._documentCount -= 1
-        return
       }
     }
 
-    throw new Error(`MiniSearch: cannot remove document with ID ${id}: it is not in the index`)
+    this._storedFields.delete(shortId)
+    this._documentIds.delete(shortId)
+    this._idToShortId.delete(id)
+    this._fieldLength.delete(shortId)
+    this._documentCount -= 1
   }
 
   /**
@@ -650,6 +657,7 @@ export default class MiniSearch<T = any> {
       this._index = new SearchableMap()
       this._documentCount = 0
       this._documentIds = new Map()
+      this._idToShortId = new Map()
       this._fieldLength = new Map()
       this._avgFieldLength = []
       this._storedFields = new Map()
@@ -996,11 +1004,16 @@ export default class MiniSearch<T = any> {
     miniSearch._documentCount = documentCount
     miniSearch._nextId = nextId
     miniSearch._documentIds = objectToNumericMap(documentIds)
+    miniSearch._idToShortId = new Map<any, number>()
     miniSearch._fieldIds = fieldIds
     miniSearch._fieldLength = objectToNumericMap(fieldLength)
     miniSearch._avgFieldLength = averageFieldLength
     miniSearch._storedFields = objectToNumericMap(storedFields)
     miniSearch._index = new SearchableMap()
+
+    for (const [shortId, id] of miniSearch._documentIds) {
+      miniSearch._idToShortId.set(id, shortId)
+    }
 
     for (const [term, data] of index) {
       const dataMap = new Map() as FieldTermData
@@ -1296,6 +1309,7 @@ export default class MiniSearch<T = any> {
    */
   private addDocumentId (documentId: any): number {
     const shortDocumentId = this._nextId
+    this._idToShortId.set(documentId, shortDocumentId)
     this._documentIds.set(shortDocumentId, documentId)
     this._documentCount += 1
     this._nextId += 1
