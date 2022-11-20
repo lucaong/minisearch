@@ -605,6 +605,25 @@ describe('MiniSearch', () => {
       expect(ms._index).toEqual(empty._index)
       expect(ms.isVacuuming).toEqual(false)
     })
+
+    it('does not enqueue more than one vacuum on top of the ongoing one', async () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+
+      ms.addAll(documents)
+      ms.discard(1)
+      ms.discard(2)
+
+      const a = ms.vacuum({ batchSize: 1, batchWait: 50 })
+      const b = ms.vacuum()
+      const c = ms.vacuum()
+
+      expect(a).not.toBe(b)
+      expect(b).toBe(c)
+    })
   })
 
   describe('addAll', () => {

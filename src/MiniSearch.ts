@@ -456,7 +456,7 @@ export default class MiniSearch<T = any> {
   protected _storedFields: Map<number, Record<string, unknown>>
   protected _dirtCount: number
   private _currentVacuum: Promise<void> | null
-  private _vacuumEnqueued: boolean
+  private _enqueuedVacuum: Promise<void> | null
 
   /**
    * @param options  Configuration options
@@ -558,7 +558,7 @@ export default class MiniSearch<T = any> {
 
     this._currentVacuum = null
 
-    this._vacuumEnqueued = false
+    this._enqueuedVacuum = null
 
     this.addFields(this._options.fields)
   }
@@ -835,10 +835,10 @@ export default class MiniSearch<T = any> {
     // If a vacuum is already ongoing, schedule another as soon as it finishes,
     // unless there's already one queuing
     if (this._currentVacuum) {
-      if (this._vacuumEnqueued) { return this._currentVacuum }
+      if (this._enqueuedVacuum != null) { return this._enqueuedVacuum }
 
-      this._vacuumEnqueued = true
-      return this._currentVacuum.then(() => this.performVacuuming(options))
+      this._enqueuedVacuum = this._currentVacuum.then(() => this.performVacuuming(options))
+      return this._enqueuedVacuum
     }
 
     this._currentVacuum = this.performVacuuming(options)
@@ -875,8 +875,8 @@ export default class MiniSearch<T = any> {
       }
     }
 
-    this._vacuumEnqueued = false
-    this._currentVacuum = null
+    this._currentVacuum = this._enqueuedVacuum
+    this._enqueuedVacuum = null
     this._dirtCount -= initialDirtCount
   }
 
