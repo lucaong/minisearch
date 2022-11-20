@@ -449,6 +449,14 @@ describe('MiniSearch', () => {
       expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
     })
 
+    it('raises error if a document with the given ID does not exist', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+
+      expect(() => {
+        ms.discard(99)
+      }).toThrow('MiniSearch: cannot discard document with ID 99: it is not in the index')
+    })
+
     it('adjusts internal data to account for the document being discarded', () => {
       const ms = new MiniSearch({ fields: ['text'] })
       const documents = [
