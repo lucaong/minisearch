@@ -744,27 +744,33 @@ export default class MiniSearch<T = any> {
    * [[MiniSearch.remove]] takes the full document as argument, and removes it
    * from the inverted index, releasing memory immediately.
    *
-   * [[MiniSearch.discard]] instead only needs the document ID, and marks the
-   * current version of the document as discarded so it is ignored in search
-   * results. The inverted index is not modified though, so memory is not
-   * released. Upon search, whenever a discarded ID is found, it is filtered out
-   * from the results, and the inverted index for the search terms is cleaned up
-   * removing the discarded documents. This partially releases memory, but only
-   * for terms that have been searched at least once after discarding the
-   * document.
+   * [[MiniSearch.discard]] instead only needs the document ID, and works by
+   * marking the current version of the document as discarded, scausing it to be
+   * ignored by search. The inverted index is not modified though, therefore
+   * memory is not released.
+   *
+   * The memory bloat resulting from repetite calls to [[MiniSearch.discard]] is
+   * cleaned up later by two mechanisms: clean up during search, and vacuuming.
+   * Upom search, whenever a discarded ID is found (and ignored for the
+   * results), references to the discarded document are removed from the
+   * inverted index entries for the search terms. This partially releases
+   * memory, but only for terms that have been searched at least once after
+   * discarding the document.
+   *
+   * Vacuuming is performed automatically (by default) after a certain number of
+   * documents are discarded, and traverses the inverted index cleaning up all
+   * references to discarded documents (see [[Options.autoVacuum]] and
+   * [[AutoVacuumOptions]]). Alternatively, manual vacuuming can be performed
+   * with [[MiniSearch.vacuum]].
    *
    * In other words, [[MiniSearch.discard]] is faster and only takes an ID as
-   * argument, but it does not release memory for the discarded document.
+   * argument, but it does not immediately release memory for the discarded
+   * document, and instead rely on delayed clean up and vacuuming.
    *
-   * After discarding a document, it is possible to re-add a document with that
-   * same ID, and the newly added version will appear in searches. In other
+   * After discarding a document, it is possible to re-add a new version with
+   * that same ID, and the newly added version will appear in searches. In other
    * words, discarding and re-adding a document has the same effect, as visible
    * to the caller of MiniSearch, as removing and re-adding it.
-   *
-   * By default, vacuuming is performed automatically when a sufficient number
-   * of documents are discarded, traversing the inverted index and releasing
-   * memory by cleaning up discarded documents (see [[Options.autoVacuum]] and
-   * [[AutoVacuumOptions]]).
    *
    * Alternatively, the [[MiniSearch.vacuum]] method can be called manually.
    *
@@ -800,40 +806,40 @@ export default class MiniSearch<T = any> {
   }
 
   /**
-   * Cleans up discarded documents from the inverted index
+   * Triggers a manual vacuuming, that cleans up discarded documents from the
+   * inverted index
    *
-   * This function is only useful for applications that make use of
-   * [[MiniSearch.discard]].
+   * This function is only useful for applications that use the
+   * [[MiniSearch.discard]] method. Vacuuming traverses all terms in the
+   * inverted index in batches, and cleans up discarded documents from the
+   * posting list, releasing memory. While vacuuming is performed automatically
+   * by default (see [[AutoVacuumOptions]]), one can call this method to perfrom
+   * it manually.
    *
-   * Traverses all terms in the inverted index in batches, and cleans up
-   * discarded documents from the posting list, releasing memory. It takes an
-   * option argument with keys:
+   * The method takes an option argument with the following keys:
    *
    *   - `batchSize`: the size of each batch (1000 by default)
+   *
    *   - `batchWait`: the number of milliseconds to wait between batches, to
    *   avoid blocking the thread (10 by default)
    *
-   * Applications that make use of [[MiniSearch.discard]] on long-lived indexes
-   * can call this function to clean up the index and release memory.
+   * It returns a promise that resolves (to undefined) when the clean up is
+   * completed. If vacuuming is already ongoing at the time this method is
+   * called, a new one is enqueued immediately after the ongoing one, and a
+   * corresponding promise is returned. No more than one vacuuming is enqueued
+   * on top of the ongoing one though, even if this method is called more times
+   * (enqueuing multiple ones would be useless).
    *
-   * It returns a promise that resolves (to undefined) when the whole inverted
-   * index was traversed, and the clean up completed. If a vacuuming cycle is
-   * already ongoing at the time this method is called, a new one is enqueued
-   * immediately after the ongoing one completes, and the corresponding promise
-   * is returned. No more than one vacuuming is enqueued on top of the ongoing
-   * one though, even if this method is called more times (as enqueuing multiple
-   * ones would be useless).
-   *
-   * On large indexes, this method can be expensive and take time to complete,
-   * hence the batching and wait to avoid blocking the thread for too long.
-   * Therefore, it is usually better to call this method only occasionally,
-   * after several calls to [[MiniSearch.discard]] have been made.
+   * On large indexes, vacuuming can be expensive and take time to complete,
+   * hence the batching and wait to avoid blocking the thread for long.
+   * Therefore, this method should only be called when necessary, usually after
+   * several calls to [[MiniSearch.discard]], or before serializing the index.
    *
    * @param options  Configuration options for the batch size and delay
    */
   vacuum (options: VacuumOptions = {}): Promise<void> {
     // If a vacuum is already ongoing, schedule another as soon as it finishes,
-    // unless there's already one queuing
+    // unless there's already one queued
     if (this._currentVacuum) {
       if (this._enqueuedVacuum != null) { return this._enqueuedVacuum }
 

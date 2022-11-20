@@ -623,6 +623,11 @@ describe('MiniSearch', () => {
 
       expect(a).not.toBe(b)
       expect(b).toBe(c)
+      expect(ms.isVacuuming).toEqual(true)
+
+      await c
+
+      expect(ms.isVacuuming).toEqual(false)
     })
   })
 
