@@ -526,7 +526,10 @@ describe('MiniSearch', () => {
     })
 
     it('triggers auto vacuum when the threshold is met', () => {
-      const ms = new MiniSearch({ fields: ['text'], autoVacuum: { minDirtCount: 2, minDirtFactor: 0, batchWait: 50, batchSize: 1 } })
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount: 2, minDirtFactor: 0, batchWait: 50, batchSize: 1 }
+      })
       const documents = [
         { id: 1, text: 'Some stuff' },
         { id: 2, text: 'Some additional stuff' },
@@ -558,6 +561,36 @@ describe('MiniSearch', () => {
 
       ms.discard(1)
       expect(ms.isVacuuming).toEqual(false)
+    })
+
+    it('applies default settings if autoVacuum is set to true', () => {
+      const ms = new MiniSearch({ fields: ['text'], autoVacuum: true })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      ms._dirtCount = 1000
+
+      ms.discard(1)
+      expect(ms.isVacuuming).toEqual(true)
+    })
+
+    it('applies default settings if options are set to null', async () => {
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount: null, minDirtFactor: null, batchWait: null, batchSize: null }
+      })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      ms._dirtCount = 1000
+
+      const x = ms.discard(1)
+      expect(ms.isVacuuming).toEqual(true)
+      await x
     })
   })
 
