@@ -852,7 +852,7 @@ export default class MiniSearch<T = any> {
     return this._currentVacuum
   }
 
-  private async performVacuuming (options: VacuumOptions = {}): Promise<void> {
+  private async performVacuuming (options: VacuumOptions): Promise<void> {
     const initialDirtCount = this._dirtCount
 
     const { batchSize, batchWait } = { ...defaultVacuumOptions, ...options }
