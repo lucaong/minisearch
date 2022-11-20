@@ -449,7 +449,7 @@ describe('MiniSearch', () => {
       expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
     })
 
-    it('adjusts metadata as if the document was removed', () => {
+    it('adjusts internal data to account for the document being discarded', () => {
       const ms = new MiniSearch({ fields: ['text'] })
       const documents = [
         { id: 1, text: 'Some interesting stuff' },
@@ -469,6 +469,7 @@ describe('MiniSearch', () => {
       expect(ms._storedFields).toEqual(clone._storedFields)
       expect(ms._avgFieldLength).toEqual(clone._avgFieldLength)
       expect(ms._documentCount).toEqual(clone._documentCount)
+      expect(ms._dirtCount).toEqual(1)
     })
 
     it('allows adding a new version of the document afterwards', () => {
@@ -510,14 +511,44 @@ describe('MiniSearch', () => {
 
       const results = ms.search('some stuff')
 
-      expect(ms).toEqual(clone)
+      expect(ms._index).toEqual(clone._index)
 
       // Results are the same after the first search
       expect(ms.search('stuff')).toEqual(results)
     })
+
+    it('triggers auto vacuum when the threshold is met', () => {
+      const ms = new MiniSearch({ fields: ['text'], autoVacuum: { minDirtCount: 2, minDirtFactor: 0, batchWait: 50, batchSize: 1 } })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+
+      expect(ms.isVacuuming).toEqual(false)
+
+      ms.discard(1)
+      expect(ms.isVacuuming).toEqual(false)
+
+      ms.discard(2)
+      expect(ms.isVacuuming).toEqual(true)
+    })
+
+    it('does not trigger auto vacuum if disabled', () => {
+      const ms = new MiniSearch({ fields: ['text'], autoVacuum: false })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      ms._dirtCount = 1000
+
+      ms.discard(1)
+      expect(ms.isVacuuming).toEqual(false)
+    })
   })
 
-  describe('cleanupDiscarded', () => {
+  describe('vacuum', () => {
     it('cleans up discarded documents from the index', async () => {
       const ms = new MiniSearch({ fields: ['text'], storeFields: ['text'] })
       const documents = [
@@ -537,9 +568,34 @@ describe('MiniSearch', () => {
 
       expect(ms).not.toEqual(clone)
 
-      await ms.cleanupDiscarded({ batchSize: 1 })
+      await ms.vacuum({ batchSize: 1 })
 
       expect(ms).toEqual(clone)
+      expect(ms.isVacuuming).toEqual(false)
+    })
+
+    it('schedules a second vacuum right after the current one completes, if one is ongoing', async () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const empty = MiniSearch.loadJSON(JSON.stringify(ms), {
+        fields: ['text']
+      })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+
+      ms.discard(1)
+      ms.discard(2)
+      ms.add({ id: 3, text: 'Even more stuff' })
+
+      ms.vacuum({ batchSize: 1, batchWait: 50 })
+      ms.discard(3)
+
+      await ms.vacuum()
+
+      expect(ms._index).toEqual(empty._index)
+      expect(ms.isVacuuming).toEqual(false)
     })
   })
 

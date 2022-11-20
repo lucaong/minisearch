@@ -189,6 +189,15 @@ export type Options<T = any> = {
    */
   logger?: (level: LogLevel, message: string, code?: string) => void
 
+  /**
+   * If true (the default), vacuuming is performed automatically as soon as
+   * [[MiniSearch.discard]] is called a certain number of times, to clean up
+   * discarded documents from the index. If false, no auto-vacuuming is
+   * performed. Custom auto vacuuming settings can be passed as an object (see
+   * the [[AutoVacuumOptions]] type).
+   */
+  autoVacuum?: boolean | AutoVacuumOptions
+
    /**
     * Default search options (see the [[SearchOptions]] type and the
     * [[MiniSearch.search]] method for details)
@@ -203,19 +212,21 @@ export type Options<T = any> = {
 }
 
 type OptionsWithDefaults<T = any> = Options<T> & {
-  storeFields: string[],
+  storeFields: string[]
 
-  idField: string,
+  idField: string
 
-  extractField: (document: T, fieldName: string) => string,
+  extractField: (document: T, fieldName: string) => string
 
-  tokenize: (text: string, fieldName: string) => string[],
+  tokenize: (text: string, fieldName: string) => string[]
 
-  processTerm: (term: string, fieldName: string) => string | string[] | null | undefined | false,
+  processTerm: (term: string, fieldName: string) => string | string[] | null | undefined | false
 
   logger: (level: LogLevel, message: string, code?: string) => void
 
-  searchOptions: SearchOptionsWithDefaults,
+  autoVacuum: false | AutoVacuumOptions
+
+  searchOptions: SearchOptionsWithDefaults
 
   autoSuggestOptions: SearchOptions
 }
@@ -294,6 +305,7 @@ export type AsPlainObject = {
   fieldLength: { [shortId: string]: number[] }
   averageFieldLength: number[],
   storedFields: { [shortId: string]: any }
+  dirtCount?: number,
   index: [string, { [fieldId: string]: SerializedIndexEntry }][]
   serializationVersion: number
 }
@@ -305,6 +317,47 @@ export type QueryCombination = SearchOptions & { queries: Query[] }
  * combining several queries with a combination of AND or OR.
  */
 export type Query = QueryCombination | string
+
+/**
+ * Options to control auto vacuum behavior. When discarding a document with
+ * [[MiniSearch.discard]], if vacuuming is not already in progress, and the
+ * dirtCount and dirtFactor are above the thresholds defined by this
+ * configuration, a vacuuming cycle is automatically started.
+ */
+export type AutoVacuumOptions = VacuumOptions & {
+  /**
+   * Minimum dirt factor under which auto vacuum is not triggered. It defaults
+   * to 0.15.
+   */
+  minDirtFactor?: number,
+
+  /**
+   * Minimum dirt count (number of discarded documents since the last vacuuming)
+   * under which auto vacuum is not triggered. It defaults to 100.
+   */
+  minDirtCount?: number
+}
+
+/**
+ * Options to control vacuuming behavior. Vacuuming is only necessary when
+ * discarding documents with [[MiniSearch.discard]], and is a potentially costly
+ * operation on large indexes because it has to traverse the whole inverted
+ * index. Therefore, in order to avoid blocking the thread for long, it is
+ * performed in batches, with a delay between each batch. These options are used
+ * to configure the batch size and the delay between batches.
+ */
+export type VacuumOptions = {
+  /**
+   * Size of each vacuuming batch (the number of termsin the inverted index that
+   * will be traversed in each batch). Defaults to 1000.
+   */
+  batchSize?: number,
+
+  /**
+   * Wait time between each vacuuming batch in milliseconds. Defaults to 10.
+   */
+  batchWait?: number
+}
 
 type QuerySpec = {
   prefix: boolean,
@@ -401,6 +454,9 @@ export default class MiniSearch<T = any> {
   protected _avgFieldLength: number[]
   protected _nextId: number
   protected _storedFields: Map<number, Record<string, unknown>>
+  protected _dirtCount: number
+  private _currentVacuum: Promise<void> | null
+  private _vacuumEnqueued: boolean
 
   /**
    * @param options  Configuration options
@@ -471,6 +527,7 @@ export default class MiniSearch<T = any> {
     this._options = {
       ...defaultOptions,
       ...options,
+      autoVacuum: !!options.autoVacuum && (options.autoVacuum === true ? defaultAutoVacuumOptions : options.autoVacuum),
       searchOptions: { ...defaultSearchOptions, ...(options.searchOptions || {}) },
       autoSuggestOptions: { ...defaultAutoSuggestOptions, ...(options.autoSuggestOptions || {}) }
     }
@@ -496,6 +553,12 @@ export default class MiniSearch<T = any> {
     this._nextId = 0
 
     this._storedFields = new Map()
+
+    this._dirtCount = 0
+
+    this._currentVacuum = null
+
+    this._vacuumEnqueued = false
 
     this.addFields(this._options.fields)
   }
@@ -698,9 +761,12 @@ export default class MiniSearch<T = any> {
    * words, discarding and re-adding a document has the same effect, as visible
    * to the caller of MiniSearch, as removing and re-adding it.
    *
-   * The [[MiniSearch.cleanupDiscarded]] method can be called to traverse and
-   * clean up the index and release memory, usually after [[MiniSearch.discard]]
-   * is used to discard several documents.
+   * By default, vacuuming is performed automatically when a sufficient number
+   * of documents are discarded, traversing the inverted index and releasing
+   * memory by cleaning up discarded documents (see [[Options.autoVacuum]] and
+   * [[AutoVacuumOptions]]).
+   *
+   * Alternatively, the [[MiniSearch.vacuum]] method can be called manually.
    *
    * @param id  The ID of the document to be discarded
    */
@@ -722,6 +788,15 @@ export default class MiniSearch<T = any> {
     this._fieldLength.delete(shortId)
 
     this._documentCount -= 1
+    this._dirtCount += 1
+
+    if (this._options.autoVacuum === false) { return }
+
+    const { minDirtFactor, minDirtCount, batchSize, batchWait } = this._options.autoVacuum
+    if (this.dirtCount >= (minDirtCount || defaultAutoVacuumOptions.minDirtCount) &&
+      this.dirtFactor >= (minDirtFactor || defaultAutoVacuumOptions.minDirtFactor)) {
+      this.vacuum({ batchSize, batchWait })
+    }
   }
 
   /**
@@ -741,8 +816,13 @@ export default class MiniSearch<T = any> {
    * Applications that make use of [[MiniSearch.discard]] on long-lived indexes
    * can call this function to clean up the index and release memory.
    *
-   * It returns a void promise, that resolves when the whole inverted index was
-   * traversed, and the clean up completed.
+   * It returns a promise that resolves (to undefined) when the whole inverted
+   * index was traversed, and the clean up completed. If a vacuuming cycle is
+   * already ongoing at the time this method is called, a new one is enqueued
+   * immediately after the ongoing one completes, and the corresponding promise
+   * is returned. No more than one vacuuming is enqueued on top of the ongoing
+   * one though, even if this method is called more times (as enqueuing multiple
+   * ones would be useless).
    *
    * On large indexes, this method can be expensive and take time to complete,
    * hence the batching and wait to avoid blocking the thread for too long.
@@ -751,8 +831,25 @@ export default class MiniSearch<T = any> {
    *
    * @param options  Configuration options for the batch size and delay
    */
-  async cleanupDiscarded (options: { batchSize?: number, batchWait?: number } = {}): Promise<void> {
-    const { batchSize, batchWait } = { batchSize: 1000, batchWait: 10, ...options }
+  vacuum (options: VacuumOptions = {}): Promise<void> {
+    // If a vacuum is already ongoing, schedule another as soon as it finishes,
+    // unless there's already one queuing
+    if (this._currentVacuum) {
+      if (this._vacuumEnqueued) { return this._currentVacuum }
+
+      this._vacuumEnqueued = true
+      return this._currentVacuum.then(() => this.performVacuuming(options))
+    }
+
+    this._currentVacuum = this.performVacuuming(options)
+
+    return this._currentVacuum
+  }
+
+  private async performVacuuming (options: VacuumOptions = {}): Promise<void> {
+    const initialDirtCount = this._dirtCount
+
+    const { batchSize, batchWait } = { ...defaultVacuumOptions, ...options }
     let i = 0
 
     for (const [term, fieldsData] of this._index) {
@@ -777,6 +874,35 @@ export default class MiniSearch<T = any> {
         await new Promise((resolve) => setTimeout(resolve, batchWait))
       }
     }
+
+    this._vacuumEnqueued = false
+    this._currentVacuum = null
+    this._dirtCount -= initialDirtCount
+  }
+
+  /**
+   * Is true if a vacuuming operation is ongoing, false otherwise
+   */
+  get isVacuuming (): boolean {
+    return this._currentVacuum != null
+  }
+
+  /**
+   * The number of documents discarded since the last vacuuming
+   */
+  get dirtCount (): number {
+    return this._dirtCount
+  }
+
+  /**
+   * A number between 0 and 1 giving an indication about the proportion of
+   * documents that are discarded, and can therefore be cleaned up by vacuuming.
+   * A value close to 0 means that the index is relatively clean, while a higher
+   * value means that the index is relatively dirty, and vacuuming could release
+   * memory.
+   */
+  get dirtFactor (): number {
+    return this._dirtCount / (1 + this._documentCount + this._dirtCount)
   }
 
   /**
@@ -1116,6 +1242,7 @@ export default class MiniSearch<T = any> {
       fieldLength,
       averageFieldLength,
       storedFields,
+      dirtCount,
       serializationVersion
     } = js
     if (serializationVersion !== 1 && serializationVersion !== 2) {
@@ -1132,6 +1259,7 @@ export default class MiniSearch<T = any> {
     miniSearch._fieldLength = objectToNumericMap(fieldLength)
     miniSearch._avgFieldLength = averageFieldLength
     miniSearch._storedFields = objectToNumericMap(storedFields)
+    miniSearch._dirtCount = dirtCount || 0
     miniSearch._index = new SearchableMap()
 
     for (const [shortId, id] of miniSearch._documentIds) {
@@ -1301,6 +1429,7 @@ export default class MiniSearch<T = any> {
       fieldLength: Object.fromEntries(this._fieldLength),
       averageFieldLength: this._avgFieldLength,
       storedFields: Object.fromEntries(this._storedFields),
+      dirtCount: this._dirtCount,
       index,
       serializationVersion: 2
     }
@@ -1592,6 +1721,10 @@ const defaultAutoSuggestOptions = {
   prefix: (term: string, i: number, terms: string[]): boolean =>
     i === terms.length - 1
 }
+
+const defaultVacuumOptions = { batchSize: 1000, batchWait: 10 }
+
+const defaultAutoVacuumOptions = { minDirtFactor: 0.15, minDirtCount: 100, ...defaultVacuumOptions }
 
 const assignUniqueTerm = (target: string[], term: string): void => {
   // Avoid adding duplicate terms.
