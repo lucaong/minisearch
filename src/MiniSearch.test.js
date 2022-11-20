@@ -515,6 +515,31 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('cleanupDiscarded', () => {
+    it('cleans up discarded documents from the index', async () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      const clone = MiniSearch.loadJSON(JSON.stringify(ms), {
+        fields: ['text']
+      })
+
+      ms.discard(1)
+      ms.discard(2)
+      clone.remove({ id: 1, text: 'Some stuff' })
+      clone.remove({ id: 2, text: 'Some additional stuff' })
+
+      expect(ms).not.toEqual(clone)
+
+      await ms.cleanupDiscarded({ batchSize: 1 })
+
+      expect(ms).toEqual(clone)
+    })
+  })
+
   describe('addAll', () => {
     it('adds all the documents to the index', () => {
       const ms = new MiniSearch({ fields: ['text'] })

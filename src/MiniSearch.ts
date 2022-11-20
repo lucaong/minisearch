@@ -698,6 +698,10 @@ export default class MiniSearch<T = any> {
    * words, discarding and re-adding a document has the same effect, as visible
    * to the caller of MiniSearch, as removing and re-adding it.
    *
+   * The [[MiniSearch.cleanupDiscarded]] method can be called to traverse and
+   * clean up the index and release memory, usually after [[MiniSearch.discard]]
+   * is used to discard several documents.
+   *
    * @param id  The ID of the document to be discarded
    */
   discard (id: any): void {
@@ -717,6 +721,61 @@ export default class MiniSearch<T = any> {
     this._fieldLength.delete(shortId)
 
     this._documentCount -= 1
+  }
+
+  /**
+   * Cleans up discarded documents from the inverted index
+   *
+   * This function is only useful for applications that make use of
+   * [[MiniSearch.discard]].
+   *
+   * Traverses all terms in the inverted index in batches, and cleans up
+   * discarded documents from the posting list, releasing memory. It takes an
+   * option argument with keys:
+   *
+   *   - `batchSize`: the size of each batch (1000 by default)
+   *   - `batchWait`: the number of milliseconds to wait between batches, to
+   *   avoid blocking the thread (10 by default)
+   *
+   * Applications that make use of [[MiniSearch.discard]] on long-lived indexes
+   * can call this function to clean up the index and release memory.
+   *
+   * It returns a void promise, that resolves when the whole inverted index was
+   * traversed, and the clean up completed.
+   *
+   * On large indexes, this method can be expensive and take time to complete,
+   * hence the batching and wait to avoid blocking the thread for too long.
+   * Therefore, it is usually better to call this method only occasionally,
+   * after several calls to [[MiniSearch.discard]] have been made.
+   *
+   * @param options  Configuration options for the batch size and delay
+   */
+  async cleanupDiscarded (options: { batchSize?: number, batchWait?: number } = {}): Promise<void> {
+    const { batchSize, batchWait } = { batchSize: 1000, batchWait: 10, ...options }
+    let i = 0
+
+    for (const [term, fieldsData] of this._index) {
+      for (const [fieldId, fieldIndex] of fieldsData) {
+        for (const [shortId] of fieldIndex) {
+          if (this._documentIds.has(shortId)) { continue }
+
+          if (fieldIndex.size <= 1) {
+            fieldsData.delete(fieldId)
+          } else {
+            fieldIndex.delete(shortId)
+          }
+        }
+      }
+
+      if (this._index.get(term)!.size === 0) {
+        this._index.delete(term)
+      }
+
+      i += 1
+      if (i % batchSize === 0) {
+        await new Promise((resolve) => setTimeout(resolve, batchWait))
+      }
+    }
   }
 
   /**
