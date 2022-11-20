@@ -466,12 +466,13 @@ describe('MiniSearch', () => {
       expect(ms._idToShortId).toEqual(clone._idToShortId)
       expect(ms._documentIds).toEqual(clone._documentIds)
       expect(ms._fieldLength).toEqual(clone._fieldLength)
+      expect(ms._storedFields).toEqual(clone._storedFields)
       expect(ms._avgFieldLength).toEqual(clone._avgFieldLength)
       expect(ms._documentCount).toEqual(clone._documentCount)
     })
 
     it('allows adding a new version of the document afterwards', () => {
-      const ms = new MiniSearch({ fields: ['text'] })
+      const ms = new MiniSearch({ fields: ['text'], storeFields: ['text'] })
       const documents = [
         { id: 1, text: 'Some interesting stuff' },
         { id: 2, text: 'Some more interesting stuff' }
@@ -494,11 +495,12 @@ describe('MiniSearch', () => {
     })
 
     it('leaves the index in the same state as removal when all terms are searched at least once', () => {
-      const ms = new MiniSearch({ fields: ['text'] })
+      const ms = new MiniSearch({ fields: ['text'], storeFields: ['text'] })
       const document = { id: 1, text: 'Some stuff' }
       ms.add(document)
       const clone = MiniSearch.loadJSON(JSON.stringify(ms), {
-        fields: ['text']
+        fields: ['text'],
+        storeFields: ['text']
       })
 
       ms.discard(1)
@@ -517,14 +519,15 @@ describe('MiniSearch', () => {
 
   describe('cleanupDiscarded', () => {
     it('cleans up discarded documents from the index', async () => {
-      const ms = new MiniSearch({ fields: ['text'] })
+      const ms = new MiniSearch({ fields: ['text'], storeFields: ['text'] })
       const documents = [
         { id: 1, text: 'Some stuff' },
         { id: 2, text: 'Some additional stuff' }
       ]
       ms.addAll(documents)
       const clone = MiniSearch.loadJSON(JSON.stringify(ms), {
-        fields: ['text']
+        fields: ['text'],
+        storeFields: ['text']
       })
 
       ms.discard(1)

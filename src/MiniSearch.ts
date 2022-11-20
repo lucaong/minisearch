@@ -713,6 +713,7 @@ export default class MiniSearch<T = any> {
 
     this._idToShortId.delete(id)
     this._documentIds.delete(shortId)
+    this._storedFields.delete(shortId)
 
     ;(this._fieldLength.get(shortId) || []).forEach((fieldLength, fieldId) => {
       this.removeFieldLength(shortId, fieldId, this._documentCount, fieldLength)
