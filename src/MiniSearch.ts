@@ -333,7 +333,7 @@ export type AutoVacuumOptions = VacuumOptions & {
 
   /**
    * Minimum dirt count (number of discarded documents since the last vacuuming)
-   * under which auto vacuum is not triggered. It defaults to 100.
+   * under which auto vacuum is not triggered. It defaults to 20.
    */
   minDirtCount?: number
 }
@@ -796,7 +796,7 @@ export default class MiniSearch<T = any> {
     this._documentCount -= 1
     this._dirtCount += 1
 
-    if (this._options.autoVacuum === false) { return }
+    if (this._options.autoVacuum === false || this.isVacuuming) { return }
 
     const { minDirtFactor, minDirtCount, batchSize, batchWait } = this._options.autoVacuum
     if (this.dirtCount >= (minDirtCount || defaultAutoVacuumOptions.minDirtCount) &&
@@ -1730,7 +1730,7 @@ const defaultAutoSuggestOptions = {
 
 const defaultVacuumOptions = { batchSize: 1000, batchWait: 10 }
 
-const defaultAutoVacuumOptions = { minDirtFactor: 0.15, minDirtCount: 100, ...defaultVacuumOptions }
+const defaultAutoVacuumOptions = { minDirtFactor: 0.15, minDirtCount: 20, ...defaultVacuumOptions }
 
 const assignUniqueTerm = (target: string[], term: string): void => {
   // Avoid adding duplicate terms.

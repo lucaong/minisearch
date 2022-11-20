@@ -529,7 +529,8 @@ describe('MiniSearch', () => {
       const ms = new MiniSearch({ fields: ['text'], autoVacuum: { minDirtCount: 2, minDirtFactor: 0, batchWait: 50, batchSize: 1 } })
       const documents = [
         { id: 1, text: 'Some stuff' },
-        { id: 2, text: 'Some additional stuff' }
+        { id: 2, text: 'Some additional stuff' },
+        { id: 3, text: 'Even more stuff' }
       ]
       ms.addAll(documents)
 
@@ -540,6 +541,10 @@ describe('MiniSearch', () => {
 
       ms.discard(2)
       expect(ms.isVacuuming).toEqual(true)
+
+      // It does not enqueue another vacuuming if one is ongoing
+      ms.discard(3)
+      expect(ms._enqueuedVacuum).toEqual(null)
     })
 
     it('does not trigger auto vacuum if disabled', () => {
