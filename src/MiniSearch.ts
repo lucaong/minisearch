@@ -319,26 +319,6 @@ export type QueryCombination = SearchOptions & { queries: Query[] }
 export type Query = QueryCombination | string
 
 /**
- * Options to control auto vacuum behavior. When discarding a document with
- * [[MiniSearch.discard]], if vacuuming is not already in progress, and the
- * dirtCount and dirtFactor are above the thresholds defined by this
- * configuration, a vacuuming cycle is automatically started.
- */
-export type AutoVacuumOptions = VacuumOptions & {
-  /**
-   * Minimum dirt factor under which auto vacuum is not triggered. It defaults
-   * to 0.15.
-   */
-  minDirtFactor?: number,
-
-  /**
-   * Minimum dirt count (number of discarded documents since the last vacuuming)
-   * under which auto vacuum is not triggered. It defaults to 20.
-   */
-  minDirtCount?: number
-}
-
-/**
  * Options to control vacuuming behavior. Vacuuming is only necessary when
  * discarding documents with [[MiniSearch.discard]], and is a potentially costly
  * operation on large indexes because it has to traverse the whole inverted
@@ -359,11 +339,33 @@ export type VacuumOptions = {
   batchWait?: number
 }
 
+export type VacuumConditions = {
+  /**
+   * Minimum dirt factor under which auto vacuum is not triggered. It defaults
+   * to 0.15.
+   */
+  minDirtFactor?: number,
+
+  /**
+   * Minimum dirt count (number of discarded documents since the last vacuuming)
+   * under which auto vacuum is not triggered. It defaults to 20.
+   */
+  minDirtCount?: number
+}
+
 type QuerySpec = {
   prefix: boolean,
   fuzzy: number | boolean,
   term: string
 }
+
+/**
+ * Options to control auto vacuum behavior. When discarding a document with
+ * [[MiniSearch.discard]], if vacuuming is not already in progress, and the
+ * dirtCount and dirtFactor are above the thresholds defined by this
+ * configuration, a vacuuming cycle is automatically started.
+ */
+export type AutoVacuumOptions = VacuumOptions & VacuumConditions
 
 type DocumentTermFreqs = Map<number, number>
 type FieldTermData = Map<number, DocumentTermFreqs>
@@ -796,13 +798,10 @@ export default class MiniSearch<T = any> {
     this._documentCount -= 1
     this._dirtCount += 1
 
-    if (this._options.autoVacuum === false || this.isVacuuming) { return }
+    if (this._options.autoVacuum === false) { return }
 
     const { minDirtFactor, minDirtCount, batchSize, batchWait } = this._options.autoVacuum
-    if (this.dirtCount >= (minDirtCount || defaultAutoVacuumOptions.minDirtCount) &&
-      this.dirtFactor >= (minDirtFactor || defaultAutoVacuumOptions.minDirtFactor)) {
-      this.vacuum({ batchSize, batchWait })
-    }
+    this.conditionalVacuum({ batchSize, batchWait }, { minDirtCount, minDirtFactor })
   }
 
   /**
@@ -850,65 +849,84 @@ export default class MiniSearch<T = any> {
    * It returns a promise that resolves (to undefined) when the clean up is
    * completed. If vacuuming is already ongoing at the time this method is
    * called, a new one is enqueued immediately after the ongoing one, and a
-   * corresponding promise is returned. No more than one vacuuming is enqueued
-   * on top of the ongoing one though, even if this method is called more times
-   * (enqueuing multiple ones would be useless).
+   * corresponding promise is returned. However, no more than one vacuuming is
+   * enqueued on top of the ongoing one, even if this method is called more
+   * times (enqueuing multiple ones would be useless).
    *
    * On large indexes, vacuuming can be expensive and take time to complete,
    * hence the batching and wait to avoid blocking the thread for long.
    * Therefore, this method should only be called when necessary, usually after
    * several calls to [[MiniSearch.discard]], or before serializing the index.
    *
-   * @param options  Configuration options for the batch size and delay
+   * @param options  Configuration options for the batch size and delay. See
+   * [[VacuumOptions]].
    */
   vacuum (options: VacuumOptions = {}): Promise<void> {
+    return this.conditionalVacuum(options)
+  }
+
+  private conditionalVacuum (options: VacuumOptions, conditions?: VacuumConditions): Promise<void> {
     // If a vacuum is already ongoing, schedule another as soon as it finishes,
     // unless there's already one queued
     if (this._currentVacuum) {
       if (this._enqueuedVacuum != null) { return this._enqueuedVacuum }
 
-      this._enqueuedVacuum = this._currentVacuum.then(() => this.performVacuuming(options))
+      this._enqueuedVacuum = this._currentVacuum.then(() => this.performVacuuming(options, conditions))
       return this._enqueuedVacuum
     }
 
-    this._currentVacuum = this.performVacuuming(options)
+    if (this.vacuumConditionsMet(conditions) === false) { return Promise.resolve() }
 
+    this._currentVacuum = this.performVacuuming(options)
     return this._currentVacuum
   }
 
-  private async performVacuuming (options: VacuumOptions): Promise<void> {
+  private async performVacuuming (options: VacuumOptions, conditions?: VacuumConditions): Promise<void> {
     const initialDirtCount = this._dirtCount
 
-    const batchSize = options.batchSize || defaultVacuumOptions.batchSize
-    const batchWait = options.batchWait || defaultVacuumOptions.batchWait
-    let i = 0
+    if (this.vacuumConditionsMet(conditions)) {
+      const batchSize = options.batchSize || defaultVacuumOptions.batchSize
+      const batchWait = options.batchWait || defaultVacuumOptions.batchWait
+      let i = 0
 
-    for (const [term, fieldsData] of this._index) {
-      for (const [fieldId, fieldIndex] of fieldsData) {
-        for (const [shortId] of fieldIndex) {
-          if (this._documentIds.has(shortId)) { continue }
+      for (const [term, fieldsData] of this._index) {
+        for (const [fieldId, fieldIndex] of fieldsData) {
+          for (const [shortId] of fieldIndex) {
+            if (this._documentIds.has(shortId)) { continue }
 
-          if (fieldIndex.size <= 1) {
-            fieldsData.delete(fieldId)
-          } else {
-            fieldIndex.delete(shortId)
+            if (fieldIndex.size <= 1) {
+              fieldsData.delete(fieldId)
+            } else {
+              fieldIndex.delete(shortId)
+            }
           }
+        }
+
+        if (this._index.get(term)!.size === 0) {
+          this._index.delete(term)
+        }
+
+        i += 1
+        if (i % batchSize === 0) {
+          await new Promise((resolve) => setTimeout(resolve, batchWait))
         }
       }
 
-      if (this._index.get(term)!.size === 0) {
-        this._index.delete(term)
-      }
-
-      i += 1
-      if (i % batchSize === 0) {
-        await new Promise((resolve) => setTimeout(resolve, batchWait))
-      }
+      this._dirtCount -= initialDirtCount
     }
 
     this._currentVacuum = this._enqueuedVacuum
     this._enqueuedVacuum = null
-    this._dirtCount -= initialDirtCount
+  }
+
+  private vacuumConditionsMet (conditions?: VacuumConditions) {
+    if (conditions == null) { return true }
+
+    let { minDirtCount, minDirtFactor } = conditions
+    minDirtCount = minDirtCount || defaultAutoVacuumOptions.minDirtCount
+    minDirtFactor = minDirtFactor || defaultAutoVacuumOptions.minDirtFactor
+
+    return this.dirtCount >= minDirtCount && this.dirtFactor >= minDirtFactor
   }
 
   /**

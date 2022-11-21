@@ -544,10 +544,6 @@ describe('MiniSearch', () => {
 
       ms.discard(2)
       expect(ms.isVacuuming).toEqual(true)
-
-      // It does not enqueue another vacuuming if one is ongoing
-      ms.discard(3)
-      expect(ms._enqueuedVacuum).toEqual(null)
     })
 
     it('does not trigger auto vacuum if disabled', () => {
@@ -591,6 +587,51 @@ describe('MiniSearch', () => {
       const x = ms.discard(1)
       expect(ms.isVacuuming).toEqual(true)
       await x
+    })
+
+    it('vacuums until under the dirt thresholds when called multiple times', async () => {
+      const minDirtCount = 2
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount, minDirtFactor: 0, batchSize: 1, batchWait: 10 }
+      })
+      const documents = []
+      for (let i = 0; i < 5; i++) {
+        documents.push({ id: i + 1, text: `Document number ${i}` })
+      }
+      ms.addAll(documents)
+
+      expect(ms._dirtCount).toEqual(0)
+
+      documents.forEach((doc) => ms.discard(doc.id))
+
+      while (ms.isVacuuming) {
+        await ms._currentVacuum
+      }
+
+      expect(ms._dirtCount).toBeLessThan(minDirtCount)
+    })
+
+    it('does not perform unnecessary vacuuming when called multiple times', async () => {
+      const minDirtCount = 2
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount, minDirtFactor: 0, batchSize: 1, batchWait: 10 }
+      })
+      const documents = [
+        { id: 1, text: 'Document one' },
+        { id: 2, text: 'Document two' },
+        { id: 3, text: 'Document three' },
+      ]
+      ms.addAll(documents)
+
+      documents.forEach((doc) => ms.discard(doc.id))
+
+      while (ms.isVacuuming) {
+        await ms._currentVacuum
+      }
+
+      expect(ms._dirtCount).toBe(1)
     })
   })
 
