@@ -594,6 +594,35 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('replace', () => {
+    it('replaces an existing document with a new version', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some quite interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' }
+      ]
+      ms.addAll(documents)
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2])
+      expect(ms.search('quite').map((doc) => doc.id)).toEqual([1])
+      expect(ms.search('even').map((doc) => doc.id)).toEqual([])
+
+      ms.replace({ id: 1, text: 'Some even more interesting stuff' })
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2, 1])
+      expect(ms.search('quite').map((doc) => doc.id)).toEqual([])
+      expect(ms.search('even').map((doc) => doc.id)).toEqual([1])
+    })
+
+    it('raises error if a document with the given ID does not exist', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+
+      expect(() => {
+        ms.replace({ id: 1, text: 'Some stuff' })
+      }).toThrow('MiniSearch: cannot discard document with ID 1: it is not in the index')
+    })
+  })
+
   describe('vacuum', () => {
     it('cleans up discarded documents from the index', async () => {
       const ms = new MiniSearch({ fields: ['text'], storeFields: ['text'] })

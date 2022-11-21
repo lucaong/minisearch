@@ -806,6 +806,30 @@ export default class MiniSearch<T = any> {
   }
 
   /**
+   * It replaces an existing document with the given updated version
+   *
+   * It works by discarding the current version and adding the updated one, so
+   * it is functionally equivalent to calling [[MiniSearch.discard]] followed by
+   * [[MiniSearch.add]]. The ID of the updated document should match the
+   * one to be replaced.
+   *
+   * Since it relies on [[MiniSearch.discard]], this method does not immediately
+   * release memory for the replaced document, and instead relies on vacuuming
+   * to clean up eventually (see [[MiniSearch.discard]] and
+   * [[Options.autoVacuum]]).
+   *
+   * @param updatedDocument  The updated document to replace the old version
+   * with
+   */
+  replace (updatedDocument: T): void {
+    const { idField, extractField } = this._options
+    const id = extractField(updatedDocument, idField)
+
+    this.discard(id)
+    this.add(updatedDocument)
+  }
+
+  /**
    * Triggers a manual vacuuming, that cleans up discarded documents from the
    * inverted index
    *
