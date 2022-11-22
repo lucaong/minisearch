@@ -1234,6 +1234,13 @@ export default class MiniSearch<T = any> {
   }
 
   /**
+   * Number of terms in the index
+   */
+  get termCount (): number {
+    return this._index.size
+  }
+
+  /**
    * Deserializes a JSON index (serialized with `JSON.stringify(miniSearch)`)
    * and instantiates a MiniSearch instance. It should be given the same options
    * originally used when serializing the index.
