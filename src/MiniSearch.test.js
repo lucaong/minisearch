@@ -525,6 +525,15 @@ describe('MiniSearch', () => {
       expect(ms.search('stuff')).toEqual(results)
     })
 
+    it('triggers auto vacuum by default', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      ms.add({ id: 1, text: 'Some stuff' })
+      ms._dirtCount = 1000
+
+      ms.discard(1)
+      expect(ms.isVacuuming).toEqual(true)
+    })
+
     it('triggers auto vacuum when the threshold is met', () => {
       const ms = new MiniSearch({
         fields: ['text'],
@@ -783,7 +792,7 @@ describe('MiniSearch', () => {
         { id: 2, text: 'Some additional stuff' }
       ]
       ms.addAll(documents)
-      await ms.vacuum({ batchSize: ms.termCount + 2 })
+      await ms.vacuum({ batchSize: ms.termCount + 1 })
       expect(ms.isVacuuming).toEqual(false)
     })
   })

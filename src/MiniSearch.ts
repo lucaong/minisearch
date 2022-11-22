@@ -527,10 +527,12 @@ export default class MiniSearch<T = any> {
       throw new Error('MiniSearch: option "fields" must be provided')
     }
 
+    const autoVacuum = (options.autoVacuum == null || options.autoVacuum === true) ? defaultAutoVacuumOptions : options.autoVacuum
+
     this._options = {
       ...defaultOptions,
       ...options,
-      autoVacuum: !!options.autoVacuum && (options.autoVacuum === true ? defaultAutoVacuumOptions : options.autoVacuum),
+      autoVacuum,
       searchOptions: { ...defaultSearchOptions, ...(options.searchOptions || {}) },
       autoSuggestOptions: { ...defaultAutoSuggestOptions, ...(options.autoSuggestOptions || {}) }
     }
@@ -915,10 +917,11 @@ export default class MiniSearch<T = any> {
           this._index.delete(term)
         }
 
-        i += 1
         if (i % batchSize === 0) {
           await new Promise((resolve) => setTimeout(resolve, batchWait))
         }
+
+        i += 1
       }
 
       this._dirtCount -= initialDirtCount
@@ -1764,11 +1767,6 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
   return { term, fuzzy, prefix }
 }
 
-const defaultVacuumOptions = { batchSize: 1000, batchWait: 10 }
-const defaultVacuumConditions = { minDirtFactor: 0.15, minDirtCount: 20 }
-
-const defaultAutoVacuumOptions = { ...defaultVacuumOptions, ...defaultVacuumConditions }
-
 const defaultOptions = {
   idField: 'id',
   extractField: (document: any, fieldName: string) => document[fieldName],
@@ -1778,7 +1776,7 @@ const defaultOptions = {
   searchOptions: undefined,
   storeFields: [],
   logger: (level: LogLevel, message: string, code?: string) => console != null && console.warn != null && console[level](message),
-  autoVacuum: defaultAutoVacuumOptions
+  autoVacuum: true
 }
 
 const defaultSearchOptions = {
@@ -1795,6 +1793,11 @@ const defaultAutoSuggestOptions = {
   prefix: (term: string, i: number, terms: string[]): boolean =>
     i === terms.length - 1
 }
+
+const defaultVacuumOptions = { batchSize: 1000, batchWait: 10 }
+const defaultVacuumConditions = { minDirtFactor: 0.15, minDirtCount: 20 }
+
+const defaultAutoVacuumOptions = { ...defaultVacuumOptions, ...defaultVacuumConditions }
 
 const assignUniqueTerm = (target: string[], term: string): void => {
   // Avoid adding duplicate terms.
