@@ -603,6 +603,9 @@ describe('MiniSearch', () => {
 
       expect(ms._dirtCount).toEqual(0)
 
+      // Calling discard multiple times should start an auto-vacuum and enqueue
+      // another, so that the remaining dirt count afterwards is always below
+      // minDirtCount
       documents.forEach((doc) => ms.discard(doc.id))
 
       while (ms.isVacuuming) {
@@ -625,6 +628,10 @@ describe('MiniSearch', () => {
       ]
       ms.addAll(documents)
 
+      // Calling discard multiple times will start an auto-vacuum and enqueue
+      // another, subject to minDirtCount/minDirtFactor conditions. The last one
+      // should be a no-op, as the remaining dirt count after the first auto
+      // vacuum would be 1, which is below minDirtCount
       documents.forEach((doc) => ms.discard(doc.id))
 
       while (ms.isVacuuming) {
@@ -632,6 +639,37 @@ describe('MiniSearch', () => {
       }
 
       expect(ms._dirtCount).toBe(1)
+    })
+
+    it('enqueued vacuum runs without conditions if a manual vacuum was called while enqueued', async () => {
+      const minDirtCount = 2
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount, minDirtFactor: 0, batchSize: 1, batchWait: 10 }
+      })
+      const documents = [
+        { id: 1, text: 'Document one' },
+        { id: 2, text: 'Document two' },
+        { id: 3, text: 'Document three' },
+      ]
+      ms.addAll(documents)
+
+      // Calling discard multiple times will start an auto-vacuum and enqueue
+      // another, subject to minDirtCount/minDirtFactor conditions. The last one
+      // would be a no-op, as the remaining dirt count after the first auto
+      // vacuum would be 1, which is below minDirtCount
+      documents.forEach((doc) => ms.discard(doc.id))
+
+      // But before the enqueued vacuum is ran, we invoke a manual vacuum with
+      // no conditions, so it should run even with a dirt count below
+      // minDirtCount
+      ms.vacuum()
+
+      while (ms.isVacuuming) {
+        await ms._currentVacuum
+      }
+
+      expect(ms._dirtCount).toBe(0)
     })
   })
 

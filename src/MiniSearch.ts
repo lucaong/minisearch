@@ -459,6 +459,7 @@ export default class MiniSearch<T = any> {
   protected _dirtCount: number
   private _currentVacuum: Promise<void> | null
   private _enqueuedVacuum: Promise<void> | null
+  private _enqueuedVacuumConditions: VacuumConditions | undefined
 
   /**
    * @param options  Configuration options
@@ -561,6 +562,7 @@ export default class MiniSearch<T = any> {
     this._currentVacuum = null
 
     this._enqueuedVacuum = null
+    this._enqueuedVacuumConditions = defaultVacuumConditions
 
     this.addFields(this._options.fields)
   }
@@ -867,11 +869,18 @@ export default class MiniSearch<T = any> {
 
   private conditionalVacuum (options: VacuumOptions, conditions?: VacuumConditions): Promise<void> {
     // If a vacuum is already ongoing, schedule another as soon as it finishes,
-    // unless there's already one queued
+    // unless there's already one enqueued. If one was already enqueued, do not
+    // enqueue another on top, but make sure that the conditions are the
+    // broadest.
     if (this._currentVacuum) {
+      this._enqueuedVacuumConditions = this._enqueuedVacuumConditions && conditions
       if (this._enqueuedVacuum != null) { return this._enqueuedVacuum }
 
-      this._enqueuedVacuum = this._currentVacuum.then(() => this.performVacuuming(options, conditions))
+      this._enqueuedVacuum = this._currentVacuum.then(() => {
+        const conditions = this._enqueuedVacuumConditions
+        this._enqueuedVacuumConditions = defaultVacuumConditions
+        return this.performVacuuming(options, conditions)
+      })
       return this._enqueuedVacuum
     }
 
@@ -1772,8 +1781,9 @@ const defaultAutoSuggestOptions = {
 }
 
 const defaultVacuumOptions = { batchSize: 1000, batchWait: 10 }
+const defaultVacuumConditions = { minDirtFactor: 0.15, minDirtCount: 20 }
 
-const defaultAutoVacuumOptions = { minDirtFactor: 0.15, minDirtCount: 20, ...defaultVacuumOptions }
+const defaultAutoVacuumOptions = { ...defaultVacuumOptions, ...defaultVacuumConditions }
 
 const assignUniqueTerm = (target: string[], term: string): void => {
   // Avoid adding duplicate terms.
