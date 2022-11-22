@@ -1764,6 +1764,11 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
   return { term, fuzzy, prefix }
 }
 
+const defaultVacuumOptions = { batchSize: 1000, batchWait: 10 }
+const defaultVacuumConditions = { minDirtFactor: 0.15, minDirtCount: 20 }
+
+const defaultAutoVacuumOptions = { ...defaultVacuumOptions, ...defaultVacuumConditions }
+
 const defaultOptions = {
   idField: 'id',
   extractField: (document: any, fieldName: string) => document[fieldName],
@@ -1772,7 +1777,8 @@ const defaultOptions = {
   fields: undefined,
   searchOptions: undefined,
   storeFields: [],
-  logger: (level: LogLevel, message: string, code?: string) => console != null && console.warn != null && console[level](message)
+  logger: (level: LogLevel, message: string, code?: string) => console != null && console.warn != null && console[level](message),
+  autoVacuum: defaultAutoVacuumOptions
 }
 
 const defaultSearchOptions = {
@@ -1789,11 +1795,6 @@ const defaultAutoSuggestOptions = {
   prefix: (term: string, i: number, terms: string[]): boolean =>
     i === terms.length - 1
 }
-
-const defaultVacuumOptions = { batchSize: 1000, batchWait: 10 }
-const defaultVacuumConditions = { minDirtFactor: 0.15, minDirtCount: 20 }
-
-const defaultAutoVacuumOptions = { ...defaultVacuumOptions, ...defaultVacuumConditions }
 
 const assignUniqueTerm = (target: string[], term: string): void => {
   // Avoid adding duplicate terms.
