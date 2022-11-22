@@ -775,6 +775,17 @@ describe('MiniSearch', () => {
 
       expect(ms.isVacuuming).toEqual(false)
     })
+
+    it('allows batch size to be bigger than the term count', async () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      await ms.vacuum({ batchSize: ms.termCount + 2 })
+      expect(ms.isVacuuming).toEqual(false)
+    })
   })
 
   describe('addAll', () => {

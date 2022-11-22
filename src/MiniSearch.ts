@@ -896,7 +896,7 @@ export default class MiniSearch<T = any> {
     if (this.vacuumConditionsMet(conditions)) {
       const batchSize = options.batchSize || defaultVacuumOptions.batchSize
       const batchWait = options.batchWait || defaultVacuumOptions.batchWait
-      let i = 0
+      let i = 1
 
       for (const [term, fieldsData] of this._index) {
         for (const [fieldId, fieldIndex] of fieldsData) {
@@ -923,6 +923,9 @@ export default class MiniSearch<T = any> {
 
       this._dirtCount -= initialDirtCount
     }
+
+    // Make the next lines always async, so they execute after this function returns
+    await null
 
     this._currentVacuum = this._enqueuedVacuum
     this._enqueuedVacuum = null
