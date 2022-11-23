@@ -443,10 +443,12 @@ describe('MiniSearch', () => {
       ms.addAll(documents)
 
       expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2])
+      expect([1, 2].map((id) => ms.has(id))).toEqual([true, true])
 
       ms.discard(1)
 
       expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
+      expect([1, 2].map((id) => ms.has(id))).toEqual([false, true])
     })
 
     it('raises error if a document with the given ID does not exist', () => {
@@ -693,10 +695,12 @@ describe('MiniSearch', () => {
       ms.addAll(documents)
 
       expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2, 3])
+      expect([1, 2, 3].map((id) => ms.has(id))).toEqual([true, true, true])
 
       ms.discardAll([1, 3])
 
       expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
+      expect([1, 2, 3].map((id) => ms.has(id))).toEqual([false, true, false])
     })
 
     it('only triggers at most a single auto vacuum at the end', () => {
