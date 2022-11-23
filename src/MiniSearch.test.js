@@ -682,6 +682,39 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('discardAll', () => {
+    it('prevents the documents from appearing in search results', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' },
+        { id: 3, text: 'Some even more interesting stuff' }
+      ]
+      ms.addAll(documents)
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2, 3])
+
+      ms.discardAll([1, 3])
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
+    })
+
+    it('only triggers at most a single auto vacuum at the end', () => {
+      const ms = new MiniSearch({ fields: ['text'], autoVacuum: { minDirtCount: 3, minDirtFactor: 0, batchSize: 1, batchWait: 10 } })
+      const documents = []
+      for (const i = 1; i <= 10; i++) {
+        documents.push({ id: i, text: `Document ${i}` })
+      }
+      ms.addAll(documents)
+      ms.discardAll([1, 2])
+      expect(ms.isVacuuming).toEqual(false)
+
+      ms.discardAll([3, 4, 5, 6, 7, 8, 9, 10])
+      expect(ms.isVacuuming).toEqual(true)
+      expect(ms._enqueuedVacuum).toEqual(null)
+    })
+  })
+
   describe('replace', () => {
     it('replaces an existing document with a new version', () => {
       const ms = new MiniSearch({ fields: ['text'] })

@@ -810,10 +810,42 @@ export default class MiniSearch<T = any> {
     this._documentCount -= 1
     this._dirtCount += 1
 
+    this.maybeAutoVacuum()
+  }
+
+  private maybeAutoVacuum (): void {
     if (this._options.autoVacuum === false) { return }
 
     const { minDirtFactor, minDirtCount, batchSize, batchWait } = this._options.autoVacuum
     this.conditionalVacuum({ batchSize, batchWait }, { minDirtCount, minDirtFactor })
+  }
+
+  /**
+   * Discards the documents with the given IDs, so they won't appear in search
+   * results
+   *
+   * It is equivalent to calling [[MiniSearch.discard]] for all the given IDs,
+   * but with the optimization of triggering at most one automatic vacuuming at
+   * the end.
+   *
+   * Note: to remove all documents from the index, it is faster and more
+   * convenient to call [[MiniSearch.removeAll]] with no argument, instead of
+   * passing all IDs to this method.
+   */
+  discardAll (ids: readonly any[]): void {
+    const autoVacuum = this._options.autoVacuum
+
+    try {
+      this._options.autoVacuum = false
+
+      for (const id of ids) {
+        this.discard(id)
+      }
+    } finally {
+      this._options.autoVacuum = autoVacuum
+    }
+
+    this.maybeAutoVacuum()
   }
 
   /**
