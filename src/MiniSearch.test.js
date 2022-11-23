@@ -713,6 +713,17 @@ describe('MiniSearch', () => {
       expect(ms.isVacuuming).toEqual(true)
       expect(ms._enqueuedVacuum).toEqual(null)
     })
+
+    it('does not change auto vacuum settings in case of errors', () => {
+      const ms = new MiniSearch({ fields: ['text'], autoVacuum: { minDirtCount: 1, minDirtFactor: 0, batchSize: 1, batchWait: 10 } })
+      ms.add({ id: 1, text: 'Some stuff' })
+
+      expect(() => { ms.discardAll([3]) }).toThrow()
+      expect(ms.isVacuuming).toEqual(false)
+
+      ms.discardAll([1])
+      expect(ms.isVacuuming).toEqual(true)
+    })
   })
 
   describe('replace', () => {
