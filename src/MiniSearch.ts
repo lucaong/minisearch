@@ -105,6 +105,14 @@ export type SearchOptions = {
    * same term processor used for indexing is used also for search.
    */
   processTerm?: (term: string) => string | string[] | null | undefined | false
+
+  /**
+   * BM25+ algorithm parameters. Customizing these is almost never necessary,
+   * and finetuning them requires an understanding of the BM25 scoring model. In
+   * most cases, it is best to use boosting to tweak scoring for specific use
+   * cases.
+   */
+  bm25?: BM25Params
 }
 
 type SearchOptionsWithDefaults = SearchOptions & {
@@ -119,6 +127,8 @@ type SearchOptionsWithDefaults = SearchOptions & {
   maxFuzzy: number,
 
   combineWith: string
+
+  bm25: BM25Params
 }
 
 /**
@@ -1437,13 +1447,14 @@ export default class MiniSearch<T = any> {
     const {
       boostDocument,
       weights,
-      maxFuzzy
+      maxFuzzy,
+      bm25: bm25params
     } = options
 
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
 
     const data = this._index.get(query.term)
-    const results = this.termResults(query.term, query.term, 1, data, boosts, boostDocument)
+    const results = this.termResults(query.term, query.term, 1, data, boosts, boostDocument, bm25params)
 
     let prefixMatches
     let fuzzyMatches
@@ -1473,7 +1484,7 @@ export default class MiniSearch<T = any> {
         // account for the fact that prefix matches stay more relevant than
         // fuzzy matches for longer distances.
         const weight = prefixWeight * term.length / (term.length + 0.3 * distance)
-        this.termResults(query.term, term, weight, data, boosts, boostDocument, results)
+        this.termResults(query.term, term, weight, data, boosts, boostDocument, bm25params, results)
       }
     }
 
@@ -1485,7 +1496,7 @@ export default class MiniSearch<T = any> {
         // Weight gradually approaches 0 as distance goes to infinity, with the
         // weight for the hypothetical distance 0 being equal to fuzzyWeight.
         const weight = fuzzyWeight * term.length / (term.length + distance)
-        this.termResults(query.term, term, weight, data, boosts, boostDocument, results)
+        this.termResults(query.term, term, weight, data, boosts, boostDocument, bm25params, results)
       }
     }
 
@@ -1562,6 +1573,7 @@ export default class MiniSearch<T = any> {
     fieldTermData: FieldTermData | undefined,
     fieldBoosts: { [field: string]: number },
     boostDocumentFn: ((id: any, term: string) => number) | undefined,
+    bm25params: BM25Params,
     results: RawResult = new Map()
   ): RawResult {
     if (fieldTermData == null) return results
@@ -1595,7 +1607,7 @@ export default class MiniSearch<T = any> {
         // factor. This will make a difference in scoring if the field is rarely
         // present. This is currently not supported, and may require further
         // analysis to see if it is a valid use case.
-        const rawScore = calcBM25Score(termFreq, matchingFields, this._documentCount, fieldLength, avgFieldLength)
+        const rawScore = calcBM25Score(termFreq, matchingFields, this._documentCount, fieldLength, avgFieldLength, bm25params)
         const weightedScore = termWeight * fieldBoost * docBoost * rawScore
 
         const result = results.get(docId)
@@ -1787,18 +1799,58 @@ const combinators: { [kind: string]: CombinatorFunction } = {
   }
 }
 
-// https://en.wikipedia.org/wiki/Okapi_BM25
-// https://opensourceconnections.com/blog/2015/10/16/bm25-the-next-generation-of-lucene-relevation/
-const k = 1.2 // Term frequency saturation point. Recommended values are between 1.2 and 2.
-const b = 0.7 // Length normalization impact. Recommended values are around 0.75.
-const d = 0.5 // BM25+ frequency normalization lower bound. Recommended values are between 0.5 and 1.
+/**
+ * Parameters of the BM25+ scoring algorithm. Customizing these is almost never
+ * necessary, and finetuning them requires an understanding of the BM25 scoring
+ * model.
+ *
+ * Some information about BM25 (and BM25+) can be found at these links:
+ *
+ *   - https://en.wikipedia.org/wiki/Okapi_BM25
+ *   - https://opensourceconnections.com/blog/2015/10/16/bm25-the-next-generation-of-lucene-relevation/
+ */
+export type BM25Params = {
+  /** Term frequency saturation point.
+   *
+   * Recommended values are between `1.2` and `2`. Higher values increase the
+   * difference in score between documents with higher and lower term
+   * frequencies. Setting this to `0` or a negative value is invalid. Defaults
+   * to `1.2`
+   */
+  k: number,
+
+  /**
+   * Length normalization impact.
+   *
+   * Recommended values are around `0.75`. Higher values increase the weight
+   * that field length has on scoring. Setting this to `0` (not recommended)
+   * means that the field length has no effect on scoring. Negative values are
+   * invalid. Defaults to `0.7`.
+   */
+  b: number,
+
+  /**
+   * BM25+ frequency normalization lower bound (usually called δ).
+   *
+   * Recommended values are between `0.5` and `1`. Increasing this parameter
+   * increases the minimum relevance of one occurrence of a search term
+   * regardless of its (possibly very long) field length. Negative values are
+   * invalid. Defaults to `0.5`.
+   */
+  d: number
+}
+
+const defaultBM25params: BM25Params = { k: 1.2, b: 0.7, d: 0.5 }
+
 const calcBM25Score = (
   termFreq: number,
   matchingCount: number,
   totalCount: number,
   fieldLength: number,
-  avgFieldLength: number
+  avgFieldLength: number,
+  bm25params: BM25Params
 ): number => {
+  const { k, b, d } = bm25params
   const invDocFreq = Math.log(1 + (totalCount - matchingCount + 0.5) / (matchingCount + 0.5))
   return invDocFreq * (d + termFreq * (k + 1) / (termFreq + k * (1 - b + b * fieldLength / avgFieldLength)))
 }
@@ -1831,7 +1883,8 @@ const defaultSearchOptions = {
   fuzzy: false,
   maxFuzzy: 6,
   boost: {},
-  weights: { fuzzy: 0.45, prefix: 0.375 }
+  weights: { fuzzy: 0.45, prefix: 0.375 },
+  bm25: defaultBM25params
 }
 
 const defaultAutoSuggestOptions = {
