@@ -40,6 +40,15 @@ describe('MiniSearch', () => {
       }).toThrowError('MiniSearch: document does not have ID field "foo"')
     })
 
+    it('throws error on duplicate ID', () => {
+      const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] })
+      ms.add({ foo: 'abc', text: 'Something' })
+
+      expect(() => {
+        ms.add({ foo: 'abc', text: 'I have a duplicate ID' })
+      }).toThrowError('MiniSearch: duplicate ID abc')
+    })
+
     it('extracts the ID field using extractField', () => {
       const extractField = (document, fieldName) => {
         if (fieldName === 'id') { return document.id.value }
@@ -360,6 +369,16 @@ describe('MiniSearch', () => {
         expect(() => ms.remove({ id: 1, title: 'Divina Commedia cammin', text: 'something has changed' }))
           .not.toThrow()
       })
+
+      it('calls the custom logger if given', () => {
+        const logger = jest.fn()
+        ms = new MiniSearch({ fields: ['title', 'text'], logger })
+        ms.addAll(documents)
+        ms.remove({ id: 1, title: 'Divina Commedia', text: 'something' })
+
+        expect(logger).toHaveBeenCalledWith('warn', 'MiniSearch: document with ID 1 has changed before removal: term "something" was not present in field "text". Removing a document after it has changed can corrupt the index!', 'version_conflict')
+        expect(console.warn).not.toHaveBeenCalled()
+      })
     })
   })
 
@@ -411,6 +430,418 @@ describe('MiniSearch', () => {
       expect(() => { ms.removeAll(undefined) }).toThrowError()
       expect(() => { ms.removeAll(false) }).toThrowError()
       expect(() => { ms.removeAll([]) }).not.toThrowError()
+    })
+  })
+
+  describe('discard', () => {
+    it('prevents a document from appearing in search results', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' }
+      ]
+      ms.addAll(documents)
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2])
+      expect([1, 2].map((id) => ms.has(id))).toEqual([true, true])
+
+      ms.discard(1)
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
+      expect([1, 2].map((id) => ms.has(id))).toEqual([false, true])
+    })
+
+    it('raises error if a document with the given ID does not exist', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+
+      expect(() => {
+        ms.discard(99)
+      }).toThrow('MiniSearch: cannot discard document with ID 99: it is not in the index')
+    })
+
+    it('adjusts internal data to account for the document being discarded', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' }
+      ]
+      ms.addAll(documents)
+      const clone = MiniSearch.loadJSON(JSON.stringify(ms), {
+        fields: ['text']
+      })
+
+      ms.discard(1)
+      clone.remove({ id: 1, text: 'Some interesting stuff' })
+
+      expect(ms._idToShortId).toEqual(clone._idToShortId)
+      expect(ms._documentIds).toEqual(clone._documentIds)
+      expect(ms._fieldLength).toEqual(clone._fieldLength)
+      expect(ms._storedFields).toEqual(clone._storedFields)
+      expect(ms._avgFieldLength).toEqual(clone._avgFieldLength)
+      expect(ms._documentCount).toEqual(clone._documentCount)
+      expect(ms._dirtCount).toEqual(1)
+    })
+
+    it('allows adding a new version of the document afterwards', () => {
+      const ms = new MiniSearch({ fields: ['text'], storeFields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' }
+      ]
+      ms.addAll(documents)
+
+      ms.discard(1)
+      ms.add({ id: 1, text: 'Some new stuff' })
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2])
+      expect(ms.search('new').map((doc) => doc.id)).toEqual([1])
+
+      ms.discard(1)
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
+
+      ms.add({ id: 1, text: 'Some newer stuff' })
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2])
+      expect(ms.search('new').map((doc) => doc.id)).toEqual([])
+      expect(ms.search('newer').map((doc) => doc.id)).toEqual([1])
+    })
+
+    it('leaves the index in the same state as removal when all terms are searched at least once', () => {
+      const ms = new MiniSearch({ fields: ['text'], storeFields: ['text'] })
+      const document = { id: 1, text: 'Some stuff' }
+      ms.add(document)
+      const clone = MiniSearch.loadJSON(JSON.stringify(ms), {
+        fields: ['text'],
+        storeFields: ['text']
+      })
+
+      ms.discard(1)
+      clone.remove({ id: 1, text: 'Some stuff' })
+
+      expect(ms).not.toEqual(clone)
+
+      const results = ms.search('some stuff')
+
+      expect(ms._index).toEqual(clone._index)
+
+      // Results are the same after the first search
+      expect(ms.search('stuff')).toEqual(results)
+    })
+
+    it('triggers auto vacuum by default', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      ms.add({ id: 1, text: 'Some stuff' })
+      ms._dirtCount = 1000
+
+      ms.discard(1)
+      expect(ms.isVacuuming).toEqual(true)
+    })
+
+    it('triggers auto vacuum when the threshold is met', () => {
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount: 2, minDirtFactor: 0, batchWait: 50, batchSize: 1 }
+      })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' },
+        { id: 3, text: 'Even more stuff' }
+      ]
+      ms.addAll(documents)
+
+      expect(ms.isVacuuming).toEqual(false)
+
+      ms.discard(1)
+      expect(ms.isVacuuming).toEqual(false)
+
+      ms.discard(2)
+      expect(ms.isVacuuming).toEqual(true)
+    })
+
+    it('does not trigger auto vacuum if disabled', () => {
+      const ms = new MiniSearch({ fields: ['text'], autoVacuum: false })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      ms._dirtCount = 1000
+
+      ms.discard(1)
+      expect(ms.isVacuuming).toEqual(false)
+    })
+
+    it('applies default settings if autoVacuum is set to true', () => {
+      const ms = new MiniSearch({ fields: ['text'], autoVacuum: true })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      ms._dirtCount = 1000
+
+      ms.discard(1)
+      expect(ms.isVacuuming).toEqual(true)
+    })
+
+    it('applies default settings if options are set to null', async () => {
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount: null, minDirtFactor: null, batchWait: null, batchSize: null }
+      })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      ms._dirtCount = 1000
+
+      const x = ms.discard(1)
+      expect(ms.isVacuuming).toEqual(true)
+      await x
+    })
+
+    it('vacuums until under the dirt thresholds when called multiple times', async () => {
+      const minDirtCount = 2
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount, minDirtFactor: 0, batchSize: 1, batchWait: 10 }
+      })
+      const documents = []
+      for (let i = 0; i < 5; i++) {
+        documents.push({ id: i + 1, text: `Document number ${i}` })
+      }
+      ms.addAll(documents)
+
+      expect(ms._dirtCount).toEqual(0)
+
+      // Calling discard multiple times should start an auto-vacuum and enqueue
+      // another, so that the remaining dirt count afterwards is always below
+      // minDirtCount
+      documents.forEach((doc) => ms.discard(doc.id))
+
+      while (ms.isVacuuming) {
+        await ms._currentVacuum
+      }
+
+      expect(ms._dirtCount).toBeLessThan(minDirtCount)
+    })
+
+    it('does not perform unnecessary vacuuming when called multiple times', async () => {
+      const minDirtCount = 2
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount, minDirtFactor: 0, batchSize: 1, batchWait: 10 }
+      })
+      const documents = [
+        { id: 1, text: 'Document one' },
+        { id: 2, text: 'Document two' },
+        { id: 3, text: 'Document three' },
+      ]
+      ms.addAll(documents)
+
+      // Calling discard multiple times will start an auto-vacuum and enqueue
+      // another, subject to minDirtCount/minDirtFactor conditions. The last one
+      // should be a no-op, as the remaining dirt count after the first auto
+      // vacuum would be 1, which is below minDirtCount
+      documents.forEach((doc) => ms.discard(doc.id))
+
+      while (ms.isVacuuming) {
+        await ms._currentVacuum
+      }
+
+      expect(ms._dirtCount).toBe(1)
+    })
+
+    it('enqueued vacuum runs without conditions if a manual vacuum was called while enqueued', async () => {
+      const minDirtCount = 2
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: { minDirtCount, minDirtFactor: 0, batchSize: 1, batchWait: 10 }
+      })
+      const documents = [
+        { id: 1, text: 'Document one' },
+        { id: 2, text: 'Document two' },
+        { id: 3, text: 'Document three' },
+      ]
+      ms.addAll(documents)
+
+      // Calling discard multiple times will start an auto-vacuum and enqueue
+      // another, subject to minDirtCount/minDirtFactor conditions. The last one
+      // would be a no-op, as the remaining dirt count after the first auto
+      // vacuum would be 1, which is below minDirtCount
+      documents.forEach((doc) => ms.discard(doc.id))
+
+      // But before the enqueued vacuum is ran, we invoke a manual vacuum with
+      // no conditions, so it should run even with a dirt count below
+      // minDirtCount
+      ms.vacuum()
+
+      while (ms.isVacuuming) {
+        await ms._currentVacuum
+      }
+
+      expect(ms._dirtCount).toBe(0)
+    })
+  })
+
+  describe('discardAll', () => {
+    it('prevents the documents from appearing in search results', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' },
+        { id: 3, text: 'Some even more interesting stuff' }
+      ]
+      ms.addAll(documents)
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2, 3])
+      expect([1, 2, 3].map((id) => ms.has(id))).toEqual([true, true, true])
+
+      ms.discardAll([1, 3])
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2])
+      expect([1, 2, 3].map((id) => ms.has(id))).toEqual([false, true, false])
+    })
+
+    it('only triggers at most a single auto vacuum at the end', () => {
+      const ms = new MiniSearch({ fields: ['text'], autoVacuum: { minDirtCount: 3, minDirtFactor: 0, batchSize: 1, batchWait: 10 } })
+      const documents = []
+      for (const i = 1; i <= 10; i++) {
+        documents.push({ id: i, text: `Document ${i}` })
+      }
+      ms.addAll(documents)
+      ms.discardAll([1, 2])
+      expect(ms.isVacuuming).toEqual(false)
+
+      ms.discardAll([3, 4, 5, 6, 7, 8, 9, 10])
+      expect(ms.isVacuuming).toEqual(true)
+      expect(ms._enqueuedVacuum).toEqual(null)
+    })
+
+    it('does not change auto vacuum settings in case of errors', () => {
+      const ms = new MiniSearch({ fields: ['text'], autoVacuum: { minDirtCount: 1, minDirtFactor: 0, batchSize: 1, batchWait: 10 } })
+      ms.add({ id: 1, text: 'Some stuff' })
+
+      expect(() => { ms.discardAll([3]) }).toThrow()
+      expect(ms.isVacuuming).toEqual(false)
+
+      ms.discardAll([1])
+      expect(ms.isVacuuming).toEqual(true)
+    })
+  })
+
+  describe('replace', () => {
+    it('replaces an existing document with a new version', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some quite interesting stuff' },
+        { id: 2, text: 'Some more interesting stuff' }
+      ]
+      ms.addAll(documents)
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([1, 2])
+      expect(ms.search('quite').map((doc) => doc.id)).toEqual([1])
+      expect(ms.search('even').map((doc) => doc.id)).toEqual([])
+
+      ms.replace({ id: 1, text: 'Some even more interesting stuff' })
+
+      expect(ms.search('stuff').map((doc) => doc.id)).toEqual([2, 1])
+      expect(ms.search('quite').map((doc) => doc.id)).toEqual([])
+      expect(ms.search('even').map((doc) => doc.id)).toEqual([1])
+    })
+
+    it('raises error if a document with the given ID does not exist', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+
+      expect(() => {
+        ms.replace({ id: 1, text: 'Some stuff' })
+      }).toThrow('MiniSearch: cannot discard document with ID 1: it is not in the index')
+    })
+  })
+
+  describe('vacuum', () => {
+    it('cleans up discarded documents from the index', async () => {
+      const ms = new MiniSearch({ fields: ['text'], storeFields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      const clone = MiniSearch.loadJSON(JSON.stringify(ms), {
+        fields: ['text'],
+        storeFields: ['text']
+      })
+
+      ms.discard(1)
+      ms.discard(2)
+      clone.remove({ id: 1, text: 'Some stuff' })
+      clone.remove({ id: 2, text: 'Some additional stuff' })
+
+      expect(ms).not.toEqual(clone)
+
+      await ms.vacuum({ batchSize: 1 })
+
+      expect(ms).toEqual(clone)
+      expect(ms.isVacuuming).toEqual(false)
+    })
+
+    it('schedules a second vacuum right after the current one completes, if one is ongoing', async () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const empty = MiniSearch.loadJSON(JSON.stringify(ms), {
+        fields: ['text']
+      })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+
+      ms.discard(1)
+      ms.discard(2)
+      ms.add({ id: 3, text: 'Even more stuff' })
+
+      ms.vacuum({ batchSize: 1, batchWait: 50 })
+      ms.discard(3)
+
+      await ms.vacuum()
+
+      expect(ms._index).toEqual(empty._index)
+      expect(ms.isVacuuming).toEqual(false)
+    })
+
+    it('does not enqueue more than one vacuum on top of the ongoing one', async () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+
+      ms.addAll(documents)
+      ms.discard(1)
+      ms.discard(2)
+
+      const a = ms.vacuum({ batchSize: 1, batchWait: 50 })
+      const b = ms.vacuum()
+      const c = ms.vacuum()
+
+      expect(a).not.toBe(b)
+      expect(b).toBe(c)
+      expect(ms.isVacuuming).toEqual(true)
+
+      await c
+
+      expect(ms.isVacuuming).toEqual(false)
+    })
+
+    it('allows batch size to be bigger than the term count', async () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'Some stuff' },
+        { id: 2, text: 'Some additional stuff' }
+      ]
+      ms.addAll(documents)
+      await ms.vacuum({ batchSize: ms.termCount + 1 })
+      expect(ms.isVacuuming).toEqual(false)
     })
   })
 
@@ -474,6 +905,46 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('has', () => {
+    it('returns true if a document with the given ID was added to the index, false otherwise', () => {
+      const documents = [
+        { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+        { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+      ]
+      const ms = new MiniSearch({ fields: ['title', 'text'] })
+      ms.addAll(documents)
+
+      expect(ms.has(1)).toEqual(true)
+      expect(ms.has(2)).toEqual(true)
+      expect(ms.has(3)).toEqual(false)
+
+      ms.remove({ id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' })
+      ms.discard(2)
+
+      expect(ms.has(1)).toEqual(false)
+      expect(ms.has(2)).toEqual(false)
+    })
+
+    it('works well with custom ID fields', () => {
+      const documents = [
+        { uid: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
+        { uid: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+      ]
+      const ms = new MiniSearch({ fields: ['title', 'text'], idField: 'uid' })
+      ms.addAll(documents)
+
+      expect(ms.has(1)).toEqual(true)
+      expect(ms.has(2)).toEqual(true)
+      expect(ms.has(3)).toEqual(false)
+
+      ms.remove({ uid: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' })
+      ms.discard(2)
+
+      expect(ms.has(1)).toEqual(false)
+      expect(ms.has(2)).toEqual(false)
+    })
+  })
+
   describe('search', () => {
     const documents = [
       { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
@@ -524,7 +995,7 @@ describe('MiniSearch', () => {
     it('computes a meaningful score when fields are named liked default properties of object', () => {
       const ms = new MiniSearch({ fields: ['constructor'] })
       ms.add({ id: 1, constructor: 'something' })
-      ms.add({ id: 1, constructor: 'something else' })
+      ms.add({ id: 2, constructor: 'something else' })
 
       const results = ms.search('something')
       results.forEach((result) => {

@@ -180,6 +180,25 @@ export type Options<T = any> = {
     */
   processTerm?: (term: string, fieldName?: string) => string | string[] | null | undefined | false,
 
+  /**
+   * Function called to log messages. Arguments are a log level ('debug',
+   * 'info', 'warn', or 'error'), a log message, and an optional string code
+   * that identifies the reason for the log.
+   *
+   * The default implementation uses `console`, if defined.
+   */
+  logger?: (level: LogLevel, message: string, code?: string) => void
+
+  /**
+   * If `true` (the default), vacuuming is performed automatically as soon as
+   * [[MiniSearch.discard]] is called a certain number of times, cleaning up
+   * obsolete references from the index. If `false`, no automatic vacuuming is
+   * performed. Custom settings controlling auto vacuuming thresholds, as well
+   * as batching behavior, can be passed as an object (see the
+   * [[AutoVacuumOptions]] type).
+   */
+  autoVacuum?: boolean | AutoVacuumOptions
+
    /**
     * Default search options (see the [[SearchOptions]] type and the
     * [[MiniSearch.search]] method for details)
@@ -194,20 +213,26 @@ export type Options<T = any> = {
 }
 
 type OptionsWithDefaults<T = any> = Options<T> & {
-  storeFields: string[],
+  storeFields: string[]
 
-  idField: string,
+  idField: string
 
-  extractField: (document: T, fieldName: string) => string,
+  extractField: (document: T, fieldName: string) => string
 
-  tokenize: (text: string, fieldName: string) => string[],
+  tokenize: (text: string, fieldName: string) => string[]
 
-  processTerm: (term: string, fieldName: string) => string | string[] | null | undefined | false,
+  processTerm: (term: string, fieldName: string) => string | string[] | null | undefined | false
 
-  searchOptions: SearchOptionsWithDefaults,
+  logger: (level: LogLevel, message: string, code?: string) => void
+
+  autoVacuum: false | AutoVacuumOptions
+
+  searchOptions: SearchOptionsWithDefaults
 
   autoSuggestOptions: SearchOptions
 }
+
+type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
 /**
  * The type of auto-suggestions
@@ -281,6 +306,7 @@ export type AsPlainObject = {
   fieldLength: { [shortId: string]: number[] }
   averageFieldLength: number[],
   storedFields: { [shortId: string]: any }
+  dirtCount?: number,
   index: [string, { [fieldId: string]: SerializedIndexEntry }][]
   serializationVersion: number
 }
@@ -292,6 +318,60 @@ export type QueryCombination = SearchOptions & { queries: Query[] }
  * combining several queries with a combination of AND or OR.
  */
 export type Query = QueryCombination | string
+
+/**
+ * Options to control vacuuming behavior.
+ *
+ * Vacuuming cleans up document references made obsolete by
+ * [[MiniSearch.discard]] from the index. On large indexes, vacuuming is
+ * potentially costly, because it has to traverse the whole inverted index.
+ * Therefore, in order to dilute this cost so it does not negatively affects the
+ * application, vacuuming is performed in batches, with a delay between each
+ * batch. These options are used to configure the batch size and the delay
+ * between batches.
+ */
+export type VacuumOptions = {
+  /**
+   * Size of each vacuuming batch (the number of terms in the index that will be
+   * traversed in each batch). Defaults to 1000.
+   */
+  batchSize?: number,
+
+  /**
+   * Wait time between each vacuuming batch in milliseconds. Defaults to 10.
+   */
+  batchWait?: number
+}
+
+/**
+ * Sets minimum thresholds for `dirtCount` and `dirtFactor` that trigger an
+ * automatic vacuuming.
+ */
+export type VacuumConditions = {
+  /**
+   * Minimum `dirtCount` (number of discarded documents since the last vacuuming)
+   * under which auto vacuum is not triggered. It defaults to 20.
+   */
+  minDirtCount?: number
+
+  /**
+   * Minimum `dirtFactor` (proportion of discarded documents over the total)
+   * under which auto vacuum is not triggered. It defaults to 0.1.
+   */
+  minDirtFactor?: number,
+}
+
+/**
+ * Options to control auto vacuum behavior. When discarding a document with
+ * [[MiniSearch.discard]], a vacuuming operation is automatically started if the
+ * `dirtCount` and `dirtFactor` are above the `minDirtCount` and `minDirtFactor`
+ * thresholds defined by this configuration. See [[VacuumConditions]] for
+ * details on these.
+ *
+ * Also, `batchSize` and `batchWait` can be specified, controlling batching
+ * behavior (see [[VacuumOptions]]).
+ */
+export type AutoVacuumOptions = VacuumOptions & VacuumConditions
 
 type QuerySpec = {
   prefix: boolean,
@@ -382,11 +462,16 @@ export default class MiniSearch<T = any> {
   protected _index: SearchableMap<FieldTermData>
   protected _documentCount: number
   protected _documentIds: Map<number, any>
+  protected _idToShortId: Map<any, number>
   protected _fieldIds: { [key: string]: number }
   protected _fieldLength: Map<number, number[]>
   protected _avgFieldLength: number[]
   protected _nextId: number
   protected _storedFields: Map<number, Record<string, unknown>>
+  protected _dirtCount: number
+  private _currentVacuum: Promise<void> | null
+  private _enqueuedVacuum: Promise<void> | null
+  private _enqueuedVacuumConditions: VacuumConditions | undefined
 
   /**
    * @param options  Configuration options
@@ -454,9 +539,12 @@ export default class MiniSearch<T = any> {
       throw new Error('MiniSearch: option "fields" must be provided')
     }
 
+    const autoVacuum = (options.autoVacuum == null || options.autoVacuum === true) ? defaultAutoVacuumOptions : options.autoVacuum
+
     this._options = {
       ...defaultOptions,
       ...options,
+      autoVacuum,
       searchOptions: { ...defaultSearchOptions, ...(options.searchOptions || {}) },
       autoSuggestOptions: { ...defaultAutoSuggestOptions, ...(options.autoSuggestOptions || {}) }
     }
@@ -466,6 +554,8 @@ export default class MiniSearch<T = any> {
     this._documentCount = 0
 
     this._documentIds = new Map()
+
+    this._idToShortId = new Map()
 
     // Fields are defined during initialization, don't change, are few in
     // number, rarely need iterating over, and have string keys. Therefore in
@@ -481,6 +571,13 @@ export default class MiniSearch<T = any> {
 
     this._storedFields = new Map()
 
+    this._dirtCount = 0
+
+    this._currentVacuum = null
+
+    this._enqueuedVacuum = null
+    this._enqueuedVacuumConditions = defaultVacuumConditions
+
     this.addFields(this._options.fields)
   }
 
@@ -494,6 +591,10 @@ export default class MiniSearch<T = any> {
     const id = extractField(document, idField)
     if (id == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
+    }
+
+    if (this._idToShortId.has(id)) {
+      throw new Error(`MiniSearch: duplicate ID ${id}`)
     }
 
     const shortDocumentId = this.addDocumentId(id)
@@ -527,7 +628,7 @@ export default class MiniSearch<T = any> {
    *
    * @param documents  An array of documents to be indexed
    */
-  addAll (documents: T[]): void {
+  addAll (documents: readonly T[]): void {
     for (const document of documents) this.add(document)
   }
 
@@ -542,7 +643,7 @@ export default class MiniSearch<T = any> {
    * @param options  Configuration options
    * @return A promise resolving to `undefined` when the indexing is done
    */
-  addAllAsync (documents: T[], options: { chunkSize?: number } = {}): Promise<void> {
+  addAllAsync (documents: readonly T[], options: { chunkSize?: number } = {}): Promise<void> {
     const { chunkSize = 10 } = options
     const acc: { chunk: T[], promise: Promise<void> } = { chunk: [], promise: Promise.resolve() }
 
@@ -566,13 +667,14 @@ export default class MiniSearch<T = any> {
   /**
    * Removes the given document from the index.
    *
-   * The document to delete must NOT have changed between indexing and deletion,
-   * otherwise the index will be corrupted. Therefore, when reindexing a document
-   * after a change, the correct order of operations is:
+   * The document to remove must NOT have changed between indexing and removal,
+   * otherwise the index will be corrupted.
    *
-   *   1. remove old version
-   *   2. apply changes
-   *   3. index new version
+   * This method requires passing the full document to be removed (not just the
+   * ID), and immediately removes the document from the inverted index, allowing
+   * memory to be released. A convenient alternative is [[MiniSearch.discard]],
+   * which needs only the document ID, and has the same visible effect, but
+   * delays cleaning up the index until the next vacuuming.
    *
    * @param document  The document to be removed
    */
@@ -584,39 +686,39 @@ export default class MiniSearch<T = any> {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
 
-    for (const [shortId, longId] of this._documentIds) {
-      if (id === longId) {
-        for (const field of fields) {
-          const fieldValue = extractField(document, field)
-          if (fieldValue == null) continue
+    const shortId = this._idToShortId.get(id)
 
-          const tokens = tokenize(fieldValue.toString(), field)
-          const fieldId = this._fieldIds[field]
+    if (shortId == null) {
+      throw new Error(`MiniSearch: cannot remove document with ID ${id}: it is not in the index`)
+    }
 
-          const uniqueTerms = new Set(tokens).size
-          this.removeFieldLength(shortId, fieldId, this._documentCount, uniqueTerms)
+    for (const field of fields) {
+      const fieldValue = extractField(document, field)
+      if (fieldValue == null) continue
 
-          for (const term of tokens) {
-            const processedTerm = processTerm(term, field)
-            if (Array.isArray(processedTerm)) {
-              for (const t of processedTerm) {
-                this.removeTerm(fieldId, shortId, t)
-              }
-            } else if (processedTerm) {
-              this.removeTerm(fieldId, shortId, processedTerm)
-            }
+      const tokens = tokenize(fieldValue.toString(), field)
+      const fieldId = this._fieldIds[field]
+
+      const uniqueTerms = new Set(tokens).size
+      this.removeFieldLength(shortId, fieldId, this._documentCount, uniqueTerms)
+
+      for (const term of tokens) {
+        const processedTerm = processTerm(term, field)
+        if (Array.isArray(processedTerm)) {
+          for (const t of processedTerm) {
+            this.removeTerm(fieldId, shortId, t)
           }
+        } else if (processedTerm) {
+          this.removeTerm(fieldId, shortId, processedTerm)
         }
-
-        this._storedFields.delete(shortId)
-        this._documentIds.delete(shortId)
-        this._fieldLength.delete(shortId)
-        this._documentCount -= 1
-        return
       }
     }
 
-    throw new Error(`MiniSearch: cannot remove document with ID ${id}: it is not in the index`)
+    this._storedFields.delete(shortId)
+    this._documentIds.delete(shortId)
+    this._idToShortId.delete(id)
+    this._fieldLength.delete(shortId)
+    this._documentCount -= 1
   }
 
   /**
@@ -628,7 +730,7 @@ export default class MiniSearch<T = any> {
    * more efficient to call this method with no arguments than to pass all
    * documents.
    */
-  removeAll (documents?: T[]): void {
+  removeAll (documents?: readonly T[]): void {
     if (documents) {
       for (const document of documents) this.remove(document)
     } else if (arguments.length > 0) {
@@ -637,11 +739,289 @@ export default class MiniSearch<T = any> {
       this._index = new SearchableMap()
       this._documentCount = 0
       this._documentIds = new Map()
+      this._idToShortId = new Map()
       this._fieldLength = new Map()
       this._avgFieldLength = []
       this._storedFields = new Map()
       this._nextId = 0
     }
+  }
+
+  /**
+   * Discards the document with the given ID, so it won't appear in search results
+   *
+   * It has the same visible effect of [[MiniSearch.remove]] (both cause the
+   * document to stop appearing in searches), but a different effect on the
+   * internal data structures:
+   *
+   *   - [[MiniSearch.remove]] requires passing the full document to be removed
+   *   as argument, and removes it from the inverted index immediately.
+   *
+   *   - [[MiniSearch.discard]] instead only needs the document ID, and works by
+   *   marking the current version of the document as discarded, so it is
+   *   immediately ignored by searches. This is faster and more convenient than
+   *   `remove`, but the index is not immediately modified. To take care of
+   *   that, vacuuming is performed after a certain number of documents are
+   *   discarded, cleaning up the index and allowing memory to be released.
+   *
+   * After discarding a document, it is possible to re-add a new version, and
+   * only the new version will appear in searches. In other words, discarding
+   * and re-adding a document works exactly like removing and re-adding it. The
+   * [[MiniSearch.replace]] method can also be used to replace a document with a
+   * new version.
+   *
+   * #### Details about vacuuming
+   *
+   * Repetite calls to this method would leave obsolete document references in
+   * the index, invisible to searches. Two mechanisms take care of cleaning up:
+   * clean up during search, and vacuuming.
+   *
+   *   - Upon search, whenever a discarded ID is found (and ignored for the
+   *   results), references to the discarded document are removed from the
+   *   inverted index entries for the search terms. This ensures that subsequent
+   *   searches for the same terms do not need to skip these obsolete references
+   *   again.
+   *
+   *   - In addition, vacuuming is performed automatically by default (see the
+   *   `autoVacuum` field in [[Options]]) after a certain number of documents
+   *   are discarded. Vacuuming traverses all terms in the index, cleaning up
+   *   all references to discarded documents. Vacuuming can also be triggered
+   *   manually by calling [[MiniSearch.vacuum]].
+   *
+   * @param id  The ID of the document to be discarded
+   */
+  discard (id: any): void {
+    const shortId = this._idToShortId.get(id)
+
+    if (shortId == null) {
+      throw new Error(`MiniSearch: cannot discard document with ID ${id}: it is not in the index`)
+    }
+
+    this._idToShortId.delete(id)
+    this._documentIds.delete(shortId)
+    this._storedFields.delete(shortId)
+
+    ;(this._fieldLength.get(shortId) || []).forEach((fieldLength, fieldId) => {
+      this.removeFieldLength(shortId, fieldId, this._documentCount, fieldLength)
+    })
+
+    this._fieldLength.delete(shortId)
+
+    this._documentCount -= 1
+    this._dirtCount += 1
+
+    this.maybeAutoVacuum()
+  }
+
+  private maybeAutoVacuum (): void {
+    if (this._options.autoVacuum === false) { return }
+
+    const { minDirtFactor, minDirtCount, batchSize, batchWait } = this._options.autoVacuum
+    this.conditionalVacuum({ batchSize, batchWait }, { minDirtCount, minDirtFactor })
+  }
+
+  /**
+   * Discards the documents with the given IDs, so they won't appear in search
+   * results
+   *
+   * It is equivalent to calling [[MiniSearch.discard]] for all the given IDs,
+   * but with the optimization of triggering at most one automatic vacuuming at
+   * the end.
+   *
+   * Note: to remove all documents from the index, it is faster and more
+   * convenient to call [[MiniSearch.removeAll]] with no argument, instead of
+   * passing all IDs to this method.
+   */
+  discardAll (ids: readonly any[]): void {
+    const autoVacuum = this._options.autoVacuum
+
+    try {
+      this._options.autoVacuum = false
+
+      for (const id of ids) {
+        this.discard(id)
+      }
+    } finally {
+      this._options.autoVacuum = autoVacuum
+    }
+
+    this.maybeAutoVacuum()
+  }
+
+  /**
+   * It replaces an existing document with the given updated version
+   *
+   * It works by discarding the current version and adding the updated one, so
+   * it is functionally equivalent to calling [[MiniSearch.discard]] followed by
+   * [[MiniSearch.add]]. The ID of the updated document should be the same as
+   * the original one.
+   *
+   * Since it uses [[MiniSearch.discard]] internally, this method relies on
+   * vacuuming to clean up obsolete document references from the index, allowing
+   * memory to be released (see [[MiniSearch.discard]]).
+   *
+   * @param updatedDocument  The updated document to replace the old version
+   * with
+   */
+  replace (updatedDocument: T): void {
+    const { idField, extractField } = this._options
+    const id = extractField(updatedDocument, idField)
+
+    this.discard(id)
+    this.add(updatedDocument)
+  }
+
+  /**
+   * Triggers a manual vacuuming, cleaning up references to discarded documents
+   * from the inverted index
+   *
+   * Vacuiuming is only useful for applications that use the
+   * [[MiniSearch.discard]] or [[MiniSearch.replace]] methods.
+   *
+   * By default, vacuuming is performed automatically when needed (controlled by
+   * the `autoVacuum` field in [[Options]]), so there is usually no need to call
+   * this method, unless one wants to make sure to perform vacuuming at a
+   * specific moment.
+   *
+   * Vacuuming traverses all terms in the inverted index in batches, and cleans
+   * up references to discarded documents from the posting list, allowing memory
+   * to be released.
+   *
+   * The method takes an optional object as argument with the following keys:
+   *
+   *   - `batchSize`: the size of each batch (1000 by default)
+   *
+   *   - `batchWait`: the number of milliseconds to wait between batches (10 by
+   *   default)
+   *
+   * On large indexes, vacuuming could have a non-negligible cost: batching
+   * avoids blocking the thread for long, diluting this cost so that it is not
+   * negatively affecting the application. Nonetheless, this method should only
+   * be called when necessary, and relying on automatic vacuuming is usually
+   * better.
+   *
+   * It returns a promise that resolves (to undefined) when the clean up is
+   * completed. If vacuuming is already ongoing at the time this method is
+   * called, a new one is enqueued immediately after the ongoing one, and a
+   * corresponding promise is returned. However, no more than one vacuuming is
+   * enqueued on top of the ongoing one, even if this method is called more
+   * times (enqueuing multiple ones would be useless).
+   *
+   * @param options  Configuration options for the batch size and delay. See
+   * [[VacuumOptions]].
+   */
+  vacuum (options: VacuumOptions = {}): Promise<void> {
+    return this.conditionalVacuum(options)
+  }
+
+  private conditionalVacuum (options: VacuumOptions, conditions?: VacuumConditions): Promise<void> {
+    // If a vacuum is already ongoing, schedule another as soon as it finishes,
+    // unless there's already one enqueued. If one was already enqueued, do not
+    // enqueue another on top, but make sure that the conditions are the
+    // broadest.
+    if (this._currentVacuum) {
+      this._enqueuedVacuumConditions = this._enqueuedVacuumConditions && conditions
+      if (this._enqueuedVacuum != null) { return this._enqueuedVacuum }
+
+      this._enqueuedVacuum = this._currentVacuum.then(() => {
+        const conditions = this._enqueuedVacuumConditions
+        this._enqueuedVacuumConditions = defaultVacuumConditions
+        return this.performVacuuming(options, conditions)
+      })
+      return this._enqueuedVacuum
+    }
+
+    if (this.vacuumConditionsMet(conditions) === false) { return Promise.resolve() }
+
+    this._currentVacuum = this.performVacuuming(options)
+    return this._currentVacuum
+  }
+
+  private async performVacuuming (options: VacuumOptions, conditions?: VacuumConditions): Promise<void> {
+    const initialDirtCount = this._dirtCount
+
+    if (this.vacuumConditionsMet(conditions)) {
+      const batchSize = options.batchSize || defaultVacuumOptions.batchSize
+      const batchWait = options.batchWait || defaultVacuumOptions.batchWait
+      let i = 1
+
+      for (const [term, fieldsData] of this._index) {
+        for (const [fieldId, fieldIndex] of fieldsData) {
+          for (const [shortId] of fieldIndex) {
+            if (this._documentIds.has(shortId)) { continue }
+
+            if (fieldIndex.size <= 1) {
+              fieldsData.delete(fieldId)
+            } else {
+              fieldIndex.delete(shortId)
+            }
+          }
+        }
+
+        if (this._index.get(term)!.size === 0) {
+          this._index.delete(term)
+        }
+
+        if (i % batchSize === 0) {
+          await new Promise((resolve) => setTimeout(resolve, batchWait))
+        }
+
+        i += 1
+      }
+
+      this._dirtCount -= initialDirtCount
+    }
+
+    // Make the next lines always async, so they execute after this function returns
+    await null
+
+    this._currentVacuum = this._enqueuedVacuum
+    this._enqueuedVacuum = null
+  }
+
+  private vacuumConditionsMet (conditions?: VacuumConditions) {
+    if (conditions == null) { return true }
+
+    let { minDirtCount, minDirtFactor } = conditions
+    minDirtCount = minDirtCount || defaultAutoVacuumOptions.minDirtCount
+    minDirtFactor = minDirtFactor || defaultAutoVacuumOptions.minDirtFactor
+
+    return this.dirtCount >= minDirtCount && this.dirtFactor >= minDirtFactor
+  }
+
+  /**
+   * Is `true` if a vacuuming operation is ongoing, `false` otherwise
+   */
+  get isVacuuming (): boolean {
+    return this._currentVacuum != null
+  }
+
+  /**
+   * The number of documents discarded since the most recent vacuuming
+   */
+  get dirtCount (): number {
+    return this._dirtCount
+  }
+
+  /**
+   * A number between 0 and 1 giving an indication about the proportion of
+   * documents that are discarded, and can therefore be cleaned up by vacuuming.
+   * A value close to 0 means that the index is relatively clean, while a higher
+   * value means that the index is relatively dirty, and vacuuming could release
+   * memory.
+   */
+  get dirtFactor (): number {
+    return this._dirtCount / (1 + this._documentCount + this._dirtCount)
+  }
+
+  /**
+   * Returns `true` if a document with the given ID is present in the index and
+   * available for search, `false` otherwise
+   *
+   * @param id  The document ID
+   */
+  has (id: any) {
+    return this._idToShortId.has(id)
   }
 
   /**
@@ -896,10 +1276,17 @@ export default class MiniSearch<T = any> {
   }
 
   /**
-   * Number of documents in the index
+   * Total number of documents available to search
    */
   get documentCount (): number {
     return this._documentCount
+  }
+
+  /**
+   * Number of terms in the index
+   */
+  get termCount (): number {
+    return this._index.size
   }
 
   /**
@@ -981,6 +1368,7 @@ export default class MiniSearch<T = any> {
       fieldLength,
       averageFieldLength,
       storedFields,
+      dirtCount,
       serializationVersion
     } = js
     if (serializationVersion !== 1 && serializationVersion !== 2) {
@@ -990,11 +1378,17 @@ export default class MiniSearch<T = any> {
     this._documentCount = documentCount
     this._nextId = nextId
     this._documentIds = objectToNumericMap(documentIds)
+    this._idToShortId = new Map<any, number>()
     this._fieldIds = fieldIds
     this._fieldLength = objectToNumericMap(fieldLength)
     this._avgFieldLength = averageFieldLength
     this._storedFields = objectToNumericMap(storedFields)
+    this._dirtCount = dirtCount || 0
     this._index = new SearchableMap()
+
+    for (const [shortId, id] of this._documentIds) {
+      this._idToShortId.set(id, shortId)
+    }
 
     for (const [term, data] of index) {
       const dataMap = new Map() as FieldTermData
@@ -1157,6 +1551,7 @@ export default class MiniSearch<T = any> {
       fieldLength: Object.fromEntries(this._fieldLength),
       averageFieldLength: this._avgFieldLength,
       storedFields: Object.fromEntries(this._storedFields),
+      dirtCount: this._dirtCount,
       index,
       serializationVersion: 2
     }
@@ -1183,10 +1578,16 @@ export default class MiniSearch<T = any> {
       const fieldTermFreqs = fieldTermData.get(fieldId)
       if (fieldTermFreqs == null) continue
 
-      const matchingFields = fieldTermFreqs.size
+      let matchingFields = fieldTermFreqs.size
       const avgFieldLength = this._avgFieldLength[fieldId]
 
       for (const docId of fieldTermFreqs.keys()) {
+        if (!this._documentIds.has(docId)) {
+          this.removeTerm(fieldId, docId, derivedTerm)
+          matchingFields -= 1
+          continue
+        }
+
         const docBoost = boostDocumentFn ? boostDocumentFn(this._documentIds.get(docId), derivedTerm) : 1
         if (!docBoost) continue
 
@@ -1275,10 +1676,9 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private warnDocumentChanged (shortDocumentId: number, fieldId: number, term: string): void {
-    if (console == null || console.warn == null) { return }
     for (const fieldName of Object.keys(this._fieldIds)) {
       if (this._fieldIds[fieldName] === fieldId) {
-        console.warn(`MiniSearch: document with ID ${this._documentIds.get(shortDocumentId)} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`)
+        this._options.logger('warn', `MiniSearch: document with ID ${this._documentIds.get(shortDocumentId)} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`, 'version_conflict')
         return
       }
     }
@@ -1289,6 +1689,7 @@ export default class MiniSearch<T = any> {
    */
   private addDocumentId (documentId: any): number {
     const shortDocumentId = this._nextId
+    this._idToShortId.set(documentId, shortDocumentId)
     this._documentIds.set(shortDocumentId, documentId)
     this._documentCount += 1
     this._nextId += 1
@@ -1321,6 +1722,10 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private removeFieldLength (documentId: number, fieldId: number, count: number, length: number): void {
+    if (count === 1) {
+      this._avgFieldLength[fieldId] = 0
+      return
+    }
     const totalFieldLength = (this._avgFieldLength[fieldId] * count) - length
     this._avgFieldLength[fieldId] = totalFieldLength / (count - 1)
   }
@@ -1415,12 +1820,14 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
 
 const defaultOptions = {
   idField: 'id',
-  extractField: (document: { [key: string]: any }, fieldName: string) => document[fieldName],
+  extractField: (document: any, fieldName: string) => document[fieldName],
   tokenize: (text: string, fieldName?: string) => text.split(SPACE_OR_PUNCTUATION),
   processTerm: (term: string, fieldName?: string) => term.toLowerCase(),
   fields: undefined,
   searchOptions: undefined,
-  storeFields: []
+  storeFields: [],
+  logger: (level: LogLevel, message: string, code?: string) => console != null && console.warn != null && console[level](message),
+  autoVacuum: true
 }
 
 const defaultSearchOptions = {
@@ -1437,6 +1844,11 @@ const defaultAutoSuggestOptions = {
   prefix: (term: string, i: number, terms: string[]): boolean =>
     i === terms.length - 1
 }
+
+const defaultVacuumOptions = { batchSize: 1000, batchWait: 10 }
+const defaultVacuumConditions = { minDirtFactor: 0.1, minDirtCount: 20 }
+
+const defaultAutoVacuumOptions = { ...defaultVacuumOptions, ...defaultVacuumConditions }
 
 const assignUniqueTerm = (target: string[], term: string): void => {
   // Avoid adding duplicate terms.

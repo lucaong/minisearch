@@ -85,7 +85,7 @@ Alternatively, if you prefer to use a `<script>` tag, you can require MiniSearch
 [from a CDN](https://www.jsdelivr.com/package/npm/minisearch):
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/minisearch@5.0.0/dist/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/minisearch@5.1.0/dist/umd/index.min.js"></script>
 ```
 
 In this case, `MiniSearch` will appear as a global variable in your project.

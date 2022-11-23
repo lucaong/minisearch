@@ -156,7 +156,11 @@ miniSearch.addAll(documents)
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#dirtcount" class="tsd-kind-icon">dirt<wbr>Count</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#dirtfactor" class="tsd-kind-icon">dirt<wbr>Factor</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#documentcount" class="tsd-kind-icon">document<wbr>Count</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#isvacuuming" class="tsd-kind-icon">is<wbr>Vacuuming</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#termcount" class="tsd-kind-icon">term<wbr>Count</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -166,10 +170,15 @@ miniSearch.addAll(documents)
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#addall" class="tsd-kind-icon">add<wbr>All</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#addallasync" class="tsd-kind-icon">add<wbr>All<wbr>Async</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#autosuggest" class="tsd-kind-icon">auto<wbr>Suggest</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#discard" class="tsd-kind-icon">discard</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#discardall" class="tsd-kind-icon">discard<wbr>All</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#has" class="tsd-kind-icon">has</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#remove" class="tsd-kind-icon">remove</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#removeall" class="tsd-kind-icon">remove<wbr>All</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#replace" class="tsd-kind-icon">replace</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#search" class="tsd-kind-icon">search</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#tojson" class="tsd-kind-icon">toJSON</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_minisearch_.minisearch.html#vacuum" class="tsd-kind-icon">vacuum</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="_minisearch_.minisearch.html#getdefault" class="tsd-kind-icon">get<wbr>Default</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static"><a href="_minisearch_.minisearch.html#loadjson" class="tsd-kind-icon">loadJSON</a></li>
 							</ul>
@@ -189,7 +198,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L386">MiniSearch.ts:386</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L474">MiniSearch.ts:474</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -268,6 +277,54 @@ miniSearch.addAll(documents)
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="dirtcount" class="tsd-anchor"></a>
+					<h3>dirt<wbr>Count</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> dirtCount<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1002">MiniSearch.ts:1002</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The number of documents discarded since the most recent vacuuming</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="dirtfactor" class="tsd-anchor"></a>
+					<h3>dirt<wbr>Factor</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> dirtFactor<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1013">MiniSearch.ts:1013</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>A number between 0 and 1 giving an indication about the proportion of
+										documents that are discarded, and can therefore be cleaned up by vacuuming.
+										A value close to 0 means that the index is relatively clean, while a higher
+										value means that the index is relatively dirty, and vacuuming could release
+									memory.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="documentcount" class="tsd-anchor"></a>
 					<h3>document<wbr>Count</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
@@ -277,12 +334,56 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L890">MiniSearch.ts:890</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1281">MiniSearch.ts:1281</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Number of documents in the index</p>
+									<p>Total number of documents available to search</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="isvacuuming" class="tsd-anchor"></a>
+					<h3>is<wbr>Vacuuming</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> isVacuuming<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L995">MiniSearch.ts:995</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Is <code>true</code> if a vacuuming operation is ongoing, <code>false</code> otherwise</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="termcount" class="tsd-anchor"></a>
+					<h3>term<wbr>Count</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> termCount<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1288">MiniSearch.ts:1288</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Number of terms in the index</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -302,7 +403,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L489">MiniSearch.ts:489</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L589">MiniSearch.ts:589</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -327,13 +428,13 @@ miniSearch.addAll(documents)
 					<a name="addall" class="tsd-anchor"></a>
 					<h3>add<wbr>All</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>All<span class="tsd-signature-symbol">(</span>documents<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>All<span class="tsd-signature-symbol">(</span>documents<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L523">MiniSearch.ts:523</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L631">MiniSearch.ts:631</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -344,7 +445,7 @@ miniSearch.addAll(documents)
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>documents: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>documents: <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>An array of documents to be indexed</p>
 									</div>
@@ -358,13 +459,13 @@ miniSearch.addAll(documents)
 					<a name="addallasync" class="tsd-anchor"></a>
 					<h3>add<wbr>All<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>All<wbr>Async<span class="tsd-signature-symbol">(</span>documents<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>chunkSize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>All<wbr>Async<span class="tsd-signature-symbol">(</span>documents<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>chunkSize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L538">MiniSearch.ts:538</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L646">MiniSearch.ts:646</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -378,7 +479,7 @@ miniSearch.addAll(documents)
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>documents: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5>documents: <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>An array of documents to be indexed</p>
 									</div>
@@ -410,7 +511,7 @@ miniSearch.addAll(documents)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L862">MiniSearch.ts:862</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1253">MiniSearch.ts:1253</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -487,6 +588,144 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="discard" class="tsd-anchor"></a>
+					<h3>discard</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">discard<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L793">MiniSearch.ts:793</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Discards the document with the given ID, so it won&#39;t appear in search results</p>
+								</div>
+								<p>It has the same visible effect of <a href="_minisearch_.minisearch.html#remove">MiniSearch.remove</a> (both cause the
+									document to stop appearing in searches), but a different effect on the
+								internal data structures:</p>
+								<ul>
+									<li><p><a href="_minisearch_.minisearch.html#remove">MiniSearch.remove</a> requires passing the full document to be removed
+										as argument, and removes it from the inverted index immediately.</p>
+									</li>
+									<li><p><a href="_minisearch_.minisearch.html#discard">MiniSearch.discard</a> instead only needs the document ID, and works by
+											marking the current version of the document as discarded, so it is
+											immediately ignored by searches. This is faster and more convenient than
+											<code>remove</code>, but the index is not immediately modified. To take care of
+											that, vacuuming is performed after a certain number of documents are
+										discarded, cleaning up the index and allowing memory to be released.</p>
+									</li>
+								</ul>
+								<p>After discarding a document, it is possible to re-add a new version, and
+									only the new version will appear in searches. In other words, discarding
+									and re-adding a document works exactly like removing and re-adding it. The
+									<a href="_minisearch_.minisearch.html#replace">MiniSearch.replace</a> method can also be used to replace a document with a
+								new version.</p>
+								<a href="#details-about-vacuuming" id="details-about-vacuuming" style="color: inherit; text-decoration: none;">
+									<h4>Details about vacuuming</h4>
+								</a>
+								<p>Repetite calls to this method would leave obsolete document references in
+									the index, invisible to searches. Two mechanisms take care of cleaning up:
+								clean up during search, and vacuuming.</p>
+								<ul>
+									<li><p>Upon search, whenever a discarded ID is found (and ignored for the
+											results), references to the discarded document are removed from the
+											inverted index entries for the search terms. This ensures that subsequent
+											searches for the same terms do not need to skip these obsolete references
+										again.</p>
+									</li>
+									<li><p>In addition, vacuuming is performed automatically by default (see the
+											<code>autoVacuum</code> field in <a href="../modules/_minisearch_.html#options">Options</a>) after a certain number of documents
+											are discarded. Vacuuming traverses all terms in the index, cleaning up
+											all references to discarded documents. Vacuuming can also be triggered
+										manually by calling <a href="_minisearch_.minisearch.html#vacuum">MiniSearch.vacuum</a>.</p>
+									</li>
+								</ul>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>id: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The ID of the document to be discarded</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="discardall" class="tsd-anchor"></a>
+					<h3>discard<wbr>All</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">discard<wbr>All<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L835">MiniSearch.ts:835</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Discards the documents with the given IDs, so they won&#39;t appear in search
+									results</p>
+								</div>
+								<p>It is equivalent to calling <a href="_minisearch_.minisearch.html#discard">MiniSearch.discard</a> for all the given IDs,
+									but with the optimization of triggering at most one automatic vacuuming at
+								the end.</p>
+								<p>Note: to remove all documents from the index, it is faster and more
+									convenient to call <a href="_minisearch_.minisearch.html#removeall">MiniSearch.removeAll</a> with no argument, instead of
+								passing all IDs to this method.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>ids: <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="has" class="tsd-anchor"></a>
+					<h3>has</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">has<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1023">MiniSearch.ts:1023</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns <code>true</code> if a document with the given ID is present in the index and
+									available for search, <code>false</code> otherwise</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>id: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The document ID</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="remove" class="tsd-anchor"></a>
 					<h3>remove</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -496,21 +735,20 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L572">MiniSearch.ts:572</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L681">MiniSearch.ts:681</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Removes the given document from the index.</p>
 								</div>
-								<p>The document to delete must NOT have changed between indexing and deletion,
-									otherwise the index will be corrupted. Therefore, when reindexing a document
-								after a change, the correct order of operations is:</p>
-								<ol>
-									<li>remove old version</li>
-									<li>apply changes</li>
-									<li>index new version</li>
-								</ol>
+								<p>The document to remove must NOT have changed between indexing and removal,
+								otherwise the index will be corrupted.</p>
+								<p>This method requires passing the full document to be removed (not just the
+									ID), and immediately removes the document from the inverted index, allowing
+									memory to be released. A convenient alternative is <a href="_minisearch_.minisearch.html#discard">MiniSearch.discard</a>,
+									which needs only the document ID, and has the same visible effect, but
+								delays cleaning up the index until the next vacuuming.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -529,13 +767,13 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 					<a name="removeall" class="tsd-anchor"></a>
 					<h3>remove<wbr>All</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">remove<wbr>All<span class="tsd-signature-symbol">(</span>documents<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>All<span class="tsd-signature-symbol">(</span>documents<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L620">MiniSearch.ts:620</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L733">MiniSearch.ts:733</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -547,12 +785,51 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> documents: <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> documents: <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The documents to be removed. If this argument is omitted,
 											all documents are removed. Note that, for removing all documents, it is
 											more efficient to call this method with no arguments than to pass all
 										documents.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="replace" class="tsd-anchor"></a>
+					<h3>replace</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">replace<span class="tsd-signature-symbol">(</span>updatedDocument<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L866">MiniSearch.ts:866</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>It replaces an existing document with the given updated version</p>
+								</div>
+								<p>It works by discarding the current version and adding the updated one, so
+									it is functionally equivalent to calling <a href="_minisearch_.minisearch.html#discard">MiniSearch.discard</a> followed by
+									<a href="_minisearch_.minisearch.html#add">MiniSearch.add</a>. The ID of the updated document should be the same as
+								the original one.</p>
+								<p>Since it uses <a href="_minisearch_.minisearch.html#discard">MiniSearch.discard</a> internally, this method relies on
+									vacuuming to clean up obsolete document references from the index, allowing
+								memory to be released (see <a href="_minisearch_.minisearch.html#discard">MiniSearch.discard</a>).</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>updatedDocument: <span class="tsd-signature-type">T</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The updated document to replace the old version
+										with</p>
 									</div>
 								</li>
 							</ul>
@@ -570,7 +847,7 @@ miniSearch.autoSuggest(<span class="hljs-string">&#x27;zen ar&#x27;</span>, {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L774">MiniSearch.ts:774</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1165">MiniSearch.ts:1165</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -722,7 +999,7 @@ miniSearch.search({
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L1123">MiniSearch.ts:1123</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1528">MiniSearch.ts:1528</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -752,6 +1029,67 @@ miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: 
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="vacuum" class="tsd-anchor"></a>
+					<h3>vacuum</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">vacuum<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="../modules/_minisearch_.html#vacuumoptions" class="tsd-signature-type">VacuumOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L913">MiniSearch.ts:913</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Triggers a manual vacuuming, cleaning up references to discarded documents
+									from the inverted index</p>
+								</div>
+								<p>Vacuiuming is only useful for applications that use the
+								<a href="_minisearch_.minisearch.html#discard">MiniSearch.discard</a> or <a href="_minisearch_.minisearch.html#replace">MiniSearch.replace</a> methods.</p>
+								<p>By default, vacuuming is performed automatically when needed (controlled by
+									the <code>autoVacuum</code> field in <a href="../modules/_minisearch_.html#options">Options</a>), so there is usually no need to call
+									this method, unless one wants to make sure to perform vacuuming at a
+								specific moment.</p>
+								<p>Vacuuming traverses all terms in the inverted index in batches, and cleans
+									up references to discarded documents from the posting list, allowing memory
+								to be released.</p>
+								<p>The method takes an optional object as argument with the following keys:</p>
+								<ul>
+									<li><p><code>batchSize</code>: the size of each batch (1000 by default)</p>
+									</li>
+									<li><p><code>batchWait</code>: the number of milliseconds to wait between batches (10 by
+										default)</p>
+									</li>
+								</ul>
+								<p>On large indexes, vacuuming could have a non-negligible cost: batching
+									avoids blocking the thread for long, diluting this cost so that it is not
+									negatively affecting the application. Nonetheless, this method should only
+									be called when necessary, and relying on automatic vacuuming is usually
+								better.</p>
+								<p>It returns a promise that resolves (to undefined) when the clean up is
+									completed. If vacuuming is already ongoing at the time this method is
+									called, a new one is enqueued immediately after the ongoing one, and a
+									corresponding promise is returned. However, no more than one vacuuming is
+									enqueued on top of the ongoing one, even if this method is called more
+								times (enqueuing multiple ones would be useless).</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <a href="../modules/_minisearch_.html#vacuumoptions" class="tsd-signature-type">VacuumOptions</a><span class="tsd-signature-symbol"> = {}</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Configuration options for the batch size and delay. See
+										<a href="../modules/_minisearch_.html#vacuumoptions">VacuumOptions</a>.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="getdefault" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Default</h3>
@@ -762,7 +1100,7 @@ miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: 
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L943">MiniSearch.ts:943</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1341">MiniSearch.ts:1341</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -808,7 +1146,7 @@ MiniSearch.getDefault(<span class="hljs-string">&#x27;notExisting&#x27;</span>)
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/4eb5319/src/MiniSearch.ts#L915">MiniSearch.ts:915</a></li>
+									<li>Defined in <a href="https://github.com/lucaong/minisearch/blob/732d95a/src/MiniSearch.ts#L1313">MiniSearch.ts:1313</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -882,7 +1220,19 @@ miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: 
 								<a href="_minisearch_.minisearch.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#dirtcount" class="tsd-kind-icon">dirt<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#dirtfactor" class="tsd-kind-icon">dirt<wbr>Factor</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_minisearch_.minisearch.html#documentcount" class="tsd-kind-icon">document<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#isvacuuming" class="tsd-kind-icon">is<wbr>Vacuuming</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#termcount" class="tsd-kind-icon">term<wbr>Count</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_minisearch_.minisearch.html#add" class="tsd-kind-icon">add</a>
@@ -897,16 +1247,31 @@ miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: 
 								<a href="_minisearch_.minisearch.html#autosuggest" class="tsd-kind-icon">auto<wbr>Suggest</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#discard" class="tsd-kind-icon">discard</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#discardall" class="tsd-kind-icon">discard<wbr>All</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#has" class="tsd-kind-icon">has</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_minisearch_.minisearch.html#remove" class="tsd-kind-icon">remove</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_minisearch_.minisearch.html#removeall" class="tsd-kind-icon">remove<wbr>All</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#replace" class="tsd-kind-icon">replace</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_minisearch_.minisearch.html#search" class="tsd-kind-icon">search</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_minisearch_.minisearch.html#tojson" class="tsd-kind-icon">toJSON</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_minisearch_.minisearch.html#vacuum" class="tsd-kind-icon">vacuum</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="_minisearch_.minisearch.html#getdefault" class="tsd-kind-icon">get<wbr>Default</a>
@@ -918,6 +1283,9 @@ miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: 
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_minisearch_.html#autovacuumoptions" class="tsd-kind-icon">Auto<wbr>Vacuum<wbr>Options</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="../modules/_minisearch_.html#matchinfo" class="tsd-kind-icon">Match<wbr>Info</a>
 					</li>
@@ -938,6 +1306,12 @@ miniSearch = MiniSearch.loadJSON(json, { <span class="hljs-attr">fields</span>: 
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="../modules/_minisearch_.html#suggestion" class="tsd-kind-icon">Suggestion</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_minisearch_.html#vacuumconditions" class="tsd-kind-icon">Vacuum<wbr>Conditions</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_minisearch_.html#vacuumoptions" class="tsd-kind-icon">Vacuum<wbr>Options</a>
 					</li>
 				</ul>
 			</nav>
