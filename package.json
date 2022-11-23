@@ -1,6 +1,6 @@
 {
   "name": "minisearch",
-  "version": "5.1.0",
+  "version": "6.0.0-beta.1",
   "description": "Tiny but powerful full-text search engine for browser and Node",
   "main": "dist/umd/index.js",
   "module": "dist/es5m/index.js",
