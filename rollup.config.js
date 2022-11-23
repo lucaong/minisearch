@@ -37,6 +37,7 @@ const benchmarks = {
     entryFileNames: '[name].cjs',
     plugins: []
   },
+  external: ['benchmark'],
   plugins: [typescript()]
 }
 

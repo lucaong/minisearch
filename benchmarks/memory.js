@@ -16,7 +16,7 @@ const memory = (docs) => {
   miniSearch.addAll(docs)
   const heapAfter = heapSize()
 
-  const terms = miniSearch._index.size
+  const terms = miniSearch.termCount
   const documents = miniSearch.documentCount
   const memSize = bytesToMb(heapAfter - heapBefore)
   const serializedSize = bytesToMb(JSON.stringify(miniSearch).length)
