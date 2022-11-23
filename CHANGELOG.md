@@ -4,6 +4,15 @@
 
 # v6.0.0 (unreleased)
 
+This is a major release. The most notable change is the addition of `discard`,
+`discardAll`, and `replace`. These method make it more convenient and performant
+to remove or replace documents. This release is almost completely backwards
+compatible with `v5`, apart from one breaking change in the behavior of `add`
+when the document ID already exists.
+
+  - [breaking change] `add`, `addAll`, and `addAllAsync` now throw an error on
+    duplicate document IDs. When necessary, it is now possible to check for the
+    existence of a document with a certain ID with the new method `has`.
   - Add `discard` method to remove documents by ID. This is a convenient
     alternative to `remove` that takes only the ID of the documents to remove,
     as opposed to the whole document. The visible effect is the same as
@@ -20,12 +29,12 @@
     or can be triggered manually by calling the `vacuum` method. The new
     `dirtCount` and `dirtFactor` properties give the current value of the
     parameters used to decide whether to trigger an automatic vacuuming.
-  - Add `has` method, to check if a document ID is present
   - Add `termCount` property, giving the number of distinct terms present in the
     index
   - Improve TypeScript type of some methods by marking the given array argument
     as `readonly`, signaling that it won't be mutated, and allowing passing
     readonly arrays.
+  - Make it possible to overload the `loadJS` static method in subclasses
 
 # v5.1.0
 
