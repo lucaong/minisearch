@@ -31,6 +31,8 @@ when the document ID already exists.
     parameters used to decide whether to trigger an automatic vacuuming.
   - Add `termCount` property, giving the number of distinct terms present in the
     index
+  - Allow customizing the parameters of the BM25+ scoring algorithm via the
+    `bm25` search option.
   - Improve TypeScript type of some methods by marking the given array argument
     as `readonly`, signaling that it won't be mutated, and allowing passing
     readonly arrays.
