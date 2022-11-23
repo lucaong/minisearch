@@ -112,7 +112,7 @@ export type SearchOptions = {
    * most cases, it is best to use boosting to tweak scoring for specific use
    * cases.
    */
-  _bm25?: BM25Params
+  bm25?: BM25Params
 }
 
 type SearchOptionsWithDefaults = SearchOptions & {
@@ -128,7 +128,7 @@ type SearchOptionsWithDefaults = SearchOptions & {
 
   combineWith: string
 
-  _bm25: BM25Params
+  bm25: BM25Params
 }
 
 /**
@@ -1448,7 +1448,7 @@ export default class MiniSearch<T = any> {
       boostDocument,
       weights,
       maxFuzzy,
-      _bm25: bm25params
+      bm25: bm25params
     } = options
 
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
@@ -1810,22 +1810,32 @@ const combinators: { [kind: string]: CombinatorFunction } = {
  *   - https://opensourceconnections.com/blog/2015/10/16/bm25-the-next-generation-of-lucene-relevation/
  */
 export type BM25Params = {
-  /**
-   * Term frequency saturation point. Recommended values are between 1.2 and 2.
-   * Defaults to 1.2. Setting this to 0 or a negative value is invalid.
+  /** Term frequency saturation point.
+   *
+   * Recommended values are between `1.2` and `2`. Higher values increase the
+   * difference in score between documents with higher and lower term
+   * frequencies. Setting this to `0` or a negative value is invalid. Defaults
+   * to `1.2`
    */
   k: number,
 
   /**
-   * Length normalization impact. Recommended values are around 0.75. Defaults
-   * to 0.7. Setting this to 0 (not recommended) means that the field length has
-   * no effect on scoring. Negative values are invalid.
+   * Length normalization impact.
+   *
+   * Recommended values are around `0.75`. Higher values increase the weight
+   * that field length has on scoring. Setting this to `0` (not recommended)
+   * means that the field length has no effect on scoring. Negative values are
+   * invalid. Defaults to `0.7`.
    */
   b: number,
 
   /**
-   * BM25+ frequency normalization lower bound (usually called δ). Recommended
-   * values are between 0.5 and 1. Defaults to 0.5. Negative values are invalid.
+   * BM25+ frequency normalization lower bound (usually called δ).
+   *
+   * Recommended values are between `0.5` and `1`. Increasing this parameter
+   * increases the minimum relevance of one occurrence of a search term
+   * regardless of its (possibly very long) field length. Negative values are
+   * invalid. Defaults to `0.5`.
    */
   d: number
 }
@@ -1874,7 +1884,7 @@ const defaultSearchOptions = {
   maxFuzzy: 6,
   boost: {},
   weights: { fuzzy: 0.45, prefix: 0.375 },
-  _bm25: defaultBM25params
+  bm25: defaultBM25params
 }
 
 const defaultAutoSuggestOptions = {

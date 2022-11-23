@@ -1160,22 +1160,22 @@ describe('MiniSearch', () => {
     })
 
     it('allows customizing BM25+ parameters', () => {
-      const ms = new MiniSearch({ fields: ['text'], searchOptions: { _bm25: { k: 1.2, b: 0.7, d: 0.5 } } })
+      const ms = new MiniSearch({ fields: ['text'], searchOptions: { bm25: { k: 1.2, b: 0.7, d: 0.5 } } })
       const documents = [
         { id: 1, text: 'something very very very cool' },
         { id: 2, text: 'something cool' }
       ]
       ms.addAll(documents)
 
-      expect(ms.search('very')[0].score).toBeGreaterThan(ms.search('very', { _bm25: { k: 1, b: 0.7, d: 0.5 } })[0].score)
-      expect(ms.search('something')[1].score).toBeGreaterThan(ms.search('something', { _bm25: { k: 1.2, b: 1, d: 0.5 } })[1].score)
-      expect(ms.search('something')[1].score).toBeGreaterThan(ms.search('something', { _bm25: { k: 1.2, b: 0.7, d: 0.1 } })[1].score)
+      expect(ms.search('very')[0].score).toBeGreaterThan(ms.search('very', { bm25: { k: 1, b: 0.7, d: 0.5 } })[0].score)
+      expect(ms.search('something')[1].score).toBeGreaterThan(ms.search('something', { bm25: { k: 1.2, b: 1, d: 0.5 } })[1].score)
+      expect(ms.search('something')[1].score).toBeGreaterThan(ms.search('something', { bm25: { k: 1.2, b: 0.7, d: 0.1 } })[1].score)
 
       // Defaults are taken from the searchOptions passed to the constructor
-      const other = new MiniSearch({ fields: ['text'], searchOptions: { _bm25: { k: 1, b: 0.7, d: 0.5 } } })
+      const other = new MiniSearch({ fields: ['text'], searchOptions: { bm25: { k: 1, b: 0.7, d: 0.5 } } })
       other.addAll(documents)
 
-      expect(other.search('very')).toEqual(ms.search('very', { _bm25: { k: 1, b: 0.7, d: 0.5 } }))
+      expect(other.search('very')).toEqual(ms.search('very', { bm25: { k: 1, b: 0.7, d: 0.5 } }))
     })
 
     describe('when passing a query tree', () => {
