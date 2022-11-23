@@ -1812,19 +1812,20 @@ const combinators: { [kind: string]: CombinatorFunction } = {
 export type BM25Params = {
   /**
    * Term frequency saturation point. Recommended values are between 1.2 and 2.
-   * Defaults to 1.2.
+   * Defaults to 1.2. Setting this to 0 or a negative value is invalid.
    */
   k: number,
 
   /**
    * Length normalization impact. Recommended values are around 0.75. Defaults
-   * to 0.7.
+   * to 0.7. Setting this to 0 (not recommended) means that the field length has
+   * no effect on scoring. Negative values are invalid.
    */
   b: number,
 
   /**
    * BM25+ frequency normalization lower bound (usually called δ). Recommended
-   * values are between 0.5 and 1. Defaults to 0.5.
+   * values are between 0.5 and 1. Defaults to 0.5. Negative values are invalid.
    */
   d: number
 }
