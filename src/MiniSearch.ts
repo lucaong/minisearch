@@ -109,8 +109,8 @@ export type SearchOptions = {
   /**
    * BM25+ algorithm parameters. Customizing these is almost never necessary,
    * and finetuning them requires an understanding of the BM25 scoring model. In
-   * most cases, it is best to use boosting to tweak scoring for specific use
-   * cases.
+   * most cases, it is best to omit this option to use defaults, and instead use
+   * boosting to tweak scoring for specific use cases.
    */
   bm25?: BM25Params
 }
