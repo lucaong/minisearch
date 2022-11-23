@@ -190,11 +190,12 @@ export type Options<T = any> = {
   logger?: (level: LogLevel, message: string, code?: string) => void
 
   /**
-   * If true (the default), vacuuming is performed automatically as soon as
-   * [[MiniSearch.discard]] is called a certain number of times, to clean up
-   * discarded documents from the index. If false, no auto-vacuuming is
-   * performed. Custom auto vacuuming settings can be passed as an object (see
-   * the [[AutoVacuumOptions]] type).
+   * If `true` (the default), vacuuming is performed automatically as soon as
+   * [[MiniSearch.discard]] is called a certain number of times, cleaning up
+   * obsolete references from the index. If `false`, no automatic vacuuming is
+   * performed. Custom settings controlling auto vacuuming thresholds, as well
+   * as batching behavior, can be passed as an object (see the
+   * [[AutoVacuumOptions]] type).
    */
   autoVacuum?: boolean | AutoVacuumOptions
 
@@ -319,17 +320,20 @@ export type QueryCombination = SearchOptions & { queries: Query[] }
 export type Query = QueryCombination | string
 
 /**
- * Options to control vacuuming behavior. Vacuuming is only necessary when
- * discarding documents with [[MiniSearch.discard]], and is a potentially costly
- * operation on large indexes because it has to traverse the whole inverted
- * index. Therefore, in order to avoid blocking the thread for long, it is
- * performed in batches, with a delay between each batch. These options are used
- * to configure the batch size and the delay between batches.
+ * Options to control vacuuming behavior.
+ *
+ * Vacuuming cleans up document references made obsolete by
+ * [[MiniSearch.discard]] from the index. On large indexes, vacuuming is
+ * potentially costly, because it has to traverse the whole inverted index.
+ * Therefore, in order to dilute this cost so it does not negatively affects the
+ * application, vacuuming is performed in batches, with a delay between each
+ * batch. These options are used to configure the batch size and the delay
+ * between batches.
  */
 export type VacuumOptions = {
   /**
-   * Size of each vacuuming batch (the number of termsin the inverted index that
-   * will be traversed in each batch). Defaults to 1000.
+   * Size of each vacuuming batch (the number of terms in the index that will be
+   * traversed in each batch). Defaults to 1000.
    */
   batchSize?: number,
 
@@ -339,33 +343,41 @@ export type VacuumOptions = {
   batchWait?: number
 }
 
+/**
+ * Sets minimum thresholds for `dirtCount` and `dirtFactor` that trigger an
+ * automatic vacuuming.
+ */
 export type VacuumConditions = {
   /**
-   * Minimum dirt factor under which auto vacuum is not triggered. It defaults
-   * to 0.15.
-   */
-  minDirtFactor?: number,
-
-  /**
-   * Minimum dirt count (number of discarded documents since the last vacuuming)
+   * Minimum `dirtCount` (number of discarded documents since the last vacuuming)
    * under which auto vacuum is not triggered. It defaults to 20.
    */
   minDirtCount?: number
+
+  /**
+   * Minimum `dirtFactor` (proportion of discarded documents over the total)
+   * under which auto vacuum is not triggered. It defaults to 0.1.
+   */
+  minDirtFactor?: number,
 }
+
+/**
+ * Options to control auto vacuum behavior. When discarding a document with
+ * [[MiniSearch.discard]], a vacuuming operation is automatically started if the
+ * `dirtCount` and `dirtFactor` are above the `minDirtCount` and `minDirtFactor`
+ * thresholds defined by this configuration. See [[VacuumConditions]] for
+ * details on these.
+ *
+ * Also, `batchSize` and `batchWait` can be specified, controlling batching
+ * behavior (see [[VacuumOptions]]).
+ */
+export type AutoVacuumOptions = VacuumOptions & VacuumConditions
 
 type QuerySpec = {
   prefix: boolean,
   fuzzy: number | boolean,
   term: string
 }
-
-/**
- * Options to control auto vacuum behavior. When discarding a document with
- * [[MiniSearch.discard]], if vacuuming is not already in progress, and the
- * dirtCount and dirtFactor are above the thresholds defined by this
- * configuration, a vacuuming cycle is automatically started.
- */
-export type AutoVacuumOptions = VacuumOptions & VacuumConditions
 
 type DocumentTermFreqs = Map<number, number>
 type FieldTermData = Map<number, DocumentTermFreqs>
@@ -655,19 +667,14 @@ export default class MiniSearch<T = any> {
   /**
    * Removes the given document from the index.
    *
-   * The document to delete must NOT have changed between indexing and deletion,
-   * otherwise the index will be corrupted. Therefore, when reindexing a document
-   * after a change, the correct order of operations is:
+   * The document to remove must NOT have changed between indexing and removal,
+   * otherwise the index will be corrupted.
    *
-   *   1. remove old version
-   *   2. apply changes
-   *   3. index new version
-   *
-   * This method is the cleanest way to remove a document, as it removes it from
-   * the inverted index. On the other hand, it requires having the full document
-   * to remove at hand. An alternative approach is [[MiniSearch.discard]], which
-   * only needs the ID of the document and has the same visible effect as
-   * remove, but does not immediately free up memory from the inverted index.
+   * This method requires passing the full document to be removed (not just the
+   * ID), and immediately removes the document from the inverted index, allowing
+   * memory to be released. A convenient alternative is [[MiniSearch.discard]],
+   * which needs only the document ID, and has the same visible effect, but
+   * delays cleaning up the index until the next vacuuming.
    *
    * @param document  The document to be removed
    */
@@ -744,41 +751,42 @@ export default class MiniSearch<T = any> {
    * Discards the document with the given ID, so it won't appear in search results
    *
    * It has the same visible effect of [[MiniSearch.remove]] (both cause the
-   * document to stop appearing in search results), but a different effect on
-   * the internal data structures:
+   * document to stop appearing in searches), but a different effect on the
+   * internal data structures:
    *
-   * [[MiniSearch.remove]] takes the full document as argument, and removes it
-   * from the inverted index, releasing memory immediately.
+   *   - [[MiniSearch.remove]] requires passing the full document to be removed
+   *   as argument, and removes it from the inverted index immediately.
    *
-   * [[MiniSearch.discard]] instead only needs the document ID, and works by
-   * marking the current version of the document as discarded, scausing it to be
-   * ignored by search. The inverted index is not modified though, therefore
-   * memory is not released.
+   *   - [[MiniSearch.discard]] instead only needs the document ID, and works by
+   *   marking the current version of the document as discarded, so it is
+   *   immediately ignored by searches. This is faster and more convenient than
+   *   `remove`, but the index is not immediately modified. To take care of
+   *   that, vacuuming is performed after a certain number of documents are
+   *   discarded, cleaning up the index and allowing memory to be released.
    *
-   * The memory bloat resulting from repetite calls to [[MiniSearch.discard]] is
-   * cleaned up later by two mechanisms: clean up during search, and vacuuming.
-   * Upom search, whenever a discarded ID is found (and ignored for the
-   * results), references to the discarded document are removed from the
-   * inverted index entries for the search terms. This partially releases
-   * memory, but only for terms that have been searched at least once after
-   * discarding the document.
+   * After discarding a document, it is possible to re-add a new version, and
+   * only the new version will appear in searches. In other words, discarding
+   * and re-adding a document works exactly like removing and re-adding it. The
+   * [[MiniSearch.replace]] method can also be used to replace a document with a
+   * new version.
    *
-   * Vacuuming is performed automatically (by default) after a certain number of
-   * documents are discarded, and traverses the inverted index cleaning up all
-   * references to discarded documents (see [[Options.autoVacuum]] and
-   * [[AutoVacuumOptions]]). Alternatively, manual vacuuming can be performed
-   * with [[MiniSearch.vacuum]].
+   * #### Details about vacuuming
    *
-   * In other words, [[MiniSearch.discard]] is faster and only takes an ID as
-   * argument, but it does not immediately release memory for the discarded
-   * document, and instead rely on delayed clean up and vacuuming.
+   * Repetite calls to this method would leave obsolete document references in
+   * the index, invisible to searches. Two mechanisms take care of cleaning up:
+   * clean up during search, and vacuuming.
    *
-   * After discarding a document, it is possible to re-add a new version with
-   * that same ID, and the newly added version will appear in searches. In other
-   * words, discarding and re-adding a document has the same effect, as visible
-   * to the caller of MiniSearch, as removing and re-adding it.
+   *   - Upon search, whenever a discarded ID is found (and ignored for the
+   *   results), references to the discarded document are removed from the
+   *   inverted index entries for the search terms. This ensures that subsequent
+   *   searches for the same terms do not need to skip these obsolete references
+   *   again.
    *
-   * Alternatively, the [[MiniSearch.vacuum]] method can be called manually.
+   *   - In addition, vacuuming is performed automatically by default (see the
+   *   `autoVacuum` field in [[Options]]) after a certain number of documents
+   *   are discarded. Vacuuming traverses all terms in the index, cleaning up
+   *   all references to discarded documents. Vacuuming can also be triggered
+   *   manually by calling [[MiniSearch.vacuum]].
    *
    * @param id  The ID of the document to be discarded
    */
@@ -813,13 +821,12 @@ export default class MiniSearch<T = any> {
    *
    * It works by discarding the current version and adding the updated one, so
    * it is functionally equivalent to calling [[MiniSearch.discard]] followed by
-   * [[MiniSearch.add]]. The ID of the updated document should match the
-   * one to be replaced.
+   * [[MiniSearch.add]]. The ID of the updated document should be the same as
+   * the original one.
    *
-   * Since it relies on [[MiniSearch.discard]], this method does not immediately
-   * release memory for the replaced document, and instead relies on vacuuming
-   * to clean up eventually (see [[MiniSearch.discard]] and
-   * [[Options.autoVacuum]]).
+   * Since it uses [[MiniSearch.discard]] internally, this method relies on
+   * vacuuming to clean up obsolete document references from the index, allowing
+   * memory to be released (see [[MiniSearch.discard]]).
    *
    * @param updatedDocument  The updated document to replace the old version
    * with
@@ -833,22 +840,33 @@ export default class MiniSearch<T = any> {
   }
 
   /**
-   * Triggers a manual vacuuming, that cleans up discarded documents from the
-   * inverted index
+   * Triggers a manual vacuuming, cleaning up references to discarded documents
+   * from the inverted index
    *
-   * This function is only useful for applications that use the
-   * [[MiniSearch.discard]] method. Vacuuming traverses all terms in the
-   * inverted index in batches, and cleans up discarded documents from the
-   * posting list, releasing memory. While vacuuming is performed automatically
-   * by default (see [[AutoVacuumOptions]]), one can call this method to perfrom
-   * it manually.
+   * Vacuiuming is only useful for applications that use the
+   * [[MiniSearch.discard]] or [[MiniSearch.replace]] methods.
    *
-   * The method takes an option argument with the following keys:
+   * By default, vacuuming is performed automatically when needed (controlled by
+   * the `autoVacuum` field in [[Options]]), so there is usually no need to call
+   * this method, unless one wants to make sure to perform vacuuming at a
+   * specific moment.
+   *
+   * Vacuuming traverses all terms in the inverted index in batches, and cleans
+   * up references to discarded documents from the posting list, allowing memory
+   * to be released.
+   *
+   * The method takes an optional object as argument with the following keys:
    *
    *   - `batchSize`: the size of each batch (1000 by default)
    *
-   *   - `batchWait`: the number of milliseconds to wait between batches, to
-   *   avoid blocking the thread (10 by default)
+   *   - `batchWait`: the number of milliseconds to wait between batches (10 by
+   *   default)
+   *
+   * On large indexes, vacuuming could have a non-negligible cost: batching
+   * avoids blocking the thread for long, diluting this cost so that it is not
+   * negatively affecting the application. Nonetheless, this method should only
+   * be called when necessary, and relying on automatic vacuuming is usually
+   * better.
    *
    * It returns a promise that resolves (to undefined) when the clean up is
    * completed. If vacuuming is already ongoing at the time this method is
@@ -856,11 +874,6 @@ export default class MiniSearch<T = any> {
    * corresponding promise is returned. However, no more than one vacuuming is
    * enqueued on top of the ongoing one, even if this method is called more
    * times (enqueuing multiple ones would be useless).
-   *
-   * On large indexes, vacuuming can be expensive and take time to complete,
-   * hence the batching and wait to avoid blocking the thread for long.
-   * Therefore, this method should only be called when necessary, usually after
-   * several calls to [[MiniSearch.discard]], or before serializing the index.
    *
    * @param options  Configuration options for the batch size and delay. See
    * [[VacuumOptions]].
@@ -945,14 +958,14 @@ export default class MiniSearch<T = any> {
   }
 
   /**
-   * Is true if a vacuuming operation is ongoing, false otherwise
+   * Is `true` if a vacuuming operation is ongoing, `false` otherwise
    */
   get isVacuuming (): boolean {
     return this._currentVacuum != null
   }
 
   /**
-   * The number of documents discarded since the last vacuuming
+   * The number of documents discarded since the most recent vacuuming
    */
   get dirtCount (): number {
     return this._dirtCount
@@ -970,7 +983,8 @@ export default class MiniSearch<T = any> {
   }
 
   /**
-   * Returns true if a document with the given ID was added to the index, false otherwise
+   * Returns `true` if a document with the given ID is present in the index and
+   * available for search, `false` otherwise
    *
    * @param id  The document ID
    */
@@ -1230,7 +1244,7 @@ export default class MiniSearch<T = any> {
   }
 
   /**
-   * Number of documents in the index
+   * Total number of documents available to search
    */
   get documentCount (): number {
     return this._documentCount
@@ -1795,7 +1809,7 @@ const defaultAutoSuggestOptions = {
 }
 
 const defaultVacuumOptions = { batchSize: 1000, batchWait: 10 }
-const defaultVacuumConditions = { minDirtFactor: 0.15, minDirtCount: 20 }
+const defaultVacuumConditions = { minDirtFactor: 0.1, minDirtCount: 20 }
 
 const defaultAutoVacuumOptions = { ...defaultVacuumOptions, ...defaultVacuumConditions }
 
