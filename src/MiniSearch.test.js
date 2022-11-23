@@ -1712,6 +1712,22 @@ e forse del mio dir poco ti cale`
 
       expect(original).toEqual(expected)
     })
+
+    it('allows subclassing and changing .loadJS', () => {
+      class Modified extends MiniSearch {
+        static loadJS(js, options) {
+          return super.loadJS({ ...js, documentCount: 99 }, options)
+        }
+      }
+
+      const options = { fields: ['title', 'text'], storeFields: ['category'] }
+      const ms = new MiniSearch(options)
+      ms.addAll(documents)
+
+      const json = JSON.stringify(ms)
+      const deserialized = Modified.loadJSON(json, options)
+      expect(deserialized.documentCount).toEqual(99)
+    })
   })
 
   describe('getDefault', () => {
