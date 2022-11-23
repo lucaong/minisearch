@@ -540,7 +540,7 @@ export default class MiniSearch<T = any> {
    *
    * @param documents  An array of documents to be indexed
    */
-  addAll (documents: T[]): void {
+  addAll (documents: readonly T[]): void {
     for (const document of documents) this.add(document)
   }
 
@@ -555,7 +555,7 @@ export default class MiniSearch<T = any> {
    * @param options  Configuration options
    * @return A promise resolving to `undefined` when the indexing is done
    */
-  addAllAsync (documents: T[], options: { chunkSize?: number } = {}): Promise<void> {
+  addAllAsync (documents: readonly T[], options: { chunkSize?: number } = {}): Promise<void> {
     const { chunkSize = 10 } = options
     const acc: { chunk: T[], promise: Promise<void> } = { chunk: [], promise: Promise.resolve() }
 
@@ -641,7 +641,7 @@ export default class MiniSearch<T = any> {
    * more efficient to call this method with no arguments than to pass all
    * documents.
    */
-  removeAll (documents?: T[]): void {
+  removeAll (documents?: readonly T[]): void {
     if (documents) {
       for (const document of documents) this.remove(document)
     } else if (arguments.length > 0) {
