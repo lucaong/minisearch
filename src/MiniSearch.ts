@@ -1314,7 +1314,7 @@ export default class MiniSearch<T = any> {
     if (options == null) {
       throw new Error('MiniSearch: loadJSON should be given the same options used when serializing the index')
     }
-    return MiniSearch.loadJS(JSON.parse(json), options)
+    return this.loadJS(JSON.parse(json), options)
   }
 
   /**
