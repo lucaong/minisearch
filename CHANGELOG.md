@@ -2,6 +2,31 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v6.0.0 (unreleased)
+
+  - Add `discard` method to remove documents by ID. This is a convenient
+    alternative to `remove` that takes only the ID of the documents to remove,
+    as opposed to the whole document. The visible effect is the same as
+    `remove`. The difference is that `remove` immediately mutates the index,
+    while `discard` marks the current document version as discarded, so it is
+    immedately ignored by searches, but delays modifying the index until a
+    certain number of documents are discarded. At that point, a vacuuming is
+    triggered, cleaning up the index from obsolete references and allowing
+    memory to be released.
+  - Add `discardAll` and `replace` methods, built on top of `discard`
+  - Add vacuuming of references to discarded documents from the index. Vacuuming
+    is performed automatically by default when the number of discarded documents
+    reaches a threshold (controlled by the new `autoVacuum` constructor option),
+    or can be triggered manually by calling the `vacuum` method. The new
+    `dirtCount` and `dirtFactor` properties give the current value of the
+    parameters used to decide whether to trigger an automatic vacuuming.
+  - Add `has` method, to check if a document ID is present
+  - Add `termCount` property, giving the number of distinct terms present in the
+    index
+  - Improve TypeScript type of some methods by marking the given array argument
+    as `readonly`, signaling that it won't be mutated, and allowing passing
+    readonly arrays.
+
 # v5.1.0
 
   - The `processTerm` option can now also expand a single term into several
