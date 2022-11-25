@@ -635,7 +635,7 @@ describe('MiniSearch', () => {
       const documents = [
         { id: 1, text: 'Document one' },
         { id: 2, text: 'Document two' },
-        { id: 3, text: 'Document three' },
+        { id: 3, text: 'Document three' }
       ]
       ms.addAll(documents)
 
@@ -661,7 +661,7 @@ describe('MiniSearch', () => {
       const documents = [
         { id: 1, text: 'Document one' },
         { id: 2, text: 'Document two' },
-        { id: 3, text: 'Document three' },
+        { id: 3, text: 'Document three' }
       ]
       ms.addAll(documents)
 
@@ -706,7 +706,7 @@ describe('MiniSearch', () => {
     it('only triggers at most a single auto vacuum at the end', () => {
       const ms = new MiniSearch({ fields: ['text'], autoVacuum: { minDirtCount: 3, minDirtFactor: 0, batchSize: 1, batchWait: 10 } })
       const documents = []
-      for (const i = 1; i <= 10; i++) {
+      for (let i = 1; i <= 10; i++) {
         documents.push({ id: i, text: `Document ${i}` })
       }
       ms.addAll(documents)
@@ -909,7 +909,7 @@ describe('MiniSearch', () => {
     it('returns true if a document with the given ID was added to the index, false otherwise', () => {
       const documents = [
         { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
-        { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+        { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' }
       ]
       const ms = new MiniSearch({ fields: ['title', 'text'] })
       ms.addAll(documents)
@@ -928,7 +928,7 @@ describe('MiniSearch', () => {
     it('works well with custom ID fields', () => {
       const documents = [
         { uid: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita' },
-        { uid: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' },
+        { uid: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como' }
       ]
       const ms = new MiniSearch({ fields: ['title', 'text'], idField: 'uid' })
       ms.addAll(documents)
@@ -1533,7 +1533,7 @@ describe('MiniSearch', () => {
         expect(ms.search('queen', { fuzzy: 1, prefix: true })[0].song).toEqual('Killer Queen')
       })
     })
-  }) 
+  })
 
   describe('default tokenization', () => {
     it('splits on non-alphanumeric taking diacritics into account', () => {
@@ -1734,7 +1734,7 @@ e forse del mio dir poco ti cale`
 
     it('allows subclassing and changing .loadJS', () => {
       class Modified extends MiniSearch {
-        static loadJS(js, options) {
+        static loadJS (js, options) {
           return super.loadJS({ ...js, documentCount: 99 }, options)
         }
       }
