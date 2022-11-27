@@ -759,6 +759,32 @@ describe('MiniSearch', () => {
     })
   })
 
+  describe('addFields', () => {
+    it('add fields to an existing document', () => {
+      const options = { fields: ['text', 'author'], storeFields: ['text', 'author', 'n'] }
+      const ms = new MiniSearch(options)
+      const other = new MiniSearch(options)
+
+      ms.add({ id: 1, text: 'Some quite interesting stuff' })
+      ms.addFields(1, { author: 'Al et. al.', n: 5 })
+
+      other.add({ id: 1, text: 'Some quite interesting stuff', author: 'Al et. al.', n: 5 })
+
+      expect(ms).toEqual(other)
+    })
+
+    it('throws an error if the document did not exist', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      expect(() => { ms.addFields(1, { text: 'hello' }) }).toThrow('MiniSearch: no document with ID 1')
+    })
+
+    it('throws an error if adding a field that already exists', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      ms.add({ id: 1, text: 'Some interesting stuff' })
+      expect(() => { ms.addFields(1, { text: 'hello' }) }).toThrow('MiniSearch: field text already exists on document with ID 1')
+    })
+  })
+
   describe('vacuum', () => {
     it('cleans up discarded documents from the index', async () => {
       const ms = new MiniSearch({ fields: ['text'], storeFields: ['text'] })

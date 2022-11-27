@@ -588,7 +588,7 @@ export default class MiniSearch<T = any> {
     this._enqueuedVacuum = null
     this._enqueuedVacuumConditions = defaultVacuumConditions
 
-    this.addFields(this._options.fields)
+    this.addFieldIds(this._options.fields)
   }
 
   /**
@@ -597,8 +597,9 @@ export default class MiniSearch<T = any> {
    * @param document  The document to be indexed
    */
   add (document: T): void {
-    const { extractField, tokenize, processTerm, fields, idField } = this._options
+    const { extractField, idField } = this._options
     const id = extractField(document, idField)
+
     if (id == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
@@ -610,6 +611,52 @@ export default class MiniSearch<T = any> {
     const shortDocumentId = this.addDocumentId(id)
     this.saveStoredFields(shortDocumentId, document)
 
+    this.addToIndex(shortDocumentId, document, true)
+  }
+
+  /**
+   * Adds some fields to an existing documeny
+   *
+   * The added fields should not be already present on the document, or an error
+   * will be thrown.
+   *
+   * ## Example:
+   *
+   *     const miniSearch = new MiniSearch({ fields: ['title', 'text', 'author'] })
+   *
+   *     miniSearch.add({ id: 1, title: 'Neuromancer' })
+   *
+   *     miniSearch.addFields(1, {
+   *       text: 'The sky above the port was the color of television, tuned to a dead channel.',
+   *       author: 'William Gibson'
+   *     })
+   *
+   *     // The above is equivalent to:
+   *     miniSearch.add({
+   *       id: 1,
+   *       title: 'Neuromancer',
+   *       text: 'The sky above the port was the color of television, tuned to a dead channel.',
+   *       author: 'William Gibson'
+   *     })
+   *
+   * @param id  The document ID
+   * @param toAdd  The fields to add
+   */
+  addFields (id: any, toAdd: T): void {
+    const shortDocumentId = this._idToShortId.get(id)
+
+    if (shortDocumentId == null) {
+      throw new Error(`MiniSearch: no document with ID ${id}`)
+    }
+
+    this.saveStoredFields(shortDocumentId, toAdd)
+
+    this.addToIndex(shortDocumentId, toAdd, false)
+  }
+
+  private addToIndex (shortDocumentId: number, document: T, added: boolean) {
+    const { extractField, tokenize, processTerm, fields } = this._options
+
     for (const field of fields) {
       const fieldValue = extractField(document, field)
       if (fieldValue == null) continue
@@ -617,8 +664,13 @@ export default class MiniSearch<T = any> {
       const tokens = tokenize(fieldValue.toString(), field)
       const fieldId = this._fieldIds[field]
 
-      const uniqueTerms = new Set(tokens).size
-      this.addFieldLength(shortDocumentId, fieldId, this._documentCount - 1, uniqueTerms)
+      const uniqueTerms = new Set(tokens)
+      uniqueTerms.delete('')
+
+      if (this._fieldLength.get(shortDocumentId)?.[fieldId] != null) {
+        throw new Error(`MiniSearch: field ${field} already exists on document with ID ${this._documentIds.get(shortDocumentId)}`)
+      }
+      this.addFieldLength(shortDocumentId, fieldId, this._documentCount, uniqueTerms.size, added)
 
       for (const term of tokens) {
         const processedTerm = processTerm(term, field)
@@ -1706,7 +1758,7 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private addFields (fields: string[]): void {
+  private addFieldIds (fields: string[]): void {
     for (let i = 0; i < fields.length; i++) {
       this._fieldIds[fields[i]] = i
     }
@@ -1715,14 +1767,16 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private addFieldLength (documentId: number, fieldId: number, count: number, length: number): void {
+  private addFieldLength (documentId: number, fieldId: number, count: number, length: number, added: boolean): void {
     let fieldLengths = this._fieldLength.get(documentId)
     if (fieldLengths == null) this._fieldLength.set(documentId, fieldLengths = [])
+    const n = added ? 1 : 0
+
     fieldLengths[fieldId] = length
 
     const averageFieldLength = this._avgFieldLength[fieldId] || 0
-    const totalFieldLength = (averageFieldLength * count) + length
-    this._avgFieldLength[fieldId] = totalFieldLength / (count + 1)
+    const totalFieldLength = (averageFieldLength * (count - n)) + length
+    this._avgFieldLength[fieldId] = totalFieldLength / count
   }
 
   /**
