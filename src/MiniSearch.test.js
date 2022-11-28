@@ -814,10 +814,18 @@ describe('MiniSearch', () => {
 
     it('throws an error if removing a field that did not exist', () => {
       const ms = new MiniSearch({ fields: ['text', 'author'] })
-      ms.add({ id: 1, author: 'Al et. al.' })
+      ms.addAll([
+        { id: 1, author: 'Al et. al.' },
+        { id: 2 }
+      ])
+
       expect(() => {
         ms.removeFields(1, { text: 'Some interesting stuff' })
       }).toThrow('MiniSearch: field text does not exist on document with ID 1')
+
+      expect(() => {
+        ms.removeFields(2, { author: 'Someone' })
+      }).toThrow('MiniSearch: field author does not exist on document with ID 2')
     })
   })
 
