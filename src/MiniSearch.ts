@@ -766,6 +766,7 @@ export default class MiniSearch<T = any> {
   /**
    * Removes some fields from an existing documeny
    *
+   * The original fields to be removed must be provided as the second argument.
    * The removed fields should be present on the document, or an error will be
    * thrown.
    *
