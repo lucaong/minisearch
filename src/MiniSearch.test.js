@@ -775,13 +775,49 @@ describe('MiniSearch', () => {
 
     it('throws an error if the document did not exist', () => {
       const ms = new MiniSearch({ fields: ['text'] })
-      expect(() => { ms.addFields(1, { text: 'hello' }) }).toThrow('MiniSearch: no document with ID 1')
+      expect(() => {
+        ms.addFields(1, { text: 'hello' })
+      }).toThrow('MiniSearch: no document with ID 1')
     })
 
     it('throws an error if adding a field that already exists', () => {
       const ms = new MiniSearch({ fields: ['text'] })
       ms.add({ id: 1, text: 'Some interesting stuff' })
-      expect(() => { ms.addFields(1, { text: 'hello' }) }).toThrow('MiniSearch: field text already exists on document with ID 1')
+      expect(() => {
+        ms.addFields(1, { text: 'hello' })
+      }).toThrow('MiniSearch: field text already exists on document with ID 1')
+    })
+  })
+
+  describe('removeFields', () => {
+    it('removes fields to an existing document', () => {
+      const options = { fields: ['text', 'author'], storeFields: ['text', 'author', 'n'] }
+      const ms = new MiniSearch(options)
+      const other = new MiniSearch(options)
+
+      ms.add({ id: 1, text: 'Some quite interesting stuff', author: 'Al et. al.', n: 5 })
+      ms.add({ id: 2, text: 'Lalala', author: 'Someone', n: 3 })
+      ms.removeFields(1, { text: 'Some quite interesting stuff', n: 5 })
+
+      other.add({ id: 1, author: 'Al et. al.' })
+      other.add({ id: 2, text: 'Lalala', author: 'Someone', n: 3 })
+
+      expect(ms).toEqual(other)
+    })
+
+    it('throws an error if the document did not exist', () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      expect(() => {
+        ms.removeFields(1, { text: 'hello' })
+      }).toThrow('MiniSearch: no document with ID 1')
+    })
+
+    it('throws an error if removing a field that did not exist', () => {
+      const ms = new MiniSearch({ fields: ['text', 'author'] })
+      ms.add({ id: 1, author: 'Al et. al.' })
+      expect(() => {
+        ms.removeFields(1, { text: 'Some interesting stuff' })
+      }).toThrow('MiniSearch: field text does not exist on document with ID 1')
     })
   })
 
