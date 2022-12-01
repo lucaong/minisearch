@@ -2,13 +2,16 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-# v6.0.0 (unreleased)
+# v6.0.0
 
 This is a major release. The most notable change is the addition of `discard`,
 `discardAll`, and `replace`. These method make it more convenient and performant
-to remove or replace documents. This release is almost completely backwards
-compatible with `v5`, apart from one breaking change in the behavior of `add`
-when the document ID already exists.
+to remove or replace documents.
+
+This release is almost completely backwards compatible with `v5`, apart from one
+breaking change in the behavior of `add` when the document ID already exists.
+
+Changes:
 
   - [breaking change] `add`, `addAll`, and `addAllAsync` now throw an error on
     duplicate document IDs. When necessary, it is now possible to check for the
