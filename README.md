@@ -62,7 +62,7 @@ build custom solutions, while keeping a small and well tested codebase.
 With `npm`:
 
 ```
-npm install --save minisearch
+npm install minisearch
 ```
 
 With `yarn`:
