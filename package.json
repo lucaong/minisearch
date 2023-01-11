@@ -40,7 +40,8 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@rollup/plugin-typescript": "^9.0.2",
+    "@rollup/plugin-terser": "^0.3.0",
+    "@rollup/plugin-typescript": "^11.0.0",
     "@types/benchmark": "^2.1.1",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
@@ -58,7 +59,6 @@
     "regenerator-runtime": "^0.13.1",
     "rollup": "^3.4.0",
     "rollup-plugin-dts": "^5.0.0",
-    "rollup-plugin-terser": "^7.0.0",
     "snazzy": "^9.0.0",
     "ts-jest": "^29.0.3",
     "tslib": "^2.0.1",

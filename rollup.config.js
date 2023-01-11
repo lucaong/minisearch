@@ -1,6 +1,6 @@
 import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
-import { terser } from 'rollup-plugin-terser'
+import terser from '@rollup/plugin-terser'
 
 const config = ({ format, input, output, name, dir, extension = 'js', exports = undefined }) => {
   const shouldMinify = process.env.MINIFY === 'true' && output !== 'dts'
