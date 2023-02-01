@@ -1003,8 +1003,14 @@ describe('MiniSearch', () => {
       })
     })
 
-    it('searches in the given fields', () => {
+    it('searches only selected fields', () => {
       const results = ms.search('vita', { fields: ['title'] })
+      expect(results).toHaveLength(1)
+      expect(results[0].id).toEqual(3)
+    })
+
+    it('searches only selected fields even if other fields are boosted', () => {
+      const results = ms.search('vita', { fields: ['title'], boost: { text: 2 } })
       expect(results).toHaveLength(1)
       expect(results[0].id).toEqual(3)
     })
@@ -1221,6 +1227,48 @@ describe('MiniSearch', () => {
 
         expect(results.length).toEqual(2)
         expect(results.map(({ id }) => id)).toEqual([3, 2])
+      })
+
+      it('uses the search options in the second argument as default', () => {
+        let reference = ms.search({
+          queries: [
+            { fields: ['text'], queries: ['vita'] },
+            { fields: ['title'], queries: ['promessi'] }
+          ]
+        })
+
+        // Boost field
+        let results = ms.search({
+          queries: [
+            { fields: ['text'], queries: ['vita'] },
+            { fields: ['title'], queries: ['promessi'] }
+          ]
+        }, { boost: { title: 2 } })
+
+        expect(results.length).toEqual(reference.length)
+        expect(results.find((r) => r.id === 2).score)
+          .toBeGreaterThan(reference.find((r) => r.id === 2).score)
+
+        // Combine with AND
+        results = ms.search({
+          queries: [
+            { fields: ['text'], queries: ['vita'] },
+            { fields: ['title'], queries: ['promessi'] }
+          ]
+        }, { combineWith: 'AND' })
+
+        expect(results.length).toEqual(0)
+
+        // Combine with AND, then override it with OR
+        results = ms.search({
+          queries: [
+            { fields: ['text'], queries: ['vita'] },
+            { fields: ['title'], queries: ['promessi'] }
+          ],
+          combineWith: 'OR'
+        }, { combineWith: 'AND' })
+
+        expect(results.length).toEqual(reference.length)
       })
     })
 

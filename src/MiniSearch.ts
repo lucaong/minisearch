@@ -1420,7 +1420,7 @@ export default class MiniSearch<T = any> {
     if (typeof query !== 'string') {
       const options = { ...searchOptions, ...query, queries: undefined }
       const results = query.queries.map((subquery) => this.executeQuery(subquery, options))
-      return this.combineResults(results, query.combineWith)
+      return this.combineResults(results, options.combineWith)
     }
 
     const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
@@ -1442,7 +1442,7 @@ export default class MiniSearch<T = any> {
     const options: SearchOptionsWithDefaults = { ...this._options.searchOptions, ...searchOptions }
 
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
-      ({ ...boosts, [field]: getOwnProperty(boosts, field) || 1 }), options.boost || {})
+      ({ ...boosts, [field]: getOwnProperty(options.boost, field) || 1 }), {})
 
     const {
       boostDocument,
