@@ -2,6 +2,16 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v6.0.1
+
+  - [fix] The `boost` search option now does not interfere with the `fields`
+    search option: if `fields` is specified, boosting a field that is not
+    included in `fields` has no effect, and will not include such boosted field
+    in the search.
+  - [fix] When using `search` with a `QuerySpec`, the `combineWith` option is
+    now properly taking its default from the `SearchOptions` given as the second
+    argument.
+
 # v6.0.0
 
 This is a major release. The most notable change is the addition of `discard`,
