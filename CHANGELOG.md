@@ -4,6 +4,9 @@
 
 # unreleased
 
+  - Add `getStoredFields` method to retrieve the stored fields for a document
+    given its ID.
+
   - Pass stored fields to the `boostDocument` callback function, making it
     easier to perform dynamic document boosting.
 
