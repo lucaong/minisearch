@@ -1038,9 +1038,9 @@ export default class MiniSearch<T = any> {
   }
 
   /**
-   * Returns the stored fields (as configured in [[Options.storeFields]]) for
-   * the given document ID. Returns `undefined` if the document is not present
-   * in the index.
+   * Returns the stored fields (as configured in the `storeFields` constructor
+   * option) for the given document ID. Returns `undefined` if the document is
+   * not present in the index.
    *
    * @param id  The document ID
    */
