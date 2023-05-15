@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# unreleased
+
+  - Pass stored fields to the `boostDocument` callback function, making it
+    easier to perform dynamic document boosting.
+
 # v6.0.1
 
   - [fix] The `boost` search option now does not interfere with the `fields`
