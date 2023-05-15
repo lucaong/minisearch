@@ -1109,14 +1109,15 @@ describe('MiniSearch', () => {
       expect(results.map(({ id }) => id)).toEqual([2, 1])
     })
 
-    it('boosts documents by calling boostDocument with document ID and term', () => {
-      const query = 'divina commedia'
+    it('boosts documents by calling boostDocument with document ID, term, and stored fields', () => {
+      const query = 'divina commedia nova'
       const boostFactor = 1.234
       const boostDocument = jest.fn((id, term) => boostFactor)
       const resultsWithoutBoost = ms.search(query)
       const results = ms.search(query, { boostDocument })
-      expect(boostDocument).toHaveBeenCalledWith(1, 'divina')
-      expect(boostDocument).toHaveBeenCalledWith(1, 'commedia')
+      expect(boostDocument).toHaveBeenCalledWith(1, 'divina', {})
+      expect(boostDocument).toHaveBeenCalledWith(1, 'commedia', {})
+      expect(boostDocument).toHaveBeenCalledWith(3, 'nova', { category: 'poetry' })
       expect(results[0].score).toBeCloseTo(resultsWithoutBoost[0].score * boostFactor)
     })
 

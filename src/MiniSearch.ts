@@ -38,9 +38,12 @@ export type SearchOptions = {
   /**
    * Function to calculate a boost factor for documents. It takes as arguments
    * the document ID, and a term that matches the search in that document, and
-   * should return a boosting factor.
+   * the value of the stored fields for the document (if any).  It should return
+   * a boosting factor: a number higher than 1 increases the computed score, a
+   * number lower than 1 decreases the score, and a falsy value skips the search
+   * result completely.
    */
-  boostDocument?: (documentId: any, term: string) => number,
+  boostDocument?: (documentId: any, term: string, storedFields?: Record<string, unknown>) => number,
 
   /**
    * Controls whether to perform prefix search. It can be a simple boolean, or a
@@ -1572,7 +1575,7 @@ export default class MiniSearch<T = any> {
     termWeight: number,
     fieldTermData: FieldTermData | undefined,
     fieldBoosts: { [field: string]: number },
-    boostDocumentFn: ((id: any, term: string) => number) | undefined,
+    boostDocumentFn: ((id: any, term: string, storedFields?: Record<string, unknown>) => number) | undefined,
     bm25params: BM25Params,
     results: RawResult = new Map()
   ): RawResult {
@@ -1595,7 +1598,7 @@ export default class MiniSearch<T = any> {
           continue
         }
 
-        const docBoost = boostDocumentFn ? boostDocumentFn(this._documentIds.get(docId), derivedTerm) : 1
+        const docBoost = boostDocumentFn ? boostDocumentFn(this._documentIds.get(docId), derivedTerm, this._storedFields.get(docId)) : 1
         if (!docBoost) continue
 
         const termFreq = fieldTermFreqs.get(docId)!
