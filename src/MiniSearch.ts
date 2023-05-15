@@ -1033,8 +1033,23 @@ export default class MiniSearch<T = any> {
    *
    * @param id  The document ID
    */
-  has (id: any) {
+  has (id: any): boolean {
     return this._idToShortId.has(id)
+  }
+
+  /**
+   * Returns the stored fields (as configured in [[Options.storeFields]]) for
+   * the given document ID. Returns `undefined` if the document is not present
+   * in the index.
+   *
+   * @param id  The document ID
+   */
+  getStoredFields (id: any): Record<string, unknown> | undefined {
+    const shortId = this._idToShortId.get(id)
+
+    if (shortId == null) { return undefined }
+
+    return this._storedFields.get(shortId)
   }
 
   /**
