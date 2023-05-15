@@ -2,7 +2,7 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-# unreleased
+# v6.1.0
 
   - Add `getStoredFields` method to retrieve the stored fields for a document
     given its ID.
