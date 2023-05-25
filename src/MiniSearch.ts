@@ -152,7 +152,7 @@ export type Options<T = any> = {
 
    /**
     * Names of fields to store, so that search results would include them. By
-    * default none, so resuts would only contain the id field.
+    * default none, so results would only contain the id field.
     */
   storeFields?: string[],
 
@@ -402,7 +402,7 @@ interface RawResultValue {
 
   // Set of all query terms that were matched. They may not be present in the
   // text exactly in the case of prefix/fuzzy matches. We must check for
-  // uniqueness before adding a new term. This is much fater than using a set,
+  // uniqueness before adding a new term. This is much faster than using a set,
   // because the number of elements is relatively small.
   terms: string[],
 
@@ -888,7 +888,7 @@ export default class MiniSearch<T = any> {
    * Triggers a manual vacuuming, cleaning up references to discarded documents
    * from the inverted index
    *
-   * Vacuiuming is only useful for applications that use the
+   * Vacuuming is only useful for applications that use the
    * [[MiniSearch.discard]] or [[MiniSearch.replace]] methods.
    *
    * By default, vacuuming is performed automatically when needed (controlled by
@@ -1552,7 +1552,7 @@ export default class MiniSearch<T = any> {
    * miniSearch = MiniSearch.loadJSON(json, { fields: ['title', 'text'] })
    * ```
    *
-   * @return A plain-object serializeable representation of the search index.
+   * @return A plain-object serializable representation of the search index.
    */
   toJSON (): AsPlainObject {
     const index: [string, { [key: string]: SerializedIndexEntry }][] = []
@@ -1621,7 +1621,7 @@ export default class MiniSearch<T = any> {
 
         // NOTE: The total number of fields is set to the number of documents
         // `this._documentCount`. It could also make sense to use the number of
-        // documents where the current field is non-blank as a normalisation
+        // documents where the current field is non-blank as a normalization
         // factor. This will make a difference in scoring if the field is rarely
         // present. This is currently not supported, and may require further
         // analysis to see if it is a valid use case.
