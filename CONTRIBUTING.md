@@ -37,7 +37,7 @@ setup your development environment:
   3. Run the tests with `yarn test`. You can also automatically trigger a run of
      relevant tests for the code that you change by running `yarn test-watch`
 
-  4. If you are working on optimising the performance, you can run the
+  4. If you are working on optimizing the performance, you can run the
      performance benchmarks with `yarn benchmark`
 
   5. If you are improving the documentation, you can build the docs with `yarn
@@ -52,7 +52,7 @@ Also, please follow these guidelines:
     further code changes. If you are not sure how to test, feel free to send the
     pull request and ask for advices in the comment.
 
-  - Don't change the version number. That will be done by the mainteiner upon
+  - Don't change the version number. That will be done by the maintainer upon
     releasing a new version.
 
   - Make sure that the full test suite passes before sending the pull request.
