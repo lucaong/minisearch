@@ -1886,12 +1886,14 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
 const defaultOptions = {
   idField: 'id',
   extractField: (document: any, fieldName: string) => document[fieldName],
-  tokenize: (text: string, fieldName?: string) => text.split(SPACE_OR_PUNCTUATION),
-  processTerm: (term: string, fieldName?: string) => term.toLowerCase(),
+  tokenize: (text: string) => text.split(SPACE_OR_PUNCTUATION),
+  processTerm: (term: string) => term.toLowerCase(),
   fields: undefined,
   searchOptions: undefined,
   storeFields: [],
-  logger: (level: LogLevel, message: string, code?: string) => console != null && console.warn != null && console[level](message),
+  logger: (level: LogLevel, message: string): void => {
+    if (typeof console?.[level] === "function") console[level](message);
+  },
   autoVacuum: true
 }
 
