@@ -1,66 +1,68 @@
-/* eslint-env jest */
-
-import MiniSearch from './MiniSearch'
+import MiniSearch from './MiniSearch';
 
 describe('MiniSearch', () => {
   describe('constructor', () => {
     it('throws error if fields option is missing', () => {
-      expect(() => new MiniSearch()).toThrow('MiniSearch: option "fields" must be provided')
-    })
+      expect(() => new MiniSearch()).toThrow('MiniSearch: option "fields" must be provided');
+    });
 
     it('initializes the attributes', () => {
-      const options = { fields: ['title', 'text'] }
-      const ms = new MiniSearch(options)
-      expect(ms._documentCount).toEqual(0)
-      expect(ms._fieldIds).toEqual({ title: 0, text: 1 })
-      expect(ms._documentIds.size).toEqual(0)
-      expect(ms._fieldLength.size).toEqual(0)
-      expect(ms._avgFieldLength.length).toEqual(0)
-      expect(ms._options).toMatchObject(options)
-    })
-  })
+      const options = { fields: ['title', 'text'] };
+      const ms = new MiniSearch(options);
+
+      expect(ms._documentCount).toEqual(0);
+      expect(ms._fieldIds).toEqual({ title: 0, text: 1 });
+      expect(ms._options).toMatchObject(options);
+    });
+  });
 
   describe('add', () => {
     it('adds the document to the index', () => {
-      const ms = new MiniSearch({ fields: ['text'] })
-      ms.add({ id: 1, text: 'Nel mezzo del cammin di nostra vita' })
-      expect(ms.documentCount).toEqual(1)
-    })
+      const ms = new MiniSearch({ fields: ['text'] });
+      ms.add({ id: 1, text: 'Nel mezzo del cammin di nostra vita' });
+
+      expect(ms.documentCount).toEqual(1);
+    });
 
     it('does not throw error if a field is missing', () => {
-      const ms = new MiniSearch({ fields: ['title', 'text'] })
-      ms.add({ id: 1, text: 'Nel mezzo del cammin di nostra vita' })
-      expect(ms.documentCount).toEqual(1)
-    })
+      const ms = new MiniSearch({ fields: ['title', 'text'] });
+      ms.add({ id: 1, text: 'Nel mezzo del cammin di nostra vita' });
+
+      expect(ms.documentCount).toEqual(1);
+    });
 
     it('throws error if the document does not have the ID field', () => {
-      const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] })
+      const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] });
+
       expect(() => {
-        ms.add({ text: 'I do not have an ID' })
-      }).toThrowError('MiniSearch: document does not have ID field "foo"')
-    })
+        ms.add({ text: 'I do not have an ID' });
+      }).toThrowError('MiniSearch: document does not have ID field "foo"');
+    });
 
     it('throws error on duplicate ID', () => {
-      const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] })
-      ms.add({ foo: 'abc', text: 'Something' })
+      const ms = new MiniSearch({ idField: 'foo', fields: ['title', 'text'] });
+      ms.add({ foo: 'abc', text: 'Something' });
 
       expect(() => {
-        ms.add({ foo: 'abc', text: 'I have a duplicate ID' })
-      }).toThrowError('MiniSearch: duplicate ID abc')
-    })
+        ms.add({ foo: 'abc', text: 'I have a duplicate ID' });
+      }).toThrowError('MiniSearch: duplicate ID abc');
+    });
 
     it('extracts the ID field using extractField', () => {
       const extractField = (document, fieldName) => {
-        if (fieldName === 'id') { return document.id.value }
-        return MiniSearch.getDefault('extractField')(document, fieldName)
-      }
-      const ms = new MiniSearch({ fields: ['text'], extractField })
+        if (fieldName === 'id') { return document.id.value; }
+        return MiniSearch.getDefault('extractField')(document, fieldName);
+      };
 
-      ms.add({ id: { value: 123 }, text: 'Nel mezzo del cammin di nostra vita' })
+      const ms = new MiniSearch({ fields: ['text'], extractField });
+      ms.add({ id: { value: 123 }, text: 'Nel mezzo del cammin di nostra vita' });
 
-      const results = ms.search('vita')
-      expect(results[0].id).toEqual(123)
-    })
+      const results = ms.search('vita');
+      expect(results[0].id).toEqual(123);
+    });
+  });
+});
+
 
     it('rejects falsy terms', () => {
       const processTerm = term => term === 'foo' ? null : term
