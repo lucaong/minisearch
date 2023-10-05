@@ -94,8 +94,8 @@
     "build": "yarn clean-build && NODE_ENV=production rollup -c",
     "clean-build": "rm -rf dist",
     "build-minified": "MINIFY=true yarn build",
-    "build-docs": "typedoc --options typedoc.json && touch docs/.nojekyll && yarn build-examples",
-    "build-examples": "yarn build && cd examples && yarn install && yarn build && cd ../",
+    "build-docs": "typedoc --options typedoc.json && touch docs/.nojekyll && yarn build-demo",
+    "build-demo": "mkdir -p ./docs/demo && cp -r ./examples/plain_js ./docs/demo",
     "lint": "eslint 'src/**/*.{js,ts}'",
     "lintfix": "eslint --fix 'src/**/*.{js,ts}'",
     "prepublishOnly": "yarn test && yarn build"
