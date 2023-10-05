@@ -91,10 +91,8 @@ $app.addEventListener('click', (event) => {
   renderSuggestions([])
 })
 
-// Changing any advanced option recomputes the search option
+// Changing any advanced option triggers a new search with the updated options
 $options.addEventListener('change', (event) => {
-  recomputeSearchOptions()
-
   const query = $searchInput.value
   const results = getSearchResults(query)
   renderSearchResults(results)
@@ -110,6 +108,7 @@ const searchOptions = {
 }
 
 const getSearchResults = (query) => {
+  const searchOptions = getSearchOptions()
   return miniSearch.search(query, searchOptions).map(({ id }) => songsById[id])
 }
 
@@ -164,8 +163,9 @@ const selectSuggestion = (direction) => {
   $searchInput.value = $suggestions[nextIndex].innerText
 }
 
-const recomputeSearchOptions = () => {
+const getSearchOptions = () => {
   const formData = new FormData($options)
+  const searchOptions = {}
 
   searchOptions.fuzzy = formData.has('fuzzy') ? 0.2 : false
   searchOptions.prefix = formData.has('prefix')
@@ -179,6 +179,8 @@ const recomputeSearchOptions = () => {
     year = parseInt(year, 10)
     return year >= fromYear && year <= toYear
   }
+
+  return searchOptions
 }
 
 const capitalize = (string) => string.replace(/(\b\w)/gi, (char) => char.toUpperCase())
