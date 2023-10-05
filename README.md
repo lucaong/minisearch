@@ -11,7 +11,7 @@
 JavaScript. It is respectful of resources, and it can comfortably run both in
 Node and in the browser.
 
-Try out the [demo application](https://lucaong.github.io/minisearch/examples/).
+Try out the [demo application](https://lucaong.github.io/minisearch/demo/).
 
 Find the complete [documentation and API reference
 here](https://lucaong.github.io/minisearch/classes/_minisearch_.minisearch.html),
