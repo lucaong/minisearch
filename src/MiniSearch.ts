@@ -327,10 +327,15 @@ export type AsPlainObject = {
 export type QueryCombination = SearchOptions & { queries: Query[] }
 
 /**
+ * Wildcard query, used to match all terms
+ */
+export type Wildcard = typeof MiniSearch.wildcard
+
+/**
  * Search query expression, either a query string or an expression tree
  * combining several queries with a combination of AND or OR.
  */
-export type Query = QueryCombination | string
+export type Query = QueryCombination | string | Wildcard
 
 /**
  * Options to control vacuuming behavior.
@@ -485,6 +490,8 @@ export default class MiniSearch<T = any> {
   private _currentVacuum: Promise<void> | null
   private _enqueuedVacuum: Promise<void> | null
   private _enqueuedVacuumConditions: VacuumConditions | undefined
+
+  static readonly wildcard: unique symbol = Symbol('*')
 
   /**
    * @param options  Configuration options
@@ -1145,6 +1152,28 @@ export default class MiniSearch<T = any> {
    * })
    * ```
    *
+   * ### Wildcard query
+   *
+   * Searching for an empty string (assuming the default tokenizer) returns no
+   * results. Sometimes though, one needs to match all documents, like in a
+   * "wildcard" search. This is possible by passing the special value
+   * `MiniSearch.wildcard` as the query:
+   *
+   * ```javascript
+   * // Return search results for all documents
+   * minisearch.search(MiniSearch.wildcard)
+   * ```
+   *
+   * Note that search options such as `filter` and `boostDocument` are still
+   * applied, influencing which results are returned, and their order:
+   *
+   * ```javascript
+   * // Return search results for all documents in the 'fiction' category
+   * minisearch.search(MiniSearch.wildcard, {
+   *   filter: (result) => result.category === 'fiction'
+   * })
+   * ```
+   *
    * ### Advanced combination of queries:
    *
    * It is possible to combine different subqueries with OR, AND, and AND_NOT,
@@ -1191,14 +1220,13 @@ export default class MiniSearch<T = any> {
    * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
   search (query: Query, searchOptions: SearchOptions = {}): SearchResult[] {
-    const combinedResults = this.executeQuery(query, searchOptions)
-
+    const rawResults = this.executeQuery(query, searchOptions)
     const results = []
 
-    for (const [docId, { score, terms, match }] of combinedResults) {
+    for (const [docId, { score, terms, match }] of rawResults) {
       // Final score takes into account the number of matching QUERY terms.
       // The end user will only receive the MATCHED terms.
-      const quality = terms.length
+      const quality = terms.length || 1
 
       const result = {
         id: this._documentIds.get(docId),
@@ -1435,6 +1463,10 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private executeQuery (query: Query, searchOptions: SearchOptions = {}): RawResult {
+    if (query === MiniSearch.wildcard) {
+      return this.executeWildcardQuery(searchOptions)
+    }
+
     if (typeof query !== 'string') {
       const options = { ...searchOptions, ...query, queries: undefined }
       const results = query.queries.map((subquery) => this.executeQuery(subquery, options))
@@ -1516,6 +1548,25 @@ export default class MiniSearch<T = any> {
         const weight = fuzzyWeight * term.length / (term.length + distance)
         this.termResults(query.term, term, weight, data, boosts, boostDocument, bm25params, results)
       }
+    }
+
+    return results
+  }
+
+  /**
+   * @ignore
+   */
+  private executeWildcardQuery (searchOptions: SearchOptions): RawResult {
+    const results = new Map() as RawResult
+    const options: SearchOptionsWithDefaults = { ...this._options.searchOptions, ...searchOptions }
+
+    for (const [shortId, id] of this._documentIds) {
+      const score = options.boostDocument ? options.boostDocument(id, '', this._storedFields.get(shortId)) : 1
+      results.set(shortId, {
+        score,
+        terms: [],
+        match: {}
+      })
     }
 
     return results
@@ -1892,7 +1943,7 @@ const defaultOptions = {
   searchOptions: undefined,
   storeFields: [],
   logger: (level: LogLevel, message: string): void => {
-    if (typeof console?.[level] === "function") console[level](message);
+    if (typeof console?.[level] === 'function') console[level](message)
   },
   autoVacuum: true
 }
