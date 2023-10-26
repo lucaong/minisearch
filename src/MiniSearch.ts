@@ -1161,7 +1161,7 @@ export default class MiniSearch<T = any> {
    *
    * ```javascript
    * // Return search results for all documents
-   * minisearch.search(MiniSearch.wildcard)
+   * miniSearch.search(MiniSearch.wildcard)
    * ```
    *
    * Note that search options such as `filter` and `boostDocument` are still
@@ -1169,7 +1169,7 @@ export default class MiniSearch<T = any> {
    *
    * ```javascript
    * // Return search results for all documents in the 'fiction' category
-   * minisearch.search(MiniSearch.wildcard, {
+   * miniSearch.search(MiniSearch.wildcard, {
    *   filter: (result) => result.category === 'fiction'
    * })
    * ```
