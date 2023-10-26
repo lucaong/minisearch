@@ -1203,6 +1203,32 @@ describe('MiniSearch', () => {
       expect(other.search('very')).toEqual(ms.search('very', { bm25: { k: 1, b: 0.7, d: 0.5 } }))
     })
 
+    it('allows searching for the special value `MiniSearch.wildcard` to match all terms', () => {
+      const ms = new MiniSearch({ fields: ['text'], storeFields: ['cool'] })
+      const documents = [
+        { id: 1, text: 'something cool', cool: true },
+        { id: 2, text: 'something else', cool: false },
+        { id: 3, text: null, cool: true }
+      ]
+      ms.addAll(documents)
+
+      // The string "*" is just a normal term
+      expect(ms.search('*')).toEqual([])
+
+      // The empty string is just a normal query
+      expect(ms.search('')).toEqual([])
+
+      // The value `MiniSearch.wildcard` matches all terms
+      expect(ms.search(MiniSearch.wildcard).map(({ id }) => id)).toEqual([1, 2, 3])
+
+      // Filters and document boosting are still applied
+      const results = ms.search(MiniSearch.wildcard, {
+        filter: (x) => x.cool,
+        boostDocument: (id) => id
+      })
+      expect(results.map(({ id }) => id)).toEqual([3, 1])
+    })
+
     describe('when passing a query tree', () => {
       it('searches according to the given combination', () => {
         const results = ms.search({
@@ -1221,6 +1247,18 @@ describe('MiniSearch', () => {
         })
         expect(results.length).toEqual(2)
         expect(results.map(({ id }) => id)).toEqual([1, 2])
+      })
+
+      it('allows combining wildcard queries', () => {
+        const results = ms.search({
+          combineWith: 'AND_NOT',
+          queries: [
+            MiniSearch.wildcard,
+            'vita'
+          ]
+        })
+        expect(results.length).toEqual(1)
+        expect(results.map(({ id }) => id)).toEqual([2])
       })
 
       it('uses the given options for each subquery, cascading them properly', () => {
