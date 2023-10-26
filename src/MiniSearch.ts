@@ -1241,6 +1241,14 @@ export default class MiniSearch<T = any> {
       }
     }
 
+    // If it's a wildcard query, and no document boost is applied, skip sorting
+    // the results, as all results have the same score of 1
+    if (query === MiniSearch.wildcard &&
+      searchOptions.boostDocument == null &&
+      this._options.searchOptions.boostDocument == null) {
+      return results
+    }
+
     results.sort(byScore)
     return results
   }
