@@ -2,6 +2,12 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v6.2.0
+
+  - Add the possibility to search for the special value `MiniSearch.wildcard` to
+    match all documents, but still apply search options like filtering and
+    document boosting
+
 # v6.1.0
 
   - Add `getStoredFields` method to retrieve the stored fields for a document
