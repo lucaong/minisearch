@@ -1,11 +1,10 @@
 {
   "name": "MiniSearch",
-  "inputFiles": ["index.ts", "src/MiniSearch.ts", "src/SearchableMap/SearchableMap.ts"],
+  "entryPoints": ["src/MiniSearch.ts", "src/SearchableMap/SearchableMap.ts"],
   "out": "docs",
-  "mode": "modules",
-  "excludeNotExported": true,
   "excludePrivate": true,
   "excludeProtected": true,
-  "stripInternal": true,
-  "excludeExternals": true
+  "excludeInternal": true,
+  "excludeExternals": true,
+  "plugin": ["typedoc-plugin-rename-defaults"]
 }

@@ -135,7 +135,7 @@ type SearchOptionsWithDefaults = SearchOptions & {
 }
 
 /**
- * Configuration options passed to the [[MiniSearch]] constructor
+ * Configuration options passed to the {@link MiniSearch} constructor
  *
  * @typeParam T  The type of documents being indexed.
  */
@@ -204,23 +204,23 @@ export type Options<T = any> = {
 
   /**
    * If `true` (the default), vacuuming is performed automatically as soon as
-   * [[MiniSearch.discard]] is called a certain number of times, cleaning up
+   * {@link MiniSearch#discard} is called a certain number of times, cleaning up
    * obsolete references from the index. If `false`, no automatic vacuuming is
    * performed. Custom settings controlling auto vacuuming thresholds, as well
-   * as batching behavior, can be passed as an object (see the
-   * [[AutoVacuumOptions]] type).
+   * as batching behavior, can be passed as an object (see the {@link
+   * AutoVacuumOptions} type).
    */
   autoVacuum?: boolean | AutoVacuumOptions
 
    /**
-    * Default search options (see the [[SearchOptions]] type and the
-    * [[MiniSearch.search]] method for details)
+    * Default search options (see the {@link SearchOptions} type and the {@link
+    * MiniSearch#search} method for details)
     */
   searchOptions?: SearchOptions,
 
    /**
-    * Default auto suggest options (see the [[SearchOptions]] type and the
-    * [[MiniSearch.autoSuggest]] method for details)
+    * Default auto suggest options (see the {@link SearchOptions} type and the
+    * {@link MiniSearch#autoSuggest} method for details)
     */
   autoSuggestOptions?: SearchOptions
 }
@@ -298,7 +298,7 @@ export type SearchResult = {
   score: number,
 
   /**
-   * Match information, see [[MatchInfo]]
+   * Match information, see {@link MatchInfo}
    */
   match: MatchInfo,
 
@@ -340,8 +340,8 @@ export type Query = QueryCombination | string | Wildcard
 /**
  * Options to control vacuuming behavior.
  *
- * Vacuuming cleans up document references made obsolete by
- * [[MiniSearch.discard]] from the index. On large indexes, vacuuming is
+ * Vacuuming cleans up document references made obsolete by {@link
+ * MiniSearch.discard} from the index. On large indexes, vacuuming is
  * potentially costly, because it has to traverse the whole inverted index.
  * Therefore, in order to dilute this cost so it does not negatively affects the
  * application, vacuuming is performed in batches, with a delay between each
@@ -381,13 +381,13 @@ export type VacuumConditions = {
 
 /**
  * Options to control auto vacuum behavior. When discarding a document with
- * [[MiniSearch.discard]], a vacuuming operation is automatically started if the
- * `dirtCount` and `dirtFactor` are above the `minDirtCount` and `minDirtFactor`
- * thresholds defined by this configuration. See [[VacuumConditions]] for
- * details on these.
+ * {@link MiniSearch#discard}, a vacuuming operation is automatically started if
+ * the `dirtCount` and `dirtFactor` are above the `minDirtCount` and
+ * `minDirtFactor` thresholds defined by this configuration. See {@link
+ * VacuumConditions} for details on these.
  *
  * Also, `batchSize` and `batchWait` can be specified, controlling batching
- * behavior (see [[VacuumOptions]]).
+ * behavior (see {@link VacuumOptions}).
  */
 export type AutoVacuumOptions = VacuumOptions & VacuumConditions
 
@@ -420,8 +420,8 @@ interface RawResultValue {
 type RawResult = Map<number, RawResultValue>
 
 /**
- * [[MiniSearch]] is the main entrypoint class, implementing a full-text search
- * engine in memory.
+ * {@link MiniSearch} is the main entrypoint class, implementing a full-text
+ * search engine in memory.
  *
  * @typeParam T  The type of the documents being indexed.
  *
@@ -491,6 +491,10 @@ export default class MiniSearch<T = any> {
   private _enqueuedVacuum: Promise<void> | null
   private _enqueuedVacuumConditions: VacuumConditions | undefined
 
+  /**
+   * The special wildcard symbol that can be passed to {@link MiniSearch#search}
+   * to match all documents
+   */
   static readonly wildcard: unique symbol = Symbol('*')
 
   /**
@@ -692,9 +696,9 @@ export default class MiniSearch<T = any> {
    *
    * This method requires passing the full document to be removed (not just the
    * ID), and immediately removes the document from the inverted index, allowing
-   * memory to be released. A convenient alternative is [[MiniSearch.discard]],
-   * which needs only the document ID, and has the same visible effect, but
-   * delays cleaning up the index until the next vacuuming.
+   * memory to be released. A convenient alternative is {@link
+   * MiniSearch#discard}, which needs only the document ID, and has the same
+   * visible effect, but delays cleaning up the index until the next vacuuming.
    *
    * @param document  The document to be removed
    */
@@ -770,25 +774,26 @@ export default class MiniSearch<T = any> {
   /**
    * Discards the document with the given ID, so it won't appear in search results
    *
-   * It has the same visible effect of [[MiniSearch.remove]] (both cause the
+   * It has the same visible effect of {@link MiniSearch.remove} (both cause the
    * document to stop appearing in searches), but a different effect on the
    * internal data structures:
    *
-   *   - [[MiniSearch.remove]] requires passing the full document to be removed
-   *   as argument, and removes it from the inverted index immediately.
+   *   - {@link MiniSearch#remove} requires passing the full document to be
+   *   removed as argument, and removes it from the inverted index immediately.
    *
-   *   - [[MiniSearch.discard]] instead only needs the document ID, and works by
-   *   marking the current version of the document as discarded, so it is
-   *   immediately ignored by searches. This is faster and more convenient than
-   *   `remove`, but the index is not immediately modified. To take care of
-   *   that, vacuuming is performed after a certain number of documents are
-   *   discarded, cleaning up the index and allowing memory to be released.
+   *   - {@link MiniSearch#discard} instead only needs the document ID, and
+   *   works by marking the current version of the document as discarded, so it
+   *   is immediately ignored by searches. This is faster and more convenient
+   *   than {@link MiniSearch#remove}, but the index is not immediately
+   *   modified. To take care of that, vacuuming is performed after a certain
+   *   number of documents are discarded, cleaning up the index and allowing
+   *   memory to be released.
    *
    * After discarding a document, it is possible to re-add a new version, and
    * only the new version will appear in searches. In other words, discarding
    * and re-adding a document works exactly like removing and re-adding it. The
-   * [[MiniSearch.replace]] method can also be used to replace a document with a
-   * new version.
+   * {@link MiniSearch.replace} method can also be used to replace a document
+   * with a new version.
    *
    * #### Details about vacuuming
    *
@@ -803,10 +808,10 @@ export default class MiniSearch<T = any> {
    *   again.
    *
    *   - In addition, vacuuming is performed automatically by default (see the
-   *   `autoVacuum` field in [[Options]]) after a certain number of documents
-   *   are discarded. Vacuuming traverses all terms in the index, cleaning up
-   *   all references to discarded documents. Vacuuming can also be triggered
-   *   manually by calling [[MiniSearch.vacuum]].
+   *   `autoVacuum` field in {@link Options}) after a certain number of
+   *   documents are discarded. Vacuuming traverses all terms in the index,
+   *   cleaning up all references to discarded documents. Vacuuming can also be
+   *   triggered manually by calling {@link MiniSearch#vacuum}.
    *
    * @param id  The ID of the document to be discarded
    */
@@ -844,13 +849,13 @@ export default class MiniSearch<T = any> {
    * Discards the documents with the given IDs, so they won't appear in search
    * results
    *
-   * It is equivalent to calling [[MiniSearch.discard]] for all the given IDs,
-   * but with the optimization of triggering at most one automatic vacuuming at
-   * the end.
+   * It is equivalent to calling {@link MiniSearch#discard} for all the given
+   * IDs, but with the optimization of triggering at most one automatic
+   * vacuuming at the end.
    *
    * Note: to remove all documents from the index, it is faster and more
-   * convenient to call [[MiniSearch.removeAll]] with no argument, instead of
-   * passing all IDs to this method.
+   * convenient to call {@link MiniSearch.removeAll} with no argument, instead
+   * of passing all IDs to this method.
    */
   discardAll (ids: readonly any[]): void {
     const autoVacuum = this._options.autoVacuum
@@ -872,13 +877,13 @@ export default class MiniSearch<T = any> {
    * It replaces an existing document with the given updated version
    *
    * It works by discarding the current version and adding the updated one, so
-   * it is functionally equivalent to calling [[MiniSearch.discard]] followed by
-   * [[MiniSearch.add]]. The ID of the updated document should be the same as
-   * the original one.
+   * it is functionally equivalent to calling {@link MiniSearch#discard}
+   * followed by {@link MiniSearch#add}. The ID of the updated document should
+   * be the same as the original one.
    *
-   * Since it uses [[MiniSearch.discard]] internally, this method relies on
+   * Since it uses {@link MiniSearch#discard} internally, this method relies on
    * vacuuming to clean up obsolete document references from the index, allowing
-   * memory to be released (see [[MiniSearch.discard]]).
+   * memory to be released (see {@link MiniSearch#discard}).
    *
    * @param updatedDocument  The updated document to replace the old version
    * with
@@ -895,12 +900,12 @@ export default class MiniSearch<T = any> {
    * Triggers a manual vacuuming, cleaning up references to discarded documents
    * from the inverted index
    *
-   * Vacuuming is only useful for applications that use the
-   * [[MiniSearch.discard]] or [[MiniSearch.replace]] methods.
+   * Vacuuming is only useful for applications that use the {@link
+   * MiniSearch#discard} or {@link MiniSearch#replace} methods.
    *
    * By default, vacuuming is performed automatically when needed (controlled by
-   * the `autoVacuum` field in [[Options]]), so there is usually no need to call
-   * this method, unless one wants to make sure to perform vacuuming at a
+   * the `autoVacuum` field in {@link Options}), so there is usually no need to
+   * call this method, unless one wants to make sure to perform vacuuming at a
    * specific moment.
    *
    * Vacuuming traverses all terms in the inverted index in batches, and cleans
@@ -928,7 +933,7 @@ export default class MiniSearch<T = any> {
    * times (enqueuing multiple ones would be useless).
    *
    * @param options  Configuration options for the batch size and delay. See
-   * [[VacuumOptions]].
+   * {@link VacuumOptions}.
    */
   vacuum (options: VacuumOptions = {}): Promise<void> {
     return this.conditionalVacuum(options)
@@ -1157,7 +1162,7 @@ export default class MiniSearch<T = any> {
    * Searching for an empty string (assuming the default tokenizer) returns no
    * results. Sometimes though, one needs to match all documents, like in a
    * "wildcard" search. This is possible by passing the special value
-   * `MiniSearch.wildcard` as the query:
+   * {@link MiniSearch.wildcard} as the query:
    *
    * ```javascript
    * // Return search results for all documents
@@ -1209,7 +1214,7 @@ export default class MiniSearch<T = any> {
    * ```
    *
    * Each node in the expression tree can be either a string, or an object that
-   * supports all `SearchOptions` fields, plus a `queries` array field for
+   * supports all {@link SearchOptions} fields, plus a `queries` array field for
    * subqueries.
    *
    * Note that, while this can become complicated to do by hand for complex or
@@ -1263,8 +1268,8 @@ export default class MiniSearch<T = any> {
    * default it performs prefix search on the last term of the query, and
    * combine terms with `'AND'` (requiring all query terms to match). Custom
    * options can be passed as a second argument. Defaults can be changed upon
-   * calling the `MiniSearch` constructor, by passing a `autoSuggestOptions`
-   * option.
+   * calling the {@link MiniSearch} constructor, by passing a
+   * `autoSuggestOptions` option.
    *
    * ### Basic usage:
    *
@@ -1309,9 +1314,9 @@ export default class MiniSearch<T = any> {
    *
    * @param queryString  Query string to be expanded into suggestions
    * @param options  Search options. The supported options and default values
-   * are the same as for the `search` method, except that by default prefix
-   * search is performed on the last term in the query, and terms are combined
-   * with `'AND'`.
+   * are the same as for the {@link MiniSearch#search} method, except that by
+   * default prefix search is performed on the last term in the query, and terms
+   * are combined with `'AND'`.
    * @return  A sorted array of suggestions sorted by relevance score.
    */
   autoSuggest (queryString: string, options: SearchOptions = {}): Suggestion[] {
@@ -1591,13 +1596,13 @@ export default class MiniSearch<T = any> {
 
   /**
    * Allows serialization of the index to JSON, to possibly store it and later
-   * deserialize it with `MiniSearch.loadJSON`.
+   * deserialize it with {@link MiniSearch.loadJSON}.
    *
    * Normally one does not directly call this method, but rather call the
-   * standard JavaScript `JSON.stringify()` passing the `MiniSearch` instance,
-   * and JavaScript will internally call this method. Upon deserialization, one
-   * must pass to `loadJSON` the same options used to create the original
-   * instance that was serialized.
+   * standard JavaScript `JSON.stringify()` passing the {@link MiniSearch}
+   * instance, and JavaScript will internally call this method. Upon
+   * deserialization, one must pass to {@link MiniSearch.loadJSON} the same
+   * options used to create the original instance that was serialized.
    *
    * ### Usage:
    *
