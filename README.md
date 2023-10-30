@@ -5,7 +5,7 @@
 [![Minzipped Size](https://badgen.net/bundlephobia/minzip/minisearch)](https://bundlephobia.com/result?p=minisearch)
 [![npm](https://img.shields.io/npm/v/minisearch?color=%23ff00dd)](https://www.npmjs.com/package/minisearch)
 [![npm downloads](https://img.shields.io/npm/dw/minisearch)](https://www.npmjs.com/package/minisearch)
-[![types](https://img.shields.io/npm/types/minisearch)](https://lucaong.github.io/minisearch/classes/_minisearch_.minisearch.html)
+[![types](https://img.shields.io/npm/types/minisearch)](https://lucaong.github.io/minisearch/classes/MiniSearch.MiniSearch.html)
 
 `MiniSearch` is a tiny but powerful in-memory fulltext search engine written in
 JavaScript. It is respectful of resources, and it can comfortably run both in
@@ -324,7 +324,7 @@ The default term processor can be obtained by calling
 ### API Documentation
 
 Refer to the [API
-documentation](https://lucaong.github.io/minisearch/classes/_minisearch_.minisearch.html)
+documentation](https://lucaong.github.io/minisearch/classes/MiniSearch.MiniSearch.html)
 for details about configuration options and methods.
 
 
