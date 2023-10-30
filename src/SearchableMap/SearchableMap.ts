@@ -7,8 +7,8 @@ import { RadixTree, Entry, Path } from './types'
  * A class implementing the same interface as a standard JavaScript
  * [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
  * with string keys, but adding support for efficiently searching entries with
- * prefix or fuzzy search. This class is used internally by [[MiniSearch]] as
- * the inverted index data structure. The implementation is a radix tree
+ * prefix or fuzzy search. This class is used internally by {@link MiniSearch}
+ * as the inverted index data structure. The implementation is a radix tree
  * (compressed prefix tree).
  *
  * Since this class can be of general utility beyond _MiniSearch_, it is
@@ -32,8 +32,9 @@ export default class SearchableMap<T = any> {
 
   /**
    * The constructor is normally called without arguments, creating an empty
-   * map. In order to create a [[SearchableMap]] from an iterable or from an
-   * object, check [[SearchableMap.from]] and [[SearchableMap.fromObject]].
+   * map. In order to create a {@link SearchableMap} from an iterable or from an
+   * object, check {@link SearchableMap.from} and {@link
+   * SearchableMap.fromObject}.
    *
    * The constructor arguments are for internal use, when creating derived
    * mutable views of a map at a prefix.
@@ -44,8 +45,8 @@ export default class SearchableMap<T = any> {
   }
 
   /**
-   * Creates and returns a mutable view of this [[SearchableMap]], containing only
-   * entries that share the given prefix.
+   * Creates and returns a mutable view of this {@link SearchableMap},
+   * containing only entries that share the given prefix.
    *
    * ### Usage:
    *
@@ -69,7 +70,8 @@ export default class SearchableMap<T = any> {
    * ```
    *
    * @param prefix  The prefix
-   * @return A [[SearchableMap]] representing a mutable view of the original Map at the given prefix
+   * @return A {@link SearchableMap} representing a mutable view of the original
+   * Map at the given prefix
    */
   atPrefix (prefix: string): SearchableMap<T> {
     if (!prefix.startsWith(this._prefix)) { throw new Error('Mismatched prefix') }
@@ -191,7 +193,7 @@ export default class SearchableMap<T = any> {
    * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set
    * @param key  Key to set
    * @param value  Value to associate to the key
-   * @return The [[SearchableMap]] itself, to allow chaining
+   * @return The {@link SearchableMap} itself, to allow chaining
    */
   set (key: string, value: T): SearchableMap<T> {
     if (typeof key !== 'string') { throw new Error('key must be a string') }
@@ -233,7 +235,7 @@ export default class SearchableMap<T = any> {
    *
    * @param key  The key to update
    * @param fn  The function used to compute the new value from the current one
-   * @return The [[SearchableMap]] itself, to allow chaining
+   * @return The {@link SearchableMap} itself, to allow chaining
    */
   update (key: string, fn: (value: T | undefined) => T): SearchableMap<T> {
     if (typeof key !== 'string') { throw new Error('key must be a string') }
@@ -288,10 +290,10 @@ export default class SearchableMap<T = any> {
   }
 
   /**
-   * Creates a [[SearchableMap]] from an `Iterable` of entries
+   * Creates a {@link SearchableMap} from an `Iterable` of entries
    *
-   * @param entries  Entries to be inserted in the [[SearchableMap]]
-   * @return A new [[SearchableMap]] with the given entries
+   * @param entries  Entries to be inserted in the {@link SearchableMap}
+   * @return A new {@link SearchableMap} with the given entries
    */
   static from<T = any> (entries: Iterable<Entry<T>> | Entry<T>[]) {
     const tree = new SearchableMap()
@@ -302,10 +304,10 @@ export default class SearchableMap<T = any> {
   }
 
   /**
-   * Creates a [[SearchableMap]] from the iterable properties of a JavaScript object
+   * Creates a {@link SearchableMap} from the iterable properties of a JavaScript object
    *
-   * @param object  Object of entries for the [[SearchableMap]]
-   * @return A new [[SearchableMap]] with the given entries
+   * @param object  Object of entries for the {@link SearchableMap}
+   * @return A new {@link SearchableMap} with the given entries
    */
   static fromObject<T = any> (object: { [key: string]: T }) {
     return SearchableMap.from<T>(Object.entries(object))
