@@ -47,7 +47,7 @@
     "@typescript-eslint/parser": "^6.9.0",
     "benchmark": "^2.1.4",
     "core-js": "^3.1.4",
-    "coveralls": "^3.0.2",
+    "coveralls-next": "^4.2.0",
     "eslint": "^8.16.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.20.2",
