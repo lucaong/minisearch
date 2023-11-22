@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# v6.3.0
+
+  - Add `queryTerms` array to the search results. This is useful to determine
+    which query terms were matched by each search result.
+
 # v6.2.0
 
   - Add the possibility to search for the special value `MiniSearch.wildcard` to
