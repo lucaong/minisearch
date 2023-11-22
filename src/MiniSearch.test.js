@@ -1349,6 +1349,10 @@ describe('MiniSearch', () => {
           ['vita', 'nova'],
           ['vita']
         ])
+        expect(results.map(({ queryTerms }) => queryTerms)).toEqual([
+          ['vita', 'nova'],
+          ['vita']
+        ])
       })
 
       it('reports correct info when combining terms with AND', () => {
@@ -1357,6 +1361,9 @@ describe('MiniSearch', () => {
           { vita: ['title', 'text'], nova: ['title'] }
         ])
         expect(results.map(({ terms }) => terms)).toEqual([
+          ['vita', 'nova']
+        ])
+        expect(results.map(({ queryTerms }) => queryTerms)).toEqual([
           ['vita', 'nova']
         ])
       })
@@ -1371,6 +1378,10 @@ describe('MiniSearch', () => {
           ['vita', 'nova'],
           ['vita']
         ])
+        expect(results.map(({ queryTerms }) => queryTerms)).toEqual([
+          ['vi', 'nuova'],
+          ['vi']
+        ])
       })
 
       it('reports correct info for many fuzzy and prefix queries', () => {
@@ -1384,6 +1395,11 @@ describe('MiniSearch', () => {
           ['vita', 'nova', 'memoria', 'mia', 'della', 'del'],
           ['vita', 'mezzo', 'del'],
           ['del']
+        ])
+        expect(results.map(({ queryTerms }) => queryTerms)).toEqual([
+          ['vi', 'nuova', 'm', 'de'],
+          ['vi', 'm', 'de'],
+          ['de']
         ])
       })
 
