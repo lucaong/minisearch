@@ -113,7 +113,7 @@ describe('MiniSearch', () => {
       expect(extractField).toHaveBeenCalledWith(document, 'author.name')
       expect(extractField).toHaveBeenCalledWith(document, 'category')
       expect(tokenize).toHaveBeenCalledWith(document.title, 'title')
-      expect(tokenize).toHaveBeenCalledWith('1/1/1320', 'pubDate')
+      expect(tokenize).toHaveBeenCalledWith(document.pubDate.toLocaleDateString('it-IT'), 'pubDate')
       expect(tokenize).toHaveBeenCalledWith(document.author.name, 'author.name')
       expect(tokenize).not.toHaveBeenCalledWith(document.category, 'category')
     })
