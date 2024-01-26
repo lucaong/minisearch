@@ -2,6 +2,13 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+# Upcoming (unreleased)
+
+  - Better TypeScript type of `combineWith` search option values, catching
+    invalid operators at compile time.
+  - More informative error when specifying an invalid value for `combineWith`
+    in JavaScript (in TypeScript this would be a compile time error)
+
 # v6.3.0
 
   - Add `queryTerms` array to the search results. This is useful to determine
