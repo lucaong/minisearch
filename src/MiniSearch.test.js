@@ -1055,6 +1055,12 @@ describe('MiniSearch', () => {
       expect(ms.search('sottomarino vita', { combineWith: 'AND_NOT' }).length).toEqual(0)
     })
 
+    it('raises an error if combineWith is not a valid operator', () => {
+      expect(() => {
+        ms.search('vita cammin', { combineWith: 'XOR' })
+      }).toThrowError('Invalid combination operator: XOR')
+    })
+
     it('returns empty results for empty search', () => {
       expect(ms.search('')).toEqual([])
       expect(ms.search('', { combineWith: 'OR' })).toEqual([])

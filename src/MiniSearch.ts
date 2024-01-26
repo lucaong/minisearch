@@ -1,8 +1,11 @@
 import SearchableMap from './SearchableMap/SearchableMap'
 
-const OR = 'or'
-const AND = 'and'
-const AND_NOT = 'and_not'
+export type LowercaseCombinationOperator = 'or' | 'and' | 'and_not'
+export type CombinationOperator = LowercaseCombinationOperator | Uppercase<LowercaseCombinationOperator> | Capitalize<LowercaseCombinationOperator>
+
+const OR: LowercaseCombinationOperator = 'or'
+const AND: LowercaseCombinationOperator = 'and'
+const AND_NOT: LowercaseCombinationOperator = 'and_not'
 
 /**
  * Search options to customize the search behavior.
@@ -95,7 +98,7 @@ export type SearchOptions = {
    * search. If "AND" is given, only results matching _all_ the search terms are
    * returned by a search.
    */
-  combineWith?: string,
+  combineWith?: CombinationOperator,
 
   /**
    * Function to tokenize the search query. By default, the same tokenizer used
@@ -129,7 +132,7 @@ type SearchOptionsWithDefaults = SearchOptions & {
 
   maxFuzzy: number,
 
-  combineWith: string
+  combineWith: CombinationOperator
 
   bm25: BM25Params
 }
@@ -1598,10 +1601,16 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private combineResults (results: RawResult[], combineWith = OR): RawResult {
+  private combineResults (results: RawResult[], combineWith: CombinationOperator = OR): RawResult {
     if (results.length === 0) { return new Map() }
     const operator = combineWith.toLowerCase()
-    return results.reduce(combinators[operator]) || new Map()
+    const combinator = (combinators as Record<string, CombinatorFunction>)[operator]
+
+    if (!combinator) {
+      throw new Error(`Invalid combination operator: ${combineWith}`)
+    }
+
+    return results.reduce(combinator) || new Map()
   }
 
   /**
@@ -1851,7 +1860,7 @@ const getOwnProperty = (object: any, property: string) =>
 
 type CombinatorFunction = (a: RawResult, b: RawResult) => RawResult
 
-const combinators: { [kind: string]: CombinatorFunction } = {
+const combinators: Record<LowercaseCombinationOperator, CombinatorFunction> = {
   [OR]: (a: RawResult, b: RawResult) => {
     for (const docId of b.keys()) {
       const existing = a.get(docId)
