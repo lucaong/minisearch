@@ -2,25 +2,25 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-# Upcoming (unreleased)
+## Upcoming (unreleased)
 
   - Better TypeScript type of `combineWith` search option values, catching
     invalid operators at compile time.
   - More informative error when specifying an invalid value for `combineWith`
     in JavaScript (in TypeScript this would be a compile time error)
 
-# v6.3.0
+## v6.3.0 - 2023-11-22
 
   - Add `queryTerms` array to the search results. This is useful to determine
     which query terms were matched by each search result.
 
-# v6.2.0
+## v6.2.0 - 2023-10-26
 
   - Add the possibility to search for the special value `MiniSearch.wildcard` to
     match all documents, but still apply search options like filtering and
     document boosting
 
-# v6.1.0
+## v6.1.0 - 2023-05-15
 
   - Add `getStoredFields` method to retrieve the stored fields for a document
     given its ID.
@@ -28,7 +28,7 @@
   - Pass stored fields to the `boostDocument` callback function, making it
     easier to perform dynamic document boosting.
 
-# v6.0.1
+## v6.0.1 - 2023-02-01
 
   - [fix] The `boost` search option now does not interfere with the `fields`
     search option: if `fields` is specified, boosting a field that is not
@@ -38,7 +38,7 @@
     now properly taking its default from the `SearchOptions` given as the second
     argument.
 
-# v6.0.0
+## v6.0.0 - 2022-12-01
 
 This is a major release. The most notable change is the addition of `discard`,
 `discardAll`, and `replace`. These method make it more convenient and performant
@@ -77,13 +77,13 @@ Changes:
     readonly arrays.
   - Make it possible to overload the `loadJS` static method in subclasses
 
-# v5.1.0
+## v5.1.0
 
   - The `processTerm` option can now also expand a single term into several
     terms by returning an array of strings.
   - Add `logger` option to pass a custom logger function.
 
-# v5.0.0
+## v5.0.0
 
 This is a major release. The main change is an improved scoring algorithm based
 on [BM25+](https://en.wikipedia.org/wiki/Okapi_BM25). The new algorithm will
@@ -110,16 +110,16 @@ versions (generally better), and need less aggressive boosting.
   - Define `exports` entry points in `package.json`, to require MiniSearch as a
     commonjs package or import it as a ES module.
 
-# v4.0.3
+## v4.0.3
 
   - [fix] Fix regression causing stored fields not being saved in some
     situations.
 
-# v4.0.2
+## v4.0.2
 
   - [fix] Fix match data on mixed prefix and fuzzy search
 
-# v4.0.1
+## v4.0.1
 
   - [fix] Fix an issue with scoring, causing a result matching both fuzzy and
     prefix search to be scored higher than an exact match.
@@ -129,7 +129,7 @@ versions (generally better), and need less aggressive boosting.
     `SearchableMap`, not if you use `MiniSearch`, and is considered part of
     version 4.
 
-# v4.0.0
+## v4.0.0
 
   - [breaking change] The serialization format was changed, to abstract away the
     internal implementation details of the index data structure. This allows for
@@ -171,42 +171,42 @@ contributing the fixes and outstanding performance improvements that are part of
 this release.
 
 
-# v3.3.0
+## v3.3.0
 
   - Add `maxFuzzy` search option, to limit the maximum edit distance for fuzzy
     search when using fractional fuzziness
 
-# v3.2.0
+## v3.2.0
 
   - Add AND_NOT combinator to subtract results of a subquery from another (for
     example to find documents that match one term and not another)
 
-# v3.1.0
+## v3.1.0
 
   - Add possibility for advanced combination of subqueries as query expression
     trees
 
-# v3.0.4
+## v3.0.4
 
   - [fix] Keep radix tree property (no node with a single child) after removal
     of an entry
 
-# v3.0.3
+## v3.0.3
 
   - [fix] Adjust data about field lengths upon document removal
 
-# v3.0.2
+## v3.0.2
 
   - [fix] `addAllAsync` now allows events to be processed between chunks, avoid
     blocking the UI (by [@grimmen](https://github.com/grimmen))
 
-# v3.0.1
+## v3.0.1
 
   - [fix] Fix type signature of `removeAll` to allow calling it with no
     arguments. Also, throw a more informative error if called with a falsey
     value. Thanks to [https://github.com/nilclass](@nilclass).
 
-# v3.0.0
+## v3.0.0
 
   This major version ports the source code to TypeScript. That made it possible
   to improve types and documentation, making sure that both are in sync with the
@@ -222,30 +222,30 @@ this release.
   - [breaking change] `SearchableMap` is not a static field of `MiniSearch`
     anymore: it can instead be imported separately as `minisearch/SearchableMap`
 
-# v2.6.2
+## v2.6.2
 
   - [fix] Improve TypeScript types: default generic document type is `any`, not `object`
 
-# v2.6.1
+## v2.6.1
 
   - No change from 2.6.0
 
-# v2.6.0
+## v2.6.0
 
   - Better TypeScript typings using generics, letting the user (optionally)
     specify the document type.
 
-# v2.5.1
+## v2.5.1
 
   - [fix] Fix document removal when using a custom `extractField` function
     (thanks [@ahri](https://github.com/ahri) for reporting and reproducting)
 
-# v2.5.0
+## v2.5.0
 
   - Make `idField` extraction customizeable and consistent with other fields,
     using `extractField`
 
-# v2.4.1
+## v2.4.1
 
   - [fix] Fix issue with the term `constructor` (reported by
     [@scambier](https://github.com/scambier))
@@ -253,22 +253,22 @@ this release.
   - [fix] Fix issues when a field is named like a default property of JavaScript
     objects
 
-# v2.4.0
+## v2.4.0
 
   - Convert field value to string before tokenization and indexing. This makes
     a custom field extractor unnecessary for basic cases like integers or simple
     arrays.
 
-# v2.3.1
+## v2.3.1
 
   - Version `v2.3.1` mistakenly did not contain the commit adding `removeAll`,
     this patch release fixes it.
 
-# v2.3.0
+## v2.3.0
 
   - Add `removeAll` method, to remove many documents, or all documents, at once.
 
-# v2.2.2
+## v2.2.2
 
   - Avoid destructuring variables named with an underscore prefix. This plays
     nicer to some common minifier and builder configurations.
