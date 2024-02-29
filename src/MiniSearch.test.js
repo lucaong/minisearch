@@ -426,10 +426,15 @@ describe('MiniSearch', () => {
     })
 
     it('raises an error if called with a falsey argument', () => {
+      ms.addAll(documents)
+
       expect(() => { ms.removeAll(null) }).toThrowError()
       expect(() => { ms.removeAll(undefined) }).toThrowError()
       expect(() => { ms.removeAll(false) }).toThrowError()
+      expect(() => { ms.removeAll('') }).toThrowError()
       expect(() => { ms.removeAll([]) }).not.toThrowError()
+
+      expect(ms.documentCount).toEqual(documents.length)
     })
   })
 
