@@ -2032,5 +2032,6 @@ const objectToNumericMap = <T>(object: { [key: string]: T }): Map<number, T> => 
   return map
 }
 
-// This regular expression matches any Unicode space, newline, or punctuation character
-const SPACE_OR_PUNCTUATION = /[\n\r\p{Z}\p{P}]/u
+// This regular expression matches any Unicode space (including zero-width
+// spaces \u200B-\u200D and \uFEFF), newline, or punctuation character
+const SPACE_OR_PUNCTUATION = /[\n\r\p{Z}\p{P}\u200B-\u200D\uFEFF]/u
