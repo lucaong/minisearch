@@ -1677,7 +1677,7 @@ e forse del mio dir poco ti cale`
         },
         {
           id: 2,
-          text: 'The estimates range from roughly 1 in 100 to 1 in 100,000. The higher figures come from the working engineers, and the very low figures from management. What are the causes and consequences of this lack of agreement? Since 1 part in 100,000 would imply that one could put a Shuttle up each day for 300 years expecting to lose only one, we could properly ask "What is the cause of management\'s fantastic faith in the machinery?"'
+          text: 'The estimates range from roughly 1 in 100 to 1 in 100,000. The higher figures come from the working engineers, and the very low figures from management. What are the causes and consequences of this lack of \u200Bagreement? Since 1 part in 100,000 would imply that one could put a Shuttle up each day for 300 years expecting to lose only one, we could properly ask "What is the cause of management\'s fantastic faith in the machinery?"'
         }
       ]
       const ms = new MiniSearch({ fields: ['text'] })
@@ -1688,6 +1688,7 @@ e forse del mio dir poco ti cale`
 
       expect(ms.search('300').length).toBeGreaterThan(0)
       expect(ms.search('machinery').length).toBeGreaterThan(0)
+      expect(ms.search('agreement').length).toBeGreaterThan(0)
     })
 
     it('supports non-latin alphabets', () => {
