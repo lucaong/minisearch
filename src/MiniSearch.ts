@@ -170,7 +170,7 @@ export type Options<T = any> = {
     */
   extractField?: (document: T, fieldName: string) => string,
 
-   /*
+   /**
     * Function used to split a field value into individual terms to be indexed.
     * The default tokenizer separates terms by space or punctuation, but a
     * custom tokenizer can be provided for custom logic.
