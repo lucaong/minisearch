@@ -1,5 +1,4 @@
 import typescript from '@rollup/plugin-typescript'
-import dts from 'rollup-plugin-dts'
 import terser from '@rollup/plugin-terser'
 
 const config = ({ format, input, output, name, dir, extension = 'js', exports = undefined }) => {
@@ -24,7 +23,7 @@ const config = ({ format, input, output, name, dir, extension = 'js', exports = 
         })]
         : []
     },
-    plugins: [output === 'dts' ? dts() : typescript()]
+    plugins: [typescript()]
   }
 }
 
@@ -52,9 +51,5 @@ export default process.env.BENCHMARKS === 'true' ? [benchmarks] : [
   config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'es6' }),
   config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'es5m', dir: 'es5m' }),
   config({ format: 'cjs', input: 'src/SearchableMap/SearchableMap.ts', output: 'cjs', dir: 'cjs', extension: 'cjs', exports: 'default' }),
-  config({ format: 'umd', input: 'src/SearchableMap/SearchableMap.ts', output: 'umd', name: 'MiniSearch' }),
-
-  // Type declarations
-  config({ format: 'es', input: 'src/index.ts', output: 'dts', dir: 'types', extension: 'd.ts' }),
-  config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'dts', dir: 'types', extension: 'd.ts' })
+  config({ format: 'umd', input: 'src/SearchableMap/SearchableMap.ts', output: 'umd', name: 'MiniSearch' })
 ]

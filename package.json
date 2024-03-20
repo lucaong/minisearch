@@ -13,7 +13,7 @@
       "default": "./dist/es/index.js"
     },
     "./SearchableMap": {
-      "types": "./dist/types/SearchableMap.d.ts",
+      "types": "./dist/types/SearchableMap/SearchableMap.d.ts",
       "require": "./dist/cjs/SearchableMap.cjs",
       "default": "./dist/es/SearchableMap.js"
     }
@@ -91,8 +91,9 @@
     "test-watch": "jest --watch",
     "coverage": "jest --coverage",
     "benchmark": "yarn build-benchmark && NODE_ENV=production node --expose-gc benchmarks/dist/index.cjs",
+    "declarations": "tsc --emitDeclarationOnly --declaration --outDir --declarationMap --declarationDir dist/types", 
     "build-benchmark": "BENCHMARKS=true yarn build",
-    "build": "yarn clean-build && NODE_ENV=production rollup -c",
+    "build": "yarn clean-build && NODE_ENV=production rollup -c && yarn declarations",
     "clean-build": "rm -rf dist",
     "build-minified": "MINIFY=true yarn build",
     "build-docs": "typedoc --options typedoc.json && yarn build-demo",
