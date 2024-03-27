@@ -177,22 +177,22 @@ type SearchOptionsWithDefaults = SearchOptions & {
  *
  * @typeParam T  The type of documents being indexed.
  */
-export type Options<T = any> = {
+export type Options<T extends object> = {
    /**
     * Names of the document fields to be indexed.
     */
-  fields: string[],
+  fields: Array<string & keyof T>,
 
    /**
     * Name of the ID field, uniquely identifying a document.
     */
-  idField?: string,
+  idField?: string & keyof T,
 
    /**
     * Names of fields to store, so that search results would include them. By
     * default none, so results would only contain the id field.
     */
-  storeFields?: string[],
+  storeFields?: Array<string & keyof T>,
 
    /**
     * Function used to extract the value of each field in documents. By default,
@@ -207,7 +207,7 @@ export type Options<T = any> = {
     * The returned string is fed into the `tokenize` function to split it up
     * into tokens.
     */
-  extractField?: (document: T, fieldName: string) => string,
+  extractField?: (document: T, fieldName: string & keyof T) => string,
 
    /**
     * Function used to split a field value into individual terms to be indexed.
@@ -234,7 +234,7 @@ export type Options<T = any> = {
     * case, the purpose of this function is to split apart the provided `text` document
     * into parts that can be processed by the `processTerm` function.
     */
-  tokenize?: (text: string, fieldName?: string) => string[],
+  tokenize?: (text: string, fieldName?: string & keyof T) => string[],
 
    /**
     * Function used to process a term before indexing or search. This can be
@@ -268,7 +268,7 @@ export type Options<T = any> = {
     * at the beginning or end of a word, it will also be indexed that way, with the
     * included whitespace.*
     */
-  processTerm?: (term: string, fieldName?: string) => string | string[] | null | undefined | false,
+  processTerm?: (term: string, fieldName?: string & keyof T) => string | string[] | null | undefined | false,
 
   /**
    * Function called to log messages. Arguments are a log level ('debug',
@@ -302,16 +302,16 @@ export type Options<T = any> = {
   autoSuggestOptions?: SearchOptions
 }
 
-type OptionsWithDefaults<T = any> = Options<T> & {
-  storeFields: string[]
+type OptionsWithDefaults<T extends object> = Options<T> & {
+  storeFields: Array<keyof T>
 
-  idField: string
+  idField: keyof T
 
-  extractField: (document: T, fieldName: string) => string
+  extractField: (document: T, fieldName: keyof T) => string
 
-  tokenize: (text: string, fieldName: string) => string[]
+  tokenize: (text: string, fieldName: keyof T) => string[]
 
-  processTerm: (term: string, fieldName: string) => string | string[] | null | undefined | false
+  processTerm: (term: string, fieldName: keyof T) => string | string[] | null | undefined | false
 
   logger: (level: LogLevel, message: string, code?: string) => void
 
@@ -559,17 +559,17 @@ type RawResult = Map<number, RawResultValue>
  * // ]
  * ```
  */
-export default class MiniSearch<T = any> {
+export default class MiniSearch<T extends object> {
   protected _options: OptionsWithDefaults<T>
   protected _index: SearchableMap<FieldTermData>
   protected _documentCount: number
   protected _documentIds: Map<number, any>
   protected _idToShortId: Map<any, number>
-  protected _fieldIds: { [key: string]: number }
+  protected _fieldIds: Record<string & keyof T, number>
   protected _fieldLength: Map<number, number[]>
   protected _avgFieldLength: number[]
   protected _nextId: number
-  protected _storedFields: Map<number, Record<string, unknown>>
+  protected _storedFields: Map<number, Record<keyof T, unknown>>
   protected _dirtCount: number
   private _currentVacuum: Promise<void> | null
   private _enqueuedVacuum: Promise<void> | null
@@ -649,6 +649,7 @@ export default class MiniSearch<T = any> {
 
     const autoVacuum = (options.autoVacuum == null || options.autoVacuum === true) ? defaultAutoVacuumOptions : options.autoVacuum
 
+    //@ts-ignore
     this._options = {
       ...defaultOptions,
       ...options,
@@ -669,7 +670,7 @@ export default class MiniSearch<T = any> {
     // number, rarely need iterating over, and have string keys. Therefore in
     // this case an object is a better candidate than a Map to store the mapping
     // from field key to ID.
-    this._fieldIds = {}
+    this._fieldIds = {} as Record<keyof T, number>
 
     this._fieldLength = new Map()
 
@@ -1466,7 +1467,7 @@ export default class MiniSearch<T = any> {
    * @param options  configuration options, same as the constructor
    * @return An instance of MiniSearch deserialized from the given JSON.
    */
-  static loadJSON<T = any> (json: string, options: Options<T>): MiniSearch<T> {
+  static loadJSON<T extends object> (json: string, options: Options<T>): MiniSearch<T> {
     if (options == null) {
       throw new Error('MiniSearch: loadJSON should be given the same options used when serializing the index')
     }
@@ -1505,7 +1506,7 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  static loadJS<T = any> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
+  static loadJS<T extends object> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
     const {
       index,
       documentCount,
@@ -1528,7 +1529,7 @@ export default class MiniSearch<T = any> {
     miniSearch._nextId = nextId
     miniSearch._documentIds = objectToNumericMap(documentIds)
     miniSearch._idToShortId = new Map<any, number>()
-    miniSearch._fieldIds = fieldIds
+    miniSearch._fieldIds = fieldIds as Record<string & keyof T, number>
     miniSearch._fieldLength = objectToNumericMap(fieldLength)
     miniSearch._avgFieldLength = averageFieldLength
     miniSearch._storedFields = objectToNumericMap(storedFields)
@@ -1592,7 +1593,7 @@ export default class MiniSearch<T = any> {
     const options: SearchOptionsWithDefaults = { ...this._options.searchOptions, ...searchOptions }
 
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
-      ({ ...boosts, [field]: getOwnProperty(options.boost, field) || 1 }), {})
+      ({ ...boosts, [field]: getOwnProperty(options.boost, field) || 1 }), {} as Record<string & keyof T, number>)
 
     const {
       boostDocument,
@@ -1746,14 +1747,14 @@ export default class MiniSearch<T = any> {
     derivedTerm: string,
     termWeight: number,
     fieldTermData: FieldTermData | undefined,
-    fieldBoosts: { [field: string]: number },
+    fieldBoosts: Record<string & keyof T, number>,
     boostDocumentFn: ((id: any, term: string, storedFields?: Record<string, unknown>) => number) | undefined,
     bm25params: BM25Params,
     results: RawResult = new Map()
   ): RawResult {
     if (fieldTermData == null) return results
 
-    for (const field of Object.keys(fieldBoosts)) {
+    for (const field of Object.keys(fieldBoosts) as Array<string & keyof T>) {
       const fieldBoost = fieldBoosts[field]
       const fieldId = this._fieldIds[field]
 
@@ -1858,7 +1859,7 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private warnDocumentChanged (shortDocumentId: number, fieldId: number, term: string): void {
-    for (const fieldName of Object.keys(this._fieldIds)) {
+    for (const fieldName of Object.keys(this._fieldIds) as Array<string & keyof T>) {
       if (this._fieldIds[fieldName] === fieldId) {
         this._options.logger('warn', `MiniSearch: document with ID ${this._documentIds.get(shortDocumentId)} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`, 'version_conflict')
         return
@@ -1881,7 +1882,7 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private addFields (fields: string[]): void {
+  private addFields (fields: Array<string & keyof T>): void {
     for (let i = 0; i < fields.length; i++) {
       this._fieldIds[fields[i]] = i
     }
@@ -1920,7 +1921,7 @@ export default class MiniSearch<T = any> {
     if (storeFields == null || storeFields.length === 0) { return }
 
     let documentFields = this._storedFields.get(documentId)
-    if (documentFields == null) this._storedFields.set(documentId, documentFields = {})
+    if (documentFields == null) this._storedFields.set(documentId, documentFields = {} as Record<keyof T, unknown>)
 
     for (const fieldName of storeFields) {
       const fieldValue = extractField(doc, fieldName)
