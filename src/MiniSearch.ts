@@ -177,16 +177,11 @@ type SearchOptionsWithDefaults = SearchOptions & {
  *
  * @typeParam T  The type of documents being indexed.
  */
-export type Options<T extends object> = {
+interface BaseOptions<T extends {}> {
    /**
     * Names of the document fields to be indexed.
     */
   fields: Array<string & keyof T>,
-
-   /**
-    * Name of the ID field, uniquely identifying a document.
-    */
-  idField?: string & keyof T,
 
    /**
     * Names of fields to store, so that search results would include them. By
@@ -302,8 +297,24 @@ export type Options<T extends object> = {
   autoSuggestOptions?: SearchOptions
 }
 
-type OptionsWithDefaults<T extends object> = Options<T> & {
-  storeFields: Array<keyof T>
+interface OptionsDefaultIdField<T extends {id: unknown}> extends BaseOptions<T> {
+  /**
+    * Name of the ID field, uniquely identifying a document.
+    */
+  idField?: "id";
+}
+
+interface OptionsCustomIdField<T extends {}> extends BaseOptions<T> {
+  /**
+    * Name of the ID field, uniquely identifying a document.
+    */
+  idField: string & keyof T,
+}
+
+export type Options<T extends {}> = T extends {id: unknown} ? OptionsDefaultIdField<T> : OptionsCustomIdField<T>;
+
+type OptionsWithDefaults<T extends {}> = Options<T> & {
+  storeFields: Array<string & keyof T>
 
   idField: keyof T
 
@@ -559,7 +570,7 @@ type RawResult = Map<number, RawResultValue>
  * // ]
  * ```
  */
-export default class MiniSearch<T extends object> {
+export default class MiniSearch<T extends {} = any> {
   protected _options: OptionsWithDefaults<T>
   protected _index: SearchableMap<FieldTermData>
   protected _documentCount: number
@@ -649,14 +660,13 @@ export default class MiniSearch<T extends object> {
 
     const autoVacuum = (options.autoVacuum == null || options.autoVacuum === true) ? defaultAutoVacuumOptions : options.autoVacuum
 
-    //@ts-ignore
     this._options = {
       ...defaultOptions,
       ...options,
       autoVacuum,
       searchOptions: { ...defaultSearchOptions, ...(options.searchOptions || {}) },
       autoSuggestOptions: { ...defaultAutoSuggestOptions, ...(options.autoSuggestOptions || {}) }
-    }
+    } as OptionsWithDefaults<T>;
 
     this._index = new SearchableMap()
 
@@ -1467,7 +1477,7 @@ export default class MiniSearch<T extends object> {
    * @param options  configuration options, same as the constructor
    * @return An instance of MiniSearch deserialized from the given JSON.
    */
-  static loadJSON<T extends object> (json: string, options: Options<T>): MiniSearch<T> {
+  static loadJSON<T extends {}> (json: string, options: Options<T>): MiniSearch<T> {
     if (options == null) {
       throw new Error('MiniSearch: loadJSON should be given the same options used when serializing the index')
     }
@@ -1506,7 +1516,7 @@ export default class MiniSearch<T extends object> {
   /**
    * @ignore
    */
-  static loadJS<T extends object> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
+  static loadJS<T extends {}> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
     const {
       index,
       documentCount,
@@ -1923,7 +1933,7 @@ export default class MiniSearch<T extends object> {
     let documentFields = this._storedFields.get(documentId)
     if (documentFields == null) this._storedFields.set(documentId, documentFields = {} as Record<keyof T, unknown>)
 
-    for (const fieldName of storeFields) {
+    for (const fieldName of storeFields as Array<string & keyof T>) {
       const fieldValue = extractField(doc, fieldName)
       if (fieldValue !== undefined) documentFields[fieldName] = fieldValue
     }
@@ -2041,12 +2051,11 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
   return { term, fuzzy, prefix }
 }
 
-const defaultOptions = {
+const defaultOptions: Omit<OptionsDefaultIdField<{id: any, [key: string]: any}>, "fields"> = {
   idField: 'id',
   extractField: (document: any, fieldName: string) => document[fieldName],
   tokenize: (text: string) => text.split(SPACE_OR_PUNCTUATION),
   processTerm: (term: string) => term.toLowerCase(),
-  fields: undefined,
   searchOptions: undefined,
   storeFields: [],
   logger: (level: LogLevel, message: string): void => {
