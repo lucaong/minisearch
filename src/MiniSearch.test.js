@@ -1298,7 +1298,7 @@ describe('MiniSearch', () => {
       })
 
       it('uses the search options in the second argument as default', () => {
-        let reference = ms.search({
+        const reference = ms.search({
           queries: [
             { fields: ['text'], queries: ['vita'] },
             { fields: ['title'], queries: ['promessi'] }

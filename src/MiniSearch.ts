@@ -302,7 +302,7 @@ interface OptionsDefaultIdField<T extends {id: unknown}, SF extends string & key
   /**
     * Name of the ID field, uniquely identifying a document.
     */
-  idField?: "id";
+  idField?: 'id';
 }
 
 interface OptionsCustomIdField<T extends {}, SF extends string & keyof T = never> extends BaseOptions<T, SF> {
@@ -662,7 +662,7 @@ export default class MiniSearch<T extends {}, SF extends string & keyof T = neve
       autoVacuum,
       searchOptions: { ...defaultSearchOptions, ...(options.searchOptions || {}) },
       autoSuggestOptions: { ...defaultAutoSuggestOptions, ...(options.autoSuggestOptions || {}) }
-    } as OptionsWithDefaults<T, SF>;
+    } as OptionsWithDefaults<T, SF>
 
     this._index = new SearchableMap()
 
@@ -1315,9 +1315,9 @@ export default class MiniSearch<T extends {}, SF extends string & keyof T = neve
    * @param query  Search query
    * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
-  search (query: Query<T, SF>, searchOptions: SearchOptions<T, SF> = {}): Array<SearchResult<T, SF>>  {
+  search (query: Query<T, SF>, searchOptions: SearchOptions<T, SF> = {}): Array<SearchResult<T, SF>> {
     const rawResults = this.executeQuery(query, searchOptions)
-    const results = [] as Array<SearchResult<T, SF>>;
+    const results = [] as Array<SearchResult<T, SF>>
 
     for (const [docId, { score, terms, match }] of rawResults) {
       // terms are the matched query terms, which will be returned to the user
@@ -1334,7 +1334,7 @@ export default class MiniSearch<T extends {}, SF extends string & keyof T = neve
         match
       }
 
-      const result = Object.assign(partialResult, this._storedFields.get(docId)) as SearchResult<T, SF>;
+      const result = Object.assign(partialResult, this._storedFields.get(docId)) as SearchResult<T, SF>
       if (searchOptions.filter == null || searchOptions.filter(result)) {
         results.push(result)
       }
@@ -1569,7 +1569,7 @@ export default class MiniSearch<T extends {}, SF extends string & keyof T = neve
   /**
    * @ignore
    */
-  private executeQuery (query: Query<T,SF>, searchOptions: SearchOptions<T,SF> = {}): RawResult {
+  private executeQuery (query: Query<T, SF>, searchOptions: SearchOptions<T, SF> = {}): RawResult {
     if (query === MiniSearch.wildcard) {
       return this.executeWildcardQuery(searchOptions)
     }
@@ -1595,8 +1595,8 @@ export default class MiniSearch<T extends {}, SF extends string & keyof T = neve
   /**
    * @ignore
    */
-  private executeQuerySpec (query: QuerySpec, searchOptions: SearchOptions<T,SF>): RawResult {
-    const options: SearchOptionsWithDefaults<T,SF> = { ...this._options.searchOptions, ...searchOptions }
+  private executeQuerySpec (query: QuerySpec, searchOptions: SearchOptions<T, SF>): RawResult {
+    const options: SearchOptionsWithDefaults<T, SF> = { ...this._options.searchOptions, ...searchOptions }
 
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
       ({ ...boosts, [field]: getOwnProperty(options.boost, field) || 1 }), {} as Record<string & keyof T, number>)
@@ -1663,9 +1663,9 @@ export default class MiniSearch<T extends {}, SF extends string & keyof T = neve
   /**
    * @ignore
    */
-  private executeWildcardQuery (searchOptions: SearchOptions<T,SF>): RawResult {
+  private executeWildcardQuery (searchOptions: SearchOptions<T, SF>): RawResult {
     const results = new Map() as RawResult
-    const options: SearchOptionsWithDefaults<T,SF> = { ...this._options.searchOptions, ...searchOptions }
+    const options: SearchOptionsWithDefaults<T, SF> = { ...this._options.searchOptions, ...searchOptions }
 
     for (const [shortId, id] of this._documentIds) {
       const score = options.boostDocument ? options.boostDocument(id, '', this._storedFields.get(shortId)) : 1
@@ -2046,7 +2046,7 @@ const termToQuerySpec = (options: SearchOptions<any, any>) => (term: string, i: 
   return { term, fuzzy, prefix }
 }
 
-const defaultOptions: Omit<OptionsDefaultIdField<{id: any, [key: string]: any}>, "fields"> = {
+const defaultOptions: Omit<OptionsDefaultIdField<{id: any, [key: string]: any}>, 'fields'> = {
   idField: 'id',
   extractField: (document: any, fieldName: string) => document[fieldName],
   tokenize: (text: string) => text.split(SPACE_OR_PUNCTUATION),
