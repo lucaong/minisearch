@@ -1,4 +1,5 @@
 import SearchableMap from './SearchableMap/SearchableMap'
+import type { Path } from './types'
 
 export type LowercaseCombinationOperator = 'or' | 'and' | 'and_not'
 export type CombinationOperator = LowercaseCombinationOperator | Uppercase<LowercaseCombinationOperator> | Capitalize<LowercaseCombinationOperator>
@@ -182,7 +183,7 @@ interface BaseOptions<T extends {}, SF extends string & keyof T> {
    /**
     * Names of the document fields to be indexed.
     */
-  fields: Array<string & keyof T>,
+  fields: Array<Path<T>>,
 
    /**
     * Names of fields to store, so that search results would include them. By
