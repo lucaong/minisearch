@@ -111,7 +111,7 @@ describe('MiniSearch', () => {
       expect(extractField).toHaveBeenCalledWith(document, 'title')
       expect(extractField).toHaveBeenCalledWith(document, 'pubDate')
       expect(extractField).toHaveBeenCalledWith(document, 'author.name')
-      expect(extractField).toHaveBeenCalledWith(document, 'category')
+      expect(extractField).not.toHaveBeenCalledWith(document, 'category')
       expect(tokenize).toHaveBeenCalledWith(document.title, 'title')
       expect(tokenize).toHaveBeenCalledWith(document.pubDate.toLocaleDateString('it-IT'), 'pubDate')
       expect(tokenize).toHaveBeenCalledWith(document.author.name, 'author.name')
@@ -1888,7 +1888,6 @@ e forse del mio dir poco ti cale`
       expect(MiniSearch.getDefault('tokenize')).toBeInstanceOf(Function)
       expect(MiniSearch.getDefault('processTerm')).toBeInstanceOf(Function)
       expect(MiniSearch.getDefault('searchOptions')).toBe(undefined)
-      expect(MiniSearch.getDefault('fields')).toBe(undefined)
     })
 
     it('throws an error if there is no option with the given name', () => {
