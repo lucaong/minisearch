@@ -55,6 +55,8 @@ export default process.env.BENCHMARKS === 'true' ? [benchmarks] : [
   config({ format: 'umd', input: 'src/SearchableMap/SearchableMap.ts', output: 'umd', name: 'MiniSearch' }),
 
   // Type declarations
-  config({ format: 'es', input: 'src/index.ts', output: 'dts', dir: 'types', extension: 'd.ts' }),
-  config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'dts', dir: 'types', extension: 'd.ts' })
+  config({ format: 'es', input: 'src/index.ts', output: 'dts', extension: 'd.ts' }),
+  config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'dts', extension: 'd.ts' }),
+  config({ format: 'cjs', input: 'src/index.ts', output: 'dts', extension: 'd.cts' }),
+  config({ format: 'cjs', input: 'src/SearchableMap/SearchableMap.ts', output: 'dts', extension: 'd.cts' })
 ]
