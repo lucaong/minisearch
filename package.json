@@ -8,27 +8,13 @@
   "type": "module",
   "exports": {
     ".": {
-      "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
-      },
-      "import": {
-        "types": "./dist/es/index.d.ts",
-        "default": "./dist/es/index.js"
-      },
-      "types": "./dist/es/index.d.ts",
+      "require": "./dist/cjs/index.cjs",
+      "import": "./dist/es/index.js",
       "default": "./dist/es/index.js"
     },
     "./SearchableMap": {
-      "require": {
-        "types": "./dist/cjs/SearchableMap.d.cts",
-        "default": "./dist/cjs/SearchableMap.cjs"
-      },
-      "import": {
-        "types": "./dist/es/SearchableMap.d.ts",
-        "default": "./dist/es/SearchableMap.js"
-      },
-      "types": "./dist/es/SearchableMap.d.ts",
+      "require": "./dist/cjs/SearchableMap.cjs",
+      "import": "./dist/es/SearchableMap.js",
       "default": "./dist/es/SearchableMap.js"
     }
   },
