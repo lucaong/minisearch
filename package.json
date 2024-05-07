@@ -8,13 +8,13 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
       "require": "./dist/cjs/index.cjs",
+      "import": "./dist/es/index.js",
       "default": "./dist/es/index.js"
     },
     "./SearchableMap": {
-      "types": "./dist/types/SearchableMap.d.ts",
       "require": "./dist/cjs/SearchableMap.cjs",
+      "import": "./dist/es/SearchableMap.js",
       "default": "./dist/es/SearchableMap.js"
     }
   },
@@ -58,7 +58,7 @@
     "jest": "^29.3.1",
     "regenerator-runtime": "^0.14.0",
     "rollup": "^4.1.0",
-    "rollup-plugin-dts": "^6.0.0",
+    "rollup-plugin-dts": "^6.1.0",
     "snazzy": "^9.0.0",
     "ts-jest": "^29.0.3",
     "tslib": "^2.0.1",
