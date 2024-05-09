@@ -1,4 +1,5 @@
 import SearchableMap from './SearchableMap/SearchableMap'
+import type { Path } from './types'
 
 export type LowercaseCombinationOperator = 'or' | 'and' | 'and_not'
 export type CombinationOperator = LowercaseCombinationOperator | Uppercase<LowercaseCombinationOperator> | Capitalize<LowercaseCombinationOperator>
@@ -10,7 +11,7 @@ const AND_NOT: LowercaseCombinationOperator = 'and_not'
 /**
  * Search options to customize the search behavior.
  */
-export type SearchOptions = {
+export type SearchOptions<T extends {}, SF extends string & keyof T> = {
   /**
    * Names of the fields to search in. If omitted, all fields are searched.
    */
@@ -21,7 +22,7 @@ export type SearchOptions = {
    * fields. It takes as argument each search result and should return a boolean
    * to indicate if the result should be kept or not.
    */
-  filter?: (result: SearchResult) => boolean,
+  filter?: (result: SearchResult<T, SF>) => boolean,
 
   /**
    * Key-value object of field names to boosting values. By default, fields are
@@ -30,7 +31,7 @@ export type SearchOptions = {
    * twice as high as a result matching the query in another field, all else
    * being equal.
    */
-  boost?: { [fieldName: string]: number },
+  boost?: Record<string & keyof T, number>,
 
   /**
    * Relative weights to assign to prefix search results and fuzzy search
@@ -46,7 +47,7 @@ export type SearchOptions = {
    * number lower than 1 decreases the score, and a falsy value skips the search
    * result completely.
    */
-  boostDocument?: (documentId: any, term: string, storedFields?: Record<string, unknown>) => number,
+  boostDocument?: (documentId: any, term: string, storedFields?: Pick<T, SF>) => number,
 
   /**
    * Controls whether to perform prefix search. It can be a simple boolean, or a
@@ -156,7 +157,7 @@ export type SearchOptions = {
   bm25?: BM25Params
 }
 
-type SearchOptionsWithDefaults = SearchOptions & {
+type SearchOptionsWithDefaults<T extends {}, SF extends string & keyof T> = SearchOptions<T, SF> & {
   boost: { [fieldName: string]: number },
 
   weights: { fuzzy: number, prefix: number },
@@ -176,23 +177,19 @@ type SearchOptionsWithDefaults = SearchOptions & {
  * Configuration options passed to the {@link MiniSearch} constructor
  *
  * @typeParam T  The type of documents being indexed.
+ * @typeParam SF Stored fields from the document.
  */
-export type Options<T = any> = {
+interface BaseOptions<T extends {}, SF extends string & keyof T> {
    /**
     * Names of the document fields to be indexed.
     */
-  fields: string[],
-
-   /**
-    * Name of the ID field, uniquely identifying a document.
-    */
-  idField?: string,
+  fields: Array<Path<T>>,
 
    /**
     * Names of fields to store, so that search results would include them. By
     * default none, so results would only contain the id field.
     */
-  storeFields?: string[],
+  storeFields?: Array<SF>,
 
    /**
     * Function used to extract the value of each field in documents. By default,
@@ -207,7 +204,7 @@ export type Options<T = any> = {
     * The returned string is fed into the `tokenize` function to split it up
     * into tokens.
     */
-  extractField?: (document: T, fieldName: string) => string,
+  extractField?: (document: T, fieldName: string & keyof T) => string,
 
    /**
     * Function used to split a field value into individual terms to be indexed.
@@ -234,7 +231,7 @@ export type Options<T = any> = {
     * case, the purpose of this function is to split apart the provided `text` document
     * into parts that can be processed by the `processTerm` function.
     */
-  tokenize?: (text: string, fieldName?: string) => string[],
+  tokenize?: (text: string, fieldName?: string & keyof T) => string[],
 
    /**
     * Function used to process a term before indexing or search. This can be
@@ -268,7 +265,7 @@ export type Options<T = any> = {
     * at the beginning or end of a word, it will also be indexed that way, with the
     * included whitespace.*
     */
-  processTerm?: (term: string, fieldName?: string) => string | string[] | null | undefined | false,
+  processTerm?: (term: string, fieldName?: string & keyof T) => string | string[] | null | undefined | false,
 
   /**
    * Function called to log messages. Arguments are a log level ('debug',
@@ -293,33 +290,49 @@ export type Options<T = any> = {
     * Default search options (see the {@link SearchOptions} type and the {@link
     * MiniSearch#search} method for details)
     */
-  searchOptions?: SearchOptions,
+  searchOptions?: SearchOptions<T, SF>,
 
    /**
     * Default auto suggest options (see the {@link SearchOptions} type and the
     * {@link MiniSearch#autoSuggest} method for details)
     */
-  autoSuggestOptions?: SearchOptions
+  autoSuggestOptions?: SearchOptions<T, SF>
 }
 
-type OptionsWithDefaults<T = any> = Options<T> & {
-  storeFields: string[]
+interface OptionsDefaultIdField<T extends {id: unknown}, SF extends string & keyof T = never> extends BaseOptions<T, SF> {
+  /**
+    * Name of the ID field, uniquely identifying a document.
+    */
+  idField?: 'id';
+}
 
-  idField: string
+interface OptionsCustomIdField<T extends {}, SF extends string & keyof T = never> extends BaseOptions<T, SF> {
+  /**
+    * Name of the ID field, uniquely identifying a document.
+    */
+  idField: string & keyof T,
+}
 
-  extractField: (document: T, fieldName: string) => string
+export type Options<T extends {}, SF extends string & keyof T = never> = T extends {id: unknown} ? OptionsDefaultIdField<T, SF> : OptionsCustomIdField<T, SF>;
 
-  tokenize: (text: string, fieldName: string) => string[]
+type OptionsWithDefaults<T extends {}, SF extends string & keyof T = never> = Options<T, SF> & {
+  storeFields: Array<SF>
 
-  processTerm: (term: string, fieldName: string) => string | string[] | null | undefined | false
+  idField: keyof T
+
+  extractField: (document: T, fieldName: keyof T) => string
+
+  tokenize: (text: string, fieldName: keyof T) => string[]
+
+  processTerm: (term: string, fieldName: keyof T) => string | string[] | null | undefined | false
 
   logger: (level: LogLevel, message: string, code?: string) => void
 
   autoVacuum: false | AutoVacuumOptions
 
-  searchOptions: SearchOptionsWithDefaults
+  searchOptions: SearchOptionsWithDefaults<T, SF>
 
-  autoSuggestOptions: SearchOptions
+  autoSuggestOptions: SearchOptions<T, SF>
 }
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error'
@@ -358,7 +371,7 @@ export type MatchInfo = {
  * terms that matched, the match information, the score, and all the stored
  * fields.
  */
-export type SearchResult = {
+export type SearchResult<T extends {}, SF extends string & keyof T> = {
   /**
    * The document ID
    */
@@ -385,12 +398,7 @@ export type SearchResult = {
    * Match information, see {@link MatchInfo}
    */
   match: MatchInfo,
-
-  /**
-   * Stored fields
-   */
-  [key: string]: any
-}
+} & Pick<T, SF>;
 
 /**
  * @ignore
@@ -408,7 +416,7 @@ export type AsPlainObject = {
   serializationVersion: number
 }
 
-export type QueryCombination = SearchOptions & { queries: Query[] }
+export type QueryCombination<T extends {}, SF extends string & keyof T> = SearchOptions<T, SF> & { queries: Query<T, SF>[] }
 
 /**
  * Wildcard query, used to match all terms
@@ -419,7 +427,7 @@ export type Wildcard = typeof MiniSearch.wildcard
  * Search query expression, either a query string or an expression tree
  * combining several queries with a combination of AND or OR.
  */
-export type Query = QueryCombination | string | Wildcard
+export type Query<T extends {}, SF extends string & keyof T> = QueryCombination<T, SF> | string | Wildcard
 
 /**
  * Options to control vacuuming behavior.
@@ -559,17 +567,17 @@ type RawResult = Map<number, RawResultValue>
  * // ]
  * ```
  */
-export default class MiniSearch<T = any> {
-  protected _options: OptionsWithDefaults<T>
+export default class MiniSearch<T extends {}, SF extends string & keyof T = never> {
+  protected _options: OptionsWithDefaults<T, SF>
   protected _index: SearchableMap<FieldTermData>
   protected _documentCount: number
   protected _documentIds: Map<number, any>
   protected _idToShortId: Map<any, number>
-  protected _fieldIds: { [key: string]: number }
+  protected _fieldIds: Record<string & keyof T, number>
   protected _fieldLength: Map<number, number[]>
   protected _avgFieldLength: number[]
   protected _nextId: number
-  protected _storedFields: Map<number, Record<string, unknown>>
+  protected _storedFields: Map<number, Pick<T, SF>>
   protected _dirtCount: number
   private _currentVacuum: Promise<void> | null
   private _enqueuedVacuum: Promise<void> | null
@@ -642,7 +650,7 @@ export default class MiniSearch<T = any> {
    * })
    * ```
    */
-  constructor (options: Options<T>) {
+  constructor (options: Options<T, SF>) {
     if (options?.fields == null) {
       throw new Error('MiniSearch: option "fields" must be provided')
     }
@@ -655,7 +663,7 @@ export default class MiniSearch<T = any> {
       autoVacuum,
       searchOptions: { ...defaultSearchOptions, ...(options.searchOptions || {}) },
       autoSuggestOptions: { ...defaultAutoSuggestOptions, ...(options.autoSuggestOptions || {}) }
-    }
+    } as OptionsWithDefaults<T, SF>
 
     this._index = new SearchableMap()
 
@@ -669,7 +677,7 @@ export default class MiniSearch<T = any> {
     // number, rarely need iterating over, and have string keys. Therefore in
     // this case an object is a better candidate than a Map to store the mapping
     // from field key to ID.
-    this._fieldIds = {}
+    this._fieldIds = {} as Record<keyof T, number>
 
     this._fieldLength = new Map()
 
@@ -1308,9 +1316,9 @@ export default class MiniSearch<T = any> {
    * @param query  Search query
    * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
-  search (query: Query, searchOptions: SearchOptions = {}): SearchResult[] {
+  search (query: Query<T, SF>, searchOptions: SearchOptions<T, SF> = {}): Array<SearchResult<T, SF>> {
     const rawResults = this.executeQuery(query, searchOptions)
-    const results = []
+    const results = [] as Array<SearchResult<T, SF>>
 
     for (const [docId, { score, terms, match }] of rawResults) {
       // terms are the matched query terms, which will be returned to the user
@@ -1319,7 +1327,7 @@ export default class MiniSearch<T = any> {
       // prefix and fuzzy match)
       const quality = terms.length || 1
 
-      const result = {
+      const partialResult: SearchResult<T, never> = {
         id: this._documentIds.get(docId),
         score: score * quality,
         terms: Object.keys(match),
@@ -1327,7 +1335,7 @@ export default class MiniSearch<T = any> {
         match
       }
 
-      Object.assign(result, this._storedFields.get(docId))
+      const result = Object.assign(partialResult, this._storedFields.get(docId)) as SearchResult<T, SF>
       if (searchOptions.filter == null || searchOptions.filter(result)) {
         results.push(result)
       }
@@ -1406,7 +1414,7 @@ export default class MiniSearch<T = any> {
    * are combined with `'AND'`.
    * @return  A sorted array of suggestions sorted by relevance score.
    */
-  autoSuggest (queryString: string, options: SearchOptions = {}): Suggestion[] {
+  autoSuggest (queryString: string, options: SearchOptions<T, SF> = {}): Suggestion[] {
     options = { ...this._options.autoSuggestOptions, ...options }
 
     const suggestions: Map<string, Omit<Suggestion, 'suggestion'> & { count: number }> = new Map()
@@ -1466,7 +1474,7 @@ export default class MiniSearch<T = any> {
    * @param options  configuration options, same as the constructor
    * @return An instance of MiniSearch deserialized from the given JSON.
    */
-  static loadJSON<T = any> (json: string, options: Options<T>): MiniSearch<T> {
+  static loadJSON<T extends {}, SF extends string & keyof T> (json: string, options: Options<T, SF>): MiniSearch<T, SF> {
     if (options == null) {
       throw new Error('MiniSearch: loadJSON should be given the same options used when serializing the index')
     }
@@ -1505,7 +1513,7 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  static loadJS<T = any> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
+  static loadJS<T extends {}, SF extends string & keyof T> (js: AsPlainObject, options: Options<T, SF>): MiniSearch<T, SF> {
     const {
       index,
       documentCount,
@@ -1528,7 +1536,7 @@ export default class MiniSearch<T = any> {
     miniSearch._nextId = nextId
     miniSearch._documentIds = objectToNumericMap(documentIds)
     miniSearch._idToShortId = new Map<any, number>()
-    miniSearch._fieldIds = fieldIds
+    miniSearch._fieldIds = fieldIds as Record<string & keyof T, number>
     miniSearch._fieldLength = objectToNumericMap(fieldLength)
     miniSearch._avgFieldLength = averageFieldLength
     miniSearch._storedFields = objectToNumericMap(storedFields)
@@ -1562,7 +1570,7 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private executeQuery (query: Query, searchOptions: SearchOptions = {}): RawResult {
+  private executeQuery (query: Query<T, SF>, searchOptions: SearchOptions<T, SF> = {}): RawResult {
     if (query === MiniSearch.wildcard) {
       return this.executeWildcardQuery(searchOptions)
     }
@@ -1588,11 +1596,11 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private executeQuerySpec (query: QuerySpec, searchOptions: SearchOptions): RawResult {
-    const options: SearchOptionsWithDefaults = { ...this._options.searchOptions, ...searchOptions }
+  private executeQuerySpec (query: QuerySpec, searchOptions: SearchOptions<T, SF>): RawResult {
+    const options: SearchOptionsWithDefaults<T, SF> = { ...this._options.searchOptions, ...searchOptions }
 
     const boosts = (options.fields || this._options.fields).reduce((boosts, field) =>
-      ({ ...boosts, [field]: getOwnProperty(options.boost, field) || 1 }), {})
+      ({ ...boosts, [field]: getOwnProperty(options.boost, field) || 1 }), {} as Record<string & keyof T, number>)
 
     const {
       boostDocument,
@@ -1656,9 +1664,9 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private executeWildcardQuery (searchOptions: SearchOptions): RawResult {
+  private executeWildcardQuery (searchOptions: SearchOptions<T, SF>): RawResult {
     const results = new Map() as RawResult
-    const options: SearchOptionsWithDefaults = { ...this._options.searchOptions, ...searchOptions }
+    const options: SearchOptionsWithDefaults<T, SF> = { ...this._options.searchOptions, ...searchOptions }
 
     for (const [shortId, id] of this._documentIds) {
       const score = options.boostDocument ? options.boostDocument(id, '', this._storedFields.get(shortId)) : 1
@@ -1746,14 +1754,14 @@ export default class MiniSearch<T = any> {
     derivedTerm: string,
     termWeight: number,
     fieldTermData: FieldTermData | undefined,
-    fieldBoosts: { [field: string]: number },
-    boostDocumentFn: ((id: any, term: string, storedFields?: Record<string, unknown>) => number) | undefined,
+    fieldBoosts: Record<string & keyof T, number>,
+    boostDocumentFn: ((id: any, term: string, storedFields?: Pick<T, SF>) => number) | undefined,
     bm25params: BM25Params,
     results: RawResult = new Map()
   ): RawResult {
     if (fieldTermData == null) return results
 
-    for (const field of Object.keys(fieldBoosts)) {
+    for (const field of Object.keys(fieldBoosts) as Array<string & keyof T>) {
       const fieldBoost = fieldBoosts[field]
       const fieldId = this._fieldIds[field]
 
@@ -1858,7 +1866,7 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private warnDocumentChanged (shortDocumentId: number, fieldId: number, term: string): void {
-    for (const fieldName of Object.keys(this._fieldIds)) {
+    for (const fieldName of Object.keys(this._fieldIds) as Array<string & keyof T>) {
       if (this._fieldIds[fieldName] === fieldId) {
         this._options.logger('warn', `MiniSearch: document with ID ${this._documentIds.get(shortDocumentId)} has changed before removal: term "${term}" was not present in field "${fieldName}". Removing a document after it has changed can corrupt the index!`, 'version_conflict')
         return
@@ -1881,7 +1889,7 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private addFields (fields: string[]): void {
+  private addFields (fields: Array<string & keyof T>): void {
     for (let i = 0; i < fields.length; i++) {
       this._fieldIds[fields[i]] = i
     }
@@ -1916,15 +1924,14 @@ export default class MiniSearch<T = any> {
    * @ignore
    */
   private saveStoredFields (documentId: number, doc: T): void {
-    const { storeFields, extractField } = this._options
+    const { storeFields } = this._options
     if (storeFields == null || storeFields.length === 0) { return }
 
     let documentFields = this._storedFields.get(documentId)
-    if (documentFields == null) this._storedFields.set(documentId, documentFields = {})
+    if (documentFields == null) this._storedFields.set(documentId, documentFields = {} as Pick<T, SF>)
 
     for (const fieldName of storeFields) {
-      const fieldValue = extractField(doc, fieldName)
-      if (fieldValue !== undefined) documentFields[fieldName] = fieldValue
+      documentFields[fieldName] = doc[fieldName]
     }
   }
 }
@@ -2030,7 +2037,7 @@ const calcBM25Score = (
   return invDocFreq * (d + termFreq * (k + 1) / (termFreq + k * (1 - b + b * fieldLength / avgFieldLength)))
 }
 
-const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, terms: string[]): QuerySpec => {
+const termToQuerySpec = (options: SearchOptions<any, any>) => (term: string, i: number, terms: string[]): QuerySpec => {
   const fuzzy = (typeof options.fuzzy === 'function')
     ? options.fuzzy(term, i, terms)
     : (options.fuzzy || false)
@@ -2040,12 +2047,11 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
   return { term, fuzzy, prefix }
 }
 
-const defaultOptions = {
+const defaultOptions: Omit<OptionsDefaultIdField<{id: any, [key: string]: any}>, 'fields'> = {
   idField: 'id',
   extractField: (document: any, fieldName: string) => document[fieldName],
   tokenize: (text: string) => text.split(SPACE_OR_PUNCTUATION),
   processTerm: (term: string) => term.toLowerCase(),
-  fields: undefined,
   searchOptions: undefined,
   storeFields: [],
   logger: (level: LogLevel, message: string): void => {
