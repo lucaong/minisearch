@@ -1,7 +1,7 @@
 /* eslint-disable no-labels */
 import { TreeIterator, ENTRIES, KEYS, VALUES, LEAF } from './TreeIterator'
-import fuzzySearch, { FuzzyResults } from './fuzzySearch'
-import { RadixTree, Entry, Path } from './types'
+import fuzzySearch, { type FuzzyResults } from './fuzzySearch'
+import type { RadixTree, Entry, Path } from './types'
 
 /**
  * A class implementing the same interface as a standard JavaScript

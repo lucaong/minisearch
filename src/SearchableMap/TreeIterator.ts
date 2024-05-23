@@ -1,4 +1,4 @@
-import { RadixTree, Entry, LeafType } from './types'
+import type { RadixTree, Entry, LeafType } from './types'
 
 /** @ignore */
 const ENTRIES = 'ENTRIES'
