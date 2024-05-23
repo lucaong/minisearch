@@ -1473,6 +1473,13 @@ export default class MiniSearch<T = any> {
     return this.loadJS(JSON.parse(json), options)
   }
 
+  static async loadJSONAsync<T = any> (json: string, options: Options<T>): Promise<MiniSearch<T>> {
+    if (options == null) {
+      throw new Error('MiniSearch: loadJSON should be given the same options used when serializing the index')
+    }
+    return this.loadJSAsync(JSON.parse(json), options)
+  }
+
   /**
    * Returns the default value of an option. It will throw an error if no option
    * with the given name exists.
@@ -1553,6 +1560,65 @@ export default class MiniSearch<T = any> {
         dataMap.set(parseInt(fieldId, 10), objectToNumericMap(indexEntry) as DocumentTermFreqs)
       }
 
+      miniSearch._index.set(term, dataMap)
+    }
+
+    return miniSearch
+  }
+
+  /**
+   * @ignore
+   */
+  static async loadJSAsync<T = any> (js: AsPlainObject, options: Options<T>): Promise<MiniSearch<T>> {
+    const {
+      index,
+      documentCount,
+      nextId,
+      documentIds,
+      fieldIds,
+      fieldLength,
+      averageFieldLength,
+      storedFields,
+      dirtCount,
+      serializationVersion
+    } = js
+    if (serializationVersion !== 1 && serializationVersion !== 2) {
+      throw new Error('MiniSearch: cannot deserialize an index created with an incompatible version')
+    }
+
+    const miniSearch = new MiniSearch(options)
+
+    miniSearch._documentCount = documentCount
+    miniSearch._nextId = nextId
+    miniSearch._documentIds = await objectToNumericMapAsync(documentIds)
+    miniSearch._idToShortId = new Map<any, number>()
+    miniSearch._fieldIds = fieldIds
+    miniSearch._fieldLength = await objectToNumericMapAsync(fieldLength)
+    miniSearch._avgFieldLength = averageFieldLength
+    miniSearch._storedFields = await objectToNumericMapAsync(storedFields)
+    miniSearch._dirtCount = dirtCount || 0
+    miniSearch._index = new SearchableMap()
+
+    for (const [shortId, id] of miniSearch._documentIds) {
+      miniSearch._idToShortId.set(id, shortId)
+    }
+
+    let count = 0
+    for (const [term, data] of index) {
+      const dataMap = new Map() as FieldTermData
+
+      for (const fieldId of Object.keys(data)) {
+        let indexEntry = data[fieldId]
+
+        // Version 1 used to nest the index entry inside a field called ds
+        if (serializationVersion === 1) {
+          indexEntry = indexEntry.ds as unknown as SerializedIndexEntry
+        }
+
+        dataMap.set(parseInt(fieldId, 10), await objectToNumericMapAsync(indexEntry) as DocumentTermFreqs)
+      }
+
+      if (++count % 1000 === 0) await wait(0)
       miniSearch._index.set(term, dataMap)
     }
 
@@ -2105,6 +2171,22 @@ const objectToNumericMap = <T>(object: { [key: string]: T }): Map<number, T> => 
 
   return map
 }
+
+const objectToNumericMapAsync = async <T>(object: { [key: string]: T }): Promise<Map<number, T>> => {
+  const map = new Map()
+
+  let count = 0
+  for (const key of Object.keys(object)) {
+    map.set(parseInt(key, 10), object[key])
+    if (++count % 1000 === 0) {
+      await wait(0)
+    }
+  }
+
+  return map
+}
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // This regular expression matches any Unicode space, newline, or punctuation
 // character
