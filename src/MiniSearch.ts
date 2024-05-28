@@ -1473,6 +1473,13 @@ export default class MiniSearch<T = any> {
     return this.loadJS(JSON.parse(json), options)
   }
 
+  /**
+   * Async equivalent of {@link MiniSearch.loadJSON}
+   *
+   * @param json  JSON-serialized index
+   * @param options  configuration options, same as the constructor
+   * @return A Promise that will resolve to an instance of MiniSearch deserialized from the given JSON.
+   */
   static async loadJSONAsync<T = any> (json: string, options: Options<T>): Promise<MiniSearch<T>> {
     if (options == null) {
       throw new Error('MiniSearch: loadJSON should be given the same options used when serializing the index')
