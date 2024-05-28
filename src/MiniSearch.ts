@@ -1515,32 +1515,17 @@ export default class MiniSearch<T = any> {
   static loadJS<T = any> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
     const {
       index,
-      documentCount,
-      nextId,
       documentIds,
-      fieldIds,
       fieldLength,
-      averageFieldLength,
       storedFields,
-      dirtCount,
       serializationVersion
     } = js
-    if (serializationVersion !== 1 && serializationVersion !== 2) {
-      throw new Error('MiniSearch: cannot deserialize an index created with an incompatible version')
-    }
 
-    const miniSearch = new MiniSearch(options)
+    const miniSearch = this.instantiateMiniSearch(js, options)
 
-    miniSearch._documentCount = documentCount
-    miniSearch._nextId = nextId
     miniSearch._documentIds = objectToNumericMap(documentIds)
-    miniSearch._idToShortId = new Map<any, number>()
-    miniSearch._fieldIds = fieldIds
     miniSearch._fieldLength = objectToNumericMap(fieldLength)
-    miniSearch._avgFieldLength = averageFieldLength
     miniSearch._storedFields = objectToNumericMap(storedFields)
-    miniSearch._dirtCount = dirtCount || 0
-    miniSearch._index = new SearchableMap()
 
     for (const [shortId, id] of miniSearch._documentIds) {
       miniSearch._idToShortId.set(id, shortId)
@@ -1572,32 +1557,17 @@ export default class MiniSearch<T = any> {
   static async loadJSAsync<T = any> (js: AsPlainObject, options: Options<T>): Promise<MiniSearch<T>> {
     const {
       index,
-      documentCount,
-      nextId,
       documentIds,
-      fieldIds,
       fieldLength,
-      averageFieldLength,
       storedFields,
-      dirtCount,
       serializationVersion
     } = js
-    if (serializationVersion !== 1 && serializationVersion !== 2) {
-      throw new Error('MiniSearch: cannot deserialize an index created with an incompatible version')
-    }
 
-    const miniSearch = new MiniSearch(options)
+    const miniSearch = this.instantiateMiniSearch(js, options)
 
-    miniSearch._documentCount = documentCount
-    miniSearch._nextId = nextId
     miniSearch._documentIds = await objectToNumericMapAsync(documentIds)
-    miniSearch._idToShortId = new Map<any, number>()
-    miniSearch._fieldIds = fieldIds
     miniSearch._fieldLength = await objectToNumericMapAsync(fieldLength)
-    miniSearch._avgFieldLength = averageFieldLength
     miniSearch._storedFields = await objectToNumericMapAsync(storedFields)
-    miniSearch._dirtCount = dirtCount || 0
-    miniSearch._index = new SearchableMap()
 
     for (const [shortId, id] of miniSearch._documentIds) {
       miniSearch._idToShortId.set(id, shortId)
@@ -1621,6 +1591,36 @@ export default class MiniSearch<T = any> {
       if (++count % 1000 === 0) await wait(0)
       miniSearch._index.set(term, dataMap)
     }
+
+    return miniSearch
+  }
+
+  /**
+   * @ignore
+   */
+  private static instantiateMiniSearch<T = any> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
+    const {
+      documentCount,
+      nextId,
+      fieldIds,
+      averageFieldLength,
+      dirtCount,
+      serializationVersion
+    } = js
+
+    if (serializationVersion !== 1 && serializationVersion !== 2) {
+      throw new Error('MiniSearch: cannot deserialize an index created with an incompatible version')
+    }
+
+    const miniSearch = new MiniSearch(options)
+
+    miniSearch._documentCount = documentCount
+    miniSearch._nextId = nextId
+    miniSearch._idToShortId = new Map<any, number>()
+    miniSearch._fieldIds = fieldIds
+    miniSearch._avgFieldLength = averageFieldLength
+    miniSearch._dirtCount = dirtCount || 0
+    miniSearch._index = new SearchableMap()
 
     return miniSearch
   }
