@@ -9,6 +9,7 @@
   - More informative error when specifying an invalid value for `combineWith`
     in JavaScript (in TypeScript this would be a compile time error)
   - Use the Unicode flag to simplify the tokenizer regular expression
+  - Add `loadJSONAsync` method, to load a serialized index asynchronously
 
 ## v6.3.0 - 2023-11-22
 

@@ -1476,6 +1476,12 @@ export default class MiniSearch<T = any> {
   /**
    * Async equivalent of {@link MiniSearch.loadJSON}
    *
+   * This function is an alternative to {@link MiniSearch.loadJSON} that returns
+   * a promise, and loads the index in batches, leaving pauses between them to avoid
+   * blocking the main thread. It tends to be slower than the synchronous
+   * version, but does not block the main thread, so it can be a better choice
+   * when deserializing very large indexes.
+   *
    * @param json  JSON-serialized index
    * @param options  configuration options, same as the constructor
    * @return A Promise that will resolve to an instance of MiniSearch deserialized from the given JSON.
