@@ -1881,6 +1881,26 @@ e forse del mio dir poco ti cale`
     })
   })
 
+  describe('loadJSONAsync', () => {
+    const documents = [
+      { id: 1, title: 'Divina Commedia', text: 'Nel mezzo del cammin di nostra vita', category: 'poetry' },
+      { id: 2, title: 'I Promessi Sposi', text: 'Quel ramo del lago di Como', category: 'fiction' },
+      { id: 3, title: 'Vita Nova', text: 'In quella parte del libro della mia memoria', category: 'poetry' }
+    ]
+
+    it('makes a MiniSearch instance that is identical to .loadJSON()', async () => {
+      const options = { fields: ['title', 'text'], storeFields: ['category'] }
+      const ms = new MiniSearch(options)
+      ms.addAll(documents)
+      const json = JSON.stringify(ms)
+
+      const deserializedAsync = await MiniSearch.loadJSONAsync(json, options)
+      const deserialized = MiniSearch.loadJSON(json, options)
+
+      expect(deserialized).toEqual(deserializedAsync)
+    })
+  })
+
   describe('getDefault', () => {
     it('returns the default value of the given option', () => {
       expect(MiniSearch.getDefault('idField')).toEqual('id')

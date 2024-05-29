@@ -1474,6 +1474,20 @@ export default class MiniSearch<T = any> {
   }
 
   /**
+   * Async equivalent of {@link MiniSearch.loadJSON}
+   *
+   * @param json  JSON-serialized index
+   * @param options  configuration options, same as the constructor
+   * @return A Promise that will resolve to an instance of MiniSearch deserialized from the given JSON.
+   */
+  static async loadJSONAsync<T = any> (json: string, options: Options<T>): Promise<MiniSearch<T>> {
+    if (options == null) {
+      throw new Error('MiniSearch: loadJSON should be given the same options used when serializing the index')
+    }
+    return this.loadJSAsync(JSON.parse(json), options)
+  }
+
+  /**
    * Returns the default value of an option. It will throw an error if no option
    * with the given name exists.
    *
@@ -1508,32 +1522,17 @@ export default class MiniSearch<T = any> {
   static loadJS<T = any> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
     const {
       index,
-      documentCount,
-      nextId,
       documentIds,
-      fieldIds,
       fieldLength,
-      averageFieldLength,
       storedFields,
-      dirtCount,
       serializationVersion
     } = js
-    if (serializationVersion !== 1 && serializationVersion !== 2) {
-      throw new Error('MiniSearch: cannot deserialize an index created with an incompatible version')
-    }
 
-    const miniSearch = new MiniSearch(options)
+    const miniSearch = this.instantiateMiniSearch(js, options)
 
-    miniSearch._documentCount = documentCount
-    miniSearch._nextId = nextId
     miniSearch._documentIds = objectToNumericMap(documentIds)
-    miniSearch._idToShortId = new Map<any, number>()
-    miniSearch._fieldIds = fieldIds
     miniSearch._fieldLength = objectToNumericMap(fieldLength)
-    miniSearch._avgFieldLength = averageFieldLength
     miniSearch._storedFields = objectToNumericMap(storedFields)
-    miniSearch._dirtCount = dirtCount || 0
-    miniSearch._index = new SearchableMap()
 
     for (const [shortId, id] of miniSearch._documentIds) {
       miniSearch._idToShortId.set(id, shortId)
@@ -1555,6 +1554,80 @@ export default class MiniSearch<T = any> {
 
       miniSearch._index.set(term, dataMap)
     }
+
+    return miniSearch
+  }
+
+  /**
+   * @ignore
+   */
+  static async loadJSAsync<T = any> (js: AsPlainObject, options: Options<T>): Promise<MiniSearch<T>> {
+    const {
+      index,
+      documentIds,
+      fieldLength,
+      storedFields,
+      serializationVersion
+    } = js
+
+    const miniSearch = this.instantiateMiniSearch(js, options)
+
+    miniSearch._documentIds = await objectToNumericMapAsync(documentIds)
+    miniSearch._fieldLength = await objectToNumericMapAsync(fieldLength)
+    miniSearch._storedFields = await objectToNumericMapAsync(storedFields)
+
+    for (const [shortId, id] of miniSearch._documentIds) {
+      miniSearch._idToShortId.set(id, shortId)
+    }
+
+    let count = 0
+    for (const [term, data] of index) {
+      const dataMap = new Map() as FieldTermData
+
+      for (const fieldId of Object.keys(data)) {
+        let indexEntry = data[fieldId]
+
+        // Version 1 used to nest the index entry inside a field called ds
+        if (serializationVersion === 1) {
+          indexEntry = indexEntry.ds as unknown as SerializedIndexEntry
+        }
+
+        dataMap.set(parseInt(fieldId, 10), await objectToNumericMapAsync(indexEntry) as DocumentTermFreqs)
+      }
+
+      if (++count % 1000 === 0) await wait(0)
+      miniSearch._index.set(term, dataMap)
+    }
+
+    return miniSearch
+  }
+
+  /**
+   * @ignore
+   */
+  private static instantiateMiniSearch<T = any> (js: AsPlainObject, options: Options<T>): MiniSearch<T> {
+    const {
+      documentCount,
+      nextId,
+      fieldIds,
+      averageFieldLength,
+      dirtCount,
+      serializationVersion
+    } = js
+
+    if (serializationVersion !== 1 && serializationVersion !== 2) {
+      throw new Error('MiniSearch: cannot deserialize an index created with an incompatible version')
+    }
+
+    const miniSearch = new MiniSearch(options)
+
+    miniSearch._documentCount = documentCount
+    miniSearch._nextId = nextId
+    miniSearch._idToShortId = new Map<any, number>()
+    miniSearch._fieldIds = fieldIds
+    miniSearch._avgFieldLength = averageFieldLength
+    miniSearch._dirtCount = dirtCount || 0
+    miniSearch._index = new SearchableMap()
 
     return miniSearch
   }
@@ -2105,6 +2178,22 @@ const objectToNumericMap = <T>(object: { [key: string]: T }): Map<number, T> => 
 
   return map
 }
+
+const objectToNumericMapAsync = async <T>(object: { [key: string]: T }): Promise<Map<number, T>> => {
+  const map = new Map()
+
+  let count = 0
+  for (const key of Object.keys(object)) {
+    map.set(parseInt(key, 10), object[key])
+    if (++count % 1000 === 0) {
+      await wait(0)
+    }
+  }
+
+  return map
+}
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // This regular expression matches any Unicode space, newline, or punctuation
 // character

@@ -1,6 +1,6 @@
 /* eslint-disable no-labels */
 import { LEAF } from './TreeIterator'
-import { RadixTree } from './types'
+import type { RadixTree } from './types'
 
 export type FuzzyResult<T> = [T, number]
 
