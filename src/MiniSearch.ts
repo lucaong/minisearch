@@ -104,20 +104,21 @@ export type SearchOptions = {
    * Function to tokenize the search query. By default, the same tokenizer used
    * for indexing is used also for search.
    *
-   * @remarks
-   * This function is called after `extractField` extracts a truthy value from a
-   * field. This function is then expected to split the extracted `text` document
-   * into tokens (more commonly referred to as "terms" in this context). The resulting
-   * split might be simple, like for example on word boundaries, or it might be more
-   * complex, taking into account certain encoding, or parsing needs, or even just
-   * special cases. Think about how one might need to go about indexing the term
-   * "short-term". You would likely want to treat this case specially, and return two
-   * terms instead, `[ "short", "term" ]`.
+   * @remarks This function is called after `extractField` extracts a truthy
+   * value from a field. This function is then expected to split the extracted
+   * `text` document into tokens (more commonly referred to as "terms" in this
+   * context). The resulting split might be simple, like for example on word
+   * boundaries, or it might be more complex, taking into account certain
+   * encoding, or parsing needs, or even just special cases. Think about how one
+   * might need to go about indexing the term "short-term". You would likely
+   * want to treat this case specially, and return two terms instead, `[
+   * "short", "term" ]`.
    *
    * Or, you could let such a case be handled by the `processTerm` function,
-   * which is designed to turn each token/term into whole terms or sub-terms. In any
-   * case, the purpose of this function is to split apart the provided `text` document
-   * into parts that can be processed by the `processTerm` function.
+   * which is designed to turn each token/term into whole terms or sub-terms. In
+   * any case, the purpose of this function is to split apart the provided
+   * `text` document into parts that can be processed by the `processTerm`
+   * function.
    */
   tokenize?: (text: string) => string[],
 
@@ -126,24 +127,25 @@ export type SearchOptions = {
    * same term processor used for indexing is used also for search.
    *
    * @remarks
-   * During the document indexing phase, the first step is to call the `extractField`
-   * function to fetch the requested value/field from the document. This is then
-   * passed off to the `tokenizer`, which will break apart each value into "terms".
-   * These terms are then individually passed through this function to compute each
-   * term individually. A term might for example be something like "lbs", in which
-   * case one would likely want to return `[ "lbs", "lb", "pound", "pounds" ]`.
-   * You may also return just a single string, or a falsy value if you would like
-   * to skip indexing entirely for a specific term.
+   * During the document indexing phase, the first step is to call the
+   * `extractField` function to fetch the requested value/field from the
+   * document. This is then passed off to the `tokenize` function, which will
+   * break apart each value into "terms". These terms are then individually
+   * passed through this function to compute each term individually. A term
+   * might for example be something like "lbs", in which case one would likely
+   * want to return `[ "lbs", "lb", "pound", "pounds" ]`. You may also return
+   * just a single string, or a falsy value if you would like to skip indexing
+   * entirely for a specific term.
    *
-   * Truthy return value(s) are then fed to the indexer as positive matches for this
-   * document. In our example above, all four of the `[ "lbs", "lb", "pound", "pounds" ]`
-   * terms would be added to the indexing engine, matching against the current document
-   * being computed.
+   * Truthy return value(s) are then fed to the indexer as positive matches for
+   * this document. In our example above, all four of the `[ "lbs", "lb",
+   * "pound", "pounds" ]` terms would be added to the indexing engine, matching
+   * against the current document being computed.
    *
-   * *Note: Whatever values are returned from this function will receive no further
-   * processing before being indexed. This means for example, if you include whitespace
-   * at the beginning or end of a word, it will also be indexed that way, with the
-   * included whitespace.*
+   * *Note: Whatever values are returned from this function will receive no
+   * further processing before being indexed. This means for example, if you
+   * include whitespace at the beginning or end of a word, it will also be
+   * indexed that way, with the included whitespace.*
    */
   processTerm?: (term: string) => string | string[] | null | undefined | false
 
