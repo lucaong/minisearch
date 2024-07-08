@@ -2,10 +2,20 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-## Upcoming (unreleased)
+## v7.0.0
 
-  - Better TypeScript type of `combineWith` search option values, catching
-    invalid operators at compile time.
+This is a major release, but the only real breaking change is that it targets
+ES6 (ES2015) and later. This means that it will not work in legacy browsers,
+most notably Internet Explorer 11 and earlier (by now well below 1% global
+usage according to https://caniuse.com).
+
+  - [breaking change] Target ES6 (ES2015) and later, dropping support for
+    Internet Explorer 11 and earlier.
+  - [breaking change] Better TypeScript type of `combineWith` search option
+    values, catching invalid operators at compile time. Note that this is a
+    breaking change only if one was using unlikely weird casing for the
+    `combineWith` option. For example, `AND`, `and`, `And` are all still valid,
+    but `aNd` won't compile anymore.
   - More informative error when specifying an invalid value for `combineWith`
     in JavaScript (in TypeScript this would be a compile time error)
   - Use the Unicode flag to simplify the tokenizer regular expression
