@@ -7,7 +7,8 @@
 This is a major release, but the only real breaking change is that it targets
 ES6 (ES2015) and later. This means that it will not work in legacy browsers,
 most notably Internet Explorer 11 and earlier (by now well below 1% global
-usage according to https://caniuse.com).
+usage according to https://caniuse.com). Among other benefits, this reduces the
+package size (from 8.8KB to 5.8KB minified and gzipped).
 
   - [breaking change] Target ES6 (ES2015) and later, dropping support for
     Internet Explorer 11 and earlier.
