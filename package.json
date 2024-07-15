@@ -20,7 +20,7 @@
   },
   "unpkg": "./dist/umd/index.js",
   "jsdelivr": "./dist/umd/index.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/es/index.d.ts",
   "author": "Luca Ongaro",
   "homepage": "https://lucaong.github.io/minisearch/",
   "bugs": "https://github.com/lucaong/minisearch/issues",
