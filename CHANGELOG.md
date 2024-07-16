@@ -2,6 +2,12 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v7.0.1
+
+  - [fix] Fix type definitions directory in `package.json` (by
+    [@brenoepics](https://github.com/brenoepics)
+  - [fix] Remove redundant versions of distribution files and simplify build
+
 ## v7.0.0
 
 This is a major release, but the only real breaking change is that it targets
