@@ -44,13 +44,11 @@ const benchmarks = {
 export default process.env.BENCHMARKS === 'true' ? [benchmarks] : [
   // Main (MiniSearch)
   config({ format: 'es', input: 'src/index.ts', output: 'es6' }),
-  config({ format: 'es', input: 'src/index.ts', output: 'es6m', dir: 'es6m' }),
   config({ format: 'cjs', input: 'src/index.ts', output: 'cjs', dir: 'cjs', extension: 'cjs', exports: 'default' }),
   config({ format: 'umd', input: 'src/index.ts', output: 'umd', name: 'MiniSearch' }),
 
   // SearchableMap
   config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'es6' }),
-  config({ format: 'es', input: 'src/SearchableMap/SearchableMap.ts', output: 'es6m', dir: 'es6m' }),
   config({ format: 'cjs', input: 'src/SearchableMap/SearchableMap.ts', output: 'cjs', dir: 'cjs', extension: 'cjs', exports: 'default' }),
   config({ format: 'umd', input: 'src/SearchableMap/SearchableMap.ts', output: 'umd', name: 'MiniSearch' }),
 
