@@ -2205,4 +2205,4 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // This regular expression matches any Unicode space, newline, or punctuation
 // character
-const SPACE_OR_PUNCTUATION = /[\n\r\p{Z}\p{P}]/u
+const SPACE_OR_PUNCTUATION = /[\n\r\p{Z}\p{P}]+/u

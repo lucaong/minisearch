@@ -1712,6 +1712,12 @@ e forse del mio dir poco ti cale`
       expect(ms.search('الرأس').map(({ id }) => id)).toEqual([4])
       expect(ms.search('123').map(({ id }) => id)).toEqual([5])
     })
+
+    it('splits on multiple contiguous spaces or punctuation characters correctly', () => {
+      const tokenize = MiniSearch.getDefault('tokenize')
+
+      expect(tokenize('a  b...c ? d')).toEqual(['a', 'b', 'c', 'd'])
+    })
   })
 
   describe('autoSuggest', () => {
