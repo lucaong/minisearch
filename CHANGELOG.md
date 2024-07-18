@@ -2,6 +2,12 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v7.0.2
+
+  - [fix] Fix regression on tokenizer producing blank terms when multiple
+    contiguous spaces or punctuation characters are present in the input,
+    introduced in `v7.0.0`.
+
 ## v7.0.1
 
   - [fix] Fix type definitions directory in `package.json` (by
