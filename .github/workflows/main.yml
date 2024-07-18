@@ -23,9 +23,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 'latest'
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Run tests
         run: yarn test
@@ -39,9 +40,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 'latest'
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Report coverage
         env:
