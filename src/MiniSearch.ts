@@ -33,6 +33,19 @@ export type SearchOptions = {
   boost?: { [fieldName: string]: number },
 
   /**
+   * Function to calculate a boost factor for each term.
+   *
+   * This function, if provided, is called for each query term (as split by
+   * `tokenize` and processed by `processTerm`). The arguments passed to the
+   * function are the query term, the positional index of the term in the query,
+   * and the array of all query terms. It is expected to return a numeric boost
+   * factor for the term. A factor lower than 1 reduces the importance of the
+   * term, a factor greater than 1 increases it. A factor of exactly 1 is
+   * neutral, and does not affect the term's importance.
+   */
+  boostTerm?: (term: string, i: number, terms: string[]) => number,
+
+  /**
    * Relative weights to assign to prefix search results and fuzzy search
    * results. Exact matches are assigned a weight of 1.
    */
@@ -480,7 +493,8 @@ export type AutoVacuumOptions = VacuumOptions & VacuumConditions
 type QuerySpec = {
   prefix: boolean,
   fuzzy: number | boolean,
-  term: string
+  term: string,
+  termBoost: number
 }
 
 type DocumentTermFreqs = Map<number, number>
@@ -1685,7 +1699,7 @@ export default class MiniSearch<T = any> {
     const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
 
     const data = this._index.get(query.term)
-    const results = this.termResults(query.term, query.term, 1, data, boosts, boostDocument, bm25params)
+    const results = this.termResults(query.term, query.term, 1, query.termBoost, data, boosts, boostDocument, bm25params)
 
     let prefixMatches
     let fuzzyMatches
@@ -1715,7 +1729,7 @@ export default class MiniSearch<T = any> {
         // account for the fact that prefix matches stay more relevant than
         // fuzzy matches for longer distances.
         const weight = prefixWeight * term.length / (term.length + 0.3 * distance)
-        this.termResults(query.term, term, weight, data, boosts, boostDocument, bm25params, results)
+        this.termResults(query.term, term, weight, query.termBoost, data, boosts, boostDocument, bm25params, results)
       }
     }
 
@@ -1727,7 +1741,7 @@ export default class MiniSearch<T = any> {
         // Weight gradually approaches 0 as distance goes to infinity, with the
         // weight for the hypothetical distance 0 being equal to fuzzyWeight.
         const weight = fuzzyWeight * term.length / (term.length + distance)
-        this.termResults(query.term, term, weight, data, boosts, boostDocument, bm25params, results)
+        this.termResults(query.term, term, weight, query.termBoost, data, boosts, boostDocument, bm25params, results)
       }
     }
 
@@ -1826,6 +1840,7 @@ export default class MiniSearch<T = any> {
     sourceTerm: string,
     derivedTerm: string,
     termWeight: number,
+    termBoost: number,
     fieldTermData: FieldTermData | undefined,
     fieldBoosts: { [field: string]: number },
     boostDocumentFn: ((id: any, term: string, storedFields?: Record<string, unknown>) => number) | undefined,
@@ -1864,7 +1879,7 @@ export default class MiniSearch<T = any> {
         // present. This is currently not supported, and may require further
         // analysis to see if it is a valid use case.
         const rawScore = calcBM25Score(termFreq, matchingFields, this._documentCount, fieldLength, avgFieldLength, bm25params)
-        const weightedScore = termWeight * fieldBoost * docBoost * rawScore
+        const weightedScore = termWeight * termBoost * fieldBoost * docBoost * rawScore
 
         const result = results.get(docId)
         if (result) {
@@ -2118,7 +2133,10 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
   const prefix = (typeof options.prefix === 'function')
     ? options.prefix(term, i, terms)
     : (options.prefix === true)
-  return { term, fuzzy, prefix }
+  const termBoost = (typeof options.boostTerm === 'function')
+    ? options.boostTerm(term, i, terms)
+    : 1
+  return { term, fuzzy, prefix, termBoost }
 }
 
 const defaultOptions = {

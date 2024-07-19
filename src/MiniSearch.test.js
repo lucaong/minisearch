@@ -1150,6 +1150,22 @@ describe('MiniSearch', () => {
       expect(results[0].score).toBeCloseTo(resultsWithoutBoost[0].score * boostFactor)
     })
 
+    it('boosts terms by calling boostTerm with normalized query term, term index in the query, and array of all query terms', () => {
+      const query = 'Commedia nova'
+      const boostFactors = {
+        commedia: 1.5,
+        nova: 1.1
+      }
+      const boostTerm = jest.fn((term, i, terms) => boostFactors[term])
+      const resultsWithoutBoost = ms.search(query)
+      const results = ms.search(query, { boostTerm })
+
+      expect(boostTerm).toHaveBeenCalledWith('commedia', 0, ['commedia', 'nova'])
+      expect(boostTerm).toHaveBeenCalledWith('nova', 1, ['commedia', 'nova'])
+      expect(results[0].score).toBeCloseTo(resultsWithoutBoost[0].score * boostFactors.commedia)
+      expect(results[1].score).toBeCloseTo(resultsWithoutBoost[1].score * boostFactors.nova)
+    })
+
     it('skips document if boostDocument returns a falsy value', () => {
       const query = 'vita'
       const boostDocument = jest.fn((id, term) => id === 3 ? null : 1)

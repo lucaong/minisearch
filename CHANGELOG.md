@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## unreleased
+
+  - Add `boostTerm` search option to apply a custom boosting factor to specific
+    terms in the query
+
 ## v7.0.2
 
   - [fix] Fix regression on tokenizer producing blank terms when multiple
