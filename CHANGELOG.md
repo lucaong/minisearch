@@ -2,7 +2,7 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-## unreleased
+## v7.1.0
 
   - Add `boostTerm` search option to apply a custom boosting factor to specific
     terms in the query
