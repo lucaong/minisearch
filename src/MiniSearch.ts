@@ -702,7 +702,7 @@ export default class MiniSearch<T = any> {
     this._enqueuedVacuum = null
     this._enqueuedVacuumConditions = defaultVacuumConditions
 
-    this.addFields(this._options.fields)
+    this.addFieldIds(this._options.fields)
   }
 
   /**
@@ -711,8 +711,9 @@ export default class MiniSearch<T = any> {
    * @param document  The document to be indexed
    */
   add (document: T): void {
-    const { extractField, tokenize, processTerm, fields, idField } = this._options
+    const { extractField, idField } = this._options
     const id = extractField(document, idField)
+
     if (id == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
     }
@@ -724,6 +725,52 @@ export default class MiniSearch<T = any> {
     const shortDocumentId = this.addDocumentId(id)
     this.saveStoredFields(shortDocumentId, document)
 
+    this.addToIndex(shortDocumentId, document, true)
+  }
+
+  /**
+   * Adds some fields to an existing documeny
+   *
+   * The added fields should not be already present on the document, or an error
+   * will be thrown.
+   *
+   * ## Example:
+   *
+   *     const miniSearch = new MiniSearch({ fields: ['title', 'text', 'author'] })
+   *
+   *     miniSearch.add({ id: 1, title: 'Neuromancer' })
+   *
+   *     miniSearch.addFields(1, {
+   *       text: 'The sky above the port was the color of television, tuned to a dead channel.',
+   *       author: 'William Gibson'
+   *     })
+   *
+   *     // The above is equivalent to:
+   *     miniSearch.add({
+   *       id: 1,
+   *       title: 'Neuromancer',
+   *       text: 'The sky above the port was the color of television, tuned to a dead channel.',
+   *       author: 'William Gibson'
+   *     })
+   *
+   * @param id  The document ID
+   * @param toAdd  The fields to add
+   */
+  addFields (id: any, toAdd: T): void {
+    const shortDocumentId = this._idToShortId.get(id)
+
+    if (shortDocumentId == null) {
+      throw new Error(`MiniSearch: no document with ID ${id}`)
+    }
+
+    this.saveStoredFields(shortDocumentId, toAdd)
+
+    this.addToIndex(shortDocumentId, toAdd, false)
+  }
+
+  private addToIndex (shortDocumentId: number, document: T, added: boolean) {
+    const { extractField, tokenize, processTerm, fields } = this._options
+
     for (const field of fields) {
       const fieldValue = extractField(document, field)
       if (fieldValue == null) continue
@@ -731,8 +778,13 @@ export default class MiniSearch<T = any> {
       const tokens = tokenize(fieldValue.toString(), field)
       const fieldId = this._fieldIds[field]
 
-      const uniqueTerms = new Set(tokens).size
-      this.addFieldLength(shortDocumentId, fieldId, this._documentCount - 1, uniqueTerms)
+      const uniqueTerms = new Set(tokens)
+      uniqueTerms.delete('')
+
+      if (this._fieldLength.get(shortDocumentId)?.[fieldId] != null) {
+        throw new Error(`MiniSearch: field ${field} already exists on document with ID ${this._documentIds.get(shortDocumentId)}`)
+      }
+      this.addFieldLength(shortDocumentId, fieldId, this._documentCount, uniqueTerms.size, added)
 
       for (const term of tokens) {
         const processedTerm = processTerm(term, field)
@@ -803,7 +855,7 @@ export default class MiniSearch<T = any> {
    * @param document  The document to be removed
    */
   remove (document: T): void {
-    const { tokenize, processTerm, extractField, fields, idField } = this._options
+    const { extractField, idField } = this._options
     const id = extractField(document, idField)
 
     if (id == null) {
@@ -816,6 +868,76 @@ export default class MiniSearch<T = any> {
       throw new Error(`MiniSearch: cannot remove document with ID ${id}: it is not in the index`)
     }
 
+    this.removeFromIndex(shortId, document, true)
+
+    this._storedFields.delete(shortId)
+    this._documentIds.delete(shortId)
+    this._idToShortId.delete(id)
+    this._fieldLength.delete(shortId)
+    this._documentCount -= 1
+  }
+
+  /**
+   * Removes some fields from an existing documeny
+   *
+   * The original fields to be removed must be provided as the second argument.
+   * The removed fields should be present on the document, or an error will be
+   * thrown.
+   *
+   * Note: removing _all_ the fields in a document with `removeFields` is
+   * different from removing the whole document with [[MiniSearch.remove]] or
+   * [[MiniSearch.discard]]. The difference in the first case is that the
+   * document is still counted in [[MiniSearch.documentCount]], even if it is
+   * practically not searchable anymore.
+   *
+   * ## Example:
+   *
+   *     const miniSearch = new MiniSearch({ fields: ['title', 'text', 'author'] })
+   *
+   *     miniSearch.add({
+   *       id: 1,
+   *       title: 'Neuromancer',
+   *       text: 'The sky above the port was the color of television, tuned to a dead channel.',
+   *       author: 'William Gibson'
+   *     })
+   *
+   *     miniSearch.removeFields(1, {
+   *       text: 'The sky above the port was the color of television, tuned to a dead channel.',
+   *       author: 'William Gibson'
+   *     })
+   *
+   *     // The above is equivalent to:
+   *     miniSearch.add({
+   *       id: 1,
+   *       title: 'Neuromancer'
+   *     })
+   *
+   * @param id  The document ID
+   * @param toRemove  The fields to remove
+   */
+  removeFields (id: any, toRemove: T) {
+    const { storeFields, extractField } = this._options
+    const shortDocumentId = this._idToShortId.get(id)
+
+    if (shortDocumentId == null) {
+      throw new Error(`MiniSearch: no document with ID ${id}`)
+    }
+
+    this.removeFromIndex(shortDocumentId, toRemove, false)
+
+    const storedFields = this._storedFields.get(shortDocumentId)
+
+    for (const fieldName of storeFields) {
+      const fieldValue = extractField(toRemove, fieldName)
+      if (storedFields != null && fieldValue !== undefined) {
+        delete storedFields[fieldName]
+      }
+    }
+  }
+
+  private removeFromIndex (shortId: number, document: T, removed: boolean) {
+    const { tokenize, processTerm, extractField, fields } = this._options
+
     for (const field of fields) {
       const fieldValue = extractField(document, field)
       if (fieldValue == null) continue
@@ -823,8 +945,13 @@ export default class MiniSearch<T = any> {
       const tokens = tokenize(fieldValue.toString(), field)
       const fieldId = this._fieldIds[field]
 
-      const uniqueTerms = new Set(tokens).size
-      this.removeFieldLength(shortId, fieldId, this._documentCount, uniqueTerms)
+      const uniqueTerms = new Set(tokens)
+      uniqueTerms.delete('')
+
+      if (this._fieldLength.get(shortId)?.[fieldId] == null) {
+        throw new Error(`MiniSearch: field ${field} does not exist on document with ID ${this._documentIds.get(shortId)}`)
+      }
+      this.removeFieldLength(shortId, fieldId, this._documentCount, uniqueTerms.size, removed)
 
       for (const term of tokens) {
         const processedTerm = processTerm(term, field)
@@ -837,12 +964,6 @@ export default class MiniSearch<T = any> {
         }
       }
     }
-
-    this._storedFields.delete(shortId)
-    this._documentIds.delete(shortId)
-    this._idToShortId.delete(id)
-    this._fieldLength.delete(shortId)
-    this._documentCount -= 1
   }
 
   /**
@@ -1977,7 +2098,7 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private addFields (fields: string[]): void {
+  private addFieldIds (fields: string[]): void {
     for (let i = 0; i < fields.length; i++) {
       this._fieldIds[fields[i]] = i
     }
@@ -1986,26 +2107,32 @@ export default class MiniSearch<T = any> {
   /**
    * @ignore
    */
-  private addFieldLength (documentId: number, fieldId: number, count: number, length: number): void {
+  private addFieldLength (documentId: number, fieldId: number, count: number, length: number, added: boolean): void {
     let fieldLengths = this._fieldLength.get(documentId)
     if (fieldLengths == null) this._fieldLength.set(documentId, fieldLengths = [])
+    const n = added ? 1 : 0
+
     fieldLengths[fieldId] = length
 
     const averageFieldLength = this._avgFieldLength[fieldId] || 0
-    const totalFieldLength = (averageFieldLength * count) + length
-    this._avgFieldLength[fieldId] = totalFieldLength / (count + 1)
+    const totalFieldLength = (averageFieldLength * (count - n)) + length
+    this._avgFieldLength[fieldId] = totalFieldLength / count
   }
 
   /**
    * @ignore
    */
-  private removeFieldLength (documentId: number, fieldId: number, count: number, length: number): void {
+  private removeFieldLength (documentId: number, fieldId: number, count: number, length: number, removed: boolean = true): void {
+    const fieldLengths = this._fieldLength.get(documentId)
+    delete fieldLengths?.[fieldId]
+
     if (count === 1) {
       this._avgFieldLength[fieldId] = 0
       return
     }
+    const n = removed ? 1 : 0
     const totalFieldLength = (this._avgFieldLength[fieldId] * count) - length
-    this._avgFieldLength[fieldId] = totalFieldLength / (count - 1)
+    this._avgFieldLength[fieldId] = totalFieldLength / (count - n)
   }
 
   /**
