@@ -1211,6 +1211,21 @@ describe('MiniSearch', () => {
       expect(results.every(({ category }) => category === 'poetry')).toBe(true)
     })
 
+    it('allows to define a default filter upon instantiation', () => {
+      const ms = new MiniSearch({
+        fields: ['title', 'text'],
+        storeFields: ['category'],
+        searchOptions: {
+          filter: ({ category }) => category === 'poetry'
+        }
+      })
+      ms.addAll(documents)
+    
+      const results = ms.search('del')
+      expect(results.length).toBe(1)
+      expect(results.every(({ category }) => category === 'poetry')).toBe(true)
+    })
+
     it('allows customizing BM25+ parameters', () => {
       const ms = new MiniSearch({ fields: ['text'], searchOptions: { bm25: { k: 1.2, b: 0.7, d: 0.5 } } })
       const documents = [
@@ -1801,6 +1816,8 @@ e forse del mio dir poco ti cale`
       expect(results[0].suggestion).toEqual('quella')
       expect(results).toHaveLength(1)
     })
+
+
 
     it('respects the custom defaults set in the constructor', () => {
       const ms = new MiniSearch({
