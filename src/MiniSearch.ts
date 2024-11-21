@@ -1326,7 +1326,7 @@ export default class MiniSearch<T = any> {
    */
   search (query: Query, searchOptions: SearchOptions = {}): SearchResult[] {
     const { searchOptions: globalSearchOptions } = this._options
-    const options = { ...globalSearchOptions, ...searchOptions }
+    const searchOptionsWithDefaults: SearchOptionsWithDefaults = { ...globalSearchOptions, ...searchOptions }
 
     const rawResults = this.executeQuery(query, searchOptions)
     const results = []
@@ -1347,15 +1347,14 @@ export default class MiniSearch<T = any> {
       }
 
       Object.assign(result, this._storedFields.get(docId))
-      if (options.filter == null || options.filter(result)) {
+      if (searchOptionsWithDefaults.filter == null || searchOptionsWithDefaults.filter(result)) {
         results.push(result)
       }
     }
 
     // If it's a wildcard query, and no document boost is applied, skip sorting
     // the results, as all results have the same score of 1
-    if (query === MiniSearch.wildcard &&
-      options.boostDocument == null) {
+    if (query === MiniSearch.wildcard && searchOptionsWithDefaults.boostDocument == null) {
       return results
     }
 
