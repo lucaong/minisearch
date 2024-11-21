@@ -258,7 +258,7 @@ export default class SearchableMap<T = any> {
    * ```
    *
    * @param key  The key to update
-   * @param defaultValue  A function that creates a new value if the key does not exist
+   * @param initial  A function that creates a new value if the key does not exist
    * @return The existing or new value at the given key
    */
   fetch (key: string, initial: () => T): T {

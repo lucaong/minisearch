@@ -2,6 +2,11 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## v7.1.1
+
+  - [fix] Fix ability to pass the default `filter` search option in the
+    constructor alongside other search options
+
 ## v7.1.0
 
   - Add `boostTerm` search option to apply a custom boosting factor to specific

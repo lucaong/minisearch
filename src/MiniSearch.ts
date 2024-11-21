@@ -1322,7 +1322,7 @@ export default class MiniSearch<T = any> {
    * external libraries that implement a parser for custom query languages.
    *
    * @param query  Search query
-   * @param options  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
+   * @param searchOptions  Search options. Each option, if not given, defaults to the corresponding value of `searchOptions` given to the constructor, or to the library default.
    */
   search (query: Query, searchOptions: SearchOptions = {}): SearchResult[] {
     const { searchOptions: globalSearchOptions } = this._options
