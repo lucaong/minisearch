@@ -2,7 +2,7 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-## Upcoming
+## v7.1.2
 
   - [fix] Correctly specify that MiniSearch targets ES9 (ES2018), not ES6
     (ES2015), due to the use of Unicode character class escapes in the

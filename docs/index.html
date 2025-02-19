@@ -53,7 +53,7 @@ build custom solutions, while keeping a small and well tested codebase.</p>
 </code><button>Copy</button></pre>
 <p>Alternatively, if you prefer to use a <code>&lt;script&gt;</code> tag, you can require MiniSearch
 <a href="https://www.jsdelivr.com/package/npm/minisearch">from a CDN</a>:</p>
-<pre><code class="language-html"><span class="hl-8">&lt;</span><span class="hl-9">script</span><span class="hl-10"> </span><span class="hl-11">src</span><span class="hl-10">=</span><span class="hl-12">&quot;https://cdn.jsdelivr.net/npm/minisearch@7.1.1/dist/umd/index.min.js&quot;</span><span class="hl-8">&gt;&lt;/</span><span class="hl-9">script</span><span class="hl-8">&gt;</span>
+<pre><code class="language-html"><span class="hl-8">&lt;</span><span class="hl-9">script</span><span class="hl-10"> </span><span class="hl-11">src</span><span class="hl-10">=</span><span class="hl-12">&quot;https://cdn.jsdelivr.net/npm/minisearch@7.1.2/dist/umd/index.min.js&quot;</span><span class="hl-8">&gt;&lt;/</span><span class="hl-9">script</span><span class="hl-8">&gt;</span>
 </code><button>Copy</button></pre>
 <p>In this case, <code>MiniSearch</code> will appear as a global variable in your project.</p>
 <p>Finally, if you want to manually build the library, clone the repository and run
@@ -115,9 +115,12 @@ a different processing to search queries, supply a <code>processTerm</code> sear
 <a id="md:api-documentation" class="tsd-anchor"></a><h3><a href="#md:api-documentation">API Documentation</a></h3><p>Refer to the <a href="https://lucaong.github.io/minisearch/classes/MiniSearch.MiniSearch.html">API
 documentation</a>
 for details about configuration options and methods.</p>
-<a id="md:browser-and-node-compatibility" class="tsd-anchor"></a><h2><a href="#md:browser-and-node-compatibility">Browser and Node compatibility</a></h2><p><code>MiniSearch</code> supports all browsers and NodeJS versions implementing the ES6
-(ES2015) JavaScript standard. That includes all modern browsers and NodeJS
+<a id="md:browser-and-node-compatibility" class="tsd-anchor"></a><h2><a href="#md:browser-and-node-compatibility">Browser and Node compatibility</a></h2><p><code>MiniSearch</code> supports all browsers and NodeJS versions implementing the ES9
+(ES2018) JavaScript standard. That includes all modern browsers and NodeJS
 versions.</p>
+<p>ES6 (ES2015) compatibility can be achieved by transpiling the tokenizer RegExp
+to expand Unicode character class escapes, for example with
+<a href="https://babeljs.io/docs/babel-plugin-transform-unicode-sets-regex">https://babeljs.io/docs/babel-plugin-transform-unicode-sets-regex</a>.</p>
 <a id="md:contributing" class="tsd-anchor"></a><h2><a href="#md:contributing">Contributing</a></h2><p>Contributions to <code>MiniSearch</code> are welcome. Please read the <a href="https://github.com/lucaong/minisearch/blob/master/CONTRIBUTING.md">contributions
 guidelines</a>.
 Reading the <a href="https://github.com/lucaong/minisearch/blob/master/DESIGN_DOCUMENT.md">design
