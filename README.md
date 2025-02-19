@@ -330,9 +330,13 @@ for details about configuration options and methods.
 
 ## Browser and Node compatibility
 
-`MiniSearch` supports all browsers and NodeJS versions implementing the ES6
-(ES2015) JavaScript standard. That includes all modern browsers and NodeJS
+`MiniSearch` supports all browsers and NodeJS versions implementing the ES9
+(ES2018) JavaScript standard. That includes all modern browsers and NodeJS
 versions.
+
+ES6 (ES2015) compatibility can be achieved by transpiling the tokenizer RegExp
+to expand Unicode character class escapes, for example with
+https://babeljs.io/docs/babel-plugin-transform-unicode-sets-regex.
 
 ## Contributing
 
