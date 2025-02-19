@@ -390,8 +390,8 @@ const remove = <T = any>(tree: RadixTree<T>, key: string): void => {
   if (node.size === 0) {
     cleanup(path)
   } else if (node.size === 1) {
-    const [key, value] = node.entries().next().value
-    merge(path, key, value)
+    const [key, value] = node.entries().next().value!
+    merge(path, key as string, value as RadixTree<T>)
   }
 }
 
@@ -404,9 +404,9 @@ const cleanup = <T = any>(path: Path<T>): void => {
   if (node!.size === 0) {
     cleanup(path.slice(0, -1))
   } else if (node!.size === 1) {
-    const [key, value] = node!.entries().next().value
+    const [key, value] = node!.entries().next().value!
     if (key !== LEAF) {
-      merge(path.slice(0, -1), key, value)
+      merge(path.slice(0, -1), key as string, value as RadixTree<T>)
     }
   }
 }
