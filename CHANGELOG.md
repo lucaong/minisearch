@@ -2,6 +2,13 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## Upcoming
+
+  - [fix] Correctly specify that MiniSearch targets ES9 (ES2018), not ES6
+    (ES2015), due to the use of Unicode character class escapes in the
+    tokenizer RegExp. Note: the README explains how to achieve ES2015
+    compatibility.
+
 ## v7.1.1
 
   - [fix] Fix ability to pass the default `filter` search option in the
