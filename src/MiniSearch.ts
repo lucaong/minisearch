@@ -49,7 +49,16 @@ export type SearchOptions = {
    * Relative weights to assign to prefix search results and fuzzy search
    * results. Exact matches are assigned a weight of 1.
    */
-  weights?: { fuzzy: number, prefix: number },
+  weights?: {
+    /**
+     * @default 0.45
+     */
+    fuzzy?: number
+    /**
+     * @default 0.375
+     */
+    prefix?: number
+  },
 
   /**
    * Function to calculate a boost factor for documents. It takes as arguments
@@ -1697,7 +1706,10 @@ export default class MiniSearch<T = any> {
       bm25: bm25params
     } = options
 
-    const { fuzzy: fuzzyWeight, prefix: prefixWeight } = { ...defaultSearchOptions.weights, ...weights }
+    const {
+      fuzzy: fuzzyWeight = defaultSearchOptions.weights.fuzzy,
+      prefix: prefixWeight = defaultSearchOptions.weights.prefix
+    } = weights || {}
 
     const data = this._index.get(query.term)
     const results = this.termResults(query.term, query.term, 1, query.termBoost, data, boosts, boostDocument, bm25params)
