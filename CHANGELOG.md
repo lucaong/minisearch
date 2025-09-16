@@ -2,6 +2,13 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## Upcoming
+
+  - [fix] Relax the return type of `extractField` to allow non-string values
+    (when a field is stored but not indexed, it can be any type)
+  - Add `stringifyField` option to customize how field values are turned into strings
+    for indexing
+
 ## v7.1.2
 
   - [fix] Correctly specify that MiniSearch targets ES9 (ES2018), not ES6

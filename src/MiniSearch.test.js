@@ -86,6 +86,30 @@ describe('MiniSearch', () => {
       expect(tokenize).toHaveBeenCalledWith('true', 'isBlinky')
     })
 
+    it('turns the field to string before tokenization using a custom stringifyField function, if given', () => {
+      const tokenize = jest.fn(x => x.split(/\W+/))
+      const stringifyField = jest.fn((value, fieldName) => {
+        if (fieldName === 'tags') {
+          return value.join('|')
+        } else if (typeof value === 'boolean') {
+          return value ? 'T' : 'F'
+        }
+        return value.toString()
+      })
+      const ms = new MiniSearch({ fields: ['id', 'tags', 'isBlinky'], tokenize, stringifyField })
+      expect(() => {
+        ms.add({ id: 123, tags: ['foo', 'bar'], isBlinky: false })
+        ms.add({ id: 321, isBlinky: true })
+      }).not.toThrowError()
+
+      expect(tokenize).toHaveBeenCalledWith('123', 'id')
+      expect(tokenize).toHaveBeenCalledWith('foo|bar', 'tags')
+      expect(tokenize).toHaveBeenCalledWith('F', 'isBlinky')
+
+      expect(tokenize).toHaveBeenCalledWith('321', 'id')
+      expect(tokenize).toHaveBeenCalledWith('T', 'isBlinky')
+    })
+
     it('passes document and field name to the field extractor', () => {
       const extractField = jest.fn((document, fieldName) => {
         if (fieldName === 'pubDate') {
@@ -290,39 +314,47 @@ describe('MiniSearch', () => {
       expect(ms.search('bar')).toHaveLength(0)
     })
 
-    describe('when using custom per-field extraction/tokenizer/processing', () => {
+    describe('when using custom per-field extraction/stringification/tokenizer/processing', () => {
       const documents = [
-        { id: 1, title: 'Divina Commedia', tags: 'dante,virgilio', author: { name: 'Dante Alighieri' } },
-        { id: 2, title: 'I Promessi Sposi', tags: 'renzo,lucia', author: { name: 'Alessandro Manzoni' } },
-        { id: 3, title: 'Vita Nova', author: { name: 'Dante Alighieri' } }
+        { id: 1, title: 'Divina Commedia', tags: ['dante', 'virgilio'], author: { name: 'Dante Alighieri' }, available: true },
+        { id: 2, title: 'I Promessi Sposi', tags: ['renzo', 'lucia'], author: { name: 'Alessandro Manzoni' }, available: false },
+        { id: 3, title: 'Vita Nova', tags: ['dante'], author: { name: 'Dante Alighieri' }, available: true }
       ]
+      const options = {
+        fields: ['title', 'tags', 'authorName', 'available'],
+        extractField: (doc, fieldName) => {
+          if (fieldName === 'authorName') {
+            return doc.author.name
+          } else {
+            return doc[fieldName]
+          }
+        },
+        stringifyField: (fieldValue, fieldName) => {
+          if (fieldName === 'available') {
+            return fieldValue ? 'yes' : 'no'
+          } else {
+            return fieldValue.toString()
+          }
+        },
+        tokenize: (field, fieldName) => {
+          if (fieldName === 'tags') {
+            return field.split(',')
+          } else {
+            return field.split(/\s+/)
+          }
+        },
+        processTerm: (term, fieldName) => {
+          if (fieldName === 'tags') {
+            return term.toUpperCase()
+          } else {
+            return term.toLowerCase()
+          }
+        }
+      }
 
       let ms, _warn
       beforeEach(() => {
-        ms = new MiniSearch({
-          fields: ['title', 'tags', 'authorName'],
-          extractField: (doc, fieldName) => {
-            if (fieldName === 'authorName') {
-              return doc.author.name
-            } else {
-              return doc[fieldName]
-            }
-          },
-          tokenize: (field, fieldName) => {
-            if (fieldName === 'tags') {
-              return field.split(',')
-            } else {
-              return field.split(/\s+/)
-            }
-          },
-          processTerm: (term, fieldName) => {
-            if (fieldName === 'tags') {
-              return term.toUpperCase()
-            } else {
-              return term.toLowerCase()
-            }
-          }
-        })
+        ms = new MiniSearch(options)
         ms.addAll(documents)
         _warn = console.warn
         console.warn = jest.fn()
@@ -332,12 +364,20 @@ describe('MiniSearch', () => {
         console.warn = _warn
       })
 
-      it('removes the document from the index', () => {
+      it('removes the document and its terms from the index', () => {
         expect(ms.documentCount).toEqual(3)
-        ms.remove(documents[0])
-        expect(ms.documentCount).toEqual(2)
-        expect(ms.search('commedia').length).toEqual(0)
+        expect(ms.search('commedia').map(({ id }) => id)).toEqual([1])
+        expect(ms.search('DANTE').map(({ id }) => id)).toEqual([1, 3])
         expect(ms.search('vita').map(({ id }) => id)).toEqual([3])
+        expect(ms.search('yes').map(({ id }) => id)).toEqual([1, 3])
+
+        ms.remove(documents[0])
+
+        expect(ms.documentCount).toEqual(2)
+        expect(ms.search('commedia').map(({ id }) => id)).toEqual([])
+        expect(ms.search('DANTE').map(({ id }) => id)).toEqual([3])
+        expect(ms.search('vita').map(({ id }) => id)).toEqual([3])
+        expect(ms.search('yes').map(({ id }) => id)).toEqual([3])
         expect(console.warn).not.toHaveBeenCalled()
       })
     })
