@@ -2,7 +2,7 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
-## v7.1.3
+## v7.2.0
 
   - [fix] Relax the return type of `extractField` to allow non-string values
     (when a field is stored but not indexed, it can be any type)
