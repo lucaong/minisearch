@@ -222,7 +222,38 @@ export type Options<T = any> = {
     * The returned string is fed into the `tokenize` function to split it up
     * into tokens.
     */
-  extractField?: (document: T, fieldName: string) => string,
+  extractField?: (document: T, fieldName: string) => any,
+
+  /**
+   * Function used to turn field values into strings for indexing
+   *
+   * The function takes as arguments the field value, and the name of the field
+   * to stringify, so that its logic can be customized on specific fields. By
+   * default, it simply calls `toString()` on the field value (which in many
+   * cases is already a string).
+   *
+   * ### Example:
+   *
+   * ```javascript
+   * // Custom stringifier that formats dates as "Tuesday, September 16, 2025"
+   * const miniSearch = new MiniSearch({
+   *   fields: ['title', 'date'],
+   *   stringifyField: ((fieldValue, _fieldName) => {
+   *     if (fieldValue instanceof Date) {
+   *       return fieldValue.toLocaleDateString('en-US', {
+   *         weekday: 'long',
+   *         year: 'numeric',
+   *         month: 'long',
+   *         day: 'numeric'
+   *       })
+   *     } else {
+   *      return fieldValue.toString()
+   *     }
+   *   }
+   * })
+   * ```
+   */
+  stringifyField?: (fieldValue: any, fieldName: string) => string,
 
    /**
     * Function used to split a field value into individual terms to be indexed.
@@ -322,7 +353,9 @@ type OptionsWithDefaults<T = any> = Options<T> & {
 
   idField: string
 
-  extractField: (document: T, fieldName: string) => string
+  extractField: (document: T, fieldName: string) => any
+
+  stringifyField: (fieldValue: any, fieldName: string) => string
 
   tokenize: (text: string, fieldName: string) => string[]
 
@@ -711,7 +744,7 @@ export default class MiniSearch<T = any> {
    * @param document  The document to be indexed
    */
   add (document: T): void {
-    const { extractField, tokenize, processTerm, fields, idField } = this._options
+    const { extractField, stringifyField, tokenize, processTerm, fields, idField } = this._options
     const id = extractField(document, idField)
     if (id == null) {
       throw new Error(`MiniSearch: document does not have ID field "${idField}"`)
@@ -728,7 +761,7 @@ export default class MiniSearch<T = any> {
       const fieldValue = extractField(document, field)
       if (fieldValue == null) continue
 
-      const tokens = tokenize(fieldValue.toString(), field)
+      const tokens = tokenize(stringifyField(fieldValue, field), field)
       const fieldId = this._fieldIds[field]
 
       const uniqueTerms = new Set(tokens).size
@@ -803,7 +836,7 @@ export default class MiniSearch<T = any> {
    * @param document  The document to be removed
    */
   remove (document: T): void {
-    const { tokenize, processTerm, extractField, fields, idField } = this._options
+    const { tokenize, processTerm, extractField, stringifyField, fields, idField } = this._options
     const id = extractField(document, idField)
 
     if (id == null) {
@@ -820,7 +853,7 @@ export default class MiniSearch<T = any> {
       const fieldValue = extractField(document, field)
       if (fieldValue == null) continue
 
-      const tokens = tokenize(fieldValue.toString(), field)
+      const tokens = tokenize(stringifyField(fieldValue, field), field)
       const fieldId = this._fieldIds[field]
 
       const uniqueTerms = new Set(tokens).size
@@ -2143,6 +2176,7 @@ const termToQuerySpec = (options: SearchOptions) => (term: string, i: number, te
 const defaultOptions = {
   idField: 'id',
   extractField: (document: any, fieldName: string) => document[fieldName],
+  stringifyField: (fieldValue: any, fieldName: string) => fieldValue.toString(),
   tokenize: (text: string) => text.split(SPACE_OR_PUNCTUATION),
   processTerm: (term: string) => term.toLowerCase(),
   fields: undefined,
