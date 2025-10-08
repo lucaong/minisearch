@@ -1277,7 +1277,7 @@ describe('MiniSearch', () => {
         }
       })
       ms.addAll(documents)
-    
+
       const results = ms.search('del')
       expect(results.length).toBe(1)
       expect(results.every(({ category }) => category === 'poetry')).toBe(true)
@@ -1386,7 +1386,7 @@ describe('MiniSearch', () => {
       })
 
       it('uses the search options in the second argument as default', () => {
-        let reference = ms.search({
+        const reference = ms.search({
           queries: [
             { fields: ['text'], queries: ['vita'] },
             { fields: ['title'], queries: ['promessi'] }
@@ -1873,8 +1873,6 @@ e forse del mio dir poco ti cale`
       expect(results[0].suggestion).toEqual('quella')
       expect(results).toHaveLength(1)
     })
-
-
 
     it('respects the custom defaults set in the constructor', () => {
       const ms = new MiniSearch({
