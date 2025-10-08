@@ -1251,6 +1251,23 @@ describe('MiniSearch', () => {
       expect(results.every(({ category }) => category === 'poetry')).toBe(true)
     })
 
+    it('allows custom filtering of results in complex queries', () => {
+      const results = ms.search({
+        queries: [
+          {
+            queries: ['del'],
+            filter: ({ category }) => category === 'poetry'
+          },
+          {
+            queries: ['como'],
+            filter: ({ category }) => category === 'fiction'
+          }
+        ]
+      })
+      expect(results.length).toBe(2)
+      expect(results.map(({ category }) => category).sort()).toEqual(['fiction', 'poetry'])
+    })
+
     it('allows to define a default filter upon instantiation', () => {
       const ms = new MiniSearch({
         fields: ['title', 'text'],

@@ -1364,22 +1364,8 @@ export default class MiniSearch<T = any> {
     const rawResults = this.executeQuery(query, searchOptions)
     const results = []
 
-    for (const [docId, { score, terms, match }] of rawResults) {
-      // terms are the matched query terms, which will be returned to the user
-      // as queryTerms. The quality is calculated based on them, as opposed to
-      // the matched terms in the document (which can be different due to
-      // prefix and fuzzy match)
-      const quality = terms.length || 1
-
-      const result = {
-        id: this._documentIds.get(docId),
-        score: score * quality,
-        terms: Object.keys(match),
-        queryTerms: terms,
-        match
-      }
-
-      Object.assign(result, this._storedFields.get(docId))
+    for (const [docId, rawValue] of rawResults) {
+      const result = this.makeResult(docId, rawValue)
       if (searchOptionsWithDefaults.filter == null || searchOptionsWithDefaults.filter(result)) {
         results.push(result)
       }
@@ -1724,6 +1710,7 @@ export default class MiniSearch<T = any> {
       ({ ...boosts, [field]: getOwnProperty(options.boost, field) || 1 }), {})
 
     const {
+      filter,
       boostDocument,
       weights,
       maxFuzzy,
@@ -1776,6 +1763,13 @@ export default class MiniSearch<T = any> {
         // weight for the hypothetical distance 0 being equal to fuzzyWeight.
         const weight = fuzzyWeight * term.length / (term.length + distance)
         this.termResults(query.term, term, weight, query.termBoost, data, boosts, boostDocument, bm25params, results)
+      }
+    }
+
+    if (filter) {
+      for (const [docId, rawValue] of results) {
+        const result = this.makeResult(docId, rawValue)
+        if (!filter(result)) results.delete(docId)
       }
     }
 
@@ -1936,6 +1930,29 @@ export default class MiniSearch<T = any> {
     }
 
     return results
+  }
+
+  /**
+   * @ignore
+   */
+  private makeResult (docId: number, { score, terms, match }: RawResultValue): SearchResult {
+    // terms are the matched query terms, which will be returned to the user
+    // as queryTerms. The quality is calculated based on them, as opposed to
+    // the matched terms in the document (which can be different due to
+    // prefix and fuzzy match)
+    const quality = terms.length || 1
+
+    const result: SearchResult = {
+      id: this._documentIds.get(docId),
+      score: score * quality,
+      terms: Object.keys(match),
+      queryTerms: terms,
+      match
+    }
+
+    Object.assign(result, this._storedFields.get(docId))
+
+    return result
   }
 
   /**
