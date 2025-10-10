@@ -1282,6 +1282,9 @@ export default class MiniSearch<T = any> {
    *
    * ### Filtering results:
    *
+   * Filtering of the final results can be done by passing a filter function
+   * in the search options:
+   *
    * ```javascript
    * // Filter only results in the 'fiction' category (assuming that 'category'
    * // is a stored field)
@@ -1289,6 +1292,22 @@ export default class MiniSearch<T = any> {
    *   filter: (result) => result.category === 'fiction'
    * })
    * ```
+   *
+   * When working with advanced combination of queries, then the given filter
+   * function will be run on the intermediate results.
+   *
+   * ```javascript
+   * miniSearch.search({
+   *   combineWith: 'OR',
+   *   queries: [{
+   *     queries: ['motorcycle art'],
+   *     filter: (result) => result.category === 'fiction'
+   *   }, {
+   *     queries: ['abstract art'],
+   *     filter: (result) => result.category === 'history'
+   *   }]
+   * })
+   * ````
    *
    * ### Wildcard query
    *
@@ -1364,22 +1383,8 @@ export default class MiniSearch<T = any> {
     const rawResults = this.executeQuery(query, searchOptions)
     const results = []
 
-    for (const [docId, { score, terms, match }] of rawResults) {
-      // terms are the matched query terms, which will be returned to the user
-      // as queryTerms. The quality is calculated based on them, as opposed to
-      // the matched terms in the document (which can be different due to
-      // prefix and fuzzy match)
-      const quality = terms.length || 1
-
-      const result = {
-        id: this._documentIds.get(docId),
-        score: score * quality,
-        terms: Object.keys(match),
-        queryTerms: terms,
-        match
-      }
-
-      Object.assign(result, this._storedFields.get(docId))
+    for (const [docId, rawValue] of rawResults) {
+      const result = this.makeResult(docId, rawValue)
       if (searchOptionsWithDefaults.filter == null || searchOptionsWithDefaults.filter(result)) {
         results.push(result)
       }
@@ -1697,9 +1702,19 @@ export default class MiniSearch<T = any> {
     }
 
     if (typeof query !== 'string') {
-      const options = { ...searchOptions, ...query, queries: undefined }
+      const options = { ...searchOptions, filter: undefined, ...query, queries: undefined }
       const results = query.queries.map((subquery) => this.executeQuery(subquery, options))
-      return this.combineResults(results, options.combineWith)
+      const combined = this.combineResults(results, options.combineWith)
+
+      // apply QueryCombination-level filter
+      if (options.filter) {
+        for (const [docId, rawValue] of combined) {
+          const result = this.makeResult(docId, rawValue)
+          if (!options.filter(result)) combined.delete(docId)
+        }
+      }
+
+      return combined
     }
 
     const { tokenize, processTerm, searchOptions: globalSearchOptions } = this._options
@@ -1936,6 +1951,29 @@ export default class MiniSearch<T = any> {
     }
 
     return results
+  }
+
+  /**
+   * @ignore
+   */
+  private makeResult (docId: number, { score, terms, match }: RawResultValue): SearchResult {
+    // terms are the matched query terms, which will be returned to the user
+    // as queryTerms. The quality is calculated based on them, as opposed to
+    // the matched terms in the document (which can be different due to
+    // prefix and fuzzy match)
+    const quality = terms.length || 1
+
+    const result: SearchResult = {
+      id: this._documentIds.get(docId),
+      score: score * quality,
+      terms: Object.keys(match),
+      queryTerms: terms,
+      match
+    }
+
+    Object.assign(result, this._storedFields.get(docId))
+
+    return result
   }
 
   /**

@@ -1251,6 +1251,23 @@ describe('MiniSearch', () => {
       expect(results.every(({ category }) => category === 'poetry')).toBe(true)
     })
 
+    it('allows custom filtering of results in complex queries', () => {
+      const results = ms.search({
+        queries: [
+          {
+            queries: ['del'],
+            filter: ({ category }) => category === 'poetry'
+          },
+          {
+            queries: ['como'],
+            filter: ({ category }) => category === 'fiction'
+          }
+        ]
+      })
+      expect(results.length).toBe(2)
+      expect(results.map(({ category }) => category).sort()).toEqual(['fiction', 'poetry'])
+    })
+
     it('allows to define a default filter upon instantiation', () => {
       const ms = new MiniSearch({
         fields: ['title', 'text'],
@@ -1260,7 +1277,7 @@ describe('MiniSearch', () => {
         }
       })
       ms.addAll(documents)
-    
+
       const results = ms.search('del')
       expect(results.length).toBe(1)
       expect(results.every(({ category }) => category === 'poetry')).toBe(true)
@@ -1369,7 +1386,7 @@ describe('MiniSearch', () => {
       })
 
       it('uses the search options in the second argument as default', () => {
-        let reference = ms.search({
+        const reference = ms.search({
           queries: [
             { fields: ['text'], queries: ['vita'] },
             { fields: ['title'], queries: ['promessi'] }
@@ -1856,8 +1873,6 @@ e forse del mio dir poco ti cale`
       expect(results[0].suggestion).toEqual('quella')
       expect(results).toHaveLength(1)
     })
-
-
 
     it('respects the custom defaults set in the constructor', () => {
       const ms = new MiniSearch({
