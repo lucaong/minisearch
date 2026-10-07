@@ -888,6 +888,59 @@ describe('MiniSearch', () => {
       await ms.vacuum({ batchSize: ms.termCount + 1 })
       expect(ms.isVacuuming).toEqual(false)
     })
+
+    it('does not fail if documents are added while waiting between batches', async () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'long' },
+        { id: 2, text: 'other' }
+      ]
+      ms.addAll(documents)
+      const clone = MiniSearch.loadJSON(JSON.stringify(ms), { fields: ['text'] })
+
+      ms.discard(1)
+      clone.remove(documents[0])
+
+      // The first batch is processed synchronously, then vacuuming waits
+      const vacuum = ms.vacuum({ batchSize: 1, batchWait: 10 })
+
+      // Adding "lost" while vacuuming waits splits the existing "long" edge of
+      // the radix tree into "lo" + "ng"
+      ms.add({ id: 3, text: 'lost' })
+      clone.add({ id: 3, text: 'lost' })
+
+      await vacuum
+
+      expect(ms).toEqual(clone)
+      expect(ms.isVacuuming).toEqual(false)
+    })
+
+    it('does not fail if documents are removed while waiting between batches', async () => {
+      const ms = new MiniSearch({ fields: ['text'] })
+      const documents = [
+        { id: 1, text: 'long' },
+        { id: 2, text: 'lost' },
+        { id: 3, text: 'other' }
+      ]
+      ms.addAll(documents)
+      const clone = MiniSearch.loadJSON(JSON.stringify(ms), { fields: ['text'] })
+
+      ms.discard(1)
+      clone.remove(documents[0])
+
+      // The first batch is processed synchronously, then vacuuming waits
+      const vacuum = ms.vacuum({ batchSize: 1, batchWait: 10 })
+
+      // Removing "lost" while vacuuming waits merges the "lo" and "ng" edges of
+      // the radix tree into "long"
+      ms.remove(documents[1])
+      clone.remove(documents[1])
+
+      await vacuum
+
+      expect(ms).toEqual(clone)
+      expect(ms.isVacuuming).toEqual(false)
+    })
   })
 
   describe('addAll', () => {

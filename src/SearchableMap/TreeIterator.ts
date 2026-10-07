@@ -54,13 +54,28 @@ class TreeIterator<T, K extends Kind<T>> implements Iterator<Result<T, K>> {
   }
 
   dive (): IteratorResult<Result<T, K>> {
-    if (this._path.length === 0) { return { done: true, value: undefined } }
-    const { node, keys } = last(this._path)!
-    if (last(keys) === LEAF) { return { done: false, value: this.result() } }
+    while (this._path.length > 0) {
+      const { node, keys } = last(this._path)!
+      const key = last(keys)!
 
-    const child = node.get(last(keys)!)!
-    this._path.push({ node: child, keys: Array.from(child.keys()) })
-    return this.dive()
+      if (key === LEAF) {
+        if (node.has(LEAF)) { return { done: false, value: this.result() } }
+      } else {
+        // The tree might have been modified since the keys were collected, in
+        // which case the edge for this key might have been split or merged
+        const child = node.get(key) || findSubtree(node, key)
+
+        if (child !== undefined && child.size > 0) {
+          this._path.push({ node: child, keys: Array.from(child.keys()) })
+          continue
+        }
+      }
+
+      // The entry was removed since the keys were collected: skip it
+      this.backtrack()
+    }
+
+    return { done: true, value: undefined }
   }
 
   backtrack (): void {
@@ -98,6 +113,26 @@ class TreeIterator<T, K extends Kind<T>> implements Iterator<Result<T, K>> {
 
 const last = <T>(array: T[]): T | undefined => {
   return array[array.length - 1]
+}
+
+// Finds the subtree at the given key of a node that has no edge for that key
+// anymore, because the edge was split (e.g. by setting another key sharing a
+// prefix with it) or merged with the one below (e.g. by deleting a key).
+const findSubtree = <T>(node: RadixTree<T>, key: string): RadixTree<T> | undefined => {
+  for (const k of node.keys()) {
+    if (k === LEAF) { continue }
+
+    if (key.startsWith(k)) {
+      const child = node.get(k)!
+      return key.length === k.length ? child : findSubtree(child, key.slice(k.length))
+    }
+
+    if (k.startsWith(key)) {
+      const subtree = new Map() as RadixTree<T>
+      subtree.set(k.slice(key.length), node.get(k)!)
+      return subtree
+    }
+  }
 }
 
 export { TreeIterator, ENTRIES, KEYS, VALUES, LEAF }

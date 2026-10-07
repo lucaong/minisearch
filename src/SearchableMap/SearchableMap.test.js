@@ -86,6 +86,42 @@ describe('SearchableMap', () => {
       const entries = Array.from(map.entries())
       expect(entries).toEqual([])
     })
+
+    it('keeps iterating if an edge is split while iterating', () => {
+      const map = SearchableMap.from([['long', 1], ['other', 2]])
+      const iterator = map.entries()
+      const entries = [iterator.next().value]
+
+      // Splits the "long" edge into "lo" + "ng"
+      map.set('lost', 3)
+
+      entries.push(...iterator)
+      expect(entries.filter(([key]) => key !== 'lost').sort()).toEqual([['long', 1], ['other', 2]])
+    })
+
+    it('keeps iterating if edges are merged while iterating', () => {
+      const map = SearchableMap.from([['long', 1], ['lost', 2], ['other', 3]])
+      const iterator = map.entries()
+      const entries = [iterator.next().value]
+
+      // Merges the "lo" and "ng" edges into "long"
+      map.delete('lost')
+
+      entries.push(...iterator)
+      expect(entries.sort()).toEqual([['long', 1], ['other', 3]])
+    })
+
+    it('skips entries deleted while iterating', () => {
+      const map = SearchableMap.from([['long', 1], ['lost', 2], ['other', 3]])
+      const iterator = map.entries()
+      const entries = [iterator.next().value]
+
+      map.delete('long')
+      map.delete('lost')
+
+      entries.push(...iterator)
+      expect(entries).toEqual([['other', 3]])
+    })
   })
 
   describe('forEach', () => {
@@ -308,6 +344,43 @@ describe('SearchableMap', () => {
         })
 
         expect(map.size).toEqual(0)
+      }))
+    })
+
+    it('iterates consistently if entries are set or deleted while iterating', () => {
+      const string = fc.stringOf(fc.constantFrom('a', 'b', 'c'), { maxLength: 5 })
+      const uniqueStrings = fc.uniqueArray(string, { maxLength: 50 })
+      const operations = fc.array(fc.tuple(fc.boolean(), string), { maxLength: 20 })
+
+      fc.assert(fc.property(uniqueStrings, fc.nat(), operations, (keys, steps, changes) => {
+        const map = new SearchableMap()
+        keys.forEach((key, i) => map.set(key, i))
+
+        const iterator = map.entries()
+        const iterated = []
+        for (let i = 0; i < steps % (keys.length + 1); i++) {
+          iterated.push(iterator.next().value[0])
+        }
+
+        const deleted = new Set()
+        changes.forEach(([isSet, key]) => {
+          if (isSet) {
+            map.set(key, -1)
+          } else {
+            map.delete(key)
+            deleted.add(key)
+          }
+        })
+
+        for (const [key, value] of iterator) {
+          expect(map.get(key)).toEqual(value)
+          iterated.push(key)
+        }
+
+        // No entry is iterated twice, and none of the entries that were never
+        // deleted are skipped
+        expect(new Set(iterated).size).toEqual(iterated.length)
+        expect(iterated).toEqual(expect.arrayContaining(keys.filter((key) => !deleted.has(key))))
       }))
     })
   })
