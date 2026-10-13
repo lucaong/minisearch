@@ -2,6 +2,12 @@
 
 `MiniSearch` follows [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## Upcoming
+
+  - [fix] Do not count discarded documents (not yet cleaned up from the index)
+    as matching documents when scoring, which gave wrong scores and rankings
+    for searches following `discard`, `discardAll`, or `replace`
+
 ## v7.2.0
 
   - [fix] Relax the return type of `extractField` to allow non-string values

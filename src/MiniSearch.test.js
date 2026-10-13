@@ -727,6 +727,108 @@ describe('MiniSearch', () => {
 
       expect(ms._dirtCount).toBe(0)
     })
+
+    describe('scoring of the remaining documents', () => {
+      const documents = [
+        { id: 1, text: 'foo bar' },
+        { id: 2, text: 'foo bar' },
+        { id: 3, text: 'foo baz' },
+        { id: 4, text: 'foo qux' },
+        { id: 5, text: 'other words here' }
+      ]
+
+      const expectSameResults = (actual, expected) => {
+        expect(actual.map(({ id }) => id)).toEqual(expected.map(({ id }) => id))
+        actual.forEach(({ score }, i) => expect(score).toBeCloseTo(expected[i].score))
+      }
+
+      const build = (docs, options = {}) => {
+        const ms = new MiniSearch({ fields: ['text'], ...options })
+        ms.addAll(docs)
+        return ms
+      }
+
+      const autoVacuumSettings = [false, true]
+
+      autoVacuumSettings.forEach((autoVacuum) => {
+        describe(`with autoVacuum: ${autoVacuum}`, () => {
+          const options = { autoVacuum }
+
+          it('does not count discarded documents as matching the term, whatever their position in the index', () => {
+            documents.forEach(({ id: discardedId }) => {
+              const ms = build(documents, options)
+              ms.discard(discardedId)
+
+              const fresh = build(documents.filter(({ id }) => id !== discardedId), options)
+
+              // The first search after discarding must score like an index
+              // that never contained the discarded document
+              expectSameResults(ms.search('foo'), fresh.search('foo'))
+              expectSameResults(ms.search('foo'), fresh.search('foo'))
+            })
+          })
+
+          it('does not count discarded documents when scoring prefix and fuzzy matches', () => {
+            const ms = build(documents, options)
+            ms.discard(4)
+            const fresh = build(documents.filter(({ id }) => id !== 4), options)
+
+            expectSameResults(ms.search('fo', { prefix: true }), fresh.search('fo', { prefix: true }))
+            expectSameResults(ms.search('fop', { fuzzy: 1 }), fresh.search('fop', { fuzzy: 1 }))
+          })
+
+          it('does not produce negative scores', () => {
+            const ms = build(documents, options)
+            ms.discardAll([2, 3, 4])
+
+            ms.search('foo').forEach(({ score }) => expect(score).toBeGreaterThan(0))
+          })
+
+          it('scores correctly while a discarded document still has a term frequency above 1', () => {
+            const docs = [
+              { id: 1, text: 'foo bar' },
+              { id: 2, text: 'foo' },
+              { id: 3, text: 'foo foo foo baz' }
+            ]
+            const ms = build(docs, options)
+            ms.discard(3)
+            const fresh = build(docs.slice(0, 2), options)
+
+            // Stale references with a term frequency above 1 are only cleaned
+            // up gradually, one per search, so repeat the search a few times
+            for (let i = 0; i < 4; i++) {
+              expectSameResults(ms.search('foo'), fresh.search('foo'))
+            }
+          })
+
+          it('scores like a fresh index after replace()', () => {
+            const ms = build(documents, options)
+            ms.replace({ id: 2, text: 'something else' })
+            const fresh = build(documents.map((doc) => doc.id === 2 ? { id: 2, text: 'something else' } : doc), options)
+
+            expectSameResults(ms.search('foo'), fresh.search('foo'))
+          })
+
+          it('scores like a fresh index after discardAll() followed by add()', () => {
+            const ms = build(documents, options)
+            ms.discardAll([2, 3])
+            ms.add({ id: 6, text: 'foo extra' })
+            const fresh = build([documents[0], documents[3], documents[4], { id: 6, text: 'foo extra' }], options)
+
+            expectSameResults(ms.search('foo'), fresh.search('foo'))
+          })
+        })
+      })
+
+      it('scores like a fresh index after the discarded documents are vacuumed', async () => {
+        const ms = build(documents, { autoVacuum: false })
+        ms.discard(2)
+        await ms.vacuum()
+        const fresh = build(documents.filter(({ id }) => id !== 2), { autoVacuum: false })
+
+        expectSameResults(ms.search('foo'), fresh.search('foo'))
+      })
+    })
   })
 
   describe('discardAll', () => {
