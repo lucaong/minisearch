@@ -1890,13 +1890,20 @@ export default class MiniSearch<T = any> {
       const fieldTermFreqs = fieldTermData.get(fieldId)
       if (fieldTermFreqs == null) continue
 
-      let matchingFields = fieldTermFreqs.size
+      // Discarded documents can still be referenced by the index until they are
+      // cleaned up, so they must not be counted among the documents matching
+      // the term: otherwise the IDF would depend on the order of the posting
+      // list.
+      let matchingFields = 0
+      for (const docId of fieldTermFreqs.keys()) {
+        if (this._documentIds.has(docId)) matchingFields += 1
+      }
+
       const avgFieldLength = this._avgFieldLength[fieldId]
 
       for (const docId of fieldTermFreqs.keys()) {
         if (!this._documentIds.has(docId)) {
           this.removeTerm(fieldId, docId, derivedTerm)
-          matchingFields -= 1
           continue
         }
 
