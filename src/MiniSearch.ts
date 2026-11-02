@@ -1103,7 +1103,9 @@ export default class MiniSearch<T = any> {
       const batchWait = options.batchWait || defaultVacuumOptions.batchWait
       let i = 1
 
-      for (const [term, fieldsData] of this._index) {
+      for (const term of Array.from(this._index.keys())) {
+        const fieldsData = this._index.get(term)!
+
         for (const [fieldId, fieldIndex] of fieldsData) {
           for (const [shortId] of fieldIndex) {
             if (this._documentIds.has(shortId)) { continue }
@@ -1116,7 +1118,7 @@ export default class MiniSearch<T = any> {
           }
         }
 
-        if (this._index.get(term)!.size === 0) {
+        if (fieldsData.size === 0) {
           this._index.delete(term)
         }
 
@@ -1127,7 +1129,7 @@ export default class MiniSearch<T = any> {
         i += 1
       }
 
-      this._dirtCount -= initialDirtCount
+      this._dirtCount = Math.max(0, this._dirtCount - initialDirtCount)
     }
 
     // Make the next lines always async, so they execute after this function returns
