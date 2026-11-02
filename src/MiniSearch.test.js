@@ -727,6 +727,27 @@ describe('MiniSearch', () => {
 
       expect(ms._dirtCount).toBe(0)
     })
+
+    test('vacuum does not crash when add happens during it', async () => {
+      const ms = new MiniSearch({
+        fields: ['text'],
+        autoVacuum: false
+      })
+
+      const documents = [
+        { id: 1, text: 'Document one' },
+        { id: 2, text: 'Document two' },
+        { id: 3, text: 'Document three' }
+      ]
+      ms.addAll(documents)
+
+      const vacuuming = ms.vacuum({ batchSize: 1, batchWait: 0 })
+      await null
+
+      ms.add({ id: 4, text: 'on' })
+
+      await expect(vacuuming).resolves.toBeUndefined()
+    })
   })
 
   describe('discardAll', () => {
@@ -1260,7 +1281,7 @@ describe('MiniSearch', () => {
         }
       })
       ms.addAll(documents)
-    
+
       const results = ms.search('del')
       expect(results.length).toBe(1)
       expect(results.every(({ category }) => category === 'poetry')).toBe(true)
